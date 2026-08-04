@@ -1,5 +1,6 @@
 const STORAGE_KEY = "noi-crossword-progress-v1";
 const THEME_STORAGE_KEY = "noi-crossword-theme-v1";
+const DEFAULT_THEME_ID = "sea";
 const THEMES = [
   { id: "velvet", label: "Velvet", icon: "moon" },
   { id: "sea", label: "Ocean", icon: "sun" }
@@ -687,12 +688,12 @@ function renderThemeSwitcher() {
 }
 
 function applySavedTheme() {
-  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || THEMES[0].id;
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || DEFAULT_THEME_ID;
   applyTheme(savedTheme, { persist: false });
 }
 
 function applyTheme(themeId, options = {}) {
-  const theme = THEMES.find((entry) => entry.id === themeId) || THEMES[0];
+  const theme = THEMES.find((entry) => entry.id === themeId) || THEMES.find((entry) => entry.id === DEFAULT_THEME_ID) || THEMES[0];
   document.body.dataset.theme = theme.id;
 
   if (options.persist !== false) {
