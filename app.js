@@ -6,7 +6,9 @@ const LEGACY_STORAGE_KEYS = ["noi-crossword-progress-v1", "noi-crossword-theme-v
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
   { id: "velvet", label: "Velvet", icon: "moon" },
-  { id: "sea", label: "Ocean", icon: "sun" }
+  { id: "sea", label: "Ocean", icon: "sun" },
+  { id: "red-of-you", label: "Red of You", icon: "letter", iconText: "D" },
+  { id: "green-of-me", label: "Green of Me", icon: "letter", iconText: "R" }
 ];
 
 const state = {
@@ -695,7 +697,11 @@ function renderThemeSwitcher() {
     button.type = "button";
     button.className = "theme-chip";
     button.dataset.theme = theme.id;
-    button.innerHTML = `<span class="theme-chip-icon theme-chip-icon-${theme.icon}" aria-hidden="true"></span><span class="theme-chip-name">${theme.label}</span>`;
+    const iconMarkup =
+      theme.icon === "letter"
+        ? `<span class="theme-chip-icon theme-chip-icon-letter" aria-hidden="true">${theme.iconText ?? ""}</span>`
+        : `<span class="theme-chip-icon theme-chip-icon-${theme.icon}" aria-hidden="true"></span>`;
+    button.innerHTML = `${iconMarkup}<span class="theme-chip-name">${theme.label}</span>`;
     button.setAttribute("aria-pressed", document.body.dataset.theme === theme.id ? "true" : "false");
     button.setAttribute("aria-label", `Attiva il tema ${theme.label}`);
     button.addEventListener("click", () => {
