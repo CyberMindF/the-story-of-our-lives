@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Words</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <h1 id="title">Caricamento…</h1>
+          <p id="subtitle" class="subtitle"></p>
+        </div>
+        <div class="status-panel">
+          <p id="completion-status">0 di 76 ricordi completati</p>
+          <p id="check-summary" aria-live="polite">Nessun controllo eseguito.</p>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="board-panel" aria-labelledby="title">
+          <div class="controls">
+            <button id="check-button" type="button">Controlla</button>
+            <button id="reset-button" type="button">Ricomincia</button>
+            <div class="theme-bar" aria-label="Selettore tema">
+              <span class="theme-label">Tema</span>
+              <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema chiaro o scuro"></div>
+            </div>
+          </div>
+          <div id="grid-scroll" class="grid-scroll">
+            <div id="grid" class="grid" role="group" aria-label="Griglia del cruciverba"></div>
+          </div>
+        </section>
+
+        <aside class="clues-panel" aria-labelledby="clues-title">
+          <h2 id="clues-title">Definizioni</h2>
+          <ol id="clues-list" class="clues-list"></ol>
+        </aside>
+      </main>
+    </div>
+
+    <div id="completion-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completion-title" aria-describedby="completion-text">
+      <div class="modal-card">
+        <h2 id="completion-title">Cruciverba completato</h2>
+        <p id="completion-text">Ho raccolto qui una parte di noi.<br />Hai ritrovato tutti i nostri ricordi.</p>
+        <button id="close-modal-button" type="button">Chiudi</button>
+      </div>
+    </div>
+
+    <div id="reset-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="reset-title" aria-describedby="reset-text">
+      <div class="modal-card">
+        <h2 id="reset-title">Ricominciare da capo?</h2>
+        <p id="reset-text">Questo cancellerà tutte le lettere inserite finora.</p>
+        <div class="modal-actions">
+          <button id="cancel-reset-button" type="button">Annulla</button>
+          <button id="confirm-reset-button" type="button">Cancella tutto</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js" defer></script>
+  </body>
+  </html>
