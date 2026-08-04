@@ -275,6 +275,7 @@ function renderClues() {
 }
 
 function bindControls() {
+  bindScrollInterruptions();
   elements.checkButton.addEventListener("click", checkAnswers);
   elements.resetButton.addEventListener("click", openResetModal);
   renderThemeSwitcher();
@@ -538,25 +539,243 @@ function refreshSelectionClasses() {
 function highlightClue(wordId) {
   state.cluesById.forEach((button, id) => {
     button.classList.toggle("is-selected", id === wordId);
-    if (id === wordId) {
-      button.scrollIntoView({ block: "nearest", behavior: "smooth", inline: "nearest" });
-    }
   });
+
+  const button = state.cluesById.get(wordId);
+  const list = elements.cluesList;
+  if (!button || !list) {
+    return;
+  }
+
+  // Quando la lista non scrolla da sola (layout mobile) lasciamo stare:
+  // la pagina deve seguire la cella, non la definizione.
+  const limits = getScrollLimits(list);
+  if (limits.top <= 0) {
+    return;
+  }
+
+  const listRect = list.getBoundingClientRect();
+  const buttonRect = button.getBoundingClientRect();
+  const top = list.scrollTop
+    + buttonRect.top
+    - listRect.top
+    - (list.clientHeight - buttonRect.height) / 2;
+
+  animateScrollTo(list, list.scrollLeft, top);
 }
 
 function centerCellIntoView(cellKey) {
   const input = state.inputByCellKey.get(cellKey);
-  if (!input) {
+  const scroller = elements.gridScroll;
+  const cell = input ? input.parentElement : null;
+  if (!cell || !scroller) {
     return;
   }
 
-  const wrapper = input.parentElement;
-  if (wrapper) {
-    wrapper.scrollIntoView({
-      behavior: "auto",
-      block: "center",
-      inline: "center"
+  const scrollerRect = scroller.getBoundingClientRect();
+  const cellRect = cell.getBoundingClientRect();
+  const position = getScrollPosition(scroller);
+  const limits = getScrollLimits(scroller);
+
+  const left = clampNumber(
+    position.left + cellRect.left - scrollerRect.left - (scroller.clientWidth - cellRect.width) / 2,
+    0,
+    limits.left
+  );
+  const top = clampNumber(
+    position.top + cellRect.top - scrollerRect.top - (scroller.clientHeight - cellRect.height) / 2,
+    0,
+    limits.top
+  );
+
+  animateScrollTo(scroller, left, top);
+
+  // Dove finirà la cella nel viewport una volta che il riquadro si è assestato.
+  // Quello che il riquadro non riesce a scrollare lo recupera la pagina:
+  // sotto i 980px la griglia cresce in altezza e l'unico scroller verticale è il documento.
+  centerCellIntoPage({
+    left: cellRect.left - (left - position.left),
+    top: cellRect.top - (top - position.top),
+    width: cellRect.width,
+    height: cellRect.height,
+    forceVertical: limits.top <= 0,
+    forceHorizontal: limits.left <= 0
+  });
+}
+
+function centerCellIntoPage(projection) {
+  // Il viewport "visuale" tiene conto della tastiera aperta sul telefono,
+  // così la cella finisce al centro di quello che si vede davvero.
+  const viewport = getVisualViewport();
+  const limits = getScrollLimits(window);
+  const position = getScrollPosition(window);
+
+  const relativeLeft = projection.left - viewport.left;
+  const relativeTop = projection.top - viewport.top;
+  const centeredLeft = position.left + relativeLeft - (viewport.width - projection.width) / 2;
+  const centeredTop = position.top + relativeTop - (viewport.height - projection.height) / 2;
+
+  const left = limits.left > 0 && needsPageScroll(relativeLeft, projection.width, viewport.width, projection.forceHorizontal)
+    ? clampNumber(centeredLeft, 0, limits.left)
+    : position.left;
+  const top = limits.top > 0 && needsPageScroll(relativeTop, projection.height, viewport.height, projection.forceVertical)
+    ? clampNumber(centeredTop, 0, limits.top)
+    : position.top;
+
+  animateScrollTo(window, left, top);
+}
+
+function getVisualViewport() {
+  const visual = window.visualViewport;
+  if (visual) {
+    return { left: visual.offsetLeft, top: visual.offsetTop, width: visual.width, height: visual.height };
+  }
+
+  return {
+    left: 0,
+    top: 0,
+    width: window.innerWidth || document.documentElement.clientWidth,
+    height: window.innerHeight || document.documentElement.clientHeight
+  };
+}
+
+// Con "force" ricentriamo sempre (la pagina è l'unico scroller su quell'asse),
+// altrimenti interveniamo solo quando la cella esce dalla fascia centrale.
+function needsPageScroll(start, size, viewportSize, force) {
+  if (force) {
+    return true;
+  }
+
+  const margin = Math.min(viewportSize * 0.3, 160);
+  return start < margin || start + size > viewportSize - margin;
+}
+
+const SCROLL_MIN_DURATION = 180;
+const SCROLL_MAX_DURATION = 520;
+const SCROLL_MS_PER_PIXEL = 0.9;
+const scrollAnimations = new WeakMap();
+
+function clampNumber(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function easeOutCubic(progress) {
+  return 1 - Math.pow(1 - progress, 3);
+}
+
+function prefersReducedMotion() {
+  return typeof window.matchMedia === "function"
+    && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getScrollPosition(target) {
+  if (target === window) {
+    return { left: window.scrollX, top: window.scrollY };
+  }
+
+  return { left: target.scrollLeft, top: target.scrollTop };
+}
+
+function getScrollLimits(target) {
+  const element = target === window ? document.documentElement : target;
+  return {
+    left: Math.max(0, element.scrollWidth - element.clientWidth),
+    top: Math.max(0, element.scrollHeight - element.clientHeight)
+  };
+}
+
+function applyScrollPosition(target, left, top) {
+  if (target === window) {
+    window.scrollTo(left, top);
+    return;
+  }
+
+  target.scrollLeft = left;
+  target.scrollTop = top;
+}
+
+function cancelScrollAnimation(target) {
+  const animation = scrollAnimations.get(target);
+  if (animation) {
+    cancelAnimationFrame(animation.frame);
+    scrollAnimations.delete(target);
+  }
+}
+
+// Un tween proprio invece di scrollTo({behavior:"smooth"}): riprogrammandolo
+// a ogni lettera la corsa riparte dalla posizione corrente con una durata
+// proporzionale alla distanza, quindi digitando in fretta la griglia continua
+// a seguire il cursore invece di rincorrerlo.
+function animateScrollTo(target, left, top) {
+  const limits = getScrollLimits(target);
+  const start = getScrollPosition(target);
+  const endLeft = clampNumber(left, 0, limits.left);
+  const endTop = clampNumber(top, 0, limits.top);
+  const deltaLeft = endLeft - start.left;
+  const deltaTop = endTop - start.top;
+
+  cancelScrollAnimation(target);
+
+  if (Math.abs(deltaLeft) < 1 && Math.abs(deltaTop) < 1) {
+    return;
+  }
+
+  if (prefersReducedMotion()) {
+    applyScrollPosition(target, endLeft, endTop);
+    return;
+  }
+
+  const distance = Math.hypot(deltaLeft, deltaTop);
+  const duration = clampNumber(distance * SCROLL_MS_PER_PIXEL, SCROLL_MIN_DURATION, SCROLL_MAX_DURATION);
+  const animation = { frame: 0, startTime: 0 };
+
+  const step = (now) => {
+    if (!animation.startTime) {
+      animation.startTime = now;
+    }
+
+    const progress = clampNumber((now - animation.startTime) / duration, 0, 1);
+    const eased = easeOutCubic(progress);
+    applyScrollPosition(target, start.left + deltaLeft * eased, start.top + deltaTop * eased);
+
+    if (progress < 1) {
+      animation.frame = requestAnimationFrame(step);
+      return;
+    }
+
+    scrollAnimations.delete(target);
+  };
+
+  animation.frame = requestAnimationFrame(step);
+  scrollAnimations.set(target, animation);
+}
+
+// Se l'utente scrolla a mano smettiamo di trascinarlo dove diciamo noi
+// (wheel e touch risalgono fino a window, quindi bastano questi due listener).
+function bindScrollInterruptions() {
+  const stop = () => {
+    [window, elements.gridScroll, elements.cluesList].forEach((target) => {
+      if (target) {
+        cancelScrollAnimation(target);
+      }
     });
+  };
+
+  window.addEventListener("wheel", stop, { passive: true });
+  window.addEventListener("touchstart", stop, { passive: true });
+
+  // La tastiera del telefono che si apre (o la rotazione dello schermo) cambia
+  // l'altezza utile: rimettiamo al centro la cella attiva.
+  const recenter = () => {
+    if (state.currentCellKey) {
+      centerCellIntoView(state.currentCellKey);
+    }
+  };
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", recenter);
+  } else {
+    window.addEventListener("resize", recenter);
   }
 }
 
@@ -750,12 +969,21 @@ function setCellValue(cellKey, value) {
   if (input) {
     input.value = normalized;
     input.setAttribute("value", normalized);
+    if (normalized) {
+      animateLetterEntry(input);
+    }
   }
 
   state.progress[cellKey] = normalized;
   clearValidationForCell(cellKey);
   saveProgress();
   updateCompletionState();
+}
+
+function animateLetterEntry(input) {
+  input.classList.remove("is-letter-entering");
+  void input.offsetWidth;
+  input.classList.add("is-letter-entering");
 }
 
 function saveProgress() {

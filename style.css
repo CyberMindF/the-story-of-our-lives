@@ -416,6 +416,27 @@ button:focus-visible,
   outline: none;
 }
 
+.cell-input.is-letter-entering {
+  animation: letter-enter 170ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+@keyframes letter-enter {
+  from {
+    font-size: 0.25rem;
+    opacity: 0.15;
+  }
+
+  70% {
+    font-size: calc(var(--cell-font-size) * 1.12);
+    opacity: 1;
+  }
+
+  to {
+    font-size: var(--cell-font-size);
+    opacity: 1;
+  }
+}
+
 .cell.is-selected .cell-input {
   background: var(--selection-color);
   z-index: 3;
@@ -531,6 +552,12 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
 @media (max-width: 640px) {
   .theme-switcher {
     width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell-input.is-letter-entering {
+    animation: none;
   }
 }
 
