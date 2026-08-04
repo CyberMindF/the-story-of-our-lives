@@ -1,5 +1,8 @@
-const STORAGE_KEY = "noi-crossword-progress-v1";
-const THEME_STORAGE_KEY = "noi-crossword-theme-v1";
+const STORAGE_VERSION = "v2";
+const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
+const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
+const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
+const LEGACY_STORAGE_KEYS = ["noi-crossword-progress-v1", "noi-crossword-theme-v1"];
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
   { id: "velvet", label: "Velvet", icon: "moon" },
@@ -44,6 +47,7 @@ document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
   try {
+    ensureStorageVersion();
     applySavedTheme();
     const data = await loadData();
     const validation = validateData(data);
@@ -63,6 +67,22 @@ async function init() {
     elements.title.textContent = "Errore di caricamento";
     elements.checkSummary.textContent = "Impossibile leggere data.json.";
   }
+}
+
+function ensureStorageVersion() {
+  const savedVersion = localStorage.getItem(STORAGE_VERSION_KEY);
+
+  if (savedVersion === STORAGE_VERSION) {
+    return;
+  }
+
+  LEGACY_STORAGE_KEYS.forEach((key) => {
+    localStorage.removeItem(key);
+  });
+
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(THEME_STORAGE_KEY);
+  localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
 }
 
 async function loadData() {
