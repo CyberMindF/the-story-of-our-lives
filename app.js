@@ -4,6 +4,7 @@ const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
 const ACCESS_STORAGE_KEY = "noi-crossword-access";
 const ACCESS_KEY = "cerchio";
+const ENABLE_DEVELOPER_TOOLS = true;
 const RESETTABLE_STORAGE_PREFIXES = ["noi-crossword-progress-", "noi-crossword-theme-"];
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
@@ -27,7 +28,9 @@ const state = {
   progress: {},
   validationMarks: {},
   dimensions: { rows: 0, cols: 0 },
-  isComplete: false
+  isComplete: false,
+  developerRevealActive: false,
+  developerProgressSnapshot: null
 };
 
 const elements = {
@@ -45,6 +48,7 @@ const elements = {
   checkSummary: document.getElementById("check-summary"),
   checkButton: document.getElementById("check-button"),
   resetButton: document.getElementById("reset-button"),
+  revealButton: document.getElementById("reveal-button"),
   themeSwitcher: document.getElementById("theme-switcher"),
   themeToast: document.getElementById("theme-toast"),
   mobileClueKicker: document.getElementById("mobile-clue-kicker"),
@@ -351,6 +355,10 @@ function bindControls() {
   bindScrollInterruptions();
   elements.checkButton.addEventListener("click", openCheckModal);
   elements.resetButton.addEventListener("click", openResetModal);
+  if (ENABLE_DEVELOPER_TOOLS) {
+    elements.revealButton.hidden = false;
+    elements.revealButton.addEventListener("click", revealCrossword);
+  }
   renderThemeSwitcher();
   elements.mobileSheetToggle.addEventListener("click", toggleMobileClues);
   [elements.previousClueButton, elements.nextClueButton].forEach((button) => {
@@ -427,6 +435,12 @@ function handleCellClick(cellKey) {
   const cell = state.cells.get(cellKey);
   if (!cell) {
     return;
+  }
+
+  if (ENABLE_DEVELOPER_TOOLS) {
+    const coordinates = `R${cell.row} C${cell.col}`;
+    elements.checkSummary.textContent = coordinates;
+    showTemporaryToast(coordinates);
   }
 
   if (state.currentCellKey === cellKey && cell.wordIds.length > 1) {
@@ -1096,8 +1110,16 @@ function showThemeToast(themeName) {
     return;
   }
 
+  showTemporaryToast(`Tema ${themeName}`);
+}
+
+function showTemporaryToast(message) {
+  if (!elements.themeToast || !window.matchMedia("(max-width: 640px)").matches) {
+    return;
+  }
+
   window.clearTimeout(themeToastTimer);
-  elements.themeToast.textContent = `Tema ${themeName}`;
+  elements.themeToast.textContent = message;
   elements.themeToast.classList.remove("is-visible");
   void elements.themeToast.offsetWidth;
   elements.themeToast.classList.add("is-visible");
@@ -1207,6 +1229,35 @@ function saveProgress() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
 }
 
+function revealCrossword() {
+  if (state.developerRevealActive) {
+    state.progress = { ...state.developerProgressSnapshot };
+    state.developerRevealActive = false;
+    state.developerProgressSnapshot = null;
+    elements.revealButton.classList.remove("is-active");
+    elements.revealButton.setAttribute("aria-label", "Rivela tutto il cruciverba");
+    elements.checkSummary.textContent = "Soluzioni sviluppatore nascoste.";
+    closeCompletionModal();
+  } else {
+    state.developerProgressSnapshot = { ...state.progress };
+    state.cells.forEach((cell, cellKey) => {
+      state.progress[cellKey] = cell.solution;
+    });
+    state.developerRevealActive = true;
+    elements.revealButton.classList.add("is-active");
+    elements.revealButton.setAttribute("aria-label", "Nascondi le soluzioni del cruciverba");
+    elements.checkSummary.textContent = "Cruciverba rivelato in modalità sviluppatore.";
+  }
+
+  state.validationMarks = {};
+  updateGridInputs();
+  updateValidationClasses();
+  if (!state.developerRevealActive) {
+    saveProgress();
+  }
+  updateCompletionState();
+}
+
 function openResetModal() {
   elements.resetModal.classList.remove("hidden");
   elements.cancelResetButton.focus();
@@ -1228,6 +1279,10 @@ function closeResetModal() {
 function resetProgress() {
   state.progress = {};
   state.validationMarks = {};
+  state.developerRevealActive = false;
+  state.developerProgressSnapshot = null;
+  elements.revealButton.classList.remove("is-active");
+  elements.revealButton.setAttribute("aria-label", "Rivela tutto il cruciverba");
   localStorage.removeItem(STORAGE_KEY);
   updateGridInputs();
   updateValidationClasses();
