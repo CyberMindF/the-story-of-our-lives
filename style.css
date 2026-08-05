@@ -170,6 +170,86 @@ input {
   padding: 1.25rem 2.5rem;
 }
 
+body.access-locked {
+  overflow: hidden;
+}
+
+.access-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.72), transparent 28%),
+    var(--bg-color);
+}
+
+.access-gate.hidden {
+  display: none;
+}
+
+.access-card {
+  width: min(100%, 27rem);
+  padding: 2rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 22px;
+  background: var(--panel-color);
+  box-shadow: var(--shadow);
+}
+
+.access-card h1 {
+  font-size: clamp(1.65rem, 5vw, 2.2rem);
+}
+
+.access-card > p:not(.access-eyebrow):not(.access-error) {
+  margin: 0.65rem 0 1.4rem;
+  color: var(--muted-color);
+}
+
+.access-eyebrow,
+.access-card label {
+  color: var(--muted-color);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.access-eyebrow {
+  margin: 0 0 0.5rem;
+}
+
+.access-controls {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 0.45rem;
+}
+
+.access-controls input {
+  min-width: 0;
+  flex: 1;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--cell-bg);
+  color: var(--text-color);
+  outline: none;
+}
+
+.access-controls input:focus {
+  border-color: var(--focus-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus-color) 22%, transparent);
+}
+
+.access-error {
+  min-height: 1.25rem;
+  margin: 0.65rem 0 0;
+  color: #b63b52;
+  font-size: 0.9rem;
+}
+
 .hero,
 .board-panel,
 .clues-panel {

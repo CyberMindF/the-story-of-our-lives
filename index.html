@@ -7,8 +7,8 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./style.css" />
   </head>
-  <body>
-    <div class="app-shell">
+  <body class="access-locked">
+    <div id="app-shell" class="app-shell" inert aria-hidden="true">
       <header class="hero">
         <div>
           <h1 id="title">Caricamento…</h1>
@@ -40,6 +40,20 @@
           <ol id="clues-list" class="clues-list"></ol>
         </aside>
       </main>
+    </div>
+
+    <div id="access-gate" class="access-gate" role="dialog" aria-modal="true" aria-labelledby="access-title" aria-describedby="access-text">
+      <form id="access-form" class="access-card">
+        <p class="access-eyebrow">Our Words</p>
+        <h1 id="access-title">Una parola per entrare</h1>
+        <p id="access-text">Inserisci la chiave per accedere al cruciverba.</p>
+        <label for="access-key">Chiave</label>
+        <div class="access-controls">
+          <input id="access-key" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" required />
+          <button type="submit">Entra</button>
+        </div>
+        <p id="access-error" class="access-error" aria-live="polite"></p>
+      </form>
     </div>
 
     <div id="completion-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completion-title" aria-describedby="completion-text">
