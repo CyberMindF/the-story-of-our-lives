@@ -1,10 +1,10 @@
-const STORAGE_VERSION = "v2";
+const STORAGE_VERSION = "v13";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
 const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
 const ACCESS_STORAGE_KEY = "noi-crossword-access";
 const ACCESS_KEY = "cerchio";
-const LEGACY_STORAGE_KEYS = ["noi-crossword-progress-v1", "noi-crossword-theme-v1"];
+const RESETTABLE_STORAGE_PREFIXES = ["noi-crossword-progress-", "noi-crossword-theme-"];
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
   { id: "velvet", label: "Velvet", icon: "moon" },
@@ -12,6 +12,7 @@ const THEMES = [
   { id: "red-of-you", label: "Red of You", icon: "letter", iconText: "D" },
   { id: "green-of-me", label: "Green of Me", icon: "letter", iconText: "R" }
 ];
+let themeToastTimer = null;
 
 const state = {
   data: null,
@@ -45,6 +46,7 @@ const elements = {
   checkButton: document.getElementById("check-button"),
   resetButton: document.getElementById("reset-button"),
   themeSwitcher: document.getElementById("theme-switcher"),
+  themeToast: document.getElementById("theme-toast"),
   mobileClueKicker: document.getElementById("mobile-clue-kicker"),
   mobileClueText: document.getElementById("mobile-clue-text"),
   mobileSheetToggle: document.getElementById("mobile-sheet-toggle"),
@@ -52,7 +54,10 @@ const elements = {
   closeModalButton: document.getElementById("close-modal-button"),
   resetModal: document.getElementById("reset-modal"),
   cancelResetButton: document.getElementById("cancel-reset-button"),
-  confirmResetButton: document.getElementById("confirm-reset-button")
+  confirmResetButton: document.getElementById("confirm-reset-button"),
+  checkModal: document.getElementById("check-modal"),
+  cancelCheckButton: document.getElementById("cancel-check-button"),
+  confirmCheckButton: document.getElementById("confirm-check-button")
 };
 
 document.addEventListener("DOMContentLoaded", init);
@@ -60,10 +65,13 @@ document.addEventListener("DOMContentLoaded", init);
 async function init() {
   ensureStorageVersion();
   applySavedTheme();
+  bindVisualViewport();
 
   if (!hasAccess()) {
     bindAccessGate();
-    elements.accessKey.focus();
+    if (!window.matchMedia("(max-width: 640px)").matches) {
+      elements.accessKey.focus();
+    }
     return;
   }
 
@@ -131,12 +139,13 @@ function ensureStorageVersion() {
     return;
   }
 
-  LEGACY_STORAGE_KEYS.forEach((key) => {
-    localStorage.removeItem(key);
+  Object.keys(localStorage).forEach((key) => {
+    if (RESETTABLE_STORAGE_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+      localStorage.removeItem(key);
+    }
   });
 
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(THEME_STORAGE_KEY);
+  localStorage.removeItem(ACCESS_STORAGE_KEY);
   localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
 }
 
@@ -282,8 +291,14 @@ function renderGrid() {
     input.type = "text";
     input.inputMode = "text";
     input.maxLength = 1;
-    input.autocomplete = "off";
+    input.autocomplete = "one-time-code";
     input.spellcheck = false;
+    input.setAttribute("autocorrect", "off");
+    input.setAttribute("autocapitalize", "characters");
+    input.setAttribute("data-1p-ignore", "true");
+    input.setAttribute("data-lpignore", "true");
+    input.setAttribute("data-bwignore", "true");
+    input.setAttribute("data-form-type", "other");
     input.dataset.cellKey = cell.key;
     input.setAttribute("aria-label", getCellAriaLabel(cell));
 
@@ -332,7 +347,7 @@ function renderClues() {
 
 function bindControls() {
   bindScrollInterruptions();
-  elements.checkButton.addEventListener("click", checkAnswers);
+  elements.checkButton.addEventListener("click", openCheckModal);
   elements.resetButton.addEventListener("click", openResetModal);
   renderThemeSwitcher();
   elements.mobileSheetToggle.addEventListener("click", toggleMobileClues);
@@ -350,6 +365,55 @@ function bindControls() {
       closeResetModal();
     }
   });
+  elements.cancelCheckButton.addEventListener("click", closeCheckModal);
+  elements.confirmCheckButton.addEventListener("click", () => {
+    closeCheckModal();
+    checkAnswers();
+  });
+  elements.checkModal.addEventListener("click", (event) => {
+    if (event.target === elements.checkModal) {
+      closeCheckModal();
+    }
+  });
+}
+
+function bindVisualViewport() {
+  let stableHeight = window.visualViewport?.height || window.innerHeight;
+
+  const updateViewportHeight = (force = false) => {
+    const visualViewport = window.visualViewport;
+    const height = visualViewport?.height || window.innerHeight;
+    const isGridInputFocused = document.activeElement?.classList.contains("cell-input");
+    const keyboardLikelyOpen = isGridInputFocused && height < stableHeight * 0.82;
+
+    document.body.classList.toggle("keyboard-open", keyboardLikelyOpen);
+
+    if (keyboardLikelyOpen) {
+      const offsetTop = visualViewport?.offsetTop || 0;
+      const keyboardOffset = Math.max(0, stableHeight - height - offsetTop);
+      document.documentElement.style.setProperty("--keyboard-offset", `${Math.round(keyboardOffset)}px`);
+    } else {
+      document.documentElement.style.setProperty("--keyboard-offset", "0px");
+    }
+
+    if (!force && keyboardLikelyOpen) {
+      return;
+    }
+
+    stableHeight = height;
+    document.documentElement.style.setProperty("--app-viewport-height", `${Math.round(stableHeight)}px`);
+  };
+
+  updateViewportHeight(true);
+  window.addEventListener("orientationchange", () => updateViewportHeight(true));
+  window.addEventListener("focusout", () => window.setTimeout(() => updateViewportHeight(), 120));
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", () => updateViewportHeight());
+    window.visualViewport.addEventListener("scroll", () => updateViewportHeight());
+  } else {
+    window.addEventListener("resize", () => updateViewportHeight());
+  }
 }
 
 function handleCellClick(cellKey) {
@@ -977,15 +1041,17 @@ function renderThemeSwitcher() {
     button.type = "button";
     button.className = "theme-chip";
     button.dataset.theme = theme.id;
-    const iconMarkup =
-      theme.icon === "letter"
-        ? `<span class="theme-chip-icon theme-chip-icon-letter" aria-hidden="true">${theme.iconText ?? ""}</span>`
+    const iconMarkup = theme.icon === "letter"
+      ? `<span class="theme-chip-icon theme-chip-icon-letter" aria-hidden="true">${theme.iconText ?? ""}</span>`
+      : theme.icon === "moon"
+        ? `<svg class="theme-chip-icon theme-chip-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><circle class="moon-disc" cx="12" cy="12" r="9" /><path class="moon-crescent" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></svg>`
         : `<span class="theme-chip-icon theme-chip-icon-${theme.icon}" aria-hidden="true"></span>`;
     button.innerHTML = `${iconMarkup}<span class="theme-chip-name">${theme.label}</span>`;
     button.setAttribute("aria-pressed", document.body.dataset.theme === theme.id ? "true" : "false");
     button.setAttribute("aria-label", `Attiva il tema ${theme.label}`);
     button.addEventListener("click", () => {
       applyTheme(theme.id);
+      showThemeToast(theme.label);
     });
     elements.themeSwitcher.appendChild(button);
   });
@@ -1016,6 +1082,22 @@ function updateThemeButtons() {
     button.classList.toggle("is-selected", selected);
     button.setAttribute("aria-pressed", selected ? "true" : "false");
   });
+}
+
+function showThemeToast(themeName) {
+  if (!elements.themeToast || !window.matchMedia("(max-width: 640px)").matches) {
+    return;
+  }
+
+  window.clearTimeout(themeToastTimer);
+  elements.themeToast.textContent = `Tema ${themeName}`;
+  elements.themeToast.classList.remove("is-visible");
+  void elements.themeToast.offsetWidth;
+  elements.themeToast.classList.add("is-visible");
+
+  themeToastTimer = window.setTimeout(() => {
+    elements.themeToast.classList.remove("is-visible");
+  }, 2200);
 }
 
 function toggleMobileClues() {
@@ -1103,6 +1185,15 @@ function saveProgress() {
 function openResetModal() {
   elements.resetModal.classList.remove("hidden");
   elements.cancelResetButton.focus();
+}
+
+function openCheckModal() {
+  elements.checkModal.classList.remove("hidden");
+  elements.cancelCheckButton.focus();
+}
+
+function closeCheckModal() {
+  elements.checkModal.classList.add("hidden");
 }
 
 function closeResetModal() {
