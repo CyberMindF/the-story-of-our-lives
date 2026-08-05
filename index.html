@@ -36,7 +36,23 @@
         </section>
 
         <aside class="clues-panel" aria-labelledby="clues-title">
-          <h2 id="clues-title">Definizioni</h2>
+          <div class="clues-panel-header">
+            <h2 id="clues-title">Definizioni</h2>
+            <button
+              id="mobile-sheet-toggle"
+              class="mobile-sheet-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls="clues-list"
+            >
+              <span class="mobile-clue-copy" aria-live="polite">
+                <span id="mobile-clue-kicker" class="mobile-clue-kicker">Ricordo selezionato</span>
+                <span id="mobile-clue-text" class="mobile-clue-text">Seleziona una parola per vedere la definizione.</span>
+              </span>
+              <span class="mobile-sheet-chevron" aria-hidden="true"></span>
+              <span class="sr-only">Apri la lista delle definizioni</span>
+            </button>
+          </div>
           <ol id="clues-list" class="clues-list"></ol>
         </aside>
       </main>

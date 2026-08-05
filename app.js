@@ -45,6 +45,9 @@ const elements = {
   checkButton: document.getElementById("check-button"),
   resetButton: document.getElementById("reset-button"),
   themeSwitcher: document.getElementById("theme-switcher"),
+  mobileClueKicker: document.getElementById("mobile-clue-kicker"),
+  mobileClueText: document.getElementById("mobile-clue-text"),
+  mobileSheetToggle: document.getElementById("mobile-sheet-toggle"),
   completionModal: document.getElementById("completion-modal"),
   closeModalButton: document.getElementById("close-modal-button"),
   resetModal: document.getElementById("reset-modal"),
@@ -70,6 +73,9 @@ async function init() {
 
 async function initializeCrossword() {
   try {
+    applySavedTheme();
+    document.body.dataset.mobileMode = "sheet";
+    document.body.dataset.mobileSheet = "closed";
     const data = await loadData();
     const validation = validateData(data);
     if (!validation.ok) {
@@ -313,6 +319,9 @@ function renderClues() {
     button.innerHTML = `<span class="clue-order">${entry.order}.</span><span>${escapeHtml(entry.clue)}</span>`;
     button.addEventListener("click", () => {
       selectWord(entry.id, { focusFirstEmpty: true, scroll: true });
+      if (window.matchMedia("(max-width: 640px)").matches) {
+        closeMobileClues();
+      }
     });
 
     item.appendChild(button);
@@ -326,6 +335,8 @@ function bindControls() {
   elements.checkButton.addEventListener("click", checkAnswers);
   elements.resetButton.addEventListener("click", openResetModal);
   renderThemeSwitcher();
+  elements.mobileSheetToggle.addEventListener("click", toggleMobileClues);
+  observeMobileSheetHeader();
   elements.closeModalButton.addEventListener("click", closeCompletionModal);
   elements.completionModal.addEventListener("click", (event) => {
     if (event.target === elements.completionModal) {
@@ -507,6 +518,7 @@ function selectWord(wordId, options = {}) {
   state.currentCellKey = targetCell.key;
   refreshSelectionClasses();
   highlightClue(wordId);
+  updateMobileActiveClue();
 
   if (options.scroll !== false) {
     centerCellIntoView(targetCell.key);
@@ -529,6 +541,7 @@ function selectCell(cellKey, options = {}) {
   state.currentCellKey = cellKey;
   refreshSelectionClasses();
   highlightClue(targetWordId);
+  updateMobileActiveClue();
 
   if (options.scroll !== false) {
     centerCellIntoView(cellKey);
@@ -568,6 +581,7 @@ function toggleDirectionAtCell(cellKey) {
   state.currentCellKey = cellKey;
   refreshSelectionClasses();
   highlightClue(alternative);
+  updateMobileActiveClue();
   centerCellIntoView(cellKey);
   focusCell(cellKey);
 }
@@ -1004,6 +1018,55 @@ function updateThemeButtons() {
   });
 }
 
+function toggleMobileClues() {
+  const isOpen = document.body.dataset.mobileSheet === "open";
+  setMobileCluesOpen(!isOpen);
+
+  if (!isOpen && state.currentWordId) {
+    requestAnimationFrame(() => highlightClue(state.currentWordId));
+  }
+}
+
+function observeMobileSheetHeader() {
+  const updatePeekHeight = () => {
+    const height = Math.ceil(elements.mobileSheetToggle.getBoundingClientRect().height);
+    if (height > 0) {
+      document.documentElement.style.setProperty("--mobile-sheet-peek-height", `${height}px`);
+    }
+  };
+
+  updatePeekHeight();
+
+  if (typeof ResizeObserver === "function") {
+    const observer = new ResizeObserver(updatePeekHeight);
+    observer.observe(elements.mobileSheetToggle);
+  } else {
+    window.addEventListener("resize", updatePeekHeight);
+  }
+}
+
+function closeMobileClues() {
+  setMobileCluesOpen(false);
+}
+
+function setMobileCluesOpen(isOpen) {
+  document.body.dataset.mobileSheet = isOpen ? "open" : "closed";
+  elements.mobileSheetToggle.setAttribute("aria-expanded", String(isOpen));
+
+  const accessibleLabel = elements.mobileSheetToggle.querySelector(".sr-only");
+  accessibleLabel.textContent = isOpen ? "Chiudi la lista delle definizioni" : "Apri la lista delle definizioni";
+}
+
+function updateMobileActiveClue() {
+  const entry = state.entriesById.get(state.currentWordId);
+  if (!entry) {
+    return;
+  }
+
+  elements.mobileClueKicker.textContent = `Ricordo ${entry.order}`;
+  elements.mobileClueText.textContent = entry.clue;
+}
+
 function updateGridInputs() {
   state.inputByCellKey.forEach((input, cellKey) => {
     input.value = normalizeLetter(state.progress[cellKey] || "");
@@ -1103,7 +1166,7 @@ function getCellAriaLabel(cell) {
   const labels = cell.wordIds
     .map((wordId) => {
       const entry = state.entriesById.get(wordId);
-      return `${entry.order} ${entry.direction === "O" ? "orizzontale" : "verticale"}`;
+      return `ricordo ${entry.order}`;
     })
     .join(", ");
 
