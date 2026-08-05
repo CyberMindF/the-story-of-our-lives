@@ -2,6 +2,8 @@ const STORAGE_VERSION = "v2";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
 const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
+const ACCESS_STORAGE_KEY = "noi-crossword-access";
+const ACCESS_KEY = "cerchio";
 const LEGACY_STORAGE_KEYS = ["noi-crossword-progress-v1", "noi-crossword-theme-v1"];
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
@@ -28,6 +30,11 @@ const state = {
 };
 
 const elements = {
+  appShell: document.getElementById("app-shell"),
+  accessGate: document.getElementById("access-gate"),
+  accessForm: document.getElementById("access-form"),
+  accessKey: document.getElementById("access-key"),
+  accessError: document.getElementById("access-error"),
   title: document.getElementById("title"),
   subtitle: document.getElementById("subtitle"),
   grid: document.getElementById("grid"),
@@ -48,9 +55,21 @@ const elements = {
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
+  ensureStorageVersion();
+  applySavedTheme();
+
+  if (!hasAccess()) {
+    bindAccessGate();
+    elements.accessKey.focus();
+    return;
+  }
+
+  unlockAccess();
+  await initializeCrossword();
+}
+
+async function initializeCrossword() {
   try {
-    ensureStorageVersion();
-    applySavedTheme();
     const data = await loadData();
     const validation = validateData(data);
     if (!validation.ok) {
@@ -69,6 +88,34 @@ async function init() {
     elements.title.textContent = "Errore di caricamento";
     elements.checkSummary.textContent = "Impossibile leggere data.json.";
   }
+}
+
+function hasAccess() {
+  return localStorage.getItem(ACCESS_STORAGE_KEY) === "granted";
+}
+
+function bindAccessGate() {
+  elements.accessForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const key = elements.accessKey.value.trim().toLocaleLowerCase("it");
+
+    if (key !== ACCESS_KEY) {
+      elements.accessError.textContent = "Chiave non corretta. Riprova.";
+      elements.accessKey.select();
+      return;
+    }
+
+    localStorage.setItem(ACCESS_STORAGE_KEY, "granted");
+    unlockAccess();
+    await initializeCrossword();
+  });
+}
+
+function unlockAccess() {
+  document.body.classList.remove("access-locked");
+  elements.accessGate.classList.add("hidden");
+  elements.appShell.removeAttribute("inert");
+  elements.appShell.removeAttribute("aria-hidden");
 }
 
 function ensureStorageVersion() {
