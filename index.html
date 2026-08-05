@@ -44,6 +44,9 @@
         <aside class="clues-panel" aria-labelledby="clues-title">
           <div class="clues-panel-header">
             <h2 id="clues-title">Definizioni</h2>
+            <button id="previous-clue-button" class="mobile-sheet-nav mobile-sheet-nav-previous" type="button" aria-label="Ricordo precedente">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+            </button>
             <button
               id="mobile-sheet-toggle"
               class="mobile-sheet-toggle"
@@ -57,6 +60,9 @@
               </span>
               <span class="mobile-sheet-chevron" aria-hidden="true"></span>
               <span class="sr-only">Apri la lista delle definizioni</span>
+            </button>
+            <button id="next-clue-button" class="mobile-sheet-nav mobile-sheet-nav-next" type="button" aria-label="Ricordo successivo">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
             </button>
           </div>
           <ol id="clues-list" class="clues-list"></ol>

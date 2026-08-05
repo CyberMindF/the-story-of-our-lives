@@ -7,8 +7,8 @@ const ACCESS_KEY = "cerchio";
 const RESETTABLE_STORAGE_PREFIXES = ["noi-crossword-progress-", "noi-crossword-theme-"];
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
-  { id: "velvet", label: "Velvet", icon: "moon" },
   { id: "sea", label: "Ocean", icon: "sun" },
+  { id: "velvet", label: "Velvet", icon: "moon" },
   { id: "red-of-you", label: "Red of You", icon: "letter", iconText: "D" },
   { id: "green-of-me", label: "Green of Me", icon: "letter", iconText: "R" }
 ];
@@ -50,6 +50,8 @@ const elements = {
   mobileClueKicker: document.getElementById("mobile-clue-kicker"),
   mobileClueText: document.getElementById("mobile-clue-text"),
   mobileSheetToggle: document.getElementById("mobile-sheet-toggle"),
+  previousClueButton: document.getElementById("previous-clue-button"),
+  nextClueButton: document.getElementById("next-clue-button"),
   completionModal: document.getElementById("completion-modal"),
   closeModalButton: document.getElementById("close-modal-button"),
   resetModal: document.getElementById("reset-modal"),
@@ -351,6 +353,11 @@ function bindControls() {
   elements.resetButton.addEventListener("click", openResetModal);
   renderThemeSwitcher();
   elements.mobileSheetToggle.addEventListener("click", toggleMobileClues);
+  [elements.previousClueButton, elements.nextClueButton].forEach((button) => {
+    button.addEventListener("pointerdown", preserveGridFocusDuringNavigation);
+  });
+  elements.previousClueButton.addEventListener("click", () => selectAdjacentWord(-1));
+  elements.nextClueButton.addEventListener("click", () => selectAdjacentWord(1));
   observeMobileSheetHeader();
   elements.closeModalButton.addEventListener("click", closeCompletionModal);
   elements.completionModal.addEventListener("click", (event) => {
@@ -1106,6 +1113,24 @@ function toggleMobileClues() {
 
   if (!isOpen && state.currentWordId) {
     requestAnimationFrame(() => highlightClue(state.currentWordId));
+  }
+}
+
+function selectAdjacentWord(step) {
+  if (state.words.length === 0) {
+    return;
+  }
+
+  const currentIndex = state.words.findIndex((entry) => entry.id === state.currentWordId);
+  const startIndex = currentIndex >= 0 ? currentIndex : 0;
+  const nextIndex = (startIndex + step + state.words.length) % state.words.length;
+  const keepKeyboardOpen = document.body.classList.contains("keyboard-open");
+  selectWord(state.words[nextIndex].id, { focusFirstEmpty: true, scroll: true, focus: keepKeyboardOpen });
+}
+
+function preserveGridFocusDuringNavigation(event) {
+  if (document.body.classList.contains("keyboard-open")) {
+    event.preventDefault();
   }
 }
 
