@@ -2,10 +2,10 @@
 <html lang="it">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Our Words</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./style.css?v=13" />
   </head>
   <body class="access-locked">
     <div id="app-shell" class="app-shell" inert aria-hidden="true">
@@ -23,8 +23,14 @@
       <main class="layout">
         <section class="board-panel" aria-labelledby="title">
           <div class="controls">
-            <button id="check-button" type="button">Controlla</button>
-            <button id="reset-button" type="button">Ricomincia</button>
+            <button id="check-button" class="control-button" type="button" aria-label="Controlla le risposte">
+              <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+              <span class="control-label">Controlla</span>
+            </button>
+            <button id="reset-button" class="control-button" type="button" aria-label="Ricomincia il cruciverba">
+              <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6M5.5 9A8 8 0 1 1 4 14" /></svg>
+              <span class="control-label">Ricomincia</span>
+            </button>
             <div class="theme-bar" aria-label="Selettore tema">
               <span class="theme-label">Tema</span>
               <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema chiaro o scuro"></div>
@@ -61,16 +67,18 @@
     <div id="access-gate" class="access-gate" role="dialog" aria-modal="true" aria-labelledby="access-title" aria-describedby="access-text">
       <form id="access-form" class="access-card">
         <p class="access-eyebrow">Our Words</p>
-        <h1 id="access-title">Una parola per entrare</h1>
-        <p id="access-text">Inserisci la chiave per accedere al cruciverba.</p>
-        <label for="access-key">Chiave</label>
+        <h1 id="access-title">Ti ricordi della chiave?</h1>
+        <p id="access-text">È la stessa con cui si apre anche il nostro mondo.</p>
+        <label for="access-key">La chiave</label>
         <div class="access-controls">
-          <input id="access-key" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" required />
+          <input id="access-key" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" data-1p-ignore data-lpignore="true" required />
           <button type="submit">Entra</button>
         </div>
         <p id="access-error" class="access-error" aria-live="polite"></p>
       </form>
     </div>
+
+    <div id="theme-toast" class="theme-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
     <div id="completion-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completion-title" aria-describedby="completion-text">
       <div class="modal-card">
@@ -91,6 +99,17 @@
       </div>
     </div>
 
-    <script src="./app.js" defer></script>
+    <div id="check-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="check-title" aria-describedby="check-text">
+      <div class="modal-card">
+        <h2 id="check-title">Controllare le risposte?</h2>
+        <p id="check-text">Le lettere inserite saranno indicate come corrette o errate. Le celle vuote non verranno considerate.</p>
+        <div class="modal-actions">
+          <button id="cancel-check-button" type="button">Annulla</button>
+          <button id="confirm-check-button" type="button">Controlla</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js?v=13" defer></script>
   </body>
   </html>

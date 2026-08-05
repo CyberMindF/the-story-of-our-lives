@@ -176,7 +176,14 @@ input {
 }
 
 body.access-locked {
+  position: fixed;
+  inset: 0;
+  width: 100%;
   overflow: hidden;
+}
+
+body.access-locked .app-shell {
+  visibility: hidden;
 }
 
 .access-gate {
@@ -186,6 +193,8 @@ body.access-locked {
   display: grid;
   place-items: center;
   padding: 1rem;
+  overflow: hidden;
+  overscroll-behavior: none;
   background:
     radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.72), transparent 28%),
     var(--bg-color);
@@ -324,6 +333,23 @@ h2 {
   align-items: center;
 }
 
+.control-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.control-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .theme-bar {
   display: flex;
   align-items: center;
@@ -397,30 +423,30 @@ h2 {
 }
 
 .theme-chip-icon-moon {
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.86;
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: currentColor;
 }
 
-.theme-chip-icon-moon::after {
-  content: "";
-  position: absolute;
-  width: 0.78rem;
-  height: 0.78rem;
-  top: 0.04rem;
-  left: 0.34rem;
-  border-radius: 50%;
-  background: var(--button-bg);
+.theme-chip-icon-moon .moon-disc {
+  opacity: 0.2;
+}
+
+.theme-chip-icon-moon .moon-crescent {
+  opacity: 0.88;
 }
 
 .theme-chip-icon-letter {
-  width: auto;
-  height: auto;
+  width: 1rem;
+  height: 1rem;
+  display: grid;
+  place-items: center;
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   line-height: 1;
+  transform: translateY(0.07rem);
 }
 
 .theme-chip-name {
@@ -650,15 +676,13 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
 }
 
-body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon::after {
-  background: var(--active-color);
-}
-
 body[data-theme="sea"] .theme-chip[data-theme="sea"] .theme-chip-icon-sun,
-body[data-theme="red-of-you"] .theme-chip[data-theme="red-of-you"] .theme-chip-icon-letter,
-body[data-theme="green-of-me"] .theme-chip[data-theme="green-of-me"] .theme-chip-icon-letter,
 body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon {
   transform: translateY(-0.02rem);
+}
+
+.theme-toast {
+  display: none;
 }
 
 @media (max-width: 640px) {
@@ -680,6 +704,7 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
   place-items: center;
   padding: 1rem;
   background: rgba(20, 16, 10, 0.45);
+  z-index: 200;
 }
 
 .modal.hidden {
@@ -735,23 +760,59 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
     --cell-size: 2.9rem;
     --cell-font-size: 1.2rem;
     --mobile-sheet-peek-height: 6.2rem;
+    --app-viewport-height: 100dvh;
+    --keyboard-offset: 0px;
   }
 
   html,
   body {
     width: 100%;
     height: 100%;
+    min-height: 0;
     overflow: hidden;
     overscroll-behavior: none;
   }
 
+  body {
+    isolation: isolate;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: inherit;
+    pointer-events: none;
+  }
+
+  .access-gate {
+    inset: auto 0 0;
+    width: 100%;
+    height: var(--app-viewport-height);
+    padding:
+      max(1rem, env(safe-area-inset-top))
+      max(1rem, env(safe-area-inset-right))
+      max(1rem, env(safe-area-inset-bottom))
+      max(1rem, env(safe-area-inset-left));
+  }
+
+  .access-card {
+    max-height: calc(var(--app-viewport-height) - 2rem);
+    overflow: hidden;
+  }
+
   .app-shell {
     width: 100%;
-    height: 100dvh;
+    height: var(--app-viewport-height);
     min-height: 0;
     display: flex;
     flex-direction: column;
-    padding: 0.8rem 1.15rem;
+    padding:
+      max(0.8rem, env(safe-area-inset-top))
+      max(1.15rem, env(safe-area-inset-right))
+      0.8rem
+      max(1.15rem, env(safe-area-inset-left));
     overflow: hidden;
   }
 
@@ -759,12 +820,96 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
     flex: 0 0 auto;
   }
 
+  body.keyboard-open .hero {
+    display: none;
+  }
+
   .controls {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+
+  .control-button {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: 0 0 2.5rem;
+    padding: 0;
+  }
+
+  .control-button .control-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .theme-bar {
+    gap: 0;
+    flex-wrap: nowrap;
+  }
+
+  .theme-label {
+    display: none;
+  }
+
+  .theme-switcher {
+    width: auto;
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .theme-chip {
+    width: 2.35rem;
+    height: 2.35rem;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .theme-chip-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .theme-toast {
+    position: fixed;
+    top: max(1rem, env(safe-area-inset-top));
+    left: 50%;
+    z-index: 150;
+    display: block;
+    max-width: calc(100vw - 2rem);
+    padding: 0.65rem 1.15rem;
+    border: 1px solid var(--panel-border-color);
+    border-radius: 999px;
+    background: var(--drawer-bg);
+    color: var(--text-color);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -0.75rem);
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+
+  .theme-toast.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 
   .layout {
     flex: 1;
+    height: 0;
     min-height: 0;
     gap: 0.85rem;
   }
@@ -780,6 +925,7 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
   }
 
   body[data-mobile-mode="sheet"] .board-panel {
+    width: 100%;
     height: 100%;
     min-height: 0;
     position: relative;
@@ -790,8 +936,8 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
-    height: min(72dvh, 40rem);
+    bottom: var(--keyboard-offset);
+    height: min(72dvh, 40rem, var(--app-viewport-height));
     padding: 0;
     z-index: 50;
     border-radius: 20px 20px 0 0;
@@ -799,7 +945,7 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     transform: translateY(calc(100% - var(--mobile-sheet-peek-height)));
-    transition: transform 220ms ease;
+    transition: transform 220ms ease, bottom 160ms ease;
   }
 
   body[data-mobile-mode="sheet"][data-mobile-sheet="open"] .clues-panel {
@@ -821,7 +967,7 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1rem 1.15rem;
+    padding: 1rem max(1.15rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1.15rem, env(safe-area-inset-left));
     border: 0;
     border-radius: 20px 20px 0 0;
     background: transparent;
@@ -873,7 +1019,7 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
     flex: 1;
     min-height: 0;
     margin: 0;
-    padding: 0 1rem 1rem;
+    padding: 0 max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
     overflow: auto;
     touch-action: pan-y;
     overscroll-behavior: contain;
@@ -882,7 +1028,7 @@ body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon
 
   body[data-mobile-mode="sheet"] .app-shell {
     min-height: 0;
-    padding-bottom: calc(var(--mobile-sheet-peek-height) + 0.8rem);
+    padding-bottom: calc(var(--mobile-sheet-peek-height) + max(0.8rem, env(safe-area-inset-bottom)));
   }
 
   body[data-mobile-mode="sheet"] .grid-scroll {
