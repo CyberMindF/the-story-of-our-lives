@@ -4,6 +4,7 @@ const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
 const ACCESS_STORAGE_KEY = "noi-crossword-access";
 const ACCESS_KEY = "cerchio";
+const ENABLE_DEVELOPER_TOOLS = true;
 const RESETTABLE_STORAGE_PREFIXES = ["noi-crossword-progress-", "noi-crossword-theme-"];
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
@@ -45,6 +46,7 @@ const elements = {
   checkSummary: document.getElementById("check-summary"),
   checkButton: document.getElementById("check-button"),
   resetButton: document.getElementById("reset-button"),
+  revealButton: document.getElementById("reveal-button"),
   themeSwitcher: document.getElementById("theme-switcher"),
   themeToast: document.getElementById("theme-toast"),
   mobileClueKicker: document.getElementById("mobile-clue-kicker"),
@@ -351,6 +353,10 @@ function bindControls() {
   bindScrollInterruptions();
   elements.checkButton.addEventListener("click", openCheckModal);
   elements.resetButton.addEventListener("click", openResetModal);
+  if (ENABLE_DEVELOPER_TOOLS) {
+    elements.revealButton.hidden = false;
+    elements.revealButton.addEventListener("click", revealCrossword);
+  }
   renderThemeSwitcher();
   elements.mobileSheetToggle.addEventListener("click", toggleMobileClues);
   [elements.previousClueButton, elements.nextClueButton].forEach((button) => {
@@ -1205,6 +1211,19 @@ function animateLetterEntry(input) {
 
 function saveProgress() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
+}
+
+function revealCrossword() {
+  state.cells.forEach((cell, cellKey) => {
+    state.progress[cellKey] = cell.solution;
+  });
+
+  state.validationMarks = {};
+  updateGridInputs();
+  updateValidationClasses();
+  saveProgress();
+  elements.checkSummary.textContent = "Cruciverba rivelato in modalità sviluppatore.";
+  updateCompletionState();
 }
 
 function openResetModal() {
