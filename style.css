@@ -349,6 +349,11 @@ h2 {
   display: none;
 }
 
+.developer-control.is-active {
+  background: var(--active-color);
+  border-color: var(--focus-color);
+}
+
 .control-icon {
   width: 1.15rem;
   height: 1.15rem;

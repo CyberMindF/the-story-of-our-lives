@@ -28,7 +28,9 @@ const state = {
   progress: {},
   validationMarks: {},
   dimensions: { rows: 0, cols: 0 },
-  isComplete: false
+  isComplete: false,
+  developerRevealActive: false,
+  developerProgressSnapshot: null
 };
 
 const elements = {
@@ -433,6 +435,12 @@ function handleCellClick(cellKey) {
   const cell = state.cells.get(cellKey);
   if (!cell) {
     return;
+  }
+
+  if (ENABLE_DEVELOPER_TOOLS) {
+    const coordinates = `R${cell.row} C${cell.col}`;
+    elements.checkSummary.textContent = coordinates;
+    showTemporaryToast(coordinates);
   }
 
   if (state.currentCellKey === cellKey && cell.wordIds.length > 1) {
@@ -1102,8 +1110,16 @@ function showThemeToast(themeName) {
     return;
   }
 
+  showTemporaryToast(`Tema ${themeName}`);
+}
+
+function showTemporaryToast(message) {
+  if (!elements.themeToast || !window.matchMedia("(max-width: 640px)").matches) {
+    return;
+  }
+
   window.clearTimeout(themeToastTimer);
-  elements.themeToast.textContent = `Tema ${themeName}`;
+  elements.themeToast.textContent = message;
   elements.themeToast.classList.remove("is-visible");
   void elements.themeToast.offsetWidth;
   elements.themeToast.classList.add("is-visible");
@@ -1214,15 +1230,31 @@ function saveProgress() {
 }
 
 function revealCrossword() {
-  state.cells.forEach((cell, cellKey) => {
-    state.progress[cellKey] = cell.solution;
-  });
+  if (state.developerRevealActive) {
+    state.progress = { ...state.developerProgressSnapshot };
+    state.developerRevealActive = false;
+    state.developerProgressSnapshot = null;
+    elements.revealButton.classList.remove("is-active");
+    elements.revealButton.setAttribute("aria-label", "Rivela tutto il cruciverba");
+    elements.checkSummary.textContent = "Soluzioni sviluppatore nascoste.";
+    closeCompletionModal();
+  } else {
+    state.developerProgressSnapshot = { ...state.progress };
+    state.cells.forEach((cell, cellKey) => {
+      state.progress[cellKey] = cell.solution;
+    });
+    state.developerRevealActive = true;
+    elements.revealButton.classList.add("is-active");
+    elements.revealButton.setAttribute("aria-label", "Nascondi le soluzioni del cruciverba");
+    elements.checkSummary.textContent = "Cruciverba rivelato in modalità sviluppatore.";
+  }
 
   state.validationMarks = {};
   updateGridInputs();
   updateValidationClasses();
-  saveProgress();
-  elements.checkSummary.textContent = "Cruciverba rivelato in modalità sviluppatore.";
+  if (!state.developerRevealActive) {
+    saveProgress();
+  }
   updateCompletionState();
 }
 
@@ -1247,6 +1279,10 @@ function closeResetModal() {
 function resetProgress() {
   state.progress = {};
   state.validationMarks = {};
+  state.developerRevealActive = false;
+  state.developerProgressSnapshot = null;
+  elements.revealButton.classList.remove("is-active");
+  elements.revealButton.setAttribute("aria-label", "Rivela tutto il cruciverba");
   localStorage.removeItem(STORAGE_KEY);
   updateGridInputs();
   updateValidationClasses();
