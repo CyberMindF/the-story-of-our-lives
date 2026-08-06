@@ -12,6 +12,10 @@ Avvia invece un piccolo server locale dalla cartella del progetto:
 python3 -m http.server 8000
 ```
 
+```bash (windows)
+python -m http.server 8000
+```
+
 Poi apri nel browser:
 
 ```text

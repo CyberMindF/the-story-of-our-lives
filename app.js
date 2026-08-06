@@ -1,4 +1,4 @@
-const STORAGE_VERSION = "v13";
+const STORAGE_VERSION = "v14";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
 const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
@@ -27,7 +27,7 @@ const state = {
   currentCellKey: null,
   progress: {},
   validationMarks: {},
-  dimensions: { rows: 0, cols: 0 },
+  dimensions: { rows: 0, cols: 0, rowOffset: 0, colOffset: 0 },
   isComplete: false,
   developerRevealActive: false,
   developerProgressSnapshot: null
@@ -172,6 +172,8 @@ function validateData(data) {
 
   const grid = new Map();
   const conflicts = [];
+  let minRow = 1;
+  let minCol = 1;
   let maxRow = 0;
   let maxCol = 0;
 
@@ -183,6 +185,8 @@ function validateData(data) {
       const letter = entry.word[index];
       const previous = grid.get(key);
 
+      minRow = Math.min(minRow, row);
+      minCol = Math.min(minCol, col);
       maxRow = Math.max(maxRow, row);
       maxCol = Math.max(maxCol, col);
 
@@ -207,12 +211,19 @@ function validateData(data) {
     });
   }
 
-  console.info(`Validazione completata: ${words.length} parole, ${maxRow} righe logiche, ${maxCol} colonne logiche.`);
+  const rowOffset = Math.max(0, 1 - minRow);
+  const colOffset = Math.max(0, 1 - minCol);
+  const rows = maxRow + rowOffset;
+  const cols = maxCol + colOffset;
+
+  console.info(
+    `Validazione completata: ${words.length} parole, coordinate R${minRow}–${maxRow} C${minCol}–${maxCol}, griglia ${rows}×${cols}.`
+  );
 
   return {
     ok: conflicts.length === 0,
     words,
-    dimensions: { rows: maxRow, cols: maxCol },
+    dimensions: { rows, cols, rowOffset, colOffset },
     conflicts
   };
 }
@@ -280,8 +291,8 @@ function renderGrid() {
   sortedCells.forEach((cell) => {
     const wrapper = document.createElement("div");
     wrapper.className = "cell";
-    wrapper.style.gridRow = String(cell.row);
-    wrapper.style.gridColumn = String(cell.col);
+    wrapper.style.gridRow = String(cell.row + state.dimensions.rowOffset);
+    wrapper.style.gridColumn = String(cell.col + state.dimensions.colOffset);
     wrapper.dataset.cellKey = cell.key;
 
     if (cell.startWordIds.length > 0) {
