@@ -1,10 +1,10 @@
-const STORAGE_VERSION = "v14";
+const STORAGE_VERSION = "v15";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
 const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
 const ACCESS_STORAGE_KEY = "noi-crossword-access";
 const ACCESS_KEY = "cerchio";
-const ENABLE_DEVELOPER_TOOLS = true;
+const ENABLE_DEVELOPER_TOOLS = false;
 const RESETTABLE_STORAGE_PREFIXES = ["noi-crossword-progress-", "noi-crossword-theme-"];
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
