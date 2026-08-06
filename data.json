@@ -81,6 +81,15 @@
     { "word": "UNO", "clue": "Il gioco dove sei più forte", "row": 32, "col": 32, "direction": "O" },
     { "word": "MONOPOLY", "clue": "Il nostro primo gioco insieme", "row": 30, "col": 33, "direction": "O" },
     { "word": "COOKIES", "clue": "Sono stati il nostro capolavoro in cucina", "row": 28, "col": 36, "direction": "V" },
-    { "word": "DADI", "clue": "Dei portafortuna e una mia passione", "row": 21, "col": 36, "direction": "V" }
+    { "word": "DADI", "clue": "Dei portafortuna e una mia passione", "row": 21, "col": 36, "direction": "V" },
+    { "word": "LUNA", "clue": "Dovevamo guardala insieme, perché anche se lontani siamo sempre stati sotto lo stesso cielo", "row": 22, "col": 40, "direction": "V" },
+    { "word": "TEMI", "clue": "Una volta ne avevi fatto uno verde dedicato a me. Inizialmente li cambiavi spesso sul telefono e mi piaceva vedere cosa ti inventavi di nuovo, ti trovavo molto brava", "row": 10, "col": 32, "direction": "V" },
+    { "word": "TIGRI", "clue": "Tra tutti gli animali, sono le mie preferite, dovevi portarmi a vederle ahaha", "row": 13, "col": 28, "direction": "O" },
+    { "word": "MENTE", "clue": "C'era una cosa importante prima della nostra buonanotte, ti ricordi? \"Posso avere il tuo cuore?\" \"Posso avere il tuo corpo?\" \"Posso avere la tua ...?\"", "row": 28, "col": 5, "direction": "O" },
+    { "word": "STORIELLE", "clue": "Quando ci stavamo conoscendo io le scrivevo, e tu amavi leggerle", "row": 20, "col": 6, "direction": "V" },
+    { "word": "MARGHERITA", "clue": "Il fiore che ti rappresenta", "row": 21, "col": -2, "direction": "O" },
+    { "word": "APPARTENENZA", "clue": "Dovresti saperlo \"mia\" e \"mio\" per me era...", "row": 18, "col": -1, "direction": "V" },
+    { "word": "RICORDI", "clue": "Dico sempre che se li togli, togli tutto quello che siamo", "row": 21, "col": 4, "direction": "V" },
+    { "word": "NOSTRI", "clue": "????", "row": 27, "col": -1, "direction": "O" }
   ]
 }
