@@ -1,6 +1,6 @@
 # Il Mondo Bianco
 
-Cruciverba personalizzato con frontend HTML/CSS/JavaScript e autenticazione tramite Cloudflare Pages Functions e D1.
+Applicazione del Mondo Bianco con frontend HTML/CSS/JavaScript, autenticazione tramite Cloudflare Pages Functions e dati su D1. Il cruciverba e le future esperienze sono pagine interne protette.
 
 ## Avvio locale
 
@@ -20,7 +20,7 @@ Modifica `WORLD_KEY` dentro `.dev.vars`, poi avvia:
 npx wrangler pages dev .
 ```
 
-Apri l'indirizzo mostrato da Wrangler, normalmente `http://localhost:8788`. La root mostra l'hub temporaneo del Mondo Bianco; il cruciverba è disponibile in `http://localhost:8788/tavolo-da-gioco/cruciverba/`.
+Apri l'indirizzo mostrato da Wrangler, normalmente `http://localhost:8788`. La root mostra il Portone e l'accesso; dopo l'autenticazione si entra nell'hub su `http://localhost:8788/mondo-bianco/`. Il cruciverba è disponibile in `http://localhost:8788/tavolo-da-gioco/cruciverba/`.
 
 ## Autenticazione
 
@@ -38,10 +38,10 @@ Il token originale viene inviato in un cookie `HttpOnly`; D1 conserva soltanto i
 Le future pagine del Mondo Bianco possono usare il guard condiviso prima del proprio JavaScript:
 
 ```html
-<script src="../auth-guard.js" data-auth-gateway="../"></script>
+<script type="module" src="../auth-guard.js" data-auth-gateway="../"></script>
 ```
 
-Il tag va inserito nel `<head>`, prima degli script specifici della pagina, senza `defer`: in questo modo il contenuto protetto resta nascosto durante il rapido controllo iniziale. `data-auth-gateway` deve indicare la directory che contiene `index.html`; può essere `./`, `../` o un altro percorso relativo in base alla posizione della pagina. Se sessione o Chiave non sono valide, il guard conserva l'indirizzo richiesto e porta all'accesso principale. Dopo login, registrazione o conferma della sola Chiave, il browser torna automaticamente alla pagina iniziale. Sono accettate soltanto destinazioni dello stesso dominio e mai URL sotto `/api/`.
+Il tag va inserito prima dello script specifico della pagina. Il guard nasconde il contenuto durante il rapido controllo iniziale e pubblica la Promise `window.mondoBiancoAuthReady`, che l'entry point della pagina deve attendere. `data-auth-gateway` deve indicare la directory che contiene il Portone; può essere `./`, `../` o un altro percorso relativo in base alla posizione della pagina. Se sessione o Chiave non sono valide, il guard conserva l'indirizzo richiesto e porta all'accesso principale. Dopo login, registrazione o conferma della sola Chiave, il browser torna automaticamente alla pagina iniziale. Sono accettate soltanto destinazioni dello stesso dominio e mai URL sotto `/api/`.
 
 ## Database
 
@@ -101,7 +101,11 @@ GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1
 ## File principali
 
 - `data.json`: parole, definizioni, coordinate e ordine narrativo.
-- `style.css`: grafica, temi e layout responsive.
+- `index.html`: Portone e interfaccia di autenticazione.
+- `mondo-bianco/index.html`: home autenticata del Mondo Bianco.
+- `assets/css/themes.css`: variabili e quattro temi condivisi dalla piattaforma.
+- `assets/css/components/`: componenti condivisi, come shell e accesso.
+- `assets/css/pages/`: stile specifico di Portone, hub e cruciverba.
 - `tavolo-da-gioco/cruciverba/index.html`: pagina del cruciverba.
 - `assets/js/crossword/main.js`: entry point e interfaccia del cruciverba.
 - `assets/js/shared/`: autenticazione, API, navigazione, visite e temi riutilizzabili.

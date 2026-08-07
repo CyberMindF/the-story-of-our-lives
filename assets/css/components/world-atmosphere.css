@@ -1,0 +1,56 @@
+/*
+ * L'atmosfera identifica stabilmente il Mondo Bianco.
+ * I temi cambiano soltanto bagliori e accenti, senza sostituire il cielo del mondo.
+ */
+body.world-atmosphere {
+  --world-sky-top: #0b1120;
+  --world-sky-middle: #17243a;
+  --world-sky-bottom: #263a50;
+  --world-glow: rgba(190, 218, 232, 0.16);
+  --world-star: rgba(255, 255, 255, 0.72);
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 78% 13%, var(--world-glow), transparent 10rem),
+    radial-gradient(circle at 18% 16%, rgba(190, 218, 232, 0.1), transparent 19rem),
+    linear-gradient(155deg, var(--world-sky-top) 0%, var(--world-sky-middle) 48%, var(--world-sky-bottom) 100%);
+  background-attachment: fixed;
+}
+
+/* Dimensioni non multiple e origini diverse rendono il cielo meno regolare. */
+body.world-atmosphere::before {
+  content: "";
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, var(--world-star) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.42) 0 1px, transparent 1.45px),
+    radial-gradient(circle, rgba(215, 231, 244, 0.3) 0 0.8px, transparent 1.3px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.2) 0 1.2px, transparent 1.7px);
+  background-position: 17px 31px, 83px 11px, 41px 127px, 193px 67px;
+  background-size: 137px 173px, 211px 257px, 307px 229px, 421px 367px;
+  opacity: 0.48;
+}
+
+/* Ocean raffredda il bagliore, ma conserva il cielo comune. */
+body.world-atmosphere[data-theme="sea"] {
+  --world-glow: rgba(111, 190, 184, 0.2);
+  --world-star: rgba(226, 247, 244, 0.76);
+}
+
+/* Velvet aggiunge una luce lunare rosata senza trasformare il luogo. */
+body.world-atmosphere[data-theme="velvet"] {
+  --world-glow: rgba(222, 168, 194, 0.17);
+  --world-star: rgba(250, 224, 235, 0.72);
+}
+
+body.world-atmosphere[data-theme="red-of-you"] {
+  --world-glow: rgba(216, 62, 88, 0.18);
+  --world-star: rgba(255, 222, 228, 0.7);
+}
+
+body.world-atmosphere[data-theme="green-of-me"] {
+  --world-glow: rgba(112, 156, 119, 0.18);
+  --world-star: rgba(225, 238, 225, 0.7);
+}

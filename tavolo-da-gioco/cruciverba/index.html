@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Our Words</title>
     <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../../style.css?v=19" />
+    <link rel="stylesheet" href="../../assets/css/themes.css?v=1" />
+    <link rel="stylesheet" href="../../assets/css/components/shell.css?v=1" />
+    <link rel="stylesheet" href="../../assets/css/pages/crossword.css?v=1" />
   </head>
-  <body class="access-locked">
-    <div id="app-shell" class="app-shell" inert aria-hidden="true">
+  <body>
+    <div id="app-shell" class="app-shell">
       <!-- Intestazione principale con utente autenticato, titolo e stato del cruciverba. -->
       <header class="hero">
         <div class="hero-copy">
@@ -84,36 +86,6 @@
       </main>
     </div>
 
-    <!-- Schermata di accesso mostrata finché account, sessione e chiave non sono validi. -->
-    <div id="access-gate" class="access-gate" role="dialog" aria-modal="true" aria-labelledby="access-title" aria-describedby="access-text">
-      <form id="access-form" class="access-card">
-        <p class="access-eyebrow">Our Words</p>
-        <h1 id="access-title">Ti ricordi della chiave?</h1>
-        <p id="access-text">È la stessa con cui si apre anche il nostro mondo.</p>
-
-        <div id="access-mode-switcher" class="access-mode-switcher" role="group" aria-label="Scegli se accedere o registrarti">
-          <button id="show-login-button" type="button" aria-pressed="false">Accedi</button>
-          <button id="show-register-button" type="button" aria-pressed="true">Registrati</button>
-        </div>
-
-        <div id="access-account-fields" class="access-account-fields">
-          <label for="access-email">Email</label>
-          <input id="access-email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required />
-
-          <label for="access-password">Password</label>
-          <!-- È un campo di testo mascherato per limitare i suggerimenti dei gestori di password. -->
-          <input id="access-password" class="masked-text-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" minlength="8" data-1p-ignore data-lpignore="true" required />
-        </div>
-
-        <label for="access-key">La chiave</label>
-        <p id="access-key-hint" class="access-key-hint">Ti ricordi la chiave? È sempre quella che porti al polso.</p>
-        <input id="access-key" type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" aria-describedby="access-key-hint" data-1p-ignore data-lpignore="true" required />
-
-        <button id="access-submit-button" class="access-submit-button" type="submit">Registrati ed entra</button>
-        <p id="access-error" class="access-error" aria-live="polite"></p>
-      </form>
-    </div>
-
     <div id="theme-toast" class="theme-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
     <div id="completion-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completion-title" aria-describedby="completion-text">
@@ -146,6 +118,7 @@
       </div>
     </div>
 
-    <script type="module" src="../../assets/js/crossword/main.js?v=27"></script>
+    <script type="module" src="../../auth-guard.js?v=2" data-auth-gateway="../../"></script>
+    <script type="module" src="../../assets/js/crossword/main.js?v=28"></script>
   </body>
   </html>

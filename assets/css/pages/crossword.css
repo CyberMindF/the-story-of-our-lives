@@ -1,0 +1,626 @@
+.mobile-sheet-toggle {
+  display: none;
+}
+
+.mobile-sheet-nav {
+  display: none;
+}
+
+.secondary-action {
+  padding: 0.55rem 0.9rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 0.95fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.board-panel,
+.clues-panel {
+  padding: 1rem;
+  height: calc(100vh - 13rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+  align-items: center;
+}
+
+.control-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.developer-control[hidden] {
+  display: none;
+}
+
+.developer-control.is-active {
+  background: var(--active-color);
+  border-color: var(--focus-color);
+}
+
+.control-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+
+.cell-input:focus-visible {
+  outline: none;
+}
+
+.grid-scroll {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  border: 1px solid rgba(98, 78, 58, 0.14);
+  border-radius: 14px;
+  background: var(--grid-scroll-bg);
+  padding: 1cm;
+}
+
+.grid {
+  display: grid;
+  width: max-content;
+  gap: 1px;
+  background: var(--border-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  position: relative;
+  isolation: isolate;
+}
+
+.cell-number {
+  position: absolute;
+  top: 0.12rem;
+  left: 0.16rem;
+  z-index: 2;
+  font-size: 0.56rem;
+  line-height: 1;
+  color: var(--muted-color);
+  pointer-events: none;
+  font-weight: 700;
+}
+
+.cell-input {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+  border: none;
+  background: var(--cell-bg);
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 0;
+  color: var(--text-color);
+  font-size: var(--cell-font-size);
+  font-weight: 600;
+  padding: 0.4rem 0.2rem 0.1rem;
+  appearance: none;
+  outline: none;
+}
+
+.cell-input.is-letter-entering {
+  animation: letter-enter 170ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+@keyframes letter-enter {
+  from {
+    font-size: 0.25rem;
+    opacity: 0.15;
+  }
+
+  70% {
+    font-size: calc(var(--cell-font-size) * 1.12);
+    opacity: 1;
+  }
+
+  to {
+    font-size: var(--cell-font-size);
+    opacity: 1;
+  }
+}
+
+.cell.is-selected .cell-input {
+  background: var(--selection-color);
+  z-index: 3;
+}
+
+.cell.is-active .cell-input {
+  background: var(--active-color);
+  box-shadow: inset 0 0 0 2px var(--focus-color);
+  z-index: 4;
+}
+
+.cell.is-correct .cell-input {
+  background: var(--correct-color);
+  box-shadow: inset 0 0 0 1px rgba(169, 205, 182, 0.2);
+}
+
+.cell.is-error .cell-input {
+  background: var(--error-color);
+  box-shadow: inset 0 0 0 1px rgba(220, 162, 176, 0.3);
+}
+
+body[data-theme="velvet"] .cell.is-correct .cell-input {
+  box-shadow: inset 0 0 0 1px rgba(197, 214, 170, 0.22);
+}
+
+body[data-theme="velvet"] .cell.is-error .cell-input {
+  box-shadow: inset 0 0 0 1px rgba(201, 133, 149, 0.26);
+}
+
+body[data-theme="sea"] .cell.is-correct .cell-input {
+  box-shadow: inset 0 0 0 1px rgba(94, 148, 134, 0.24);
+}
+
+body[data-theme="sea"] .cell.is-error .cell-input {
+  box-shadow: inset 0 0 0 1px rgba(190, 155, 139, 0.28);
+}
+
+body[data-theme="red-of-you"] .cell.is-correct .cell-input {
+  box-shadow: inset 0 0 0 1px rgba(230, 197, 185, 0.22);
+}
+
+body[data-theme="red-of-you"] .cell.is-error .cell-input {
+  box-shadow: inset 0 0 0 1px rgba(255, 190, 205, 0.24);
+}
+
+body[data-theme="green-of-me"] .cell.is-correct .cell-input {
+  box-shadow: inset 0 0 0 1px rgba(177, 203, 179, 0.2);
+}
+
+body[data-theme="green-of-me"] .cell.is-error .cell-input {
+  box-shadow: inset 0 0 0 1px rgba(200, 178, 161, 0.22);
+}
+
+.clues-list {
+  padding-left: 0;
+  margin: 1rem 0 0;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.clue-item {
+  margin: 0;
+}
+
+.clue-button {
+  width: 100%;
+  text-align: left;
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  background: var(--clue-bg);
+}
+
+.clue-button.is-selected {
+  background: var(--selection-color);
+}
+
+.clue-button.is-complete {
+  border-color: var(--complete-clue-border);
+  background: var(--complete-clue-bg);
+}
+
+.clues-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.clue-order {
+  font-weight: 700;
+  margin-right: 0.45rem;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .cell-input.is-letter-entering {
+    animation: none;
+  }
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(20, 16, 10, 0.45);
+  z-index: 200;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-card {
+  max-width: 28rem;
+  background: var(--panel-color);
+  color: var(--text-color);
+  padding: 1.5rem;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+@media (max-width: 980px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .board-panel,
+  .clues-panel {
+    height: auto;
+  }
+
+  .grid-scroll {
+    flex: none;
+    max-height: none;
+  }
+
+  .clues-list {
+    flex: none;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --cell-size: 2.9rem;
+    --cell-font-size: 1.2rem;
+    --mobile-sheet-peek-height: 6.2rem;
+    --app-viewport-height: 100dvh;
+    --keyboard-offset: 0px;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    isolation: isolate;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: inherit;
+    pointer-events: none;
+  }
+
+
+  .app-shell {
+    width: 100%;
+    height: var(--app-viewport-height);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding:
+      max(0.8rem, env(safe-area-inset-top))
+      max(1.15rem, env(safe-area-inset-right))
+      0.8rem
+      max(1.15rem, env(safe-area-inset-left));
+    overflow: hidden;
+  }
+
+  .hero {
+    flex: 0 0 auto;
+  }
+
+  body.keyboard-open .hero {
+    display: none;
+  }
+
+  .controls {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+
+  .control-button {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: 0 0 2.5rem;
+    padding: 0;
+  }
+
+  .control-button .control-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .theme-bar {
+    gap: 0;
+    flex-wrap: nowrap;
+  }
+
+  .theme-label {
+    display: none;
+  }
+
+  .theme-switcher {
+    width: auto;
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .theme-chip {
+    width: 2.35rem;
+    height: 2.35rem;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .theme-chip-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .theme-toast {
+    position: fixed;
+    top: max(1rem, env(safe-area-inset-top));
+    left: 50%;
+    z-index: 150;
+    display: block;
+    max-width: calc(100vw - 2rem);
+    padding: 0.65rem 1.15rem;
+    border: 1px solid var(--panel-border-color);
+    border-radius: 999px;
+    background: var(--drawer-bg);
+    color: var(--text-color);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -0.75rem);
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+
+  .theme-toast.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  .layout {
+    flex: 1;
+    height: 0;
+    min-height: 0;
+    gap: 0.85rem;
+  }
+
+  .board-panel,
+  .clues-panel {
+    border-radius: 20px;
+  }
+
+  body[data-mobile-mode="sheet"] .layout {
+    display: block;
+    position: relative;
+  }
+
+  body[data-mobile-mode="sheet"] .board-panel {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  body[data-mobile-mode="sheet"] .clues-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: var(--keyboard-offset);
+    height: min(72dvh, 40rem, var(--app-viewport-height));
+    padding: 0;
+    z-index: 50;
+    border-radius: 20px 20px 0 0;
+    background: var(--drawer-bg);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transform: translateY(calc(100% - var(--mobile-sheet-peek-height)));
+    transition: transform 220ms ease, bottom 160ms ease;
+  }
+
+  body[data-mobile-mode="sheet"][data-mobile-sheet="open"] .clues-panel {
+    transform: translateY(0);
+  }
+
+  body[data-mobile-mode="sheet"] .clues-panel-header {
+    flex: 0 0 auto;
+    gap: 0.25rem;
+    padding-inline-start: max(0.35rem, env(safe-area-inset-left));
+    padding-inline-end: max(0.35rem, env(safe-area-inset-right));
+  }
+
+  body[data-mobile-mode="sheet"] .clues-panel-header > h2 {
+    display: none;
+  }
+
+  body[data-mobile-mode="sheet"] .mobile-sheet-toggle {
+    min-width: 0;
+    flex: 1;
+    min-height: 6.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 0.35rem max(1rem, env(safe-area-inset-bottom));
+    border: 0;
+    border-radius: 20px 20px 0 0;
+    background: transparent;
+    color: var(--text-color);
+    text-align: left;
+  }
+
+  body[data-mobile-mode="sheet"] .mobile-sheet-nav {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 2.25rem;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--muted-color);
+    opacity: 0.72;
+  }
+
+  body[data-mobile-mode="sheet"] .mobile-sheet-nav:hover,
+  body[data-mobile-mode="sheet"] .mobile-sheet-nav:active {
+    border: 0;
+    background: transparent;
+    color: var(--text-color);
+    opacity: 1;
+  }
+
+  body[data-mobile-mode="sheet"] .mobile-sheet-nav svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  body[data-mobile-mode="sheet"] .mobile-sheet-toggle:focus-visible {
+    outline: 3px solid var(--focus-color);
+    outline-offset: -4px;
+  }
+
+  body[data-mobile-mode="sheet"] .mobile-clue-copy {
+    min-width: 0;
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  body[data-mobile-mode="sheet"] .mobile-clue-kicker {
+    color: var(--muted-color);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  body[data-mobile-mode="sheet"] .mobile-clue-text {
+    font-size: 0.95rem;
+    line-height: 1.3;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  body[data-mobile-mode="sheet"] .mobile-sheet-chevron {
+    width: 0.75rem;
+    height: 0.75rem;
+    flex: 0 0 auto;
+    border-top: 2px solid currentColor;
+    border-left: 2px solid currentColor;
+    transform: translateY(0.2rem) rotate(45deg);
+    transition: transform 220ms ease;
+  }
+
+  body[data-mobile-mode="sheet"][data-mobile-sheet="open"] .mobile-sheet-chevron {
+    transform: translateY(-0.2rem) rotate(225deg);
+  }
+
+  body[data-mobile-mode="sheet"] .clues-list {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 0 max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+    overflow: auto;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body[data-mobile-mode="sheet"] .app-shell {
+    min-height: 0;
+    padding-bottom: calc(var(--mobile-sheet-peek-height) + max(0.8rem, env(safe-area-inset-bottom)));
+  }
+
+  body[data-mobile-mode="sheet"] .grid-scroll {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    padding: 0.9rem;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}

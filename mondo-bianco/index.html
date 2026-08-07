@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Il Mondo Bianco</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/css/themes.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/shell.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/world-atmosphere.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/pages/world.css?v=2" />
+  </head>
+  <body class="world-atmosphere world-page">
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">La nostra casa</p>
+          <h1>Il Mondo Bianco</h1>
+          <p class="subtitle">L’hub è in costruzione. I luoghi torneranno qui, uno alla volta.</p>
+        </div>
+        <div class="status-panel">
+          <div class="hero-userbar">
+            <p id="user-greeting" class="user-greeting"></p>
+            <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="world-placeholder">
+        <h2>I posti di questo mondo</h2>
+        <a class="world-place-link" href="../tavolo-da-gioco/cruciverba/">
+          <strong>Il Tavolo da Gioco</strong>
+          <span>Per ora puoi ritrovare qui il cruciverba.</span>
+        </a>
+      </main>
+    </div>
+
+    <script type="module" src="../auth-guard.js?v=2" data-auth-gateway="../"></script>
+    <script type="module" src="../assets/js/hub/main.js?v=1"></script>
+  </body>
+</html>

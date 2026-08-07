@@ -19,15 +19,15 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 
 - [X] **Separare la home dal cruciverba.** Spostare l'applicazione su una route figlia del Tavolo da Gioco senza perdere salvataggi, autenticazione, telemetria o funzionamento desktop/mobile.
 
-- [ ] **Unificare Portone e autenticazione.** Trasformare il Portone nella schermata reale di registrazione, login e conferma della Chiave, conservando immagine, metafora, testo e indizio ma rimuovendo la decifratura manuale tramite Browserling.
+- [X] **Unificare Portone e autenticazione.** Trasformare il Portone nella schermata reale di registrazione, login e conferma della Chiave, conservando immagine, metafora, testo e indizio ma rimuovendo la decifratura manuale tramite Browserling.
 
-- [ ] **Impostare il Mondo Bianco come home autenticata.** In assenza di `returnTo`, qualsiasi registrazione, login o sblocco riuscito deve aprire l'hub e non il cruciverba.
+- [X] **Impostare il Mondo Bianco come home autenticata.** In assenza di `returnTo`, qualsiasi registrazione, login o sblocco riuscito deve aprire l'hub e non il cruciverba.
 
-- [ ] **Completare il redirect post-accesso.** Se l'accesso nasce da una pagina interna, conservare pathname, query e hash, validare che la destinazione sia interna e tornarvi dopo login o sola Chiave.
+- [X] **Completare il redirect post-accesso.** Se l'accesso nasce da una pagina interna, conservare pathname, query e hash, validare che la destinazione sia interna e tornarvi dopo login o sola Chiave.
 
-- [ ] **Proteggere tutte le pagine interne.** Applicare un guard condiviso che distingua sessione scaduta, sessione valida ma Chiave non confermata e scheda già sbloccata, senza mostrare contenuti durante il controllo.
+- [X] **Proteggere tutte le pagine interne.** Applicare un guard condiviso che distingua sessione scaduta, sessione valida ma Chiave non confermata e scheda già sbloccata, senza mostrare contenuti durante il controllo.
 
-- [ ] **Definire il comportamento del logout.** Revocare logicamente la sessione, rimuovere lo sblocco della scheda e riportare al Portone; se il logout parte da una pagina interna, non riaprire automaticamente quella pagina senza un nuovo accesso.
+- [X] **Definire il comportamento del logout.** Revocare logicamente la sessione, rimuovere lo sblocco della scheda e riportare al Portone; se il logout parte da una pagina interna, non riaprire automaticamente quella pagina senza un nuovo accesso.
 
 - [ ] **Creare la shell condivisa del Mondo Bianco.** Implementare header, saluto, logout, ritorno all'hub, stato di caricamento e navigazione coerente riutilizzabili da tutte le pagine.
 

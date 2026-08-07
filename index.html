@@ -3,63 +3,85 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Il Mondo Bianco</title>
+    <title>🌹 Il Portone | Mondo Bianco</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <style>
-      :root {
-        color-scheme: light;
-        font-family: system-ui, sans-serif;
-        background: #f5f7f6;
-        color: #263331;
-      }
-
-      body {
-        min-height: 100vh;
-        min-height: 100dvh;
-        margin: 0;
-        display: grid;
-        place-items: center;
-        padding: 1.5rem;
-        box-sizing: border-box;
-      }
-
-      main {
-        width: min(100%, 34rem);
-        padding: 2rem;
-        border: 1px solid #d4ddda;
-        border-radius: 1rem;
-        background: rgba(255, 255, 255, 0.88);
-        box-shadow: 0 1rem 3rem rgba(38, 51, 49, 0.08);
-      }
-
-      h1 {
-        margin-top: 0;
-      }
-
-      a {
-        display: inline-block;
-        margin-top: 1rem;
-        padding: 0.75rem 1rem;
-        border-radius: 0.65rem;
-        background: #315f59;
-        color: #fff;
-        font-weight: 700;
-        text-decoration: none;
-      }
-
-      a:focus-visible {
-        outline: 3px solid #9bc6bd;
-        outline-offset: 3px;
-      }
-    </style>
+    <link rel="stylesheet" href="./assets/css/themes.css?v=1" />
+    <link rel="stylesheet" href="./assets/css/components/shell.css?v=1" />
+    <link rel="stylesheet" href="./assets/css/components/access-gate.css?v=1" />
+    <link rel="stylesheet" href="./assets/css/components/world-atmosphere.css?v=1" />
+    <link rel="stylesheet" href="./assets/css/pages/portone.css?v=5" />
   </head>
-  <body>
-    <!-- Hub provvisorio: verrà sostituito dalla migrazione fedele del Mondo Bianco. -->
-    <main>
-      <p>Migrazione in corso</p>
-      <h1>Il Mondo Bianco</h1>
-      <p>Questa è la nuova casa del progetto. Per il momento è disponibile il cruciverba nel Tavolo da Gioco.</p>
-      <a href="./tavolo-da-gioco/cruciverba/">Apri il cruciverba</a>
+  <body class="access-locked world-atmosphere portone-page">
+    <!-- Destinazione tecnica usata dal controller prima di entrare nel Mondo Bianco. -->
+    <div id="app-shell" class="app-shell" inert aria-hidden="true">
+      <p id="user-greeting"></p>
+      <button id="logout-button" type="button">Esci</button>
+    </div>
+
+    <!-- La pagina narrativa del Portone contiene l'accesso, senza essere ridotta al solo form. -->
+    <main id="access-gate" class="access-gate portone-gate" aria-labelledby="portone-title">
+      <div class="portone-layout">
+        <section class="portone-story" aria-labelledby="portone-title">
+          <div class="portone-heading">
+            <p class="portone-kicker">L’ingresso al nostro mondo</p>
+            <h1 id="portone-title"><span class="place-emoji" aria-hidden="true">🌹</span><span>Il Portone</span></h1>
+            <p class="portone-intro">
+              Se sei qui, dovresti avere già la chiave per aprire il portone, quindi puoi provarci se vuoi.
+              Solo una persona può averla e, se sei tu, sai di esserlo.
+            </p>
+          </div>
+
+          <!-- L'immagine originale resta il centro visivo e simbolico della pagina. -->
+          <figure class="portone-figure">
+            <img
+              class="portone-image"
+              src="./ExportBlock-fbd237dd-039c-4dc5-9ab4-b9f20c5dcf16-Part-1/Gruppo%20pagine/%F0%9F%8C%B9Il%20Portone/daea9434-8908-4d4b-bb83-0946b2f2d6aa.png"
+              alt="Un portone in legno circondato da rose, margherite e tulipani"
+            />
+          </figure>
+
+          <details class="portone-hint">
+            <summary>Se proprio non la stai trovando, c’è un indizio</summary>
+            <p>Cos’hanno in comune tutte queste parole?</p>
+            <p class="portone-hint-words">Tatuaggio · bracciale · simbolo · disegno · infinito · noi · emoji</p>
+          </details>
+        </section>
+
+        <!-- Il login sostituisce il vecchio decryptor, ma rimane un elemento interno al Portone. -->
+        <form id="access-form" class="access-card portone-card">
+        <img
+          class="portone-seal"
+          src="./favicon.svg"
+          alt=""
+        />
+        <p class="access-eyebrow">La Chiave</p>
+        <h1 id="access-title">Ti ricordi della chiave?</h1>
+        <p id="access-text">È la stessa con cui si apre anche il nostro mondo.</p>
+
+        <div id="access-mode-switcher" class="access-mode-switcher" role="group" aria-label="Scegli se accedere o registrarti">
+          <button id="show-login-button" type="button" aria-pressed="false">Accedi</button>
+          <button id="show-register-button" type="button" aria-pressed="true">Registrati</button>
+        </div>
+
+        <div id="access-account-fields" class="access-account-fields">
+          <label for="access-email">Email</label>
+          <input id="access-email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required />
+
+          <label for="access-password">Password</label>
+          <!-- Campo mascherato senza semantica password per ridurre i suggerimenti invasivi del browser. -->
+          <input id="access-password" class="masked-text-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" minlength="8" data-1p-ignore data-lpignore="true" required />
+        </div>
+
+        <label for="access-key">La chiave</label>
+        <p id="access-key-hint" class="access-key-hint">Ti ricordi la chiave? È sempre quella che porti al polso.</p>
+        <input id="access-key" type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" aria-describedby="access-key-hint" data-1p-ignore data-lpignore="true" required />
+
+        <button id="access-submit-button" class="access-submit-button" type="submit">Registrati ed entra</button>
+        <p id="access-error" class="access-error" aria-live="polite"></p>
+        </form>
+      </div>
     </main>
+
+    <script type="module" src="./assets/js/portone/main.js?v=1"></script>
   </body>
 </html>

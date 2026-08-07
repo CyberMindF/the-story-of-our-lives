@@ -1,5 +1,17 @@
 const RETURN_TARGET_KEY = "mondo-bianco-return-target-v1";
 
+// Conserva la pagina interna corrente prima di passare dal Portone.
+export function rememberCurrentDestination() {
+  const currentTarget = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  sessionStorage.setItem(RETURN_TARGET_KEY, currentTarget);
+  return currentTarget;
+}
+
+// Dimentica qualsiasi destinazione interna quando l'utente sceglie di uscire dal Mondo Bianco.
+export function clearRequestedDestination() {
+  sessionStorage.removeItem(RETURN_TARGET_KEY);
+}
+
 // Memorizza il parametro returnTo soltanto se rappresenta una destinazione interna sicura.
 export function rememberRequestedDestination() {
   const requestedTarget = new URLSearchParams(window.location.search).get("returnTo");

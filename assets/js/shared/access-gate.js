@@ -8,6 +8,7 @@ import {
   clearAccessUnlock
 } from "./auth.js";
 import {
+  clearRequestedDestination,
   rememberRequestedDestination,
   returnToRequestedDestination
 } from "./navigation.js";
@@ -102,6 +103,7 @@ export function createAccessGate({ onUnlock, beforeLogout, onLogoutError } = {})
       }
 
       clearAccessUnlock();
+      clearRequestedDestination();
       window.location.reload();
     } catch (error) {
       elements.logoutButton.disabled = false;

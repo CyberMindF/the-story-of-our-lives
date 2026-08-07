@@ -1,0 +1,165 @@
+:root {
+  --cell-size: 2.6rem;
+  --cell-font-size: 1.15rem;
+  --bg-color: #f7eeef;
+  --panel-color: #fff9f8;
+  --panel-border-color: rgba(0, 0, 0, 0.06);
+  --text-color: #31272a;
+  --muted-color: #78656b;
+  --border-color: #d5bcc2;
+  --selection-color: #f1dde3;
+  --active-color: #e7c3cd;
+  --correct-color: #dcebdd;
+  --error-color: #efd5d5;
+  --focus-color: #9c596c;
+  --complete-clue-bg: #f5fbf5;
+  --complete-clue-border: #84a588;
+  --button-bg: rgba(255, 255, 255, 0.48);
+  --button-hover-bg: rgba(255, 255, 255, 0.72);
+  --grid-scroll-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.28) 100%);
+  --cell-bg: rgba(255, 255, 255, 0.92);
+  --clue-bg: rgba(255, 255, 255, 0.54);
+  --drawer-bg: rgba(255, 249, 248, 0.58);
+  --shadow: 0 14px 36px rgba(102, 61, 74, 0.12);
+}
+
+body[data-theme="velvet"] {
+  --bg-color: #140f16;
+  --panel-color: #211821;
+  --panel-border-color: rgba(240, 199, 212, 0.14);
+  --text-color: #f7f1f3;
+  --muted-color: #ccb8c0;
+  --border-color: #5d4452;
+  --selection-color: #4a3341;
+  --active-color: #674658;
+  --correct-color: #3d4b3a;
+  --error-color: #5a2c39;
+  --focus-color: #f0c7d4;
+  --complete-clue-bg: rgba(102, 126, 98, 0.18);
+  --complete-clue-border: rgba(186, 210, 176, 0.32);
+  --button-bg: rgba(255, 255, 255, 0.08);
+  --button-hover-bg: rgba(255, 255, 255, 0.16);
+  --grid-scroll-bg: linear-gradient(180deg, rgba(38, 28, 37, 0.96) 0%, rgba(22, 16, 22, 0.98) 100%);
+  --cell-bg: #2a1f2a;
+  --clue-bg: rgba(255, 255, 255, 0.06);
+  --drawer-bg: rgba(33, 24, 33, 0.58);
+  --shadow: 0 22px 48px rgba(0, 0, 0, 0.42);
+}
+
+body[data-theme="sea"] {
+  --bg-color: #e4efed;
+  --panel-color: #eef6f3;
+  --panel-border-color: rgba(56, 92, 90, 0.1);
+  --text-color: #355154;
+  --muted-color: #6b8381;
+  --border-color: #b4cac7;
+  --selection-color: #d4e8e2;
+  --active-color: #b4d4cc;
+  --correct-color: #c8e0d8;
+  --error-color: #ead8cf;
+  --focus-color: #467d77;
+  --complete-clue-bg: #ddeee6;
+  --complete-clue-border: #78a69a;
+  --button-bg: rgba(236, 246, 243, 0.92);
+  --button-hover-bg: rgba(228, 241, 237, 0.98);
+  --grid-scroll-bg: linear-gradient(180deg, rgba(238, 246, 243, 0.96) 0%, rgba(227, 239, 235, 0.99) 100%);
+  --cell-bg: #edf6f3;
+  --clue-bg: rgba(236, 246, 243, 0.42);
+  --drawer-bg: rgba(238, 246, 243, 0.58);
+  --shadow: 0 14px 36px rgba(47, 86, 82, 0.12);
+}
+
+body[data-theme="red-of-you"] {
+  --bg-color: #5f0d19;
+  --panel-color: rgba(103, 18, 30, 0.84);
+  --panel-border-color: rgba(255, 211, 219, 0.16);
+  --text-color: #fff3f5;
+  --muted-color: #e5b0b7;
+  --border-color: #a53e52;
+  --selection-color: #8e2037;
+  --active-color: #bf3553;
+  --correct-color: #5d4536;
+  --error-color: #7a1730;
+  --focus-color: #ffd5dd;
+  --complete-clue-bg: rgba(126, 52, 67, 0.88);
+  --complete-clue-border: rgba(255, 201, 211, 0.28);
+  --button-bg: rgba(255, 255, 255, 0.08);
+  --button-hover-bg: rgba(255, 255, 255, 0.15);
+  --grid-scroll-bg:
+    radial-gradient(circle at 10% 12%, rgba(255, 224, 231, 0.28) 0 0.22rem, transparent 0.26rem),
+    radial-gradient(circle at 24% 30%, rgba(255, 196, 208, 0.22) 0 0.16rem, transparent 0.2rem),
+    radial-gradient(circle at 72% 18%, rgba(255, 227, 234, 0.24) 0 0.18rem, transparent 0.22rem),
+    radial-gradient(circle at 84% 42%, rgba(255, 205, 216, 0.18) 0 0.14rem, transparent 0.18rem),
+    radial-gradient(circle at 60% 78%, rgba(255, 227, 233, 0.2) 0 0.18rem, transparent 0.22rem),
+    linear-gradient(180deg, rgba(119, 16, 35, 0.96) 0%, rgba(84, 10, 24, 0.98) 100%);
+  --cell-bg: rgba(99, 17, 31, 0.96);
+  --clue-bg: rgba(255, 255, 255, 0.06);
+  --drawer-bg: rgba(103, 18, 30, 0.56);
+  --shadow: 0 24px 52px rgba(33, 4, 10, 0.42);
+}
+
+body[data-theme="green-of-me"] {
+  --bg-color: #203429;
+  --panel-color: rgba(33, 53, 41, 0.9);
+  --panel-border-color: rgba(198, 220, 205, 0.12);
+  --text-color: #eef6ef;
+  --muted-color: #bdd0c1;
+  --border-color: #5f7a64;
+  --selection-color: #35513f;
+  --active-color: #486a53;
+  --correct-color: #425f48;
+  --error-color: #5d4a3d;
+  --focus-color: #dce8db;
+  --complete-clue-bg: rgba(71, 96, 76, 0.86);
+  --complete-clue-border: rgba(199, 219, 198, 0.22);
+  --button-bg: rgba(255, 255, 255, 0.07);
+  --button-hover-bg: rgba(255, 255, 255, 0.13);
+  --grid-scroll-bg:
+    radial-gradient(circle at top left, rgba(218, 231, 218, 0.08), transparent 26%),
+    linear-gradient(180deg, rgba(43, 67, 49, 0.98) 0%, rgba(25, 42, 31, 0.99) 100%);
+  --cell-bg: rgba(40, 60, 46, 0.97);
+  --clue-bg: rgba(255, 255, 255, 0.05);
+  --drawer-bg: rgba(33, 53, 41, 0.56);
+  --shadow: 0 22px 48px rgba(7, 16, 10, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.88), transparent 28%),
+    linear-gradient(180deg, #fcf3f4 0%, var(--bg-color) 56%, #ecdce1 100%);
+  color: var(--text-color);
+}
+
+body[data-theme="velvet"] {
+  background:
+    radial-gradient(circle at top left, rgba(240, 199, 212, 0.08), transparent 22%),
+    linear-gradient(180deg, #1f1620 0%, var(--bg-color) 56%, #0d090f 100%);
+}
+
+body[data-theme="sea"] {
+  background:
+    radial-gradient(circle at 12% 16%, rgba(255, 255, 255, 0.72), transparent 24%),
+    radial-gradient(circle at 82% 14%, rgba(205, 232, 227, 0.42), transparent 18%),
+    radial-gradient(circle at 68% 72%, rgba(196, 226, 220, 0.3), transparent 20%),
+    linear-gradient(180deg, #f1faf8 0%, var(--bg-color) 52%, #c4dbd6 100%);
+}
+
+body[data-theme="red-of-you"] {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255, 213, 223, 0.16), transparent 18%),
+    radial-gradient(circle at 76% 16%, rgba(255, 219, 227, 0.12), transparent 16%),
+    linear-gradient(180deg, #7a1126 0%, var(--bg-color) 58%, #2f0610 100%);
+}
+
+body[data-theme="green-of-me"] {
+  background:
+    radial-gradient(circle at 14% 14%, rgba(224, 236, 224, 0.08), transparent 22%),
+    linear-gradient(180deg, #304a37 0%, var(--bg-color) 54%, #152118 100%);
+}

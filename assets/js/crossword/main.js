@@ -1,6 +1,6 @@
 import { readApiResponse, sendAuthenticatedJson } from "../shared/api.js";
-import { clearAccessUnlock } from "../shared/auth.js";
-import { createAccessGate } from "../shared/access-gate.js";
+import { clearAccessUnlock, revokeAuthSession } from "../shared/auth.js";
+import { clearRequestedDestination } from "../shared/navigation.js";
 import { createThemeController } from "../shared/theme.js";
 
 const STORAGE_VERSION = "v15";
@@ -43,7 +43,8 @@ const state = {
 
 const elements = {
   appShell: document.getElementById("app-shell"),
-  accessForm: document.getElementById("access-form"),
+  userGreeting: document.getElementById("user-greeting"),
+  logoutButton: document.getElementById("logout-button"),
   title: document.getElementById("title"),
   subtitle: document.getElementById("subtitle"),
   grid: document.getElementById("grid"),
@@ -87,16 +88,33 @@ async function init() {
   ensureStorageVersion();
   themeController.applySavedTheme();
   bindVisualViewport();
-  const accessGate = createAccessGate({
-    onUnlock: initializeCrossword,
-    beforeLogout: trackCrosswordClosed,
-    onLogoutError(error) {
-      elements.checkSummary.textContent = error.message;
-    }
-  });
-  accessGate.bind();
+  const user = await window.mondoBiancoAuthReady;
+  if (!user) {
+    return;
+  }
+
+  elements.userGreeting.textContent = `Ciao, ${user.nickname}`;
+  elements.logoutButton.addEventListener("click", logout);
   window.addEventListener("pagehide", () => void trackCrosswordClosed());
-  await accessGate.initialize();
+  await initializeCrossword();
+}
+
+// Chiude il cruciverba, revoca la sessione e torna al Portone.
+async function logout() {
+  elements.logoutButton.disabled = true;
+  try {
+    await trackCrosswordClosed();
+    const response = await revokeAuthSession();
+    if (!response.ok) {
+      throw new Error("Logout non riuscito.");
+    }
+    clearAccessUnlock();
+    clearRequestedDestination();
+    window.location.replace("../../../");
+  } catch (error) {
+    elements.logoutButton.disabled = false;
+    elements.checkSummary.textContent = error.message;
+  }
 }
 
 async function initializeCrossword() {
@@ -151,7 +169,6 @@ function ensureStorageVersion() {
   });
 
   localStorage.removeItem(LEGACY_ACCESS_STORAGE_KEY);
-  clearAccessUnlock();
   localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
 }
 
@@ -409,7 +426,7 @@ function bindVisualViewport() {
     const visualViewport = window.visualViewport;
     const height = visualViewport?.height || window.innerHeight;
     const isGridInputFocused = document.activeElement?.classList.contains("cell-input");
-    const isAccessInputFocused = elements.accessForm.contains(document.activeElement);
+    const isAccessInputFocused = document.getElementById("access-form")?.contains(document.activeElement) || false;
     const keyboardLikelyOpen = isGridInputFocused && height < stableHeight * 0.82;
     const accessKeyboardLikelyOpen = isAccessInputFocused && height < stableHeight * 0.82;
 

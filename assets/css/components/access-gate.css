@@ -1,0 +1,165 @@
+body.access-locked {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+body.access-locked .app-shell {
+  visibility: hidden;
+}
+
+.access-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background:
+    radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.72), transparent 28%),
+    var(--bg-color);
+}
+
+.access-gate.hidden {
+  display: none;
+}
+
+.access-card {
+  width: min(100%, 27rem);
+  padding: 2rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 22px;
+  background: var(--panel-color);
+  box-shadow: var(--shadow);
+}
+
+.access-card h1 {
+  font-size: clamp(1.65rem, 5vw, 2.2rem);
+}
+
+.access-card > p:not(.access-eyebrow):not(.access-error):not(.access-key-hint) {
+  margin: 0.65rem 0 1.4rem;
+  color: var(--muted-color);
+}
+
+.access-eyebrow,
+.access-card label {
+  color: var(--muted-color);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.access-eyebrow {
+  margin: 0 0 0.5rem;
+}
+
+.access-mode-switcher {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.access-mode-switcher button {
+  padding: 0.55rem 0.75rem;
+}
+
+.access-mode-switcher button[aria-pressed="true"] {
+  border-color: var(--focus-color);
+  background: var(--active-color);
+}
+
+.access-account-fields {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.access-card input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--cell-bg);
+  color: var(--text-color);
+  outline: none;
+}
+
+.access-card input + label,
+.access-account-fields + label {
+  display: block;
+  margin-top: 0.75rem;
+}
+
+/* La nota completa l'etichetta senza competere visivamente con i campi del form. */
+.access-card > .access-key-hint {
+  margin: 0.2rem 0 0.45rem;
+  color: var(--muted-color);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.access-card input:focus {
+  border-color: var(--focus-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus-color) 22%, transparent);
+}
+
+/* Mantiene la password visivamente nascosta senza far classificare il campo come password al browser. */
+.access-card .masked-text-input {
+  -webkit-text-security: disc;
+}
+
+.access-submit-button {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.access-submit-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.access-error {
+  min-height: 1.25rem;
+  margin: 0.65rem 0 0;
+  color: #b63b52;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .access-gate {
+    inset: auto 0 0;
+    width: 100%;
+    height: var(--app-viewport-height);
+    padding:
+      max(1rem, env(safe-area-inset-top))
+      max(1rem, env(safe-area-inset-right))
+      max(1rem, env(safe-area-inset-bottom))
+      max(1rem, env(safe-area-inset-left));
+  }
+
+  .access-card {
+    max-height: calc(var(--app-viewport-height) - 2rem);
+    overflow: hidden;
+  }
+
+  body.access-keyboard-open .access-eyebrow,
+  body.access-keyboard-open .access-card > h1,
+  body.access-keyboard-open .access-card > p:not(.access-error),
+  body.access-keyboard-open .access-mode-switcher {
+    display: none;
+  }
+
+  body.access-keyboard-open .access-card {
+    padding-block: 1rem;
+  }
+}
