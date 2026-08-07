@@ -2,6 +2,7 @@ const STORAGE_VERSION = "v15";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
 const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
+// Le credenziali sono gestite dal server; nel browser restano solo indicatori della sessione.
 const LEGACY_ACCESS_STORAGE_KEY = "noi-crossword-access";
 const ACCESS_SESSION_KEY = "noi-crossword-access-session-v1";
 const KNOWN_ACCOUNT_STORAGE_KEY = "noi-crossword-known-account-v1";

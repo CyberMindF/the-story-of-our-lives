@@ -26,7 +26,7 @@ Apri l'indirizzo mostrato da Wrangler, normalmente `http://localhost:8788`.
 
 Gli endpoint sono organizzati in `functions/api/auth/`:
 
-- `POST /api/auth/register`: registra uno dei due utenti ammessi e crea una sessione.
+- `POST /api/auth/register`: registra un nuovo utente e crea una sessione.
 - `POST /api/auth/login`: verifica email, password e chiave, poi crea una sessione.
 - `GET /api/auth/session`: controlla se il token è ancora valido.
 - `POST /api/auth/session`: con token valido, verifica nuovamente la chiave.
@@ -66,6 +66,6 @@ GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1
 - `style.css`: grafica, temi e layout responsive.
 - `app.js`: cruciverba, interfaccia e client di autenticazione.
 - `functions/api/auth/`: API di registrazione, login e sessione.
-- `migrations/`: schema D1 per utenti e sessioni.
+- `migrations/`: schema D1 per utenti, sessioni e IP di accesso.
 - `wrangler.toml`: configurazione Cloudflare e binding D1.
 - `final-message.json`: contenuto della schermata finale.
