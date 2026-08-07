@@ -56,7 +56,9 @@ La telemetria usa due endpoint autenticati e non rinnova la durata della session
 - `POST /api/telemetry/events`: registra eventi significativi delle diverse sezioni.
 - `POST /api/telemetry/word-attempts`: registra i tentativi del cruciverba dopo un secondo di pausa.
 
-La tabella `events` contiene sezione, tipo, versione dello schema, metadati JSON, utente e sessione. Per aggiungere un evento futuro bisogna inserirlo in `ALLOWED_EVENTS` dentro `functions/api/telemetry/events.js` e richiamare il client riutilizzabile `trackEvent`.
+La tabella `events` contiene sezione, tipo, versione dello schema, metadati JSON, utente e sessione. Validazione e inserimento SQL sono centralizzati in `recordEvent` dentro `functions/api/telemetry/_shared.js`. Per aggiungere un evento futuro bisogna inserirlo in `ALLOWED_EVENTS` nello stesso file e richiamare il client riutilizzabile `trackEvent`.
+
+Il cruciverba registra `crossword_opened`, `crossword_closed`, `word_completed`, `crossword_completed` e `theme_changed`. La chiusura include durata e progresso, viene inviata una sola volta per apertura e usa una richiesta `keepalive` quando la pagina viene abbandonata.
 
 I tentativi sono separati in `crossword_word_attempts`. Ogni parola usa come `word_id` il proprio numero progressivo nell'array di `data.json`, partendo da 1; non esiste un secondo ordinamento. Le celle interne ancora vuote sono rappresentate da `_`; le celle vuote finali vengono omesse. Il frontend evita richieste duplicate e il backend impedisce comunque inserimenti consecutivi identici per utente e parola.
 
