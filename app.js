@@ -1834,3 +1834,4 @@ window.__crosswordApp = {
   getCellKey,
   normalizeLetter
 };
+
