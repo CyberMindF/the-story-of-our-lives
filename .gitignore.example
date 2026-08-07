@@ -1,7 +1,0 @@
-node_modules/
-.wrangler/
-.DS_Store
-.dev.vars
-.dev.vars.*
-!.dev.vars.example
-ExportBlock-fbd237dd-039c-4dc5-9ab4-b9f20c5dcf16-Part-1/
