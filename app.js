@@ -50,6 +50,8 @@ const elements = {
   showLoginButton: document.getElementById("show-login-button"),
   showRegisterButton: document.getElementById("show-register-button"),
   accessError: document.getElementById("access-error"),
+  userGreeting: document.getElementById("user-greeting"),
+  logoutButton: document.getElementById("logout-button"),
   title: document.getElementById("title"),
   subtitle: document.getElementById("subtitle"),
   grid: document.getElementById("grid"),
@@ -79,6 +81,7 @@ const elements = {
 
 document.addEventListener("DOMContentLoaded", init);
 
+// Prepara tema e accesso, controlla la sessione e avvia il cruciverba solo per un utente autorizzato.
 async function init() {
   ensureStorageVersion();
   applySavedTheme();
@@ -97,6 +100,7 @@ async function init() {
     return;
   }
 
+  showAuthenticatedUser(session.user);
   unlockAccess();
   await initializeCrossword();
 }
@@ -126,9 +130,11 @@ async function initializeCrossword() {
   }
 }
 
+// Collega i controlli del form di autenticazione e il pulsante di logout alle rispettive azioni.
 function bindAccessGate() {
   elements.showLoginButton.addEventListener("click", () => setAccessMode("login"));
   elements.showRegisterButton.addEventListener("click", () => setAccessMode("register"));
+  elements.logoutButton.addEventListener("click", logout);
 
   elements.accessForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -172,12 +178,42 @@ async function submitAccessForm() {
       localStorage.setItem(KNOWN_ACCOUNT_STORAGE_KEY, "true");
     }
 
+    showAuthenticatedUser(result.user);
     unlockAccess();
     await initializeCrossword();
   } catch (error) {
     elements.accessError.textContent = error.message || "Impossibile completare l’accesso.";
   } finally {
     setAccessLoading(false);
+  }
+}
+
+// Mostra nell'intestazione il nickname restituito da una sessione verificata.
+function showAuthenticatedUser(user) {
+  // Il nickname viene inserito come testo, mai come HTML.
+  elements.userGreeting.textContent = `Ciao, ${user.nickname}`;
+}
+
+// Revoca la sessione corrente sul server, rimuove lo sblocco locale e ricarica la pagina.
+async function logout() {
+  elements.logoutButton.disabled = true;
+
+  try {
+    const response = await fetch("/api/auth/session", {
+      method: "DELETE",
+      credentials: "same-origin"
+    });
+
+    if (!response.ok) {
+      throw new Error("Logout non riuscito.");
+    }
+
+    // Il progresso resta nel browser; rimuoviamo soltanto lo sblocco della scheda corrente.
+    sessionStorage.removeItem(ACCESS_SESSION_KEY);
+    window.location.reload();
+  } catch (error) {
+    elements.logoutButton.disabled = false;
+    elements.checkSummary.textContent = error.message;
   }
 }
 
@@ -201,6 +237,7 @@ async function loadAuthSession() {
   }
 }
 
+// Legge una risposta JSON dell'API e restituisce un oggetto vuoto se il corpo non è valido.
 async function readApiResponse(response) {
   try {
     return await response.json();
@@ -209,6 +246,7 @@ async function readApiResponse(response) {
   }
 }
 
+// Aggiorna campi e messaggi del form per registrazione, login o sola conferma della chiave.
 function setAccessMode(mode) {
   // La modalità "key" nasconde le credenziali quando il cookie identifica già l'utente.
   const isKeyOnly = mode === "key";
@@ -243,11 +281,13 @@ function setAccessMode(mode) {
   }
 }
 
+// Disabilita temporaneamente l'invio del form e mostra lo stato di caricamento.
 function setAccessLoading(isLoading) {
   elements.accessSubmitButton.disabled = isLoading;
   elements.accessSubmitButton.textContent = isLoading ? "Attendi…" : getAccessSubmitLabel();
 }
 
+// Restituisce il testo del pulsante coerente con la modalità di accesso selezionata.
 function getAccessSubmitLabel() {
   const mode = elements.accessForm.dataset.mode;
   if (mode === "key") return "Entra";
@@ -255,6 +295,7 @@ function getAccessSubmitLabel() {
   return "Registrati ed entra";
 }
 
+// Nasconde la schermata di accesso e rende nuovamente interattiva l'applicazione.
 function unlockAccess() {
   document.body.classList.remove("access-locked");
   elements.accessGate.classList.add("hidden");

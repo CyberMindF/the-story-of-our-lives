@@ -12,6 +12,7 @@ export function json(body, status = 200, headers = {}) {
   });
 }
 
+// Prova a leggere il corpo JSON della richiesta senza generare eccezioni verso il chiamante.
 export async function readJson(request) {
   try {
     return await request.json();
@@ -20,14 +21,17 @@ export async function readJson(request) {
   }
 }
 
+// Uniforma l'email eliminando gli spazi esterni e convertendola in minuscolo.
 export function normalizeEmail(value) {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
 }
 
+// Controlla che l'email abbia una struttura minima valida prima di interrogare il database.
 export function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+// Verifica la lunghezza minima richiesta per la password.
 export function isValidPassword(value) {
   return typeof value === "string" && value.length >= 8;
 }
@@ -41,18 +45,17 @@ export function isWorldKeyValid(value, expectedValue) {
   return value.trim().toLocaleLowerCase("it") === expectedValue.trim().toLocaleLowerCase("it");
 }
 
+// Genera una sessione, ne salva l'hash in D1 e restituisce il cookie con il token originale.
 export async function createSession(request, env, userId) {
   const token = randomToken();
   const tokenHash = await hashToken(token);
   const expiresAt = new Date(Date.now() + SESSION_DURATION_SECONDS * 1000).toISOString();
 
-  // Elimina le sessioni scadute e memorizza soltanto l'hash del nuovo token.
-  await env.DB.batch([
-    env.DB.prepare("DELETE FROM sessions WHERE expires_at <= ?").bind(new Date().toISOString()),
-    env.DB
-      .prepare("INSERT INTO sessions (user_id, token_hash, expires_at, last_seen_at) VALUES (?, ?, ?, ?)")
-      .bind(userId, tokenHash, expiresAt, new Date().toISOString())
-  ]);
+  // Anche le sessioni scadute restano nello storico: qui inseriamo soltanto quella nuova.
+  await env.DB
+    .prepare("INSERT INTO sessions (user_id, token_hash, expires_at, last_seen_at) VALUES (?, ?, ?, ?)")
+    .bind(userId, tokenHash, expiresAt, new Date().toISOString())
+    .run();
 
   // Secure viene omesso in locale, dove Wrangler usa normalmente HTTP.
   const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
@@ -81,6 +84,23 @@ export async function recordAccessIp(request, env, userId) {
     .run();
 }
 
+// Revoca logicamente la sessione corrente tramite deleted_at e prepara la scadenza del cookie.
+export async function revokeCurrentSession(request, env) {
+  const token = readCookie(request.headers.get("Cookie"), "noi_session");
+  if (token) {
+    // deleted_at conserva la sessione nello storico ma impedisce di riutilizzarla.
+    const tokenHash = await hashToken(token);
+    await env.DB
+      .prepare("UPDATE sessions SET deleted_at = ? WHERE token_hash = ? AND deleted_at IS NULL")
+      .bind(new Date().toISOString(), tokenHash)
+      .run();
+  }
+
+  const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
+  return `noi_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secure}`;
+}
+
+// Restituisce l'utente associato a una sessione valida, attiva e non revocata.
 export async function getAuthenticatedUser(request, env) {
   const token = readCookie(request.headers.get("Cookie"), "noi_session");
   if (!token) {
@@ -97,6 +117,7 @@ export async function getAuthenticatedUser(request, env) {
       INNER JOIN users ON users.id = sessions.user_id
       WHERE sessions.token_hash = ?
         AND sessions.expires_at > ?
+        AND sessions.deleted_at IS NULL
         AND users.is_activated = 1
     `)
     .bind(tokenHash, now)
@@ -119,17 +140,20 @@ export async function getAuthenticatedUser(request, env) {
   };
 }
 
+// Crea un token casuale crittograficamente sicuro per identificare una nuova sessione.
 function randomToken() {
   const bytes = crypto.getRandomValues(new Uint8Array(32));
   return bytesToBase64Url(bytes);
 }
 
+// Calcola l'hash SHA-256 del token prima del confronto o del salvataggio nel database.
 async function hashToken(token) {
   const bytes = new TextEncoder().encode(token);
   const hash = await crypto.subtle.digest("SHA-256", bytes);
   return bytesToBase64Url(new Uint8Array(hash));
 }
 
+// Converte una sequenza di byte nel formato Base64URL adatto ai cookie.
 function bytesToBase64Url(bytes) {
   // Base64URL evita caratteri problematici all'interno del valore del cookie.
   let binary = "";
@@ -140,6 +164,7 @@ function bytesToBase64Url(bytes) {
   return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
 }
 
+// Cerca un cookie per nome all'interno dell'header Cookie della richiesta.
 function readCookie(header, name) {
   if (!header) {
     return null;
@@ -155,6 +180,7 @@ function readCookie(header, name) {
   return null;
 }
 
+// Recupera l'IP pubblico visto da Cloudflare, con un fallback utile durante lo sviluppo locale.
 function getConnectionIp(request) {
   // Cloudflare valorizza CF-Connecting-IP; il secondo header facilita soltanto i test locali.
   const cloudflareIp = request.headers.get("CF-Connecting-IP")?.trim();

@@ -5,16 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Our Words</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./style.css?v=16" />
+    <link rel="stylesheet" href="./style.css?v=17" />
   </head>
   <body class="access-locked">
     <div id="app-shell" class="app-shell" inert aria-hidden="true">
+      <!-- Intestazione principale con utente autenticato, titolo e stato del cruciverba. -->
       <header class="hero">
-        <div>
+        <div class="hero-copy">
           <h1 id="title">Caricamento…</h1>
           <p id="subtitle" class="subtitle"></p>
         </div>
         <div class="status-panel">
+          <!-- Saluto e logout restano vicini alle informazioni personali sul progresso. -->
+          <div class="hero-userbar">
+            <p id="user-greeting" class="user-greeting"></p>
+            <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" />
+              </svg>
+            </button>
+          </div>
           <p id="completion-status">0 di 76 ricordi completati</p>
           <p id="check-summary" aria-live="polite">Nessun controllo eseguito.</p>
         </div>
@@ -74,6 +84,7 @@
       </main>
     </div>
 
+    <!-- Schermata di accesso mostrata finché account, sessione e chiave non sono validi. -->
     <div id="access-gate" class="access-gate" role="dialog" aria-modal="true" aria-labelledby="access-title" aria-describedby="access-text">
       <form id="access-form" class="access-card">
         <p class="access-eyebrow">Our Words</p>
@@ -134,6 +145,6 @@
       </div>
     </div>
 
-    <script src="./app.js?v=16" defer></script>
+    <script src="./app.js?v=17" defer></script>
   </body>
   </html>

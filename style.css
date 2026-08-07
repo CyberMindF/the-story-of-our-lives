@@ -326,6 +326,52 @@ body.access-locked .app-shell {
   margin-bottom: 1rem;
 }
 
+.hero-copy {
+  min-width: 0;
+}
+
+.hero-userbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+}
+
+.user-greeting {
+  margin: 0;
+  color: var(--muted-color);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.logout-button {
+  display: inline-grid;
+  width: 1.7rem;
+  height: 1.7rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted-color);
+}
+
+.logout-button:hover {
+  background: var(--active-color);
+  color: var(--text-color);
+}
+
+.logout-button svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .eyebrow {
   margin: 0 0 0.35rem;
   color: var(--muted-color);
@@ -343,6 +389,10 @@ h2 {
 .status-panel p {
   margin: 0.35rem 0 0;
   color: var(--muted-color);
+}
+
+.status-panel {
+  text-align: right;
 }
 
 .mobile-sheet-toggle {
