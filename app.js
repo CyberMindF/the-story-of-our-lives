@@ -2,9 +2,12 @@ const STORAGE_VERSION = "v15";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
 const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
-const ACCESS_STORAGE_KEY = "noi-crossword-access";
-const ACCESS_KEY = "cerchio";
+// Le credenziali sono gestite dal server; nel browser restano solo indicatori della sessione.
+const LEGACY_ACCESS_STORAGE_KEY = "noi-crossword-access";
+const ACCESS_SESSION_KEY = "noi-crossword-access-session-v1";
+const KNOWN_ACCOUNT_STORAGE_KEY = "noi-crossword-known-account-v1";
 const ENABLE_DEVELOPER_TOOLS = false;
+const WORD_ATTEMPT_DEBOUNCE_MS = 1000;
 const RESETTABLE_STORAGE_PREFIXES = ["noi-crossword-progress-", "noi-crossword-theme-"];
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
@@ -30,15 +33,30 @@ const state = {
   dimensions: { rows: 0, cols: 0, rowOffset: 0, colOffset: 0 },
   isComplete: false,
   developerRevealActive: false,
-  developerProgressSnapshot: null
+  developerProgressSnapshot: null,
+  telemetryReady: false,
+  completedWordIds: new Set(),
+  wordAttemptTimers: new Map(),
+  lastWordAttempts: new Map()
 };
 
 const elements = {
   appShell: document.getElementById("app-shell"),
   accessGate: document.getElementById("access-gate"),
   accessForm: document.getElementById("access-form"),
+  accessTitle: document.getElementById("access-title"),
+  accessText: document.getElementById("access-text"),
+  accessModeSwitcher: document.getElementById("access-mode-switcher"),
+  accessAccountFields: document.getElementById("access-account-fields"),
+  accessEmail: document.getElementById("access-email"),
+  accessPassword: document.getElementById("access-password"),
   accessKey: document.getElementById("access-key"),
+  accessSubmitButton: document.getElementById("access-submit-button"),
+  showLoginButton: document.getElementById("show-login-button"),
+  showRegisterButton: document.getElementById("show-register-button"),
   accessError: document.getElementById("access-error"),
+  userGreeting: document.getElementById("user-greeting"),
+  logoutButton: document.getElementById("logout-button"),
   title: document.getElementById("title"),
   subtitle: document.getElementById("subtitle"),
   grid: document.getElementById("grid"),
@@ -68,19 +86,26 @@ const elements = {
 
 document.addEventListener("DOMContentLoaded", init);
 
+// Prepara tema e accesso, controlla la sessione e avvia il cruciverba solo per un utente autorizzato.
 async function init() {
   ensureStorageVersion();
   applySavedTheme();
   bindVisualViewport();
+  bindAccessGate();
 
-  if (!hasAccess()) {
-    bindAccessGate();
-    if (!window.matchMedia("(max-width: 640px)").matches) {
-      elements.accessKey.focus();
-    }
+  const session = await loadAuthSession();
+  if (!session.authenticated) {
+    const initialMode = localStorage.getItem(KNOWN_ACCOUNT_STORAGE_KEY) === "true" ? "login" : "register";
+    setAccessMode(initialMode);
     return;
   }
 
+  if (sessionStorage.getItem(ACCESS_SESSION_KEY) !== String(session.user.id)) {
+    setAccessMode("key");
+    return;
+  }
+
+  showAuthenticatedUser(session.user);
   unlockAccess();
   await initializeCrossword();
 }
@@ -101,7 +126,14 @@ async function initializeCrossword() {
     bindControls();
     loadProgress();
     updateGridInputs();
+    initializeTelemetryState();
     updateCompletionState();
+    state.telemetryReady = true;
+    void trackEvent("crossword_opened", {
+      totalWords: state.words.length,
+      completedWords: state.completedWordIds.size,
+      theme: document.body.dataset.theme
+    });
     selectWord(findFirstUnfinishedWordId(), { focusFirstEmpty: true, scroll: false });
   } catch (error) {
     console.error("Errore durante l'inizializzazione del cruciverba:", error);
@@ -110,27 +142,171 @@ async function initializeCrossword() {
   }
 }
 
-function hasAccess() {
-  return localStorage.getItem(ACCESS_STORAGE_KEY) === "granted";
-}
-
+// Collega i controlli del form di autenticazione e il pulsante di logout alle rispettive azioni.
 function bindAccessGate() {
+  elements.showLoginButton.addEventListener("click", () => setAccessMode("login"));
+  elements.showRegisterButton.addEventListener("click", () => setAccessMode("register"));
+  elements.logoutButton.addEventListener("click", logout);
+
   elements.accessForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const key = elements.accessKey.value.trim().toLocaleLowerCase("it");
-
-    if (key !== ACCESS_KEY) {
-      elements.accessError.textContent = "Chiave non corretta. Riprova.";
-      elements.accessKey.select();
-      return;
-    }
-
-    localStorage.setItem(ACCESS_STORAGE_KEY, "granted");
-    unlockAccess();
-    await initializeCrossword();
+    await submitAccessForm();
   });
 }
 
+// Invia registrazione, login o sola chiave alla rotta adatta alla modalità corrente.
+async function submitAccessForm() {
+  const mode = elements.accessForm.dataset.mode || "register";
+  const worldKey = elements.accessKey.value.trim();
+  const payload = { worldKey };
+
+  if (mode !== "key") {
+    payload.email = elements.accessEmail.value.trim();
+    payload.password = elements.accessPassword.value;
+  }
+
+  setAccessLoading(true);
+  elements.accessError.textContent = "";
+
+  try {
+    const endpoint = mode === "key" ? "/api/auth/session" : `/api/auth/${mode}`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const result = await readApiResponse(response);
+
+    if (!response.ok) {
+      if (response.status === 401 && mode === "key") {
+        setAccessMode("login");
+      }
+      throw new Error(result.error || "Accesso non riuscito.");
+    }
+
+    sessionStorage.setItem(ACCESS_SESSION_KEY, String(result.user.id));
+    if (mode !== "key") {
+      localStorage.setItem(KNOWN_ACCOUNT_STORAGE_KEY, "true");
+    }
+
+    showAuthenticatedUser(result.user);
+    unlockAccess();
+    await initializeCrossword();
+  } catch (error) {
+    elements.accessError.textContent = error.message || "Impossibile completare l’accesso.";
+  } finally {
+    setAccessLoading(false);
+  }
+}
+
+// Mostra nell'intestazione il nickname restituito da una sessione verificata.
+function showAuthenticatedUser(user) {
+  // Il nickname viene inserito come testo, mai come HTML.
+  elements.userGreeting.textContent = `Ciao, ${user.nickname}`;
+}
+
+// Revoca la sessione corrente sul server, rimuove lo sblocco locale e ricarica la pagina.
+async function logout() {
+  elements.logoutButton.disabled = true;
+
+  try {
+    const response = await fetch("/api/auth/session", {
+      method: "DELETE",
+      credentials: "same-origin"
+    });
+
+    if (!response.ok) {
+      throw new Error("Logout non riuscito.");
+    }
+
+    // Il progresso resta nel browser; rimuoviamo soltanto lo sblocco della scheda corrente.
+    sessionStorage.removeItem(ACCESS_SESSION_KEY);
+    window.location.reload();
+  } catch (error) {
+    elements.logoutButton.disabled = false;
+    elements.checkSummary.textContent = error.message;
+  }
+}
+
+// Il cookie HttpOnly non è leggibile da JavaScript: chiediamo al server se è ancora valido.
+async function loadAuthSession() {
+  try {
+    const response = await fetch("/api/auth/session", {
+      method: "GET",
+      credentials: "same-origin",
+      headers: { Accept: "application/json" }
+    });
+
+    if (!response.ok) {
+      return { authenticated: false };
+    }
+
+    return await readApiResponse(response);
+  } catch (error) {
+    console.warn("Impossibile verificare la sessione:", error);
+    return { authenticated: false };
+  }
+}
+
+// Legge una risposta JSON dell'API e restituisce un oggetto vuoto se il corpo non è valido.
+async function readApiResponse(response) {
+  try {
+    return await response.json();
+  } catch {
+    return {};
+  }
+}
+
+// Aggiorna campi e messaggi del form per registrazione, login o sola conferma della chiave.
+function setAccessMode(mode) {
+  // La modalità "key" nasconde le credenziali quando il cookie identifica già l'utente.
+  const isKeyOnly = mode === "key";
+  const isRegister = mode === "register";
+  elements.accessForm.dataset.mode = mode;
+  elements.accessModeSwitcher.hidden = isKeyOnly;
+  elements.accessAccountFields.hidden = isKeyOnly;
+  elements.accessEmail.required = !isKeyOnly;
+  elements.accessPassword.required = !isKeyOnly;
+  elements.showLoginButton.setAttribute("aria-pressed", String(mode === "login"));
+  elements.showRegisterButton.setAttribute("aria-pressed", String(isRegister));
+  elements.accessError.textContent = "";
+
+  if (isKeyOnly) {
+    elements.accessTitle.textContent = "Ti ricordi della chiave?";
+    elements.accessText.textContent = "È la stessa con cui si apre anche il nostro mondo.";
+    elements.accessSubmitButton.textContent = "Entra";
+  } else if (isRegister) {
+    elements.accessTitle.textContent = "Entra per la prima volta";
+    elements.accessText.textContent = "Crea il tuo accesso per custodire i progressi e ritrovare tutti i nostri ricordi.";
+    elements.accessSubmitButton.textContent = "Registrati ed entra";
+  } else {
+    elements.accessTitle.textContent = "Rieccoci nel nostro mondo";
+    elements.accessText.textContent = "Accedi con il tuo account per tornare alle parole che raccontano di noi.";
+    elements.accessSubmitButton.textContent = "Accedi ed entra";
+  }
+
+  const target = isKeyOnly ? elements.accessKey : elements.accessEmail;
+  if (!window.matchMedia("(max-width: 640px)").matches) {
+    target.focus();
+  }
+}
+
+// Disabilita temporaneamente l'invio del form e mostra lo stato di caricamento.
+function setAccessLoading(isLoading) {
+  elements.accessSubmitButton.disabled = isLoading;
+  elements.accessSubmitButton.textContent = isLoading ? "Attendi…" : getAccessSubmitLabel();
+}
+
+// Restituisce il testo del pulsante coerente con la modalità di accesso selezionata.
+function getAccessSubmitLabel() {
+  const mode = elements.accessForm.dataset.mode;
+  if (mode === "key") return "Entra";
+  if (mode === "login") return "Accedi ed entra";
+  return "Registrati ed entra";
+}
+
+// Nasconde la schermata di accesso e rende nuovamente interattiva l'applicazione.
 function unlockAccess() {
   document.body.classList.remove("access-locked");
   elements.accessGate.classList.add("hidden");
@@ -151,7 +327,8 @@ function ensureStorageVersion() {
     }
   });
 
-  localStorage.removeItem(ACCESS_STORAGE_KEY);
+  localStorage.removeItem(LEGACY_ACCESS_STORAGE_KEY);
+  sessionStorage.removeItem(ACCESS_SESSION_KEY);
   localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
 }
 
@@ -410,9 +587,12 @@ function bindVisualViewport() {
     const visualViewport = window.visualViewport;
     const height = visualViewport?.height || window.innerHeight;
     const isGridInputFocused = document.activeElement?.classList.contains("cell-input");
+    const isAccessInputFocused = elements.accessForm.contains(document.activeElement);
     const keyboardLikelyOpen = isGridInputFocused && height < stableHeight * 0.82;
+    const accessKeyboardLikelyOpen = isAccessInputFocused && height < stableHeight * 0.82;
 
     document.body.classList.toggle("keyboard-open", keyboardLikelyOpen);
+    document.body.classList.toggle("access-keyboard-open", accessKeyboardLikelyOpen);
 
     if (keyboardLikelyOpen) {
       const offsetTop = visualViewport?.offsetTop || 0;
@@ -423,6 +603,11 @@ function bindVisualViewport() {
     }
 
     if (!force && keyboardLikelyOpen) {
+      return;
+    }
+
+    if (!force && accessKeyboardLikelyOpen) {
+      document.documentElement.style.setProperty("--app-viewport-height", `${Math.round(height)}px`);
       return;
     }
 
@@ -1082,8 +1267,12 @@ function renderThemeSwitcher() {
     button.setAttribute("aria-pressed", document.body.dataset.theme === theme.id ? "true" : "false");
     button.setAttribute("aria-label", `Attiva il tema ${theme.label}`);
     button.addEventListener("click", () => {
+      const previousTheme = document.body.dataset.theme;
       applyTheme(theme.id);
       showThemeToast(theme.label);
+      if (previousTheme !== theme.id) {
+        void trackEvent("theme_changed", { previousTheme, theme: theme.id });
+      }
     });
     elements.themeSwitcher.appendChild(button);
   });
@@ -1228,6 +1417,7 @@ function setCellValue(cellKey, value) {
   clearValidationForCell(cellKey);
   saveProgress();
   updateCompletionState();
+  scheduleWordAttemptsForCell(cellKey);
 }
 
 function animateLetterEntry(input) {
@@ -1310,6 +1500,7 @@ function updateCompletionState() {
 
   state.words.forEach((entry) => {
     const solved = entry.cells.every((cell) => normalizeLetter(state.progress[cell.key] || "") === cell.solution);
+    const wasSolved = state.completedWordIds.has(entry.id);
     const clueButton = state.cluesById.get(entry.id);
     if (clueButton) {
       clueButton.classList.toggle("is-complete", solved);
@@ -1318,19 +1509,123 @@ function updateCompletionState() {
 
     if (solved) {
       completedWords += 1;
+      state.completedWordIds.add(entry.id);
+      if (!wasSolved && state.telemetryReady) {
+        void trackEvent("word_completed", { wordOrder: entry.order, direction: entry.direction });
+      }
     } else {
       allSolved = false;
+      state.completedWordIds.delete(entry.id);
     }
   });
 
   elements.completionStatus.textContent = `${completedWords} di ${state.words.length} ricordi completati`;
 
   if (allSolved && !state.isComplete) {
+    if (state.telemetryReady) {
+      void trackEvent("crossword_completed", { totalWords: state.words.length });
+    }
     openCompletionModal();
   }
 
   if (!allSolved) {
     state.isComplete = false;
+  }
+}
+
+// Inizializza la telemetria dal progresso esistente senza trasformare il caricamento in nuovi eventi.
+function initializeTelemetryState() {
+  state.telemetryReady = false;
+  state.completedWordIds.clear();
+  state.lastWordAttempts.clear();
+  state.wordAttemptTimers.forEach((timer) => window.clearTimeout(timer));
+  state.wordAttemptTimers.clear();
+
+  state.words.forEach((entry) => {
+    if (isWordSolved(entry)) {
+      state.completedWordIds.add(entry.id);
+    }
+
+    const currentAttempt = getWordAttempt(entry);
+    if (currentAttempt) {
+      state.lastWordAttempts.set(entry.id, currentAttempt);
+    }
+  });
+}
+
+// Riavvia il debounce per tutte le parole che condividono la cella appena modificata.
+function scheduleWordAttemptsForCell(cellKey) {
+  const cell = state.cells.get(cellKey);
+  cell?.wordIds.forEach((wordId) => scheduleWordAttempt(wordId));
+}
+
+// Attende un secondo di pausa prima di consolidare e inviare il tentativo corrente della parola.
+function scheduleWordAttempt(wordId) {
+  window.clearTimeout(state.wordAttemptTimers.get(wordId));
+  const timer = window.setTimeout(() => {
+    state.wordAttemptTimers.delete(wordId);
+    void sendWordAttempt(wordId);
+  }, WORD_ATTEMPT_DEBOUNCE_MS);
+  state.wordAttemptTimers.set(wordId, timer);
+}
+
+// Invia un tentativo non vuoto soltanto se differisce dall'ultimo confermato dal backend.
+async function sendWordAttempt(wordId) {
+  const entry = state.entriesById.get(wordId);
+  if (!entry) {
+    return;
+  }
+
+  const attempt = getWordAttempt(entry);
+  if (!attempt || attempt === state.lastWordAttempts.get(wordId)) {
+    return;
+  }
+
+  const saved = await sendTelemetryRequest("/api/telemetry/word-attempts", {
+    wordOrder: entry.order,
+    attempt
+  });
+  if (saved) {
+    state.lastWordAttempts.set(wordId, attempt);
+  }
+}
+
+// Rappresenta le celle interne vuote con underscore e rimuove quelle vuote in coda.
+function getWordAttempt(entry) {
+  return entry.cells
+    .map((cell) => normalizeLetter(state.progress[cell.key] || "") || "_")
+    .join("")
+    .replace(/_+$/, "");
+}
+
+// Controlla se tutte le celle di una parola contengono la relativa soluzione.
+function isWordSolved(entry) {
+  return entry.cells.every((cell) => normalizeLetter(state.progress[cell.key] || "") === cell.solution);
+}
+
+// Registra un evento generale della sezione cruciverba senza interrompere l'esperienza in caso di errore.
+async function trackEvent(eventType, metadata = {}) {
+  await sendTelemetryRequest("/api/telemetry/events", {
+    section: "crossword",
+    eventType,
+    metadata
+  });
+}
+
+// Esegue una richiesta di telemetria autenticata e gestisce gli errori senza mostrarli all'utente.
+async function sendTelemetryRequest(endpoint, payload) {
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true
+    });
+    return response.ok;
+  } catch (error) {
+    console.warn("Impossibile inviare la telemetria:", error);
+    return false;
   }
 }
 

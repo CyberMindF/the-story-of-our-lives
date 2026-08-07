@@ -1,50 +1,86 @@
-# Cruciverba statico "Noi"
+# Il Mondo Bianco
 
-Piccola web app statica per un cruciverba personalizzato, compatibile con GitHub Pages e senza dipendenze esterne.
+Cruciverba personalizzato con frontend HTML/CSS/JavaScript e autenticazione tramite Cloudflare Pages Functions e D1.
 
-## Avvio in locale
+## Avvio locale
 
-Non conviene aprire `index.html` con doppio click, perché molti browser bloccano o limitano il caricamento di `data.json` tramite `fetch()` quando la pagina usa il protocollo `file://`.
+Non aprire direttamente `index.html`: il caricamento di `data.json` e gli endpoint `/api/auth/*` richiedono un server. Anche `python3 -m http.server` non è più sufficiente, perché serve soltanto i file statici e non esegue Pages Functions.
 
-Avvia invece un piccolo server locale dalla cartella del progetto:
+Installa Wrangler, prepara la chiave locale e applica le migrazioni:
 
 ```bash
-python3 -m http.server 8000
+npm install
+cp .dev.vars.example .dev.vars
+npx wrangler d1 migrations apply DB --local
 ```
 
-```bash (windows)
-python -m http.server 8000
+Modifica `WORLD_KEY` dentro `.dev.vars`, poi avvia:
+
+```bash
+npx wrangler pages dev .
 ```
 
-Poi apri nel browser:
+Apri l'indirizzo mostrato da Wrangler, normalmente `http://localhost:8788`.
 
-```text
-http://localhost:8000
+## Autenticazione
+
+Gli endpoint sono organizzati in `functions/api/auth/`:
+
+- `POST /api/auth/register`: registra un nuovo utente e crea una sessione.
+- `POST /api/auth/login`: verifica email, password e chiave, poi crea una sessione.
+- `GET /api/auth/session`: controlla se il token è ancora valido.
+- `POST /api/auth/session`: con token valido, verifica nuovamente la chiave.
+
+Il token originale viene inviato in un cookie `HttpOnly`; D1 conserva soltanto il suo hash. La sessione scade dopo 7 giorni e viene rinnovata per altri 7 giorni soltanto quando la chiave viene inviata correttamente. Il controllo automatico eseguito all'apertura non prolunga la sessione. La verifica della chiave vale solo per la scheda corrente tramite `sessionStorage`, quindi viene richiesta nuovamente dopo la chiusura della sessione browser.
+
+## Database
+
+Le migrazioni sono in `migrations/`:
+
+```bash
+npx wrangler d1 migrations apply DB --local
 ```
 
-## Pubblicazione gratuita con GitHub Pages
+Per applicarle al D1 configurato su Cloudflare:
 
-1. Crea un repository GitHub e carica questi file.
-2. Vai in `Settings` → `Pages`.
-3. In `Build and deployment`, scegli `Deploy from a branch`.
-4. Seleziona il branch principale, di solito `main`, e la cartella `/ (root)`.
-5. Salva: dopo pochi istanti il sito sarà pubblicato.
-
-Il progetto usa solo percorsi relativi come `./style.css`, `./app.js` e `./data.json`, quindi resta compatibile anche se pubblicato sotto un sottopercorso GitHub Pages.
-
-## File da modificare
-
-- Cambiare parole, definizioni, coordinate o ordine: modifica `data.json`.
-- Cambiare grafica, colori o dimensione delle celle: modifica `style.css`.
-- Cambiare il messaggio finale, il comportamento dell'interfaccia o la logica: modifica `app.js`.
-
-## Struttura
-
-```text
-/
-├── index.html
-├── style.css
-├── app.js
-├── data.json
-└── README.md
+```bash
+npx wrangler d1 migrations apply DB --remote
 ```
+
+Il binding D1 deve chiamarsi `DB`. `WORLD_KEY` deve essere configurata come secret nelle impostazioni del progetto Cloudflare Pages e non deve essere inserita in `wrangler.toml` o nel repository.
+
+## Telemetria
+
+La telemetria usa due endpoint autenticati e non rinnova la durata della sessione:
+
+- `POST /api/telemetry/events`: registra eventi significativi delle diverse sezioni.
+- `POST /api/telemetry/word-attempts`: registra i tentativi del cruciverba dopo un secondo di pausa.
+
+La tabella `events` contiene sezione, tipo, versione dello schema, metadati JSON, utente e sessione. Per aggiungere un evento futuro bisogna inserirlo in `ALLOWED_EVENTS` dentro `functions/api/telemetry/events.js` e richiamare il client riutilizzabile `trackEvent`.
+
+I tentativi sono separati in `crossword_word_attempts`. Le celle interne ancora vuote sono rappresentate da `_`; le celle vuote finali vengono omesse. Il frontend evita richieste duplicate e il backend impedisce comunque inserimenti consecutivi identici per utente e parola.
+
+Il backend legge la soluzione direttamente da `data.json` e calcola accuratezza posizionale, similarità di modifica, completezza e compatibilità complessiva. Un prefisso corretto può quindi avere compatibilità 100% ma completezza inferiore: per esempio `AFFET` rispetto ad `AFFETTO` ha compatibilità 100% e completezza 71,43%.
+
+Login e logout non vengono duplicati in `events`: la tabella `sessions`, insieme a `created_at`, `last_seen_at`, `expires_at` e `deleted_at`, costituisce lo storico autorevole degli accessi. Gli IP pubblici osservati sono conservati separatamente in `user_access_ips`.
+
+## Pubblicazione
+
+Collega il repository GitHub a un progetto Cloudflare Pages. Non è necessario un comando di build; la directory di output è la root del repository. Prima del primo utilizzo:
+
+1. collega il database D1 al binding `DB`;
+2. configura il secret `WORLD_KEY`;
+3. applica le migrazioni al database remoto;
+4. esegui un nuovo deployment.
+
+GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1.
+
+## File principali
+
+- `data.json`: parole, definizioni, coordinate e ordine narrativo.
+- `style.css`: grafica, temi e layout responsive.
+- `app.js`: cruciverba, interfaccia e client di autenticazione.
+- `functions/api/auth/`: API di registrazione, login e sessione.
+- `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.
+- `wrangler.toml`: configurazione Cloudflare e binding D1.
+- `final-message.json`: contenuto della schermata finale.

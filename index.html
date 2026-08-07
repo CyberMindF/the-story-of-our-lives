@@ -5,16 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Our Words</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./style.css?v=14" />
+    <link rel="stylesheet" href="./style.css?v=19" />
   </head>
   <body class="access-locked">
     <div id="app-shell" class="app-shell" inert aria-hidden="true">
+      <!-- Intestazione principale con utente autenticato, titolo e stato del cruciverba. -->
       <header class="hero">
-        <div>
+        <div class="hero-copy">
           <h1 id="title">Caricamento…</h1>
           <p id="subtitle" class="subtitle"></p>
         </div>
         <div class="status-panel">
+          <!-- Saluto e logout restano vicini alle informazioni personali sul progresso. -->
+          <div class="hero-userbar">
+            <p id="user-greeting" class="user-greeting"></p>
+            <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" />
+              </svg>
+            </button>
+          </div>
           <p id="completion-status">0 di 76 ricordi completati</p>
           <p id="check-summary" aria-live="polite">Nessun controllo eseguito.</p>
         </div>
@@ -74,16 +84,32 @@
       </main>
     </div>
 
+    <!-- Schermata di accesso mostrata finché account, sessione e chiave non sono validi. -->
     <div id="access-gate" class="access-gate" role="dialog" aria-modal="true" aria-labelledby="access-title" aria-describedby="access-text">
       <form id="access-form" class="access-card">
         <p class="access-eyebrow">Our Words</p>
         <h1 id="access-title">Ti ricordi della chiave?</h1>
         <p id="access-text">È la stessa con cui si apre anche il nostro mondo.</p>
-        <label for="access-key">La chiave</label>
-        <div class="access-controls">
-          <input id="access-key" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" data-1p-ignore data-lpignore="true" required />
-          <button type="submit">Entra</button>
+
+        <div id="access-mode-switcher" class="access-mode-switcher" role="group" aria-label="Scegli se accedere o registrarti">
+          <button id="show-login-button" type="button" aria-pressed="false">Accedi</button>
+          <button id="show-register-button" type="button" aria-pressed="true">Registrati</button>
         </div>
+
+        <div id="access-account-fields" class="access-account-fields">
+          <label for="access-email">Email</label>
+          <input id="access-email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required />
+
+          <label for="access-password">Password</label>
+          <!-- È un campo di testo mascherato per limitare i suggerimenti dei gestori di password. -->
+          <input id="access-password" class="masked-text-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" minlength="8" data-1p-ignore data-lpignore="true" required />
+        </div>
+
+        <label for="access-key">La chiave</label>
+        <p id="access-key-hint" class="access-key-hint">Ti ricordi la chiave? È sempre quella che porti al polso.</p>
+        <input id="access-key" type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" aria-describedby="access-key-hint" data-1p-ignore data-lpignore="true" required />
+
+        <button id="access-submit-button" class="access-submit-button" type="submit">Registrati ed entra</button>
         <p id="access-error" class="access-error" aria-live="polite"></p>
       </form>
     </div>
@@ -120,6 +146,6 @@
       </div>
     </div>
 
-    <script src="./app.js?v=14" defer></script>
+    <script src="./app.js?v=20" defer></script>
   </body>
   </html>
