@@ -12,14 +12,14 @@ export async function onRequestPost(context) {
     }
 
     const { body, session } = parsed;
-    const wordOrder = Number(body.wordOrder);
+    const wordId = Number(body.wordId);
     const attempt = normalizeAttempt(body.attempt);
 
-    if (!Number.isInteger(wordOrder) || wordOrder < 1 || !attempt) {
+    if (!Number.isInteger(wordId) || wordId < 1 || !attempt) {
       return json({ error: "Tentativo non valido." }, 400);
     }
 
-    const solution = await loadSolution(context, wordOrder);
+    const solution = await loadSolution(context, wordId);
     if (!solution) {
       return json({ error: "Parola non trovata." }, 400);
     }
@@ -32,7 +32,7 @@ export async function onRequestPost(context) {
         INSERT INTO crossword_word_attempts (
           user_id,
           session_id,
-          word_order,
+          word_id,
           attempt,
           compatibility_percent,
           position_accuracy_percent,
@@ -45,7 +45,7 @@ export async function onRequestPost(context) {
         WHERE COALESCE((
           SELECT attempt
           FROM crossword_word_attempts
-          WHERE user_id = ? AND word_order = ?
+          WHERE user_id = ? AND word_id = ?
           ORDER BY id DESC
           LIMIT 1
         ), '') <> ?
@@ -53,7 +53,7 @@ export async function onRequestPost(context) {
       .bind(
         session.user.id,
         session.sessionId,
-        wordOrder,
+        wordId,
         attempt,
         metrics.compatibilityPercent,
         metrics.positionAccuracyPercent,
@@ -62,7 +62,7 @@ export async function onRequestPost(context) {
         Number(metrics.isCorrectPrefix),
         Number(metrics.isExact),
         session.user.id,
-        wordOrder,
+        wordId,
         attempt
       )
       .run();
@@ -74,8 +74,8 @@ export async function onRequestPost(context) {
   }
 }
 
-// Legge data.json dagli asset Pages e restituisce la soluzione associata all'ordine narrativo.
-async function loadSolution(context, wordOrder) {
+// Legge data.json dagli asset Pages e trova la soluzione tramite l'ID progressivo della parola.
+async function loadSolution(context, wordId) {
   const dataUrl = new URL("/data.json", context.request.url);
   const response = await context.env.ASSETS.fetch(dataUrl);
   if (!response.ok) {
@@ -83,7 +83,7 @@ async function loadSolution(context, wordOrder) {
   }
 
   const data = await response.json();
-  const word = data.words?.[wordOrder - 1]?.word;
+  const word = data.words?.[wordId - 1]?.word;
   return typeof word === "string" ? word.trim().toLocaleUpperCase("it") : "";
 }
 
