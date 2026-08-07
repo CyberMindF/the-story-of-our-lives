@@ -1,3 +1,5 @@
+import { getConnectionIp } from "../_shared/request-context.js";
+
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 7;
 
 // Crea risposte JSON uniformi e impedisce al browser di salvarle in cache.
@@ -69,69 +71,6 @@ export function getAuthEventMetadata(request, extra = {}) {
     userAgent: request.headers.get("User-Agent")?.slice(0, 512) || null,
     ...extra
   };
-}
-
-// Registra l'IP pubblico della connessione; non rappresenta necessariamente un singolo dispositivo.
-export async function recordAccessIp(request, env, userId) {
-  const ipAddress = getConnectionIp(request);
-  if (!ipAddress) {
-    return;
-  }
-
-  const context = getConnectionContext(request);
-  const now = new Date().toISOString();
-  await env.DB
-    .prepare(`
-      INSERT INTO user_access_ips (
-        user_id, ip_address, first_seen_at, last_seen_at, access_count,
-        continent, country, region, region_code, city, timezone, latitude, longitude, postal_code,
-        asn, as_organization, cloudflare_colo, http_protocol, tls_version,
-        client_tcp_rtt_ms, client_quic_rtt_ms
-      )
-      VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT (user_id, ip_address) DO UPDATE SET
-        last_seen_at = excluded.last_seen_at,
-        access_count = user_access_ips.access_count + 1,
-        continent = COALESCE(excluded.continent, user_access_ips.continent),
-        country = COALESCE(excluded.country, user_access_ips.country),
-        region = COALESCE(excluded.region, user_access_ips.region),
-        region_code = COALESCE(excluded.region_code, user_access_ips.region_code),
-        city = COALESCE(excluded.city, user_access_ips.city),
-        timezone = COALESCE(excluded.timezone, user_access_ips.timezone),
-        latitude = COALESCE(excluded.latitude, user_access_ips.latitude),
-        longitude = COALESCE(excluded.longitude, user_access_ips.longitude),
-        postal_code = COALESCE(excluded.postal_code, user_access_ips.postal_code),
-        asn = COALESCE(excluded.asn, user_access_ips.asn),
-        as_organization = COALESCE(excluded.as_organization, user_access_ips.as_organization),
-        cloudflare_colo = COALESCE(excluded.cloudflare_colo, user_access_ips.cloudflare_colo),
-        http_protocol = COALESCE(excluded.http_protocol, user_access_ips.http_protocol),
-        tls_version = COALESCE(excluded.tls_version, user_access_ips.tls_version),
-        client_tcp_rtt_ms = COALESCE(excluded.client_tcp_rtt_ms, user_access_ips.client_tcp_rtt_ms),
-        client_quic_rtt_ms = COALESCE(excluded.client_quic_rtt_ms, user_access_ips.client_quic_rtt_ms)
-    `)
-    .bind(
-      userId,
-      ipAddress,
-      now,
-      now,
-      context.continent,
-      context.country,
-      context.region,
-      context.regionCode,
-      context.city,
-      context.timezone,
-      context.latitude,
-      context.longitude,
-      context.postalCode,
-      context.asn,
-      context.asOrganization,
-      context.colo,
-      context.httpProtocol,
-      context.tlsVersion,
-      context.clientTcpRtt,
-      context.clientQuicRtt
-    )
-    .run();
 }
 
 // Revoca logicamente la sessione corrente tramite deleted_at e prepara la scadenza del cookie.
@@ -247,48 +186,4 @@ function readCookie(header, name) {
   }
 
   return null;
-}
-
-// Recupera l'IP pubblico visto da Cloudflare, con un fallback utile durante lo sviluppo locale.
-function getConnectionIp(request) {
-  // Cloudflare valorizza CF-Connecting-IP; il secondo header facilita soltanto i test locali.
-  const cloudflareIp = request.headers.get("CF-Connecting-IP")?.trim();
-  if (cloudflareIp) {
-    return cloudflareIp;
-  }
-
-  return request.headers.get("X-Forwarded-For")?.split(",")[0].trim() || null;
-}
-
-// Estrae soltanto i dati geografici e di rete utili dal contesto Cloudflare della richiesta.
-function getConnectionContext(request) {
-  const cf = request.cf || {};
-  return {
-    continent: normalizeOptionalText(cf.continent),
-    country: normalizeOptionalText(cf.country),
-    region: normalizeOptionalText(cf.region),
-    regionCode: normalizeOptionalText(cf.regionCode),
-    city: normalizeOptionalText(cf.city),
-    timezone: normalizeOptionalText(cf.timezone),
-    latitude: normalizeOptionalText(cf.latitude),
-    longitude: normalizeOptionalText(cf.longitude),
-    postalCode: normalizeOptionalText(cf.postalCode),
-    asn: normalizeOptionalNumber(cf.asn),
-    asOrganization: normalizeOptionalText(cf.asOrganization),
-    colo: normalizeOptionalText(cf.colo),
-    httpProtocol: normalizeOptionalText(cf.httpProtocol),
-    tlsVersion: normalizeOptionalText(cf.tlsVersion),
-    clientTcpRtt: normalizeOptionalNumber(cf.clientTcpRtt),
-    clientQuicRtt: normalizeOptionalNumber(cf.clientQuicRtt)
-  };
-}
-
-// Converte i valori testuali mancanti o inattesi in NULL per D1.
-function normalizeOptionalText(value) {
-  return typeof value === "string" && value.trim() ? value.trim() : null;
-}
-
-// Accetta soltanto numeri finiti, evitando valori non serializzabili nel database.
-function normalizeOptionalNumber(value) {
-  return typeof value === "number" && Number.isFinite(value) ? value : null;
 }

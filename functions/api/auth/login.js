@@ -1,4 +1,5 @@
 import { recordEvent } from "../_shared/events.js";
+import { linkVisitToSession } from "../_shared/visits.js";
 import {
   createSession,
   getAuthEventMetadata,
@@ -7,7 +8,6 @@ import {
   isWorldKeyValid,
   json,
   normalizeEmail,
-  recordAccessIp,
   readJson
 } from "./_shared.js";
 
@@ -48,9 +48,9 @@ export async function onRequestPost(context) {
 
     // Le credenziali corrette producono un cookie di sessione HttpOnly.
     const session = await createSession(request, env, user.id);
-    // Memorizziamo IP ed eventi soltanto dopo la verifica completa delle credenziali e della chiave.
+    // Colleghiamo la visita e registriamo gli eventi solo dopo la verifica completa.
     context.waitUntil(Promise.all([
-      recordAccessIp(request, env, user.id),
+      linkVisitToSession(request, env, user.id, session.id),
       recordEvent(env, { userId: user.id, sessionId: session.id }, {
         section: "auth",
         eventType: "login_success",

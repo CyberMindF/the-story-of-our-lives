@@ -1,11 +1,11 @@
 import { recordEvent } from "../_shared/events.js";
+import { linkVisitToSession } from "../_shared/visits.js";
 import {
   getAuthEventMetadata,
   getAuthenticatedSession,
   isWorldKeyValid,
   json,
   readJson,
-  recordAccessIp,
   revokeCurrentSession
 } from "./_shared.js";
 
@@ -41,9 +41,9 @@ export async function onRequestPost(context) {
       return json({ authenticated: false }, 401);
     }
 
-    // La conferma viene conservata come evento permanente e aggiorna il contesto dell'IP.
+    // La conferma viene conservata come evento permanente e collega la visita alla sessione.
     context.waitUntil(Promise.all([
-      recordAccessIp(request, env, session.user.id),
+      linkVisitToSession(request, env, session.user.id, session.sessionId),
       recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
         section: "auth",
         eventType: "world_unlocked",
