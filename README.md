@@ -58,11 +58,20 @@ La telemetria usa due endpoint autenticati e non rinnova la durata della session
 
 La tabella `events` contiene sezione, tipo, versione dello schema, metadati JSON, utente e sessione. Per aggiungere un evento futuro bisogna inserirlo in `ALLOWED_EVENTS` dentro `functions/api/telemetry/events.js` e richiamare il client riutilizzabile `trackEvent`.
 
-I tentativi sono separati in `crossword_word_attempts`. Le celle interne ancora vuote sono rappresentate da `_`; le celle vuote finali vengono omesse. Il frontend evita richieste duplicate e il backend impedisce comunque inserimenti consecutivi identici per utente e parola.
+I tentativi sono separati in `crossword_word_attempts`. Ogni parola usa come `word_id` il proprio numero progressivo nell'array di `data.json`, partendo da 1; non esiste un secondo ordinamento. Le celle interne ancora vuote sono rappresentate da `_`; le celle vuote finali vengono omesse. Il frontend evita richieste duplicate e il backend impedisce comunque inserimenti consecutivi identici per utente e parola.
 
 Il backend legge la soluzione direttamente da `data.json` e calcola accuratezza posizionale, similarità di modifica, completezza e compatibilità complessiva. Un prefisso corretto può quindi avere compatibilità 100% ma completezza inferiore: per esempio `AFFET` rispetto ad `AFFETTO` ha compatibilità 100% e completezza 71,43%.
 
 Login e logout non vengono duplicati in `events`: la tabella `sessions`, insieme a `created_at`, `last_seen_at`, `expires_at` e `deleted_at`, costituisce lo storico autorevole degli accessi. Gli IP pubblici osservati sono conservati separatamente in `user_access_ips`.
+
+## Progresso persistente
+
+Ogni parola in `data.json` possiede un `id` stabile, indipendente dall'ordine dell'array. Il database conserva esclusivamente lo stato dell'utente nella tabella `crossword_answers`, senza duplicare soluzione, definizione o coordinate.
+
+- `GET /api/crossword/answers`: recupera tutte le risposte dell'utente autenticato.
+- `PUT /api/crossword/answers/:wordId`: aggiorna una singola risposta tramite UPSERT.
+
+Il backend legge la soluzione da `data.json` e calcola autonomamente `is_completed` e `completed_at`. Il frontend sincronizza dopo un secondo di pausa, evita valori duplicati e mantiene `localStorage` come fallback. Se il database è ancora vuoto, il progresso locale esistente viene trasferito automaticamente al primo caricamento.
 
 ## Pubblicazione
 
@@ -81,6 +90,8 @@ GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1
 - `style.css`: grafica, temi e layout responsive.
 - `app.js`: cruciverba, interfaccia e client di autenticazione.
 - `functions/api/auth/`: API di registrazione, login e sessione.
+- `functions/api/crossword/`: API dello stato persistente del cruciverba.
+- `functions/api/telemetry/`: eventi generali e cronologia dei tentativi.
 - `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.
 - `wrangler.toml`: configurazione Cloudflare e binding D1.
 - `final-message.json`: contenuto della schermata finale.

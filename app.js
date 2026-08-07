@@ -37,7 +37,9 @@ const state = {
   telemetryReady: false,
   completedWordIds: new Set(),
   wordAttemptTimers: new Map(),
-  lastWordAttempts: new Map()
+  lastWordAttempts: new Map(),
+  lastSyncedAnswers: new Map(),
+  wordSyncChains: new Map()
 };
 
 const elements = {
@@ -124,9 +126,10 @@ async function initializeCrossword() {
     renderGrid();
     renderClues();
     bindControls();
-    loadProgress();
+    const persistentProgress = await loadProgress();
     updateGridInputs();
     initializeTelemetryState();
+    initializeAnswerSyncState(persistentProgress);
     updateCompletionState();
     state.telemetryReady = true;
     void trackEvent("crossword_opened", {
@@ -134,6 +137,9 @@ async function initializeCrossword() {
       completedWords: state.completedWordIds.size,
       theme: document.body.dataset.theme
     });
+    if (persistentProgress.source === "local") {
+      void syncAllCurrentAnswers();
+    }
     selectWord(findFirstUnfinishedWordId(), { focusFirstEmpty: true, scroll: false });
   } catch (error) {
     console.error("Errore durante l'inizializzazione del cruciverba:", error);
@@ -343,8 +349,8 @@ async function loadData() {
 function validateData(data) {
   const words = data.words.map((entry, index) => ({
     ...entry,
-    word: String(entry.word).toUpperCase(),
-    order: index + 1
+    id: String(index + 1),
+    word: String(entry.word).toUpperCase()
   }));
 
   const grid = new Map();
@@ -443,7 +449,6 @@ function setupState(data, validation) {
 }
 
 function buildWordEntry(entry) {
-  const id = `${entry.order}-${entry.word}-${entry.direction}`;
   const cells = [];
 
   for (let index = 0; index < entry.word.length; index += 1) {
@@ -458,7 +463,7 @@ function buildWordEntry(entry) {
     });
   }
 
-  return { ...entry, id, cells };
+  return { ...entry, cells };
 }
 
 function renderGrid() {
@@ -525,7 +530,7 @@ function renderClues() {
     button.type = "button";
     button.className = "clue-button";
     button.dataset.wordId = entry.id;
-    button.innerHTML = `<span class="clue-order">${entry.order}.</span><span>${escapeHtml(entry.clue)}</span>`;
+    button.innerHTML = `<span class="clue-order">${entry.id}.</span><span>${escapeHtml(entry.clue)}</span>`;
     button.addEventListener("click", () => {
       selectWord(entry.id, { focusFirstEmpty: true, scroll: true });
       if (window.matchMedia("(max-width: 640px)").matches) {
@@ -1240,7 +1245,8 @@ function clearValidationForCell(cellKey) {
   updateValidationClasses();
 }
 
-function loadProgress() {
+// Carica il progresso remoto; se non esiste o non è raggiungibile mantiene il fallback locale.
+async function loadProgress() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     state.progress = raw ? JSON.parse(raw) : {};
@@ -1248,6 +1254,55 @@ function loadProgress() {
     console.warn("Impossibile leggere il progresso salvato:", error);
     state.progress = {};
   }
+
+  try {
+    const response = await fetch("/api/crossword/answers", {
+      method: "GET",
+      credentials: "same-origin",
+      headers: { Accept: "application/json" }
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const result = await readApiResponse(response);
+    const answers = Array.isArray(result.answers) ? result.answers : [];
+    if (answers.length === 0) {
+      return { source: "local", answers: [] };
+    }
+
+    state.progress = {};
+    applyPersistentAnswers(answers);
+    saveProgress();
+    return { source: "remote", answers };
+  } catch (error) {
+    console.warn("Impossibile caricare il progresso remoto, uso quello locale:", error);
+    return { source: "local", answers: [] };
+  }
+}
+
+// Ricostruisce le celle condivise applicando in ordine cronologico le risposte ricevute dal backend.
+function applyPersistentAnswers(answers) {
+  answers.forEach((answer) => {
+    const entry = state.entriesById.get(answer.wordId);
+    if (!entry || typeof answer.currentAnswer !== "string") {
+      return;
+    }
+
+    [...answer.currentAnswer].forEach((letter, index) => {
+      const cell = entry.cells[index];
+      if (!cell || letter === "_") {
+        return;
+      }
+
+      const normalized = normalizeLetter(letter);
+      const previous = state.progress[cell.key];
+      if (previous && previous !== normalized) {
+        console.warn(`Risposte remote incompatibili nella cella ${cell.key}: ${previous} / ${normalized}`);
+      }
+      state.progress[cell.key] = normalized;
+    });
+  });
 }
 
 function renderThemeSwitcher() {
@@ -1392,7 +1447,7 @@ function updateMobileActiveClue() {
     return;
   }
 
-  elements.mobileClueKicker.textContent = `Ricordo ${entry.order}`;
+  elements.mobileClueKicker.textContent = `Ricordo ${entry.id}`;
   elements.mobileClueText.textContent = entry.clue;
 }
 
@@ -1491,6 +1546,7 @@ function resetProgress() {
   closeResetModal();
   closeCompletionModal();
   updateCompletionState();
+  void syncAllCurrentAnswers();
   selectWord(state.words[0].id, { focusFirstEmpty: true, scroll: false });
 }
 
@@ -1511,7 +1567,7 @@ function updateCompletionState() {
       completedWords += 1;
       state.completedWordIds.add(entry.id);
       if (!wasSolved && state.telemetryReady) {
-        void trackEvent("word_completed", { wordOrder: entry.order, direction: entry.direction });
+        void trackEvent("word_completed", { wordId: Number(entry.id), direction: entry.direction });
       }
     } else {
       allSolved = false;
@@ -1564,9 +1620,77 @@ function scheduleWordAttempt(wordId) {
   window.clearTimeout(state.wordAttemptTimers.get(wordId));
   const timer = window.setTimeout(() => {
     state.wordAttemptTimers.delete(wordId);
-    void sendWordAttempt(wordId);
+    void Promise.all([sendWordAttempt(wordId), queueWordAnswerSync(wordId)]);
   }, WORD_ATTEMPT_DEBOUNCE_MS);
   state.wordAttemptTimers.set(wordId, timer);
+}
+
+// Inizializza i valori già presenti nel backend per evitare aggiornamenti duplicati all'apertura.
+function initializeAnswerSyncState(persistentProgress) {
+  state.lastSyncedAnswers.clear();
+  state.wordSyncChains.clear();
+
+  if (persistentProgress.source !== "remote") {
+    return;
+  }
+
+  persistentProgress.answers.forEach((answer) => {
+    if (state.entriesById.has(answer.wordId) && typeof answer.currentAnswer === "string") {
+      state.lastSyncedAnswers.set(answer.wordId, answer.currentAnswer);
+    }
+  });
+}
+
+// Accoda gli aggiornamenti della stessa parola per conservarne l'ordine anche con una rete lenta.
+async function queueWordAnswerSync(wordId) {
+  const previous = state.wordSyncChains.get(wordId) || Promise.resolve();
+  const current = previous.catch(() => false).then(() => syncWordAnswer(wordId));
+  state.wordSyncChains.set(wordId, current);
+
+  try {
+    return await current;
+  } finally {
+    if (state.wordSyncChains.get(wordId) === current) {
+      state.wordSyncChains.delete(wordId);
+    }
+  }
+}
+
+// Salva con PUT lo stato corrente della parola solo quando è diverso dall'ultimo confermato.
+async function syncWordAnswer(wordId) {
+  const entry = state.entriesById.get(wordId);
+  if (!entry) {
+    return false;
+  }
+
+  const currentAnswer = getWordCurrentAnswer(entry);
+  const previousAnswer = state.lastSyncedAnswers.get(wordId);
+  const isEmpty = !currentAnswer.replaceAll("_", "");
+  if (currentAnswer === previousAnswer || (isEmpty && previousAnswer === undefined)) {
+    return false;
+  }
+
+  const saved = await sendAuthenticatedJson(`/api/crossword/answers/${encodeURIComponent(wordId)}`, {
+    currentAnswer
+  }, "PUT");
+  if (saved) {
+    state.lastSyncedAnswers.set(wordId, currentAnswer);
+  }
+  return saved;
+}
+
+// Sincronizza tutte le parole non vuote o già presenti sul server, usato per migrazione e reset.
+async function syncAllCurrentAnswers() {
+  for (const entry of state.words) {
+    await queueWordAnswerSync(entry.id);
+  }
+}
+
+// Restituisce una stringa lunga quanto la soluzione usando underscore per le celle vuote.
+function getWordCurrentAnswer(entry) {
+  return entry.cells
+    .map((cell) => normalizeLetter(state.progress[cell.key] || "") || "_")
+    .join("");
 }
 
 // Invia un tentativo non vuoto soltanto se differisce dall'ultimo confermato dal backend.
@@ -1581,8 +1705,8 @@ async function sendWordAttempt(wordId) {
     return;
   }
 
-  const saved = await sendTelemetryRequest("/api/telemetry/word-attempts", {
-    wordOrder: entry.order,
+  const saved = await sendAuthenticatedJson("/api/telemetry/word-attempts", {
+    wordId: Number(entry.id),
     attempt
   });
   if (saved) {
@@ -1605,18 +1729,18 @@ function isWordSolved(entry) {
 
 // Registra un evento generale della sezione cruciverba senza interrompere l'esperienza in caso di errore.
 async function trackEvent(eventType, metadata = {}) {
-  await sendTelemetryRequest("/api/telemetry/events", {
+  await sendAuthenticatedJson("/api/telemetry/events", {
     section: "crossword",
     eventType,
     metadata
   });
 }
 
-// Esegue una richiesta di telemetria autenticata e gestisce gli errori senza mostrarli all'utente.
-async function sendTelemetryRequest(endpoint, payload) {
+// Esegue una richiesta JSON autenticata senza interrompere l'interfaccia in caso di errore.
+async function sendAuthenticatedJson(endpoint, payload, method = "POST") {
   try {
     const response = await fetch(endpoint, {
-      method: "POST",
+      method,
       credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -1624,7 +1748,7 @@ async function sendTelemetryRequest(endpoint, payload) {
     });
     return response.ok;
   } catch (error) {
-    console.warn("Impossibile inviare la telemetria:", error);
+    console.warn(`Impossibile completare la richiesta ${method} ${endpoint}:`, error);
     return false;
   }
 }
@@ -1643,7 +1767,7 @@ function getCellAriaLabel(cell) {
   const labels = cell.wordIds
     .map((wordId) => {
       const entry = state.entriesById.get(wordId);
-      return `ricordo ${entry.order}`;
+      return `ricordo ${entry.id}`;
     })
     .join(", ");
 
@@ -1651,12 +1775,12 @@ function getCellAriaLabel(cell) {
 }
 
 function getCellMarkerText(cell) {
-  const orders = cell.startWordIds
-    .map((wordId) => state.entriesById.get(wordId)?.order)
-    .filter((order) => Number.isInteger(order))
+  const wordIds = cell.startWordIds
+    .map((wordId) => Number(state.entriesById.get(wordId)?.id))
+    .filter((wordId) => Number.isInteger(wordId))
     .sort((a, b) => a - b);
 
-  return orders.join("/");
+  return wordIds.join("/");
 }
 
 function getCellKey(row, col) {
