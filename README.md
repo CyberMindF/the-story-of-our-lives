@@ -31,7 +31,7 @@ Gli endpoint sono organizzati in `functions/api/auth/`:
 - `GET /api/auth/session`: controlla se il token è ancora valido.
 - `POST /api/auth/session`: con token valido, verifica nuovamente la chiave.
 
-Il token originale viene inviato in un cookie `HttpOnly`; D1 conserva soltanto il suo hash. Il cookie scade dopo 30 giorni. La verifica della chiave vale solo per la scheda corrente tramite `sessionStorage`, quindi viene richiesta nuovamente dopo la chiusura della sessione browser.
+Il token originale viene inviato in un cookie `HttpOnly`; D1 conserva soltanto il suo hash. La sessione scade dopo 7 giorni e viene rinnovata per altri 7 giorni soltanto quando la chiave viene inviata correttamente. Il controllo automatico eseguito all'apertura non prolunga la sessione. La verifica della chiave vale solo per la scheda corrente tramite `sessionStorage`, quindi viene richiesta nuovamente dopo la chiusura della sessione browser.
 
 ## Database
 

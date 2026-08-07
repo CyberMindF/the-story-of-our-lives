@@ -1,4 +1,4 @@
-const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 30;
+const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 7;
 
 // Crea risposte JSON uniformi e impedisce al browser di salvarle in cache.
 export function json(body, status = 200, headers = {}) {
@@ -57,9 +57,7 @@ export async function createSession(request, env, userId) {
     .bind(userId, tokenHash, expiresAt, new Date().toISOString())
     .run();
 
-  // Secure viene omesso in locale, dove Wrangler usa normalmente HTTP.
-  const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
-  const cookie = `noi_session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${SESSION_DURATION_SECONDS}${secure}`;
+  const cookie = buildSessionCookie(request, token);
 
   return { cookie, expiresAt };
 }
@@ -100,8 +98,8 @@ export async function revokeCurrentSession(request, env) {
   return `noi_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secure}`;
 }
 
-// Restituisce l'utente associato a una sessione valida, attiva e non revocata.
-export async function getAuthenticatedUser(request, env) {
+// Verifica la sessione e la rinnova solo quando il chiamante conferma un accesso completo.
+export async function getAuthenticatedSession(request, env, options = {}) {
   const token = readCookie(request.headers.get("Cookie"), "noi_session");
   if (!token) {
     return null;
@@ -112,7 +110,7 @@ export async function getAuthenticatedUser(request, env) {
   const now = new Date().toISOString();
   const session = await env.DB
     .prepare(`
-      SELECT users.id, users.email, users.nickname, sessions.id AS session_id
+      SELECT users.id, users.email, users.nickname, sessions.id AS session_id, sessions.expires_at
       FROM sessions
       INNER JOIN users ON users.id = sessions.user_id
       WHERE sessions.token_hash = ?
@@ -127,17 +125,35 @@ export async function getAuthenticatedUser(request, env) {
     return null;
   }
 
-  // last_seen_at serve a sapere quando la sessione è stata usata l'ultima volta.
-  await env.DB
-    .prepare("UPDATE sessions SET last_seen_at = ? WHERE id = ?")
-    .bind(now, session.session_id)
-    .run();
+  let expiresAt = session.expires_at;
+  let cookie = null;
+
+  if (options.refresh) {
+    expiresAt = new Date(Date.now() + SESSION_DURATION_SECONDS * 1000).toISOString();
+    // Solo l'invio corretto della chiave aggiorna ultima attività e scadenza.
+    await env.DB
+      .prepare("UPDATE sessions SET last_seen_at = ?, expires_at = ? WHERE id = ?")
+      .bind(now, expiresAt, session.session_id)
+      .run();
+    cookie = buildSessionCookie(request, token);
+  }
 
   return {
-    id: session.id,
-    email: session.email,
-    nickname: session.nickname
+    user: {
+      id: session.id,
+      email: session.email,
+      nickname: session.nickname
+    },
+    cookie,
+    expiresAt
   };
+}
+
+// Costruisce il cookie della sessione con una durata di sette giorni dall'ultima verifica valida.
+function buildSessionCookie(request, token) {
+  // Secure viene omesso in locale, dove Wrangler usa normalmente HTTP.
+  const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
+  return `noi_session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${SESSION_DURATION_SECONDS}${secure}`;
 }
 
 // Crea un token casuale crittograficamente sicuro per identificare una nuova sessione.
