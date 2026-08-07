@@ -269,7 +269,7 @@ function setAccessMode(mode) {
     elements.accessText.textContent = "Crea il tuo accesso per custodire i progressi e ritrovare tutti i nostri ricordi.";
     elements.accessSubmitButton.textContent = "Registrati ed entra";
   } else {
-    elements.accessTitle.textContent = "Bentornata nel nostro mondo";
+    elements.accessTitle.textContent = "Rieccoci nel nostro mondo";
     elements.accessText.textContent = "Accedi con il tuo account per tornare alle parole che raccontano di noi.";
     elements.accessSubmitButton.textContent = "Accedi ed entra";
   }
