@@ -36,6 +36,9 @@ const state = {
   developerProgressSnapshot: null,
   telemetryReady: false,
   completedWordIds: new Set(),
+  reportedCompletedWordIds: new Set(),
+  crosswordOpenedAt: 0,
+  crosswordClosedTracked: false,
   wordAttemptTimers: new Map(),
   lastWordAttempts: new Map(),
   lastSyncedAnswers: new Map(),
@@ -132,6 +135,8 @@ async function initializeCrossword() {
     initializeAnswerSyncState(persistentProgress);
     updateCompletionState();
     state.telemetryReady = true;
+    state.crosswordOpenedAt = Date.now();
+    state.crosswordClosedTracked = false;
     void trackEvent("crossword_opened", {
       totalWords: state.words.length,
       completedWords: state.completedWordIds.size,
@@ -153,6 +158,7 @@ function bindAccessGate() {
   elements.showLoginButton.addEventListener("click", () => setAccessMode("login"));
   elements.showRegisterButton.addEventListener("click", () => setAccessMode("register"));
   elements.logoutButton.addEventListener("click", logout);
+  window.addEventListener("pagehide", () => void trackCrosswordClosed());
 
   elements.accessForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -217,6 +223,7 @@ async function logout() {
   elements.logoutButton.disabled = true;
 
   try {
+    await trackCrosswordClosed();
     const response = await fetch("/api/auth/session", {
       method: "DELETE",
       credentials: "same-origin"
@@ -1566,7 +1573,8 @@ function updateCompletionState() {
     if (solved) {
       completedWords += 1;
       state.completedWordIds.add(entry.id);
-      if (!wasSolved && state.telemetryReady) {
+      if (!wasSolved && state.telemetryReady && !state.reportedCompletedWordIds.has(entry.id)) {
+        state.reportedCompletedWordIds.add(entry.id);
         void trackEvent("word_completed", { wordId: Number(entry.id), direction: entry.direction });
       }
     } else {
@@ -1593,6 +1601,7 @@ function updateCompletionState() {
 function initializeTelemetryState() {
   state.telemetryReady = false;
   state.completedWordIds.clear();
+  state.reportedCompletedWordIds.clear();
   state.lastWordAttempts.clear();
   state.wordAttemptTimers.forEach((timer) => window.clearTimeout(timer));
   state.wordAttemptTimers.clear();
@@ -1600,6 +1609,7 @@ function initializeTelemetryState() {
   state.words.forEach((entry) => {
     if (isWordSolved(entry)) {
       state.completedWordIds.add(entry.id);
+      state.reportedCompletedWordIds.add(entry.id);
     }
 
     const currentAttempt = getWordAttempt(entry);
@@ -1729,10 +1739,24 @@ function isWordSolved(entry) {
 
 // Registra un evento generale della sezione cruciverba senza interrompere l'esperienza in caso di errore.
 async function trackEvent(eventType, metadata = {}) {
-  await sendAuthenticatedJson("/api/telemetry/events", {
+  return sendAuthenticatedJson("/api/telemetry/events", {
     section: "crossword",
     eventType,
     metadata
+  });
+}
+
+// Registra una sola chiusura per apertura, includendo durata e progresso raggiunto.
+async function trackCrosswordClosed() {
+  if (!state.telemetryReady || state.crosswordClosedTracked || !state.crosswordOpenedAt) {
+    return false;
+  }
+
+  state.crosswordClosedTracked = true;
+  return trackEvent("crossword_closed", {
+    durationSeconds: Math.max(0, Math.round((Date.now() - state.crosswordOpenedAt) / 1000)),
+    completedWords: state.completedWordIds.size,
+    totalWords: state.words.length
   });
 }
 
