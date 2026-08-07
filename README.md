@@ -49,6 +49,21 @@ npx wrangler d1 migrations apply DB --remote
 
 Il binding D1 deve chiamarsi `DB`. `WORLD_KEY` deve essere configurata come secret nelle impostazioni del progetto Cloudflare Pages e non deve essere inserita in `wrangler.toml` o nel repository.
 
+## Telemetria
+
+La telemetria usa due endpoint autenticati e non rinnova la durata della sessione:
+
+- `POST /api/telemetry/events`: registra eventi significativi delle diverse sezioni.
+- `POST /api/telemetry/word-attempts`: registra i tentativi del cruciverba dopo un secondo di pausa.
+
+La tabella `events` contiene sezione, tipo, versione dello schema, metadati JSON, utente e sessione. Per aggiungere un evento futuro bisogna inserirlo in `ALLOWED_EVENTS` dentro `functions/api/telemetry/events.js` e richiamare il client riutilizzabile `trackEvent`.
+
+I tentativi sono separati in `crossword_word_attempts`. Le celle interne ancora vuote sono rappresentate da `_`; le celle vuote finali vengono omesse. Il frontend evita richieste duplicate e il backend impedisce comunque inserimenti consecutivi identici per utente e parola.
+
+Il backend legge la soluzione direttamente da `data.json` e calcola accuratezza posizionale, similarità di modifica, completezza e compatibilità complessiva. Un prefisso corretto può quindi avere compatibilità 100% ma completezza inferiore: per esempio `AFFET` rispetto ad `AFFETTO` ha compatibilità 100% e completezza 71,43%.
+
+Login e logout non vengono duplicati in `events`: la tabella `sessions`, insieme a `created_at`, `last_seen_at`, `expires_at` e `deleted_at`, costituisce lo storico autorevole degli accessi. Gli IP pubblici osservati sono conservati separatamente in `user_access_ips`.
+
 ## Pubblicazione
 
 Collega il repository GitHub a un progetto Cloudflare Pages. Non è necessario un comando di build; la directory di output è la root del repository. Prima del primo utilizzo:
@@ -66,6 +81,6 @@ GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1
 - `style.css`: grafica, temi e layout responsive.
 - `app.js`: cruciverba, interfaccia e client di autenticazione.
 - `functions/api/auth/`: API di registrazione, login e sessione.
-- `migrations/`: schema D1 per utenti, sessioni e IP di accesso.
+- `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.
 - `wrangler.toml`: configurazione Cloudflare e binding D1.
 - `final-message.json`: contenuto della schermata finale.

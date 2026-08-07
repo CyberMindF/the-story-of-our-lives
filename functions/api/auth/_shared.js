@@ -144,6 +144,7 @@ export async function getAuthenticatedSession(request, env, options = {}) {
       email: session.email,
       nickname: session.nickname
     },
+    sessionId: session.session_id,
     cookie,
     expiresAt
   };

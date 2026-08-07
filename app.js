@@ -7,6 +7,7 @@ const LEGACY_ACCESS_STORAGE_KEY = "noi-crossword-access";
 const ACCESS_SESSION_KEY = "noi-crossword-access-session-v1";
 const KNOWN_ACCOUNT_STORAGE_KEY = "noi-crossword-known-account-v1";
 const ENABLE_DEVELOPER_TOOLS = false;
+const WORD_ATTEMPT_DEBOUNCE_MS = 1000;
 const RESETTABLE_STORAGE_PREFIXES = ["noi-crossword-progress-", "noi-crossword-theme-"];
 const DEFAULT_THEME_ID = "sea";
 const THEMES = [
@@ -32,7 +33,11 @@ const state = {
   dimensions: { rows: 0, cols: 0, rowOffset: 0, colOffset: 0 },
   isComplete: false,
   developerRevealActive: false,
-  developerProgressSnapshot: null
+  developerProgressSnapshot: null,
+  telemetryReady: false,
+  completedWordIds: new Set(),
+  wordAttemptTimers: new Map(),
+  lastWordAttempts: new Map()
 };
 
 const elements = {
@@ -121,7 +126,14 @@ async function initializeCrossword() {
     bindControls();
     loadProgress();
     updateGridInputs();
+    initializeTelemetryState();
     updateCompletionState();
+    state.telemetryReady = true;
+    void trackEvent("crossword_opened", {
+      totalWords: state.words.length,
+      completedWords: state.completedWordIds.size,
+      theme: document.body.dataset.theme
+    });
     selectWord(findFirstUnfinishedWordId(), { focusFirstEmpty: true, scroll: false });
   } catch (error) {
     console.error("Errore durante l'inizializzazione del cruciverba:", error);
@@ -1255,8 +1267,12 @@ function renderThemeSwitcher() {
     button.setAttribute("aria-pressed", document.body.dataset.theme === theme.id ? "true" : "false");
     button.setAttribute("aria-label", `Attiva il tema ${theme.label}`);
     button.addEventListener("click", () => {
+      const previousTheme = document.body.dataset.theme;
       applyTheme(theme.id);
       showThemeToast(theme.label);
+      if (previousTheme !== theme.id) {
+        void trackEvent("theme_changed", { previousTheme, theme: theme.id });
+      }
     });
     elements.themeSwitcher.appendChild(button);
   });
@@ -1401,6 +1417,7 @@ function setCellValue(cellKey, value) {
   clearValidationForCell(cellKey);
   saveProgress();
   updateCompletionState();
+  scheduleWordAttemptsForCell(cellKey);
 }
 
 function animateLetterEntry(input) {
@@ -1483,6 +1500,7 @@ function updateCompletionState() {
 
   state.words.forEach((entry) => {
     const solved = entry.cells.every((cell) => normalizeLetter(state.progress[cell.key] || "") === cell.solution);
+    const wasSolved = state.completedWordIds.has(entry.id);
     const clueButton = state.cluesById.get(entry.id);
     if (clueButton) {
       clueButton.classList.toggle("is-complete", solved);
@@ -1491,19 +1509,123 @@ function updateCompletionState() {
 
     if (solved) {
       completedWords += 1;
+      state.completedWordIds.add(entry.id);
+      if (!wasSolved && state.telemetryReady) {
+        void trackEvent("word_completed", { wordOrder: entry.order, direction: entry.direction });
+      }
     } else {
       allSolved = false;
+      state.completedWordIds.delete(entry.id);
     }
   });
 
   elements.completionStatus.textContent = `${completedWords} di ${state.words.length} ricordi completati`;
 
   if (allSolved && !state.isComplete) {
+    if (state.telemetryReady) {
+      void trackEvent("crossword_completed", { totalWords: state.words.length });
+    }
     openCompletionModal();
   }
 
   if (!allSolved) {
     state.isComplete = false;
+  }
+}
+
+// Inizializza la telemetria dal progresso esistente senza trasformare il caricamento in nuovi eventi.
+function initializeTelemetryState() {
+  state.telemetryReady = false;
+  state.completedWordIds.clear();
+  state.lastWordAttempts.clear();
+  state.wordAttemptTimers.forEach((timer) => window.clearTimeout(timer));
+  state.wordAttemptTimers.clear();
+
+  state.words.forEach((entry) => {
+    if (isWordSolved(entry)) {
+      state.completedWordIds.add(entry.id);
+    }
+
+    const currentAttempt = getWordAttempt(entry);
+    if (currentAttempt) {
+      state.lastWordAttempts.set(entry.id, currentAttempt);
+    }
+  });
+}
+
+// Riavvia il debounce per tutte le parole che condividono la cella appena modificata.
+function scheduleWordAttemptsForCell(cellKey) {
+  const cell = state.cells.get(cellKey);
+  cell?.wordIds.forEach((wordId) => scheduleWordAttempt(wordId));
+}
+
+// Attende un secondo di pausa prima di consolidare e inviare il tentativo corrente della parola.
+function scheduleWordAttempt(wordId) {
+  window.clearTimeout(state.wordAttemptTimers.get(wordId));
+  const timer = window.setTimeout(() => {
+    state.wordAttemptTimers.delete(wordId);
+    void sendWordAttempt(wordId);
+  }, WORD_ATTEMPT_DEBOUNCE_MS);
+  state.wordAttemptTimers.set(wordId, timer);
+}
+
+// Invia un tentativo non vuoto soltanto se differisce dall'ultimo confermato dal backend.
+async function sendWordAttempt(wordId) {
+  const entry = state.entriesById.get(wordId);
+  if (!entry) {
+    return;
+  }
+
+  const attempt = getWordAttempt(entry);
+  if (!attempt || attempt === state.lastWordAttempts.get(wordId)) {
+    return;
+  }
+
+  const saved = await sendTelemetryRequest("/api/telemetry/word-attempts", {
+    wordOrder: entry.order,
+    attempt
+  });
+  if (saved) {
+    state.lastWordAttempts.set(wordId, attempt);
+  }
+}
+
+// Rappresenta le celle interne vuote con underscore e rimuove quelle vuote in coda.
+function getWordAttempt(entry) {
+  return entry.cells
+    .map((cell) => normalizeLetter(state.progress[cell.key] || "") || "_")
+    .join("")
+    .replace(/_+$/, "");
+}
+
+// Controlla se tutte le celle di una parola contengono la relativa soluzione.
+function isWordSolved(entry) {
+  return entry.cells.every((cell) => normalizeLetter(state.progress[cell.key] || "") === cell.solution);
+}
+
+// Registra un evento generale della sezione cruciverba senza interrompere l'esperienza in caso di errore.
+async function trackEvent(eventType, metadata = {}) {
+  await sendTelemetryRequest("/api/telemetry/events", {
+    section: "crossword",
+    eventType,
+    metadata
+  });
+}
+
+// Esegue una richiesta di telemetria autenticata e gestisce gli errori senza mostrarli all'utente.
+async function sendTelemetryRequest(endpoint, payload) {
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true
+    });
+    return response.ok;
+  } catch (error) {
+    console.warn("Impossibile inviare la telemetria:", error);
+    return false;
   }
 }
 
