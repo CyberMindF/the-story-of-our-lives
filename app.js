@@ -97,6 +97,7 @@ async function init() {
   applySavedTheme();
   bindVisualViewport();
   bindAccessGate();
+  await captureAnonymousVisit();
 
   const session = await loadAuthSession();
   if (!session.authenticated) {
@@ -113,6 +114,20 @@ async function init() {
   showAuthenticatedUser(session.user);
   unlockAccess();
   await initializeCrossword();
+}
+
+// Registra la visita prima di mostrare login o registrazione, senza richiedere dati all'utente.
+async function captureAnonymousVisit() {
+  try {
+    await fetch("/api/visits", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { Accept: "application/json" }
+    });
+  } catch (error) {
+    // Un problema di telemetria non deve impedire l'accesso al Mondo Bianco.
+    console.warn("Impossibile registrare la visita anonima:", error);
+  }
 }
 
 async function initializeCrossword() {
@@ -1834,4 +1849,3 @@ window.__crosswordApp = {
   getCellKey,
   normalizeLetter
 };
-

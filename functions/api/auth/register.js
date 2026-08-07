@@ -1,4 +1,5 @@
 import { recordEvent } from "../_shared/events.js";
+import { linkVisitToSession } from "../_shared/visits.js";
 import {
   createSession,
   getAuthEventMetadata,
@@ -7,7 +8,6 @@ import {
   isWorldKeyValid,
   json,
   normalizeEmail,
-  recordAccessIp,
   readJson
 } from "./_shared.js";
 
@@ -59,9 +59,9 @@ export async function onRequestPost(context) {
     // Dopo la registrazione l'utente entra subito con una nuova sessione.
     const userId = result.meta.last_row_id;
     const session = await createSession(request, env, userId);
-    // IP ed eventi vengono completati in background senza rallentare la risposta di registrazione.
+    // Collegamento della visita ed eventi vengono completati senza rallentare la registrazione.
     context.waitUntil(Promise.all([
-      recordAccessIp(request, env, userId),
+      linkVisitToSession(request, env, userId, session.id),
       recordEvent(env, { userId, sessionId: session.id }, {
         section: "auth",
         eventType: "register",
