@@ -1,5 +1,7 @@
+import { recordEvent } from "../_shared/events.js";
 import {
   createSession,
+  getAuthEventMetadata,
   isValidEmail,
   isValidPassword,
   isWorldKeyValid,
@@ -9,7 +11,9 @@ import {
   readJson
 } from "./_shared.js";
 
-export async function onRequestPost({ request, env, waitUntil }) {
+// Autentica le credenziali e conserva gli eventi permanenti del login riuscito.
+export async function onRequestPost(context) {
+  const { request, env } = context;
   try {
     // Anche un nuovo login richiede la chiave, oltre alle credenziali dell'account.
     const body = await readJson(request);
@@ -44,8 +48,20 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
     // Le credenziali corrette producono un cookie di sessione HttpOnly.
     const session = await createSession(request, env, user.id);
-    // Memorizziamo soltanto IP associati ad accessi completamente validi.
-    waitUntil(recordAccessIp(request, env, user.id));
+    // Memorizziamo IP ed eventi soltanto dopo la verifica completa delle credenziali e della chiave.
+    context.waitUntil(Promise.all([
+      recordAccessIp(request, env, user.id),
+      recordEvent(env, { userId: user.id, sessionId: session.id }, {
+        section: "auth",
+        eventType: "login_success",
+        metadata: getAuthEventMetadata(request, { rememberDays: 7 })
+      }),
+      recordEvent(env, { userId: user.id, sessionId: session.id }, {
+        section: "auth",
+        eventType: "world_unlocked",
+        metadata: getAuthEventMetadata(request, { rememberDays: 7, source: "login" })
+      })
+    ]));
     return json(
       {
         user: { id: user.id, email: user.email, nickname: user.nickname },
