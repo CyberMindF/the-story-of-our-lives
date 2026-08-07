@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Our Words</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../style.css?v=19" />
+  </head>
+  <body class="access-locked">
+    <div id="app-shell" class="app-shell" inert aria-hidden="true">
+      <!-- Intestazione principale con utente autenticato, titolo e stato del cruciverba. -->
+      <header class="hero">
+        <div class="hero-copy">
+          <h1 id="title">Caricamento…</h1>
+          <p id="subtitle" class="subtitle"></p>
+        </div>
+        <div class="status-panel">
+          <!-- Saluto e logout restano vicini alle informazioni personali sul progresso. -->
+          <div class="hero-userbar">
+            <p id="user-greeting" class="user-greeting"></p>
+            <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" />
+              </svg>
+            </button>
+          </div>
+          <p id="completion-status">0 di 76 ricordi completati</p>
+          <p id="check-summary" aria-live="polite">Nessun controllo eseguito.</p>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="board-panel" aria-labelledby="title">
+          <div class="controls">
+            <button id="check-button" class="control-button" type="button" aria-label="Controlla le risposte">
+              <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+              <span class="control-label">Controlla</span>
+            </button>
+            <button id="reset-button" class="control-button" type="button" aria-label="Ricomincia il cruciverba">
+              <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6M5.5 9A8 8 0 1 1 4 14" /></svg>
+              <span class="control-label">Ricomincia</span>
+            </button>
+            <button id="reveal-button" class="control-button developer-control" type="button" aria-label="Rivela tutto il cruciverba" hidden>
+              <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+              <span class="control-label">Rivela</span>
+            </button>
+            <div class="theme-bar" aria-label="Selettore tema">
+              <span class="theme-label">Tema</span>
+              <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema chiaro o scuro"></div>
+            </div>
+          </div>
+          <div id="grid-scroll" class="grid-scroll">
+            <div id="grid" class="grid" role="group" aria-label="Griglia del cruciverba"></div>
+          </div>
+        </section>
+
+        <aside class="clues-panel" aria-labelledby="clues-title">
+          <div class="clues-panel-header">
+            <h2 id="clues-title">Definizioni</h2>
+            <button id="previous-clue-button" class="mobile-sheet-nav mobile-sheet-nav-previous" type="button" aria-label="Ricordo precedente">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+            </button>
+            <button
+              id="mobile-sheet-toggle"
+              class="mobile-sheet-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls="clues-list"
+            >
+              <span class="mobile-clue-copy" aria-live="polite">
+                <span id="mobile-clue-kicker" class="mobile-clue-kicker">Ricordo selezionato</span>
+                <span id="mobile-clue-text" class="mobile-clue-text">Seleziona una parola per vedere la definizione.</span>
+              </span>
+              <span class="mobile-sheet-chevron" aria-hidden="true"></span>
+              <span class="sr-only">Apri la lista delle definizioni</span>
+            </button>
+            <button id="next-clue-button" class="mobile-sheet-nav mobile-sheet-nav-next" type="button" aria-label="Ricordo successivo">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+            </button>
+          </div>
+          <ol id="clues-list" class="clues-list"></ol>
+        </aside>
+      </main>
+    </div>
+
+    <!-- Schermata di accesso mostrata finché account, sessione e chiave non sono validi. -->
+    <div id="access-gate" class="access-gate" role="dialog" aria-modal="true" aria-labelledby="access-title" aria-describedby="access-text">
+      <form id="access-form" class="access-card">
+        <p class="access-eyebrow">Our Words</p>
+        <h1 id="access-title">Ti ricordi della chiave?</h1>
+        <p id="access-text">È la stessa con cui si apre anche il nostro mondo.</p>
+
+        <div id="access-mode-switcher" class="access-mode-switcher" role="group" aria-label="Scegli se accedere o registrarti">
+          <button id="show-login-button" type="button" aria-pressed="false">Accedi</button>
+          <button id="show-register-button" type="button" aria-pressed="true">Registrati</button>
+        </div>
+
+        <div id="access-account-fields" class="access-account-fields">
+          <label for="access-email">Email</label>
+          <input id="access-email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required />
+
+          <label for="access-password">Password</label>
+          <!-- È un campo di testo mascherato per limitare i suggerimenti dei gestori di password. -->
+          <input id="access-password" class="masked-text-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" minlength="8" data-1p-ignore data-lpignore="true" required />
+        </div>
+
+        <label for="access-key">La chiave</label>
+        <p id="access-key-hint" class="access-key-hint">Ti ricordi la chiave? È sempre quella che porti al polso.</p>
+        <input id="access-key" type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" aria-describedby="access-key-hint" data-1p-ignore data-lpignore="true" required />
+
+        <button id="access-submit-button" class="access-submit-button" type="submit">Registrati ed entra</button>
+        <p id="access-error" class="access-error" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <div id="theme-toast" class="theme-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="completion-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completion-title" aria-describedby="completion-text">
+      <div class="modal-card">
+        <h2 id="completion-title">Cruciverba completato</h2>
+        <p id="completion-text">Ho raccolto qui una parte di noi.<br />Hai ritrovato tutti i nostri ricordi.</p>
+        <button id="close-modal-button" type="button">Chiudi</button>
+      </div>
+    </div>
+
+    <div id="reset-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="reset-title" aria-describedby="reset-text">
+      <div class="modal-card">
+        <h2 id="reset-title">Ricominciare da capo?</h2>
+        <p id="reset-text">Questo cancellerà tutte le lettere inserite finora.</p>
+        <div class="modal-actions">
+          <button id="cancel-reset-button" type="button">Annulla</button>
+          <button id="confirm-reset-button" type="button">Cancella tutto</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="check-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="check-title" aria-describedby="check-text">
+      <div class="modal-card">
+        <h2 id="check-title">Controllare le risposte?</h2>
+        <p id="check-text">Le lettere inserite saranno indicate come corrette o errate. Le celle vuote non verranno considerate.</p>
+        <div class="modal-actions">
+          <button id="cancel-check-button" type="button">Annulla</button>
+          <button id="confirm-check-button" type="button">Controlla</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../../assets/js/crossword/main.js?v=27"></script>
+  </body>
+  </html>

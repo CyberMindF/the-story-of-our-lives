@@ -2,7 +2,7 @@
   "name": "cruciverba",
   "version": "1.0.0",
   "description": "Cruciverba personalizzato con frontend statico e autenticazione Cloudflare Pages Functions/D1.",
-  "main": "app.js",
+  "main": "assets/js/crossword/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

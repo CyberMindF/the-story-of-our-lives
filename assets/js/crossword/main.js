@@ -1,23 +1,18 @@
+import { readApiResponse, sendAuthenticatedJson } from "../shared/api.js";
+import { clearAccessUnlock } from "../shared/auth.js";
+import { createAccessGate } from "../shared/access-gate.js";
+import { createThemeController } from "../shared/theme.js";
+
 const STORAGE_VERSION = "v15";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
 const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
 // Le credenziali sono gestite dal server; nel browser restano solo indicatori della sessione.
 const LEGACY_ACCESS_STORAGE_KEY = "noi-crossword-access";
-const ACCESS_SESSION_KEY = "noi-crossword-access-session-v1";
-const RETURN_TARGET_KEY = "mondo-bianco-return-target-v1";
-const KNOWN_ACCOUNT_STORAGE_KEY = "noi-crossword-known-account-v1";
 const ENABLE_DEVELOPER_TOOLS = false;
 const WORD_ATTEMPT_DEBOUNCE_MS = 1000;
 const RESETTABLE_STORAGE_PREFIXES = ["noi-crossword-progress-", "noi-crossword-theme-"];
-const DEFAULT_THEME_ID = "sea";
-const THEMES = [
-  { id: "sea", label: "Ocean", icon: "sun" },
-  { id: "velvet", label: "Velvet", icon: "moon" },
-  { id: "red-of-you", label: "Red of You", icon: "letter", iconText: "D" },
-  { id: "green-of-me", label: "Green of Me", icon: "letter", iconText: "R" }
-];
-let themeToastTimer = null;
+const CROSSWORD_DATA_URL = new URL("../../../data.json", import.meta.url);
 
 const state = {
   data: null,
@@ -48,21 +43,7 @@ const state = {
 
 const elements = {
   appShell: document.getElementById("app-shell"),
-  accessGate: document.getElementById("access-gate"),
   accessForm: document.getElementById("access-form"),
-  accessTitle: document.getElementById("access-title"),
-  accessText: document.getElementById("access-text"),
-  accessModeSwitcher: document.getElementById("access-mode-switcher"),
-  accessAccountFields: document.getElementById("access-account-fields"),
-  accessEmail: document.getElementById("access-email"),
-  accessPassword: document.getElementById("access-password"),
-  accessKey: document.getElementById("access-key"),
-  accessSubmitButton: document.getElementById("access-submit-button"),
-  showLoginButton: document.getElementById("show-login-button"),
-  showRegisterButton: document.getElementById("show-register-button"),
-  accessError: document.getElementById("access-error"),
-  userGreeting: document.getElementById("user-greeting"),
-  logoutButton: document.getElementById("logout-button"),
   title: document.getElementById("title"),
   subtitle: document.getElementById("subtitle"),
   grid: document.getElementById("grid"),
@@ -90,59 +71,37 @@ const elements = {
   confirmCheckButton: document.getElementById("confirm-check-button")
 };
 
+const themeController = createThemeController({
+  storageKey: THEME_STORAGE_KEY,
+  switcher: elements.themeSwitcher,
+  toast: elements.themeToast,
+  onThemeChanged(previousTheme, theme) {
+    void trackEvent("theme_changed", { previousTheme, theme });
+  }
+});
+
 document.addEventListener("DOMContentLoaded", init);
 
 // Prepara tema e accesso, controlla la sessione e avvia il cruciverba solo per un utente autorizzato.
 async function init() {
   ensureStorageVersion();
-  rememberRequestedDestination();
-  applySavedTheme();
+  themeController.applySavedTheme();
   bindVisualViewport();
-  bindAccessGate();
-  await captureAnonymousVisit();
-
-  const session = await loadAuthSession();
-  if (!session.authenticated) {
-    const initialMode = localStorage.getItem(KNOWN_ACCOUNT_STORAGE_KEY) === "true" ? "login" : "register";
-    setAccessMode(initialMode);
-    return;
-  }
-
-  if (sessionStorage.getItem(ACCESS_SESSION_KEY) !== String(session.user.id)) {
-    setAccessMode("key");
-    return;
-  }
-
-  showAuthenticatedUser(session.user);
-  unlockAccess();
-  if (returnToRequestedDestination()) {
-    return;
-  }
-  await initializeCrossword();
-}
-
-// Registra la visita prima di mostrare login o registrazione, senza richiedere dati all'utente.
-async function captureAnonymousVisit() {
-  try {
-    const response = await fetch("/api/visits", {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { Accept: "application/json" }
-    });
-
-    if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`HTTP ${response.status}: ${body}`);
+  const accessGate = createAccessGate({
+    onUnlock: initializeCrossword,
+    beforeLogout: trackCrosswordClosed,
+    onLogoutError(error) {
+      elements.checkSummary.textContent = error.message;
     }
-  } catch (error) {
-    // Un problema di telemetria non deve impedire l'accesso al Mondo Bianco.
-    console.warn("Impossibile registrare la visita anonima:", error);
-  }
+  });
+  accessGate.bind();
+  window.addEventListener("pagehide", () => void trackCrosswordClosed());
+  await accessGate.initialize();
 }
 
 async function initializeCrossword() {
   try {
-    applySavedTheme();
+    themeController.applySavedTheme();
     document.body.dataset.mobileMode = "sheet";
     document.body.dataset.mobileSheet = "closed";
     const data = await loadData();
@@ -178,242 +137,6 @@ async function initializeCrossword() {
   }
 }
 
-// Collega i controlli del form di autenticazione e il pulsante di logout alle rispettive azioni.
-function bindAccessGate() {
-  elements.showLoginButton.addEventListener("click", () => setAccessMode("login"));
-  elements.showRegisterButton.addEventListener("click", () => setAccessMode("register"));
-  elements.logoutButton.addEventListener("click", logout);
-  window.addEventListener("pagehide", () => void trackCrosswordClosed());
-
-  elements.accessForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    await submitAccessForm();
-  });
-}
-
-// Invia registrazione, login o sola chiave alla rotta adatta alla modalità corrente.
-async function submitAccessForm() {
-  const mode = elements.accessForm.dataset.mode || "register";
-  const worldKey = elements.accessKey.value.trim();
-  const payload = { worldKey };
-
-  if (mode !== "key") {
-    payload.email = elements.accessEmail.value.trim();
-    payload.password = elements.accessPassword.value;
-  }
-
-  setAccessLoading(true);
-  elements.accessError.textContent = "";
-
-  try {
-    const endpoint = mode === "key" ? "/api/auth/session" : `/api/auth/${mode}`;
-    const response = await fetch(endpoint, {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    const result = await readApiResponse(response);
-
-    if (!response.ok) {
-      if (response.status === 401 && mode === "key") {
-        setAccessMode("login");
-      }
-      throw new Error(result.error || "Accesso non riuscito.");
-    }
-
-    sessionStorage.setItem(ACCESS_SESSION_KEY, String(result.user.id));
-    if (mode !== "key") {
-      localStorage.setItem(KNOWN_ACCOUNT_STORAGE_KEY, "true");
-    }
-
-    showAuthenticatedUser(result.user);
-    unlockAccess();
-    if (returnToRequestedDestination()) {
-      return;
-    }
-    await initializeCrossword();
-  } catch (error) {
-    elements.accessError.textContent = error.message || "Impossibile completare l’accesso.";
-  } finally {
-    setAccessLoading(false);
-  }
-}
-
-// Mostra nell'intestazione il nickname restituito da una sessione verificata.
-function showAuthenticatedUser(user) {
-  // Il nickname viene inserito come testo, mai come HTML.
-  elements.userGreeting.textContent = `Ciao, ${user.nickname}`;
-}
-
-// Revoca la sessione corrente sul server, rimuove lo sblocco locale e ricarica la pagina.
-async function logout() {
-  elements.logoutButton.disabled = true;
-
-  try {
-    await trackCrosswordClosed();
-    const response = await fetch("/api/auth/session", {
-      method: "DELETE",
-      credentials: "same-origin"
-    });
-
-    if (!response.ok) {
-      throw new Error("Logout non riuscito.");
-    }
-
-    // Il progresso resta nel browser; rimuoviamo soltanto lo sblocco della scheda corrente.
-    sessionStorage.removeItem(ACCESS_SESSION_KEY);
-    window.location.reload();
-  } catch (error) {
-    elements.logoutButton.disabled = false;
-    elements.checkSummary.textContent = error.message;
-  }
-}
-
-// Il cookie HttpOnly non è leggibile da JavaScript: chiediamo al server se è ancora valido.
-async function loadAuthSession() {
-  try {
-    const response = await fetch("/api/auth/session", {
-      method: "GET",
-      credentials: "same-origin",
-      headers: { Accept: "application/json" }
-    });
-
-    if (!response.ok) {
-      return { authenticated: false };
-    }
-
-    return await readApiResponse(response);
-  } catch (error) {
-    console.warn("Impossibile verificare la sessione:", error);
-    return { authenticated: false };
-  }
-}
-
-// Legge una risposta JSON dell'API e restituisce un oggetto vuoto se il corpo non è valido.
-async function readApiResponse(response) {
-  try {
-    return await response.json();
-  } catch {
-    return {};
-  }
-}
-
-// Aggiorna campi e messaggi del form per registrazione, login o sola conferma della chiave.
-function setAccessMode(mode) {
-  // La modalità "key" nasconde le credenziali quando il cookie identifica già l'utente.
-  const isKeyOnly = mode === "key";
-  const isRegister = mode === "register";
-  elements.accessForm.dataset.mode = mode;
-  elements.accessModeSwitcher.hidden = isKeyOnly;
-  elements.accessAccountFields.hidden = isKeyOnly;
-  elements.accessEmail.required = !isKeyOnly;
-  elements.accessPassword.required = !isKeyOnly;
-  elements.showLoginButton.setAttribute("aria-pressed", String(mode === "login"));
-  elements.showRegisterButton.setAttribute("aria-pressed", String(isRegister));
-  elements.accessError.textContent = "";
-
-  if (isKeyOnly) {
-    elements.accessTitle.textContent = "Ti ricordi della chiave?";
-    elements.accessText.textContent = "È la stessa con cui si apre anche il nostro mondo.";
-    elements.accessSubmitButton.textContent = "Entra";
-  } else if (isRegister) {
-    elements.accessTitle.textContent = "Entra per la prima volta";
-    elements.accessText.textContent = "Crea il tuo accesso per custodire i progressi e ritrovare tutti i nostri ricordi.";
-    elements.accessSubmitButton.textContent = "Registrati ed entra";
-  } else {
-    elements.accessTitle.textContent = "Rieccoci nel nostro mondo";
-    elements.accessText.textContent = "Accedi con il tuo account per tornare alle parole che raccontano di noi.";
-    elements.accessSubmitButton.textContent = "Accedi ed entra";
-  }
-
-  const target = isKeyOnly ? elements.accessKey : elements.accessEmail;
-  if (!window.matchMedia("(max-width: 640px)").matches) {
-    target.focus();
-  }
-}
-
-// Disabilita temporaneamente l'invio del form e mostra lo stato di caricamento.
-function setAccessLoading(isLoading) {
-  elements.accessSubmitButton.disabled = isLoading;
-  elements.accessSubmitButton.textContent = isLoading ? "Attendi…" : getAccessSubmitLabel();
-}
-
-// Restituisce il testo del pulsante coerente con la modalità di accesso selezionata.
-function getAccessSubmitLabel() {
-  const mode = elements.accessForm.dataset.mode;
-  if (mode === "key") return "Entra";
-  if (mode === "login") return "Accedi ed entra";
-  return "Registrati ed entra";
-}
-
-// Nasconde la schermata di accesso e rende nuovamente interattiva l'applicazione.
-function unlockAccess() {
-  document.body.classList.remove("access-locked");
-  elements.accessGate.classList.add("hidden");
-  elements.appShell.removeAttribute("inert");
-  elements.appShell.removeAttribute("aria-hidden");
-}
-
-// Memorizza una destinazione richiesta soltanto se appartiene allo stesso sito ed è una pagina navigabile.
-function rememberRequestedDestination() {
-  const requestedTarget = new URLSearchParams(window.location.search).get("returnTo");
-  if (!requestedTarget) {
-    return;
-  }
-
-  const safeTarget = getSafeReturnTarget(requestedTarget);
-  if (safeTarget) {
-    sessionStorage.setItem(RETURN_TARGET_KEY, safeTarget);
-  } else {
-    sessionStorage.removeItem(RETURN_TARGET_KEY);
-    console.warn("Destinazione successiva all'accesso non valida.");
-  }
-}
-
-// Dopo lo sblocco apre la pagina originariamente richiesta e consuma la destinazione salvata.
-function returnToRequestedDestination() {
-  const savedTarget = sessionStorage.getItem(RETURN_TARGET_KEY);
-  const safeTarget = getSafeReturnTarget(savedTarget);
-  sessionStorage.removeItem(RETURN_TARGET_KEY);
-
-  if (!safeTarget) {
-    return false;
-  }
-
-  window.location.replace(safeTarget);
-  return true;
-}
-
-// Accetta esclusivamente URL HTTP interni, evitando API e ritorni ciclici alla pagina di accesso.
-function getSafeReturnTarget(value) {
-  if (!value) {
-    return null;
-  }
-
-  try {
-    const target = new URL(value, window.location.origin);
-    const currentPath = normalizePagePath(window.location.pathname);
-    const targetPath = normalizePagePath(target.pathname);
-
-    if (target.origin !== window.location.origin || target.pathname.startsWith("/api/")) {
-      return null;
-    }
-    if (targetPath === currentPath) {
-      return null;
-    }
-
-    return `${target.pathname}${target.search}${target.hash}`;
-  } catch {
-    return null;
-  }
-}
-
-// Considera equivalenti la directory principale e il relativo file index.html.
-function normalizePagePath(pathname) {
-  return pathname.replace(/\/index\.html$/, "/");
-}
-
 function ensureStorageVersion() {
   const savedVersion = localStorage.getItem(STORAGE_VERSION_KEY);
 
@@ -428,12 +151,12 @@ function ensureStorageVersion() {
   });
 
   localStorage.removeItem(LEGACY_ACCESS_STORAGE_KEY);
-  sessionStorage.removeItem(ACCESS_SESSION_KEY);
+  clearAccessUnlock();
   localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
 }
 
 async function loadData() {
-  const response = await fetch("./data.json", { cache: "no-store" });
+  const response = await fetch(CROSSWORD_DATA_URL, { cache: "no-store" });
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}`);
   }
@@ -646,7 +369,7 @@ function bindControls() {
     elements.revealButton.hidden = false;
     elements.revealButton.addEventListener("click", revealCrossword);
   }
-  renderThemeSwitcher();
+  themeController.renderSwitcher();
   elements.mobileSheetToggle.addEventListener("click", toggleMobileClues);
   [elements.previousClueButton, elements.nextClueButton].forEach((button) => {
     button.addEventListener("pointerdown", preserveGridFocusDuringNavigation);
@@ -735,7 +458,7 @@ function handleCellClick(cellKey) {
   if (ENABLE_DEVELOPER_TOOLS) {
     const coordinates = `R${cell.row} C${cell.col}`;
     elements.checkSummary.textContent = coordinates;
-    showTemporaryToast(coordinates);
+    themeController.showToast(coordinates);
   }
 
   if (state.currentCellKey === cellKey && cell.wordIds.length > 1) {
@@ -1399,85 +1122,6 @@ function applyPersistentAnswers(answers) {
   });
 }
 
-function renderThemeSwitcher() {
-  elements.themeSwitcher.innerHTML = "";
-
-  THEMES.forEach((theme) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "theme-chip";
-    button.dataset.theme = theme.id;
-    const iconMarkup = theme.icon === "letter"
-      ? `<span class="theme-chip-icon theme-chip-icon-letter" aria-hidden="true">${theme.iconText ?? ""}</span>`
-      : theme.icon === "moon"
-        ? `<svg class="theme-chip-icon theme-chip-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><circle class="moon-disc" cx="12" cy="12" r="9" /><path class="moon-crescent" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></svg>`
-        : `<span class="theme-chip-icon theme-chip-icon-${theme.icon}" aria-hidden="true"></span>`;
-    button.innerHTML = `${iconMarkup}<span class="theme-chip-name">${theme.label}</span>`;
-    button.setAttribute("aria-pressed", document.body.dataset.theme === theme.id ? "true" : "false");
-    button.setAttribute("aria-label", `Attiva il tema ${theme.label}`);
-    button.addEventListener("click", () => {
-      const previousTheme = document.body.dataset.theme;
-      applyTheme(theme.id);
-      showThemeToast(theme.label);
-      if (previousTheme !== theme.id) {
-        void trackEvent("theme_changed", { previousTheme, theme: theme.id });
-      }
-    });
-    elements.themeSwitcher.appendChild(button);
-  });
-
-  updateThemeButtons();
-}
-
-function applySavedTheme() {
-  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || DEFAULT_THEME_ID;
-  applyTheme(savedTheme, { persist: false });
-}
-
-function applyTheme(themeId, options = {}) {
-  const theme = THEMES.find((entry) => entry.id === themeId) || THEMES.find((entry) => entry.id === DEFAULT_THEME_ID) || THEMES[0];
-  document.body.dataset.theme = theme.id;
-
-  if (options.persist !== false) {
-    localStorage.setItem(THEME_STORAGE_KEY, theme.id);
-  }
-
-  updateThemeButtons();
-}
-
-function updateThemeButtons() {
-  const activeTheme = document.body.dataset.theme;
-  elements.themeSwitcher?.querySelectorAll(".theme-chip").forEach((button) => {
-    const selected = button.dataset.theme === activeTheme;
-    button.classList.toggle("is-selected", selected);
-    button.setAttribute("aria-pressed", selected ? "true" : "false");
-  });
-}
-
-function showThemeToast(themeName) {
-  if (!elements.themeToast || !window.matchMedia("(max-width: 640px)").matches) {
-    return;
-  }
-
-  showTemporaryToast(`Tema ${themeName}`);
-}
-
-function showTemporaryToast(message) {
-  if (!elements.themeToast || !window.matchMedia("(max-width: 640px)").matches) {
-    return;
-  }
-
-  window.clearTimeout(themeToastTimer);
-  elements.themeToast.textContent = message;
-  elements.themeToast.classList.remove("is-visible");
-  void elements.themeToast.offsetWidth;
-  elements.themeToast.classList.add("is-visible");
-
-  themeToastTimer = window.setTimeout(() => {
-    elements.themeToast.classList.remove("is-visible");
-  }, 2200);
-}
-
 function toggleMobileClues() {
   const isOpen = document.body.dataset.mobileSheet === "open";
   setMobileCluesOpen(!isOpen);
@@ -1845,23 +1489,6 @@ async function trackCrosswordClosed() {
     completedWords: state.completedWordIds.size,
     totalWords: state.words.length
   });
-}
-
-// Esegue una richiesta JSON autenticata senza interrompere l'interfaccia in caso di errore.
-async function sendAuthenticatedJson(endpoint, payload, method = "POST") {
-  try {
-    const response = await fetch(endpoint, {
-      method,
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      keepalive: true
-    });
-    return response.ok;
-  } catch (error) {
-    console.warn(`Impossibile completare la richiesta ${method} ${endpoint}:`, error);
-    return false;
-  }
 }
 
 function openCompletionModal() {

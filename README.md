@@ -20,7 +20,7 @@ Modifica `WORLD_KEY` dentro `.dev.vars`, poi avvia:
 npx wrangler pages dev .
 ```
 
-Apri l'indirizzo mostrato da Wrangler, normalmente `http://localhost:8788`.
+Apri l'indirizzo mostrato da Wrangler, normalmente `http://localhost:8788`. La root mostra l'hub temporaneo del Mondo Bianco; il cruciverba è disponibile in `http://localhost:8788/tavolo-da-gioco/cruciverba/`.
 
 ## Autenticazione
 
@@ -102,7 +102,9 @@ GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1
 
 - `data.json`: parole, definizioni, coordinate e ordine narrativo.
 - `style.css`: grafica, temi e layout responsive.
-- `app.js`: cruciverba, interfaccia e client di autenticazione.
+- `tavolo-da-gioco/cruciverba/index.html`: pagina del cruciverba.
+- `assets/js/crossword/main.js`: entry point e interfaccia del cruciverba.
+- `assets/js/shared/`: autenticazione, API, navigazione, visite e temi riutilizzabili.
 - `auth-guard.js`: protezione riutilizzabile e ritorno alla pagina richiesta dopo l'accesso.
 - `functions/api/auth/`: API di registrazione, login e sessione.
 - `functions/api/crossword/`: API dello stato persistente del cruciverba.
