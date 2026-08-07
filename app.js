@@ -1,9 +1,10 @@
-const STORAGE_VERSION = "v14";
+const STORAGE_VERSION = "v15";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
 const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
-const ACCESS_STORAGE_KEY = "noi-crossword-access";
-const ACCESS_KEY = "cerchio";
+const LEGACY_ACCESS_STORAGE_KEY = "noi-crossword-access";
+const ACCESS_SESSION_KEY = "noi-crossword-access-session-v1";
+const KNOWN_ACCOUNT_STORAGE_KEY = "noi-crossword-known-account-v1";
 const ENABLE_DEVELOPER_TOOLS = true;
 const RESETTABLE_STORAGE_PREFIXES = ["noi-crossword-progress-", "noi-crossword-theme-"];
 const DEFAULT_THEME_ID = "sea";
@@ -37,7 +38,16 @@ const elements = {
   appShell: document.getElementById("app-shell"),
   accessGate: document.getElementById("access-gate"),
   accessForm: document.getElementById("access-form"),
+  accessTitle: document.getElementById("access-title"),
+  accessText: document.getElementById("access-text"),
+  accessModeSwitcher: document.getElementById("access-mode-switcher"),
+  accessAccountFields: document.getElementById("access-account-fields"),
+  accessEmail: document.getElementById("access-email"),
+  accessPassword: document.getElementById("access-password"),
   accessKey: document.getElementById("access-key"),
+  accessSubmitButton: document.getElementById("access-submit-button"),
+  showLoginButton: document.getElementById("show-login-button"),
+  showRegisterButton: document.getElementById("show-register-button"),
   accessError: document.getElementById("access-error"),
   title: document.getElementById("title"),
   subtitle: document.getElementById("subtitle"),
@@ -72,12 +82,17 @@ async function init() {
   ensureStorageVersion();
   applySavedTheme();
   bindVisualViewport();
+  bindAccessGate();
 
-  if (!hasAccess()) {
-    bindAccessGate();
-    if (!window.matchMedia("(max-width: 640px)").matches) {
-      elements.accessKey.focus();
-    }
+  const session = await loadAuthSession();
+  if (!session.authenticated) {
+    const initialMode = localStorage.getItem(KNOWN_ACCOUNT_STORAGE_KEY) === "true" ? "login" : "register";
+    setAccessMode(initialMode);
+    return;
+  }
+
+  if (sessionStorage.getItem(ACCESS_SESSION_KEY) !== String(session.user.id)) {
+    setAccessMode("key");
     return;
   }
 
@@ -110,25 +125,133 @@ async function initializeCrossword() {
   }
 }
 
-function hasAccess() {
-  return localStorage.getItem(ACCESS_STORAGE_KEY) === "granted";
-}
-
 function bindAccessGate() {
+  elements.showLoginButton.addEventListener("click", () => setAccessMode("login"));
+  elements.showRegisterButton.addEventListener("click", () => setAccessMode("register"));
+
   elements.accessForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const key = elements.accessKey.value.trim().toLocaleLowerCase("it");
+    await submitAccessForm();
+  });
+}
 
-    if (key !== ACCESS_KEY) {
-      elements.accessError.textContent = "Chiave non corretta. Riprova.";
-      elements.accessKey.select();
-      return;
+// Invia registrazione, login o sola chiave alla rotta adatta alla modalità corrente.
+async function submitAccessForm() {
+  const mode = elements.accessForm.dataset.mode || "register";
+  const worldKey = elements.accessKey.value.trim();
+  const payload = { worldKey };
+
+  if (mode !== "key") {
+    payload.email = elements.accessEmail.value.trim();
+    payload.password = elements.accessPassword.value;
+  }
+
+  setAccessLoading(true);
+  elements.accessError.textContent = "";
+
+  try {
+    const endpoint = mode === "key" ? "/api/auth/session" : `/api/auth/${mode}`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const result = await readApiResponse(response);
+
+    if (!response.ok) {
+      if (response.status === 401 && mode === "key") {
+        setAccessMode("login");
+      }
+      throw new Error(result.error || "Accesso non riuscito.");
     }
 
-    localStorage.setItem(ACCESS_STORAGE_KEY, "granted");
+    sessionStorage.setItem(ACCESS_SESSION_KEY, String(result.user.id));
+    if (mode !== "key") {
+      localStorage.setItem(KNOWN_ACCOUNT_STORAGE_KEY, "true");
+    }
+
     unlockAccess();
     await initializeCrossword();
-  });
+  } catch (error) {
+    elements.accessError.textContent = error.message || "Impossibile completare l’accesso.";
+  } finally {
+    setAccessLoading(false);
+  }
+}
+
+// Il cookie HttpOnly non è leggibile da JavaScript: chiediamo al server se è ancora valido.
+async function loadAuthSession() {
+  try {
+    const response = await fetch("/api/auth/session", {
+      method: "GET",
+      credentials: "same-origin",
+      headers: { Accept: "application/json" }
+    });
+
+    if (!response.ok) {
+      return { authenticated: false };
+    }
+
+    return await readApiResponse(response);
+  } catch (error) {
+    console.warn("Impossibile verificare la sessione:", error);
+    return { authenticated: false };
+  }
+}
+
+async function readApiResponse(response) {
+  try {
+    return await response.json();
+  } catch {
+    return {};
+  }
+}
+
+function setAccessMode(mode) {
+  // La modalità "key" nasconde le credenziali quando il cookie identifica già l'utente.
+  const isKeyOnly = mode === "key";
+  const isRegister = mode === "register";
+  elements.accessForm.dataset.mode = mode;
+  elements.accessModeSwitcher.hidden = isKeyOnly;
+  elements.accessAccountFields.hidden = isKeyOnly;
+  elements.accessEmail.required = !isKeyOnly;
+  elements.accessPassword.required = !isKeyOnly;
+  elements.accessPassword.autocomplete = isRegister ? "new-password" : "current-password";
+  elements.showLoginButton.setAttribute("aria-pressed", String(mode === "login"));
+  elements.showRegisterButton.setAttribute("aria-pressed", String(isRegister));
+  elements.accessError.textContent = "";
+
+  if (isKeyOnly) {
+    elements.accessTitle.textContent = "Ti ricordi della chiave?";
+    elements.accessText.textContent = "È la stessa con cui si apre anche il nostro mondo.";
+    elements.accessSubmitButton.textContent = "Entra";
+  } else if (isRegister) {
+    elements.accessTitle.textContent = "Entra per la prima volta";
+    elements.accessText.textContent = "Crea il tuo accesso per custodire i progressi e ritrovare tutti i nostri ricordi.";
+    elements.accessSubmitButton.textContent = "Registrati ed entra";
+  } else {
+    elements.accessTitle.textContent = "Bentornata nel nostro mondo";
+    elements.accessText.textContent = "Accedi con il tuo account per tornare alle parole che raccontano di noi.";
+    elements.accessSubmitButton.textContent = "Accedi ed entra";
+  }
+
+  const target = isKeyOnly ? elements.accessKey : elements.accessEmail;
+  if (!window.matchMedia("(max-width: 640px)").matches) {
+    target.focus();
+  }
+}
+
+function setAccessLoading(isLoading) {
+  elements.accessSubmitButton.disabled = isLoading;
+  elements.accessSubmitButton.textContent = isLoading ? "Attendi…" : getAccessSubmitLabel();
+}
+
+function getAccessSubmitLabel() {
+  const mode = elements.accessForm.dataset.mode;
+  if (mode === "key") return "Entra";
+  if (mode === "login") return "Accedi ed entra";
+  return "Registrati ed entra";
 }
 
 function unlockAccess() {
@@ -151,7 +274,8 @@ function ensureStorageVersion() {
     }
   });
 
-  localStorage.removeItem(ACCESS_STORAGE_KEY);
+  localStorage.removeItem(LEGACY_ACCESS_STORAGE_KEY);
+  sessionStorage.removeItem(ACCESS_SESSION_KEY);
   localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
 }
 
@@ -410,9 +534,12 @@ function bindVisualViewport() {
     const visualViewport = window.visualViewport;
     const height = visualViewport?.height || window.innerHeight;
     const isGridInputFocused = document.activeElement?.classList.contains("cell-input");
+    const isAccessInputFocused = elements.accessForm.contains(document.activeElement);
     const keyboardLikelyOpen = isGridInputFocused && height < stableHeight * 0.82;
+    const accessKeyboardLikelyOpen = isAccessInputFocused && height < stableHeight * 0.82;
 
     document.body.classList.toggle("keyboard-open", keyboardLikelyOpen);
+    document.body.classList.toggle("access-keyboard-open", accessKeyboardLikelyOpen);
 
     if (keyboardLikelyOpen) {
       const offsetTop = visualViewport?.offsetTop || 0;
@@ -423,6 +550,11 @@ function bindVisualViewport() {
     }
 
     if (!force && keyboardLikelyOpen) {
+      return;
+    }
+
+    if (!force && accessKeyboardLikelyOpen) {
+      document.documentElement.style.setProperty("--app-viewport-height", `${Math.round(height)}px`);
       return;
     }
 

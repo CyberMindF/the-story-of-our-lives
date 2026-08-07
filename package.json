@@ -1,7 +1,7 @@
 {
   "name": "cruciverba",
   "version": "1.0.0",
-  "description": "Piccola web app statica per un cruciverba personalizzato, compatibile con GitHub Pages e senza dipendenze esterne.",
+  "description": "Cruciverba personalizzato con frontend statico e autenticazione Cloudflare Pages Functions/D1.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

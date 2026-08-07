@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Our Words</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./style.css?v=14" />
+    <link rel="stylesheet" href="./style.css?v=15" />
   </head>
   <body class="access-locked">
     <div id="app-shell" class="app-shell" inert aria-hidden="true">
@@ -79,11 +79,25 @@
         <p class="access-eyebrow">Our Words</p>
         <h1 id="access-title">Ti ricordi della chiave?</h1>
         <p id="access-text">È la stessa con cui si apre anche il nostro mondo.</p>
-        <label for="access-key">La chiave</label>
-        <div class="access-controls">
-          <input id="access-key" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" data-1p-ignore data-lpignore="true" required />
-          <button type="submit">Entra</button>
+
+        <div id="access-mode-switcher" class="access-mode-switcher" role="group" aria-label="Scegli se accedere o registrarti">
+          <button id="show-login-button" type="button" aria-pressed="false">Accedi</button>
+          <button id="show-register-button" type="button" aria-pressed="true">Registrati</button>
         </div>
+
+        <div id="access-account-fields" class="access-account-fields">
+          <label for="access-email">Email</label>
+          <input id="access-email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required />
+
+          <label for="access-password">Password</label>
+          <input id="access-password" type="password" autocomplete="new-password" minlength="8" required />
+        </div>
+
+        <label for="access-key">La chiave</label>
+        <p id="access-key-hint" class="access-key-hint">Ti ricordi la chiave? È sempre quella che porti al polso.</p>
+        <input id="access-key" type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" aria-describedby="access-key-hint" data-1p-ignore data-lpignore="true" required />
+
+        <button id="access-submit-button" class="access-submit-button" type="submit">Registrati ed entra</button>
         <p id="access-error" class="access-error" aria-live="polite"></p>
       </form>
     </div>
@@ -120,6 +134,6 @@
       </div>
     </div>
 
-    <script src="./app.js?v=14" defer></script>
+    <script src="./app.js?v=15" defer></script>
   </body>
   </html>
