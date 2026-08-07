@@ -33,6 +33,16 @@ Gli endpoint sono organizzati in `functions/api/auth/`:
 
 Il token originale viene inviato in un cookie `HttpOnly`; D1 conserva soltanto il suo hash. La sessione scade dopo 7 giorni e viene rinnovata per altri 7 giorni soltanto quando la chiave viene inviata correttamente. Il controllo automatico eseguito all'apertura non prolunga la sessione. La verifica della chiave vale solo per la scheda corrente tramite `sessionStorage`, quindi viene richiesta nuovamente dopo la chiusura della sessione browser.
 
+### Pagine protette e ritorno dopo l'accesso
+
+Le future pagine del Mondo Bianco possono usare il guard condiviso prima del proprio JavaScript:
+
+```html
+<script src="../auth-guard.js" data-auth-gateway="../"></script>
+```
+
+Il tag va inserito nel `<head>`, prima degli script specifici della pagina, senza `defer`: in questo modo il contenuto protetto resta nascosto durante il rapido controllo iniziale. `data-auth-gateway` deve indicare la directory che contiene `index.html`; può essere `./`, `../` o un altro percorso relativo in base alla posizione della pagina. Se sessione o Chiave non sono valide, il guard conserva l'indirizzo richiesto e porta all'accesso principale. Dopo login, registrazione o conferma della sola Chiave, il browser torna automaticamente alla pagina iniziale. Sono accettate soltanto destinazioni dello stesso dominio e mai URL sotto `/api/`.
+
 ## Database
 
 Le migrazioni sono in `migrations/`:
@@ -93,6 +103,7 @@ GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1
 - `data.json`: parole, definizioni, coordinate e ordine narrativo.
 - `style.css`: grafica, temi e layout responsive.
 - `app.js`: cruciverba, interfaccia e client di autenticazione.
+- `auth-guard.js`: protezione riutilizzabile e ritorno alla pagina richiesta dopo l'accesso.
 - `functions/api/auth/`: API di registrazione, login e sessione.
 - `functions/api/crossword/`: API dello stato persistente del cruciverba.
 - `functions/api/telemetry/`: eventi generali e cronologia dei tentativi.

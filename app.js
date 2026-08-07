@@ -5,6 +5,7 @@ const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
 // Le credenziali sono gestite dal server; nel browser restano solo indicatori della sessione.
 const LEGACY_ACCESS_STORAGE_KEY = "noi-crossword-access";
 const ACCESS_SESSION_KEY = "noi-crossword-access-session-v1";
+const RETURN_TARGET_KEY = "mondo-bianco-return-target-v1";
 const KNOWN_ACCOUNT_STORAGE_KEY = "noi-crossword-known-account-v1";
 const ENABLE_DEVELOPER_TOOLS = false;
 const WORD_ATTEMPT_DEBOUNCE_MS = 1000;
@@ -94,6 +95,7 @@ document.addEventListener("DOMContentLoaded", init);
 // Prepara tema e accesso, controlla la sessione e avvia il cruciverba solo per un utente autorizzato.
 async function init() {
   ensureStorageVersion();
+  rememberRequestedDestination();
   applySavedTheme();
   bindVisualViewport();
   bindAccessGate();
@@ -113,6 +115,9 @@ async function init() {
 
   showAuthenticatedUser(session.user);
   unlockAccess();
+  if (returnToRequestedDestination()) {
+    return;
+  }
   await initializeCrossword();
 }
 
@@ -224,6 +229,9 @@ async function submitAccessForm() {
 
     showAuthenticatedUser(result.user);
     unlockAccess();
+    if (returnToRequestedDestination()) {
+      return;
+    }
     await initializeCrossword();
   } catch (error) {
     elements.accessError.textContent = error.message || "Impossibile completare l’accesso.";
@@ -345,6 +353,65 @@ function unlockAccess() {
   elements.accessGate.classList.add("hidden");
   elements.appShell.removeAttribute("inert");
   elements.appShell.removeAttribute("aria-hidden");
+}
+
+// Memorizza una destinazione richiesta soltanto se appartiene allo stesso sito ed è una pagina navigabile.
+function rememberRequestedDestination() {
+  const requestedTarget = new URLSearchParams(window.location.search).get("returnTo");
+  if (!requestedTarget) {
+    return;
+  }
+
+  const safeTarget = getSafeReturnTarget(requestedTarget);
+  if (safeTarget) {
+    sessionStorage.setItem(RETURN_TARGET_KEY, safeTarget);
+  } else {
+    sessionStorage.removeItem(RETURN_TARGET_KEY);
+    console.warn("Destinazione successiva all'accesso non valida.");
+  }
+}
+
+// Dopo lo sblocco apre la pagina originariamente richiesta e consuma la destinazione salvata.
+function returnToRequestedDestination() {
+  const savedTarget = sessionStorage.getItem(RETURN_TARGET_KEY);
+  const safeTarget = getSafeReturnTarget(savedTarget);
+  sessionStorage.removeItem(RETURN_TARGET_KEY);
+
+  if (!safeTarget) {
+    return false;
+  }
+
+  window.location.replace(safeTarget);
+  return true;
+}
+
+// Accetta esclusivamente URL HTTP interni, evitando API e ritorni ciclici alla pagina di accesso.
+function getSafeReturnTarget(value) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const target = new URL(value, window.location.origin);
+    const currentPath = normalizePagePath(window.location.pathname);
+    const targetPath = normalizePagePath(target.pathname);
+
+    if (target.origin !== window.location.origin || target.pathname.startsWith("/api/")) {
+      return null;
+    }
+    if (targetPath === currentPath) {
+      return null;
+    }
+
+    return `${target.pathname}${target.search}${target.hash}`;
+  } catch {
+    return null;
+  }
+}
+
+// Considera equivalenti la directory principale e il relativo file index.html.
+function normalizePagePath(pathname) {
+  return pathname.replace(/\/index\.html$/, "/");
 }
 
 function ensureStorageVersion() {
