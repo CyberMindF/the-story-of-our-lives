@@ -119,11 +119,16 @@ async function init() {
 // Registra la visita prima di mostrare login o registrazione, senza richiedere dati all'utente.
 async function captureAnonymousVisit() {
   try {
-    await fetch("/api/visits", {
+    const response = await fetch("/api/visits", {
       method: "POST",
       credentials: "same-origin",
       headers: { Accept: "application/json" }
     });
+
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(`HTTP ${response.status}: ${body}`);
+    }
   } catch (error) {
     // Un problema di telemetria non deve impedire l'accesso al Mondo Bianco.
     console.warn("Impossibile registrare la visita anonima:", error);

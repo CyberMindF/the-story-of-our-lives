@@ -66,8 +66,6 @@ Il backend legge la soluzione direttamente da `data.json` e calcola accuratezza 
 
 La tabella `sessions` resta la fonte ufficiale per autenticazione, scadenza e logout. La cronologia permanente registra invece in `events` le azioni `register`, `login_success`, `world_unlocked` e `logout`; `session_id` viene conservato come riferimento storico senza vincolo esterno, quindi gli eventi sopravvivono anche a una futura rimozione delle sessioni. I metadata auth contengono IP, user agent e, quando applicabile, i 7 giorni di validità.
 
-La tabella `user_access_ips` conserva soltanto lo storico raccolto prima dell'introduzione delle visite anonime e non riceve più nuove scritture. I nuovi dati geografici e di rete hanno come fonte unica la tabella `visits` e possono essere aggregati per utente tramite `visit_session_links`. Durante lo sviluppo locale i campi forniti da Cloudflare possono restare `NULL`.
-
 Prima dell'autenticazione, `POST /api/visits` crea una visita anonima identificata dal cookie casuale `noi_visit`. Nel database viene conservato soltanto l'hash del token, insieme a IP, user agent e contesto Cloudflare. Se successivamente avviene login, registrazione o sblocco, `visit_session_links` collega la visita a utente e sessione; in caso contrario il record anonimo resta comunque disponibile.
 
 ## Progresso persistente
