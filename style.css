@@ -287,6 +287,11 @@ body.access-locked .app-shell {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus-color) 22%, transparent);
 }
 
+/* Mantiene la password visivamente nascosta senza far classificare il campo come password al browser. */
+.access-card .masked-text-input {
+  -webkit-text-security: disc;
+}
+
 .access-submit-button {
   width: 100%;
   margin-top: 1rem;

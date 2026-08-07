@@ -256,7 +256,6 @@ function setAccessMode(mode) {
   elements.accessAccountFields.hidden = isKeyOnly;
   elements.accessEmail.required = !isKeyOnly;
   elements.accessPassword.required = !isKeyOnly;
-  elements.accessPassword.autocomplete = isRegister ? "new-password" : "current-password";
   elements.showLoginButton.setAttribute("aria-pressed", String(mode === "login"));
   elements.showRegisterButton.setAttribute("aria-pressed", String(isRegister));
   elements.accessError.textContent = "";
