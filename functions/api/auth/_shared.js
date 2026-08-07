@@ -52,14 +52,23 @@ export async function createSession(request, env, userId) {
   const expiresAt = new Date(Date.now() + SESSION_DURATION_SECONDS * 1000).toISOString();
 
   // Anche le sessioni scadute restano nello storico: qui inseriamo soltanto quella nuova.
-  await env.DB
+  const result = await env.DB
     .prepare("INSERT INTO sessions (user_id, token_hash, expires_at, last_seen_at) VALUES (?, ?, ?, ?)")
     .bind(userId, tokenHash, expiresAt, new Date().toISOString())
     .run();
 
   const cookie = buildSessionCookie(request, token);
 
-  return { cookie, expiresAt };
+  return { id: result.meta.last_row_id, cookie, expiresAt };
+}
+
+// Prepara i metadati permanenti degli eventi auth senza duplicare user_id o session_id.
+export function getAuthEventMetadata(request, extra = {}) {
+  return {
+    ip: getConnectionIp(request),
+    userAgent: request.headers.get("User-Agent")?.slice(0, 512) || null,
+    ...extra
+  };
 }
 
 // Registra l'IP pubblico della connessione; non rappresenta necessariamente un singolo dispositivo.

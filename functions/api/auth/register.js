@@ -1,5 +1,7 @@
+import { recordEvent } from "../_shared/events.js";
 import {
   createSession,
+  getAuthEventMetadata,
   isValidEmail,
   isValidPassword,
   isWorldKeyValid,
@@ -9,7 +11,9 @@ import {
   readJson
 } from "./_shared.js";
 
-export async function onRequestPost({ request, env, waitUntil }) {
+// Registra l'account, crea la sessione e conserva gli eventi permanenti di accesso.
+export async function onRequestPost(context) {
+  const { request, env } = context;
   try {
     // La registrazione richiede email, password e la chiave condivisa del Mondo.
     const body = await readJson(request);
@@ -55,8 +59,20 @@ export async function onRequestPost({ request, env, waitUntil }) {
     // Dopo la registrazione l'utente entra subito con una nuova sessione.
     const userId = result.meta.last_row_id;
     const session = await createSession(request, env, userId);
-    // Il tracciamento non rallenta e non invalida una registrazione completata correttamente.
-    waitUntil(recordAccessIp(request, env, userId));
+    // IP ed eventi vengono completati in background senza rallentare la risposta di registrazione.
+    context.waitUntil(Promise.all([
+      recordAccessIp(request, env, userId),
+      recordEvent(env, { userId, sessionId: session.id }, {
+        section: "auth",
+        eventType: "register",
+        metadata: getAuthEventMetadata(request, { rememberDays: 7 })
+      }),
+      recordEvent(env, { userId, sessionId: session.id }, {
+        section: "auth",
+        eventType: "world_unlocked",
+        metadata: getAuthEventMetadata(request, { rememberDays: 7, source: "register" })
+      })
+    ]));
 
     return json(
       { user: { id: userId, email, nickname }, expiresAt: session.expiresAt },

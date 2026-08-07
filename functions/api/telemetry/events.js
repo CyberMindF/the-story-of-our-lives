@@ -1,5 +1,13 @@
 import { json, readAuthenticatedRequest, recordEvent } from "./_shared.js";
 
+const CLIENT_EVENT_TYPES = new Set([
+  "crossword_opened",
+  "crossword_closed",
+  "crossword_completed",
+  "word_completed",
+  "theme_changed"
+]);
+
 // Registra un evento significativo associandolo sempre all'utente e alla sessione autenticati.
 export async function onRequestPost(context) {
   try {
@@ -8,7 +16,16 @@ export async function onRequestPost(context) {
       return parsed.error;
     }
 
-    const result = await recordEvent(context.env, parsed.session, parsed.body);
+    // Gli eventi auth possono essere prodotti esclusivamente dagli endpoint backend di autenticazione.
+    if (parsed.body.section === "auth" || !CLIENT_EVENT_TYPES.has(parsed.body.eventType)) {
+      return json({ error: "Tipo di evento non consentito al client." }, 403);
+    }
+
+    const result = await recordEvent(
+      context.env,
+      { userId: parsed.session.user.id, sessionId: parsed.session.sessionId },
+      parsed.body
+    );
     if (result.error) {
       return json({ error: result.error }, 400);
     }

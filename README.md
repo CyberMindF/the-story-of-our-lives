@@ -64,7 +64,9 @@ I tentativi sono separati in `crossword_word_attempts`. Ogni parola usa come `wo
 
 Il backend legge la soluzione direttamente da `data.json` e calcola accuratezza posizionale, similarità di modifica, completezza e compatibilità complessiva. Un prefisso corretto può quindi avere compatibilità 100% ma completezza inferiore: per esempio `AFFET` rispetto ad `AFFETTO` ha compatibilità 100% e completezza 71,43%.
 
-Login e logout non vengono duplicati in `events`: la tabella `sessions`, insieme a `created_at`, `last_seen_at`, `expires_at` e `deleted_at`, costituisce lo storico autorevole degli accessi. Gli IP pubblici osservati sono conservati separatamente in `user_access_ips`, insieme ai dati geografici approssimativi, provider/ASN, datacenter Cloudflare, protocollo, TLS e latenze disponibili in `request.cf`. Durante lo sviluppo locale questi campi possono restare `NULL`.
+La tabella `sessions` resta la fonte ufficiale per autenticazione, scadenza e logout. La cronologia permanente registra invece in `events` le azioni `register`, `login_success`, `world_unlocked` e `logout`; `session_id` viene conservato come riferimento storico senza vincolo esterno, quindi gli eventi sopravvivono anche a una futura rimozione delle sessioni. I metadata auth contengono IP, user agent e, quando applicabile, i 7 giorni di validità.
+
+Gli IP pubblici osservati sono conservati anche in forma aggregata in `user_access_ips`, insieme ai dati geografici approssimativi, provider/ASN, datacenter Cloudflare, protocollo, TLS e latenze disponibili in `request.cf`. Durante lo sviluppo locale questi campi possono restare `NULL`.
 
 ## Progresso persistente
 
