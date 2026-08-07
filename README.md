@@ -98,6 +98,17 @@ Collega il repository GitHub a un progetto Cloudflare Pages. Non è necessario u
 
 GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1.
 
+## Analisi dell'export originale
+
+L'export Notion resta immutato e viene analizzato senza dipendenze aggiuntive:
+
+```bash
+npm run analyze:export
+npm run verify:links
+```
+
+I testi puliti delle pagine vengono salvati e versionati in `content/original/`, così restano disponibili su ogni computer. Inventario tecnico e verifica dei collegamenti vengono versionati in `reports/export/`. Il riepilogo leggibile è in `REPORT_VERIFICA_EXPORT.md`.
+
 ## File principali
 
 - `data.json`: parole, definizioni, coordinate e ordine narrativo.

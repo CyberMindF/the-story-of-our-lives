@@ -1,6 +1,7 @@
 import { clearAccessUnlock, revokeAuthSession } from "../shared/auth.js";
 import { clearRequestedDestination } from "../shared/navigation.js";
 import { createThemeController } from "../shared/theme.js";
+import { createWorldStars } from "../shared/world-atmosphere.js";
 
 const elements = {
   greeting: document.getElementById("user-greeting"),
@@ -16,6 +17,7 @@ const themeController = createThemeController({
 // Mostra l'hub soltanto dopo la verifica condivisa di sessione e Chiave.
 async function init() {
   themeController.applySavedTheme();
+  createWorldStars();
   const user = await window.mondoBiancoAuthReady;
   if (!user) {
     return;

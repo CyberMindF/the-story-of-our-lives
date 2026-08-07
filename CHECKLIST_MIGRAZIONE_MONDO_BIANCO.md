@@ -10,6 +10,8 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 - Se l'utente apre direttamente una pagina interna, dopo login completo o conferma della sola Chiave torna alla pagina richiesta.
 - Una sessione server valida determina se basta la Chiave; una sessione assente o scaduta richiede le credenziali complete e la Chiave.
 - Pagine, API e media personali devono essere protetti anche sul server; nascondere soltanto l'interfaccia non è sufficiente.
+- Foto personali, note vocali, video privati e allegati sono protetti per impostazione predefinita; immagini decorative e asset grafici dell'interfaccia possono restare pubblici nel frontend.
+- Le pagine narrative e visualmente uniche conservano il contenuto in HTML; JSON è riservato alle collezioni ripetitive da ordinare, filtrare o renderizzare. I contenuti originali migrati non vengono salvati in D1.
 
 ## P0 - Fondazioni bloccanti
 
@@ -29,27 +31,25 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 
 - [X] **Definire il comportamento del logout.** Revocare logicamente la sessione, rimuovere lo sblocco della scheda e riportare al Portone; se il logout parte da una pagina interna, non riaprire automaticamente quella pagina senza un nuovo accesso.
 
-- [ ] **Creare la shell condivisa del Mondo Bianco.** Implementare header, saluto, logout, ritorno all'hub, stato di caricamento e navigazione coerente riutilizzabili da tutte le pagine.
+- [X] **Definire il modello di autorizzazione dei media.** Conservare pubblici nel frontend gli asset decorativi e strutturali; servire foto personali, note vocali, video privati e allegati da storage non pubblico esclusivamente dopo una verifica server della sessione.
 
-- [ ] **Progettare la navigazione responsive.** Rendere raggiungibili hub e luoghi su desktop e telefono senza richiedere la modalità “Sito Desktop”, mantenendo orientamento e accessibilità.
-
-- [ ] **Definire il modello di autorizzazione dei media.** Stabilire quali immagini, audio e video sono privati e impedire l'accesso diretto agli asset personali senza sessione valida.
-
-- [ ] **Configurare R2 privato.** Creare bucket, binding e convenzioni per originali, thumbnail e versioni ottimizzate, con endpoint autenticato o URL firmati a breve scadenza.
-
-- [ ] **Definire gli schemi dati dei contenuti.** Stabilire quali contenuti restano in JSON/Markdown versionato e quali richiedono D1, mantenendo ID, ordine, origine e versione.
+- [X] **Definire la convenzione dei contenuti.** Usare HTML per hub, Portone e racconti con composizione unica e JSON versionato per calendari, gallerie, playlist e altre raccolte ripetitive. D1 resta limitato ad autenticazione, progresso, telemetria e altre funzioni applicative già deliberate; qualsiasi futura gestione dei contenuti dal sito richiederà una decisione separata. Definire lo schema JSON specifico quando si migra ciascuna raccolta.
 
 - [X] **Separare il JavaScript condiviso.** Organizzare autenticazione, API, redirect, visite e temi in moduli ES riutilizzabili, lasciando al cruciverba un entry point dedicato.
 
-- [ ] **Creare un importatore verificabile dell'export.** Estrarre testi, date, didascalie e associazioni ai media senza correggere automaticamente il contenuto originale e produrre un report delle differenze.
+- [X] **Creare un importatore verificabile dell'export.** Estrarre testi, collegamenti e associazioni ai media senza correggere automaticamente il contenuto originale, registrando hash e file mancanti in un report locale non pubblicato.
 
-- [ ] **Verificare tutte le dipendenze esterne.** Controllare destinazione, accessibilità e proprietà dei 37 link a SoundCloud, YouTube, Drive, Docs, Browserling e short link prima di sostituirli o conservarli.
+- [X] **Verificare tutte le dipendenze esterne.** Controllare destinazione e raggiungibilità di link e risorse tecniche SoundCloud, YouTube, Drive, Docs, Browserling, CDNJS e short link, conservando il dettaglio degli URL fuori dal repository.
 
 ## P1 - Nucleo navigabile
 
-- [ ] **Migrare la pagina Il Mondo Bianco.** Creare l'hub con testo di benvenuto, immagine principale, citazione, canzone e accesso agli otto luoghi originali, senza aggiungere il cruciverba come nono luogo.
+- [X] **Migrare la pagina Il Mondo Bianco.** Creare l'hub con testo di benvenuto, immagine principale, citazione, canzone e gli otto luoghi originali, attivando i collegamenti interni man mano che le rispettive pagine vengono migrate e senza aggiungere il cruciverba come nono luogo.
 
 - [ ] **Migrare la pagina Il Mappamondo.** Conservare integralmente il racconto fondativo R/D, l'immagine del globo e l'accompagnamento, presentandolo come prologo leggibile e responsive.
+
+- [ ] **Completare la shell condivisa del Mondo Bianco.** Partendo da atmosfera, temi, autenticazione, saluto e logout già condivisi, aggiungere ritorno all'hub, stato di caricamento e cornice comune usando hub e Mappamondo come casi reali.
+
+- [ ] **Progettare la navigazione responsive.** Dopo aver definito l'hub e una seconda pagina reale, rendere raggiungibili luoghi e ritorno alla home su desktop e telefono mantenendo orientamento e accessibilità.
 
 - [ ] **Migrare la pagina Il Calendario.** Trasformare le 27 date originali in una timeline strutturata, ordinata e mobile-first, preservando testo e ricorrenze senza aggiungere date automaticamente.
 
@@ -70,6 +70,8 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 - [ ] **Implementare i redirect legacy.** Reindirizzare vecchi URL e short link controllabili alle nuove route, evitando catene di redirect e collegamenti rotti.
 
 ## P2 - Archivi personali e media
+
+- [ ] **Configurare R2 privato.** Prima di importare la Bacheca o qualsiasi nota vocale, video personale o audio riservato, creare bucket e binding, definire convenzioni per originali, thumbnail e versioni ottimizzate e predisporre un endpoint autenticato o URL firmati a breve scadenza.
 
 - [ ] **Migrare la struttura della Bacheca dei Ricordi.** Creare periodi, giornate, screenshot, video e altri ricordi con un indice funzionante e URL/ancore stabili.
 

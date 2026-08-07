@@ -4,6 +4,8 @@
   "description": "Cruciverba personalizzato con frontend statico e autenticazione Cloudflare Pages Functions/D1.",
   "main": "assets/js/crossword/main.js",
   "scripts": {
+    "analyze:export": "node scripts/analyze-notion-export.mjs",
+    "verify:links": "node scripts/verify-external-links.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

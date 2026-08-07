@@ -1,0 +1,408 @@
+{
+  "generatedAt": "2026-08-07T22:32:52.838Z",
+  "totals": {
+    "total": 36,
+    "reachable": 35,
+    "network-error": 1
+  },
+  "results": [
+    {
+      "href": "https://soundcloud.com/flatline-22173025/il-cerchio",
+      "label": "https://soundcloud.com/flatline-22173025/il-cerchio",
+      "pages": [
+        "⭕ Il Mondo Bianco",
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "soundcloud.com",
+      "status": 200,
+      "finalUrl": "https://soundcloud.com/flatline-22173025/il-cerchio",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/la-bacheca",
+      "label": "[ 📸 La Bacheca dei Ricordi ]",
+      "pages": [
+        "⭕ Il Mondo Bianco"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": 200,
+      "finalUrl": "https://app.notion.com/p/La-Bacheca-dei-Ricordi-31479ac3576c80e2ab7cfa11d7923c60?clid=eyJpIjoiSjdFRnZyQmwtRjZhSUw0dDFRaExTIiwiaCI6IiIsInAiOiIvbGEtYmFjaGVjYSIsInQiOjE3ODYxNDE5MzN9.690HJnxxIY880ARnQSQDw58N940mAzTai8B9IQiwECg",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/il-mappamondo",
+      "label": "[ 🌍 Il Mappamondo ]",
+      "pages": [
+        "⭕ Il Mondo Bianco"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": 200,
+      "finalUrl": "https://app.notion.com/p/Il-Mappamondo-31479ac3576c804da18ddd4d20aa9926?clid=eyJpIjoiZUYwLXRPRVNvTXo5QVpvQzRfSUhtIiwiaCI6IiIsInAiOiIvaWwtbWFwcGFtb25kbyIsInQiOjE3ODYxNDE5MzR9.kpWeIUI1TuP2VHlw5g1QGpvDg0deAW7vKViS_taBsFQ",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/i-ponti",
+      "label": "[ 🌈 I Ponti ]",
+      "pages": [
+        "⭕ Il Mondo Bianco"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": 200,
+      "finalUrl": "https://app.notion.com/p/I-Ponti-31479ac3576c80599f2eef4b8d5c6774?clid=eyJpIjoiRi1HMEhwZ19PT3RVMWhnTG5sZDJVIiwiaCI6IiIsInAiOiIvaS1wb250aSIsInQiOjE3ODYxNDE5MzV9.YBFp_UUoR-IJDKDU3eBlaoNYhqF8bVV8V4EiPEuQt8E",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/le-storie",
+      "label": "[ 📖 Le Storie ]",
+      "pages": [
+        "⭕ Il Mondo Bianco"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": 200,
+      "finalUrl": "https://app.notion.com/p/Le-Storie-31479ac3576c80e9a2e1e4bccf7f1108?clid=eyJpIjoiRGxMSXdxaGxZNTAtMjNjdzhGM2RiIiwiaCI6IiIsInAiOiIvbGUtc3RvcmllIiwidCI6MTc4NjE0MTkzNn0.cOh1NhmPumFWdiM7iYgTLVoqJjGChDby5X8sQrJAL30",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/il-calendario",
+      "label": "[ 📅 Il Calendario ]",
+      "pages": [
+        "⭕ Il Mondo Bianco"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": 200,
+      "finalUrl": "https://app.notion.com/p/Il-Calendario-31479ac3576c80e78ea2ff4f898c0139?clid=eyJpIjoiQXo3X2k3dE1FLUR3aVc3TTV5YUd2IiwiaCI6IiIsInAiOiIvaWwtY2FsZW5kYXJpbyIsInQiOjE3ODYxNDE5Mzd9.hxIYzev4VRI8xJDmzjC9POTfgnpaGJxIYdmo0Uvitao",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/la-cuffiette",
+      "label": "[ 🎧 Le Cuffiette ]",
+      "pages": [
+        "⭕ Il Mondo Bianco"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": null,
+      "finalUrl": null,
+      "outcome": "network-error",
+      "error": "Command failed: curl --location --silent --show-error --output /dev/null --max-time 15 --user-agent MondoBiancoLinkVerifier/1.0 --write-out %{http_code}\t%{url_effective} https://rsgmsfcfm.short.gy/la-cuffiette\ncurl: (28) Connection timed out after 15006 milliseconds\n"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/il-tavolo",
+      "label": "[ 🐉 Il Tavolo da Gioco ]",
+      "pages": [
+        "⭕ Il Mondo Bianco"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": 200,
+      "finalUrl": "https://app.notion.com/p/Il-Tavolo-da-Gioco-32b79ac3576c803bae9aef8c3afe520d?source=copy_link&clid=eyJpIjoiVHpaUndKUGNYT1duaVlFSGs3RFVtIiwiaCI6IiIsInAiOiIvaWwtdGF2b2xvIiwidCI6MTc4NjE0MTk1M30.IpmSZii85UGf7eDxu68G0nJW_hiftMOUb4PzIIUY2q0",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/la-mappa",
+      "label": "[ 🗺️ La Mappa ]",
+      "pages": [
+        "⭕ Il Mondo Bianco"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": 200,
+      "finalUrl": "https://app.notion.com/p/La-Mappa-33979ac3576c803980f8e722d5d9c8d6?clid=eyJpIjoiWUF2dzd1TWFVTC1DU2tXbkVReWFjIiwiaCI6IiIsInAiOiIvbGEtbWFwcGEiLCJ0IjoxNzg2MTQxOTU0fQ.d-GZYDuxaOJIAiWojUCMR-fhsqRnm7d8tjUk6UHkoHA",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://docs.google.com/document/d/10hqyWqgTlwno_3-9z2qafS1zLgWAsaAAYwNOpOaOzvY/edit?usp=drive_link",
+      "label": "[ ➡️ Vai ]",
+      "pages": [
+        "🌈 I Ponti"
+      ],
+      "domain": "docs.google.com",
+      "status": 200,
+      "finalUrl": "https://docs.google.com/document/d/10hqyWqgTlwno_3-9z2qafS1zLgWAsaAAYwNOpOaOzvY/edit?usp=drive_link",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://docs.google.com/document/d/1ov9b4AxZbLOgENju2BAqJSqMHQMIeyaVDmNqaT5dY2o/edit?usp=drive_link",
+      "label": "[ ➡️ Vai ]",
+      "pages": [
+        "🌈 I Ponti"
+      ],
+      "domain": "docs.google.com",
+      "status": 200,
+      "finalUrl": "https://docs.google.com/document/d/1ov9b4AxZbLOgENju2BAqJSqMHQMIeyaVDmNqaT5dY2o/edit?usp=drive_link",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://docs.google.com/document/d/1V5GMJ725hLmLQ5RYgUPNXt7ZKouEpBJQ2E1IGyi8fIk/edit?tab=t.0",
+      "label": "[ ➡️ Vai ]",
+      "pages": [
+        "🌈 I Ponti"
+      ],
+      "domain": "docs.google.com",
+      "status": 200,
+      "finalUrl": "https://docs.google.com/document/d/1V5GMJ725hLmLQ5RYgUPNXt7ZKouEpBJQ2E1IGyi8fIk/edit?tab=t.0",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://drive.google.com/drive/folders/1X8zz37JJYLfwRmh3KnLdRXDUP_pJPF3o?usp=drive_link",
+      "label": "[ ➡️ Vai ]",
+      "pages": [
+        "🌈 I Ponti"
+      ],
+      "domain": "drive.google.com",
+      "status": 200,
+      "finalUrl": "https://drive.google.com/drive/folders/1X8zz37JJYLfwRmh3KnLdRXDUP_pJPF3o?usp=drive_link",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://www.youtube.com/watch?v=CqnG6CCuDA0&list=RDCqnG6CCuDA0&start_radio=1",
+      "label": "https://www.youtube.com/watch?v=CqnG6CCuDA0&amp;list=RDCqnG6CCuDA0&amp;start_radio=1",
+      "pages": [
+        "🌍 Il Mappamondo"
+      ],
+      "domain": "www.youtube.com",
+      "status": 200,
+      "finalUrl": "https://www.youtube.com/watch?v=CqnG6CCuDA0&list=RDCqnG6CCuDA0&start_radio=1",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://www.browserling.com/tools/aes-decrypt",
+      "label": "AES Decryptor",
+      "pages": [
+        "🌹Il Portone"
+      ],
+      "domain": "www.browserling.com",
+      "status": 200,
+      "finalUrl": "https://www.browserling.com/tools/aes-decrypt",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js",
+      "label": "[script]",
+      "pages": [
+        "🌹Il Portone"
+      ],
+      "domain": "cdnjs.cloudflare.com",
+      "status": 200,
+      "finalUrl": "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css",
+      "label": "[link]",
+      "pages": [
+        "🌹Il Portone"
+      ],
+      "domain": "cdnjs.cloudflare.com",
+      "status": 200,
+      "finalUrl": "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/dthc",
+      "label": "🎵 Playlist 🎶",
+      "pages": [
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": 200,
+      "finalUrl": "https://open.spotify.com/playlist/0Vb1LueDMw2SjbQjCAfrMk?si=51ec3ea7faa14386&clid=eyJpIjoidnhDREVaV2xHUlBFOXdWWDFsVUhrIiwiaCI6IiIsInAiOiIvZHRoYyIsInQiOjE3ODYxNDE5NjB9.jjjEB8R8KJ_vp8O9Xg-ilGDseHoy6boRk86TkmAU6AU",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://soundcloud.com/flatline-22173025/cosa-restera?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=363e9ef89f034265afd9a0a95937f316",
+      "label": "https://soundcloud.com/flatline-22173025/cosa-restera?utm_source=clipboard&amp;utm_medium=text&amp;utm_campaign=social_sharing&amp;si=363e9ef89f034265afd9a0a95937f316",
+      "pages": [
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "soundcloud.com",
+      "status": 200,
+      "finalUrl": "https://soundcloud.com/flatline-22173025/cosa-restera?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=363e9ef89f034265afd9a0a95937f316",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://soundcloud.com/flatline-22173025/il-porno-migliore?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=21e8b8fade7e4d3da74a85d06f0e4341",
+      "label": "https://soundcloud.com/flatline-22173025/il-porno-migliore?utm_source=clipboard&amp;utm_medium=text&amp;utm_campaign=social_sharing&amp;si=21e8b8fade7e4d3da74a85d06f0e4341",
+      "pages": [
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "soundcloud.com",
+      "status": 200,
+      "finalUrl": "https://soundcloud.com/flatline-22173025/il-porno-migliore?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=21e8b8fade7e4d3da74a85d06f0e4341",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://soundcloud.com/flatline-22173025/dimmi-cosa-provi-adesso?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=3dee01eddc404a43ad230ef796c5ea73",
+      "label": "https://soundcloud.com/flatline-22173025/dimmi-cosa-provi-adesso?utm_source=clipboard&amp;utm_medium=text&amp;utm_campaign=social_sharing&amp;si=3dee01eddc404a43ad230ef796c5ea73",
+      "pages": [
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "soundcloud.com",
+      "status": 200,
+      "finalUrl": "https://soundcloud.com/flatline-22173025/dimmi-cosa-provi-adesso?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=3dee01eddc404a43ad230ef796c5ea73",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://soundcloud.com/flatline-22173025/conta?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=ef8c681115474eb6b8b92de4ad378da1",
+      "label": "https://soundcloud.com/flatline-22173025/conta?utm_source=clipboard&amp;utm_medium=text&amp;utm_campaign=social_sharing&amp;si=ef8c681115474eb6b8b92de4ad378da1",
+      "pages": [
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "soundcloud.com",
+      "status": 200,
+      "finalUrl": "https://soundcloud.com/flatline-22173025/conta?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=ef8c681115474eb6b8b92de4ad378da1",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://soundcloud.com/flatline-22173025/cosa-sei-per-me?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=590e1b6850314b21b7358fbff7367fb6",
+      "label": "https://soundcloud.com/flatline-22173025/cosa-sei-per-me?utm_source=clipboard&amp;utm_medium=text&amp;utm_campaign=social_sharing&amp;si=590e1b6850314b21b7358fbff7367fb6",
+      "pages": [
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "soundcloud.com",
+      "status": 200,
+      "finalUrl": "https://soundcloud.com/flatline-22173025/cosa-sei-per-me?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=590e1b6850314b21b7358fbff7367fb6",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://soundcloud.com/flatline-22173025/ti-amo-male?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=3461d0c371f94dcbae1854f5e6fbdfcd",
+      "label": "https://soundcloud.com/flatline-22173025/ti-amo-male?utm_source=clipboard&amp;utm_medium=text&amp;utm_campaign=social_sharing&amp;si=3461d0c371f94dcbae1854f5e6fbdfcd",
+      "pages": [
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "soundcloud.com",
+      "status": 200,
+      "finalUrl": "https://soundcloud.com/flatline-22173025/ti-amo-male?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=3461d0c371f94dcbae1854f5e6fbdfcd",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://soundcloud.com/flatline-22173025/resta-qui-con-me?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=b68a416953704dd38f63bd7150218cb7",
+      "label": "https://soundcloud.com/flatline-22173025/resta-qui-con-me?utm_source=clipboard&amp;utm_medium=text&amp;utm_campaign=social_sharing&amp;si=b68a416953704dd38f63bd7150218cb7",
+      "pages": [
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "soundcloud.com",
+      "status": 200,
+      "finalUrl": "https://soundcloud.com/flatline-22173025/resta-qui-con-me?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&si=b68a416953704dd38f63bd7150218cb7",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://soundcloud.com/flatline-22173025/desyland-dreamer",
+      "label": "https://soundcloud.com/flatline-22173025/desyland-dreamer",
+      "pages": [
+        "🎧 Le Cuffiette"
+      ],
+      "domain": "soundcloud.com",
+      "status": 200,
+      "finalUrl": "https://soundcloud.com/flatline-22173025/desyland-dreamer",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://rsgmsfcfm.short.gy/gdr",
+      "label": "[ Il Prezzo della Verità ]",
+      "pages": [
+        "🐉 Il Tavolo da Gioco"
+      ],
+      "domain": "rsgmsfcfm.short.gy",
+      "status": 200,
+      "finalUrl": "https://drive.google.com/drive/folders/1zXOQIQeJUrqB2SQD9K_r3GQvXwEVOh5t?usp=drive_link&clid=eyJpIjoiUGMxMzNIQlJZZGR5dG11Mk83NTl1IiwiaCI6IiIsInAiOiIvZ2RyIiwidCI6MTc4NjE0MTk2NH0.QUBVgtn6gFjpBHmaT-MY5V8X_0x5W_PF3g7cuorsMyU",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://www.youtube.com/watch?v=nagMxzLZfLk",
+      "label": "https://www.youtube.com/watch?v=nagMxzLZfLk",
+      "pages": [
+        "📖 Le Storie"
+      ],
+      "domain": "www.youtube.com",
+      "status": 200,
+      "finalUrl": "https://www.youtube.com/watch?v=nagMxzLZfLk",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://youtu.be/tpSifiOnql8?si=YkLs7G46HfvGpFmH",
+      "label": "https://youtu.be/tpSifiOnql8?si=YkLs7G46HfvGpFmH",
+      "pages": [
+        "📸 La Bacheca dei Ricordi"
+      ],
+      "domain": "youtu.be",
+      "status": 200,
+      "finalUrl": "https://www.youtube.com/watch?si=YkLs7G46HfvGpFmH&v=tpSifiOnql8&feature=youtu.be",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://youtu.be/cNGjD0VG4R8?si=RbsM4ba0ef8ETXSi",
+      "label": "https://youtu.be/cNGjD0VG4R8?si=RbsM4ba0ef8ETXSi",
+      "pages": [
+        "📸 La Bacheca dei Ricordi"
+      ],
+      "domain": "youtu.be",
+      "status": 200,
+      "finalUrl": "https://www.youtube.com/watch?si=RbsM4ba0ef8ETXSi&v=cNGjD0VG4R8&feature=youtu.be",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://drive.google.com/file/d/1HexZWQCdlM6XBmNG3PYbVjZeKl4LmU_I/view?usp=drive_link",
+      "label": "https://drive.google.com/file/d/1HexZWQCdlM6XBmNG3PYbVjZeKl4LmU_I/view?usp=drive_link",
+      "pages": [
+        "📸 La Bacheca dei Ricordi"
+      ],
+      "domain": "drive.google.com",
+      "status": 200,
+      "finalUrl": "https://drive.google.com/file/d/1HexZWQCdlM6XBmNG3PYbVjZeKl4LmU_I/view?usp=drive_link",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://drive.google.com/file/d/1fBFodJvE0sougquvywg5hlK2Nm3QBUAU/view?usp=drive_link",
+      "label": "https://drive.google.com/file/d/1fBFodJvE0sougquvywg5hlK2Nm3QBUAU/view?usp=drive_link",
+      "pages": [
+        "📸 La Bacheca dei Ricordi"
+      ],
+      "domain": "drive.google.com",
+      "status": 200,
+      "finalUrl": "https://drive.google.com/file/d/1fBFodJvE0sougquvywg5hlK2Nm3QBUAU/view?usp=drive_link",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://docs.google.com/document/d/10hqyWqgTlwno_3-9z2qafS1zLgWAsaAAYwNOpOaOzvY/edit?tab=t.0#heading=h.3qqgeqjm35uu",
+      "label": "Messaggio",
+      "pages": [
+        "📸 La Bacheca dei Ricordi"
+      ],
+      "domain": "docs.google.com",
+      "status": 200,
+      "finalUrl": "https://docs.google.com/document/d/10hqyWqgTlwno_3-9z2qafS1zLgWAsaAAYwNOpOaOzvY/edit?tab=t.0#heading=h.3qqgeqjm35uu",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://drive.google.com/file/d/10el25RvGS0cEjfx1B2B4FqIRt-m25xm1/view?usp=drive_link",
+      "label": "https://drive.google.com/file/d/10el25RvGS0cEjfx1B2B4FqIRt-m25xm1/view?usp=drive_link",
+      "pages": [
+        "📸 La Bacheca dei Ricordi"
+      ],
+      "domain": "drive.google.com",
+      "status": 200,
+      "finalUrl": "https://drive.google.com/file/d/10el25RvGS0cEjfx1B2B4FqIRt-m25xm1/view?usp=drive_link",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://drive.google.com/file/d/1ASDQ85ygVw43io5zMDGDWHIyozkcQ12U/view?usp=drive_link",
+      "label": "https://drive.google.com/file/d/1ASDQ85ygVw43io5zMDGDWHIyozkcQ12U/view?usp=drive_link",
+      "pages": [
+        "📸 La Bacheca dei Ricordi"
+      ],
+      "domain": "drive.google.com",
+      "status": 200,
+      "finalUrl": "https://drive.google.com/file/d/1ASDQ85ygVw43io5zMDGDWHIyozkcQ12U/view?usp=drive_link",
+      "outcome": "reachable"
+    },
+    {
+      "href": "https://drive.google.com/file/d/1PdOnPObHoWqi54CbtuDOjAVUui5s3gVw/view?usp=sharing",
+      "label": "https://drive.google.com/file/d/1PdOnPObHoWqi54CbtuDOjAVUui5s3gVw/view?usp=sharing",
+      "pages": [
+        "📸 La Bacheca dei Ricordi"
+      ],
+      "domain": "drive.google.com",
+      "status": 200,
+      "finalUrl": "https://drive.google.com/file/d/1PdOnPObHoWqi54CbtuDOjAVUui5s3gVw/view?usp=sharing",
+      "outcome": "reachable"
+    }
+  ]
+}
