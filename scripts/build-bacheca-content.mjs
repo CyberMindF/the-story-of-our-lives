@@ -36,12 +36,16 @@ const daySlugs = {
 const html = await readFile(sourcePath, "utf8");
 const body = html.match(/<div class="page-body">([\s\S]*)<\/article>/i)[1];
 
+// L'originale affianca in colonne una foto (o un piccolo gruppo) e il testo che la
+// descrive: "row-boundary" segna dove Notion apriva una nuova riga a colonne, così
+// dopo possiamo raggruppare le foto della stessa riga invece di un'unica griglia
+// per l'intera giornata, che confondeva quale didascalia si riferisse a quali foto.
 const tokenPattern =
-  /<h2[^>]*>([\s\S]*?)<\/h2>|<h3[^>]*>([\s\S]*?)<\/h3>|<figure[^>]*data-notion-image="([^"]+)"[^>]*>([\s\S]*?)<\/figure>|<figure[^>]*>((?:(?!<\/figure>)[\s\S])*<div class="source">[\s\S]*?<\/figure>)|<p[^>]*>([\s\S]*?)<\/p>/g;
+  /<div[^>]*class="column-list"[^>]*>|<h2[^>]*>([\s\S]*?)<\/h2>|<h3[^>]*>([\s\S]*?)<\/h3>|<figure[^>]*data-notion-image="([^"]+)"[^>]*>([\s\S]*?)<\/figure>|<figure[^>]*>((?:(?!<\/figure>)[\s\S])*<div class="source">[\s\S]*?<\/figure>)|<p[^>]*>([\s\S]*?)<\/p>/g;
 
 const nodes = [];
 for (const match of body.matchAll(tokenPattern)) {
-  const [, h2, h3, imageSrc, imageInner, sourceFigure, paragraph] = match;
+  const [whole, h2, h3, imageSrc, imageInner, sourceFigure, paragraph] = match;
 
   if (h2 !== undefined) {
     nodes.push({ type: "h2", text: cleanText(h2) });
@@ -62,6 +66,8 @@ for (const match of body.matchAll(tokenPattern)) {
     if (text && !text.startsWith("➡️") && text !== "[ ⬅️ Torna al Mondo Bianco ]") {
       nodes.push({ type: "text", text });
     }
+  } else if (whole.includes("column-list")) {
+    nodes.push({ type: "row-boundary" });
   }
 }
 
@@ -93,7 +99,31 @@ for (const node of nodes) {
     currentDay = { title: null, slug: "generale", items: [] };
     currentPeriod.days.push(currentDay);
   }
+
+  if (node.type === "row-boundary") {
+    // Chiude il gruppo di foto in corso: la prossima foto apre una riga nuova.
+    currentDay.openPhotoGroup = null;
+    continue;
+  }
+
+  if (node.type === "photo") {
+    if (!currentDay.openPhotoGroup) {
+      currentDay.openPhotoGroup = { type: "photo-group", photos: [] };
+      currentDay.items.push(currentDay.openPhotoGroup);
+    }
+    currentDay.openPhotoGroup.photos.push(node);
+    continue;
+  }
+
+  currentDay.openPhotoGroup = null;
   currentDay.items.push(node);
+}
+
+// La proprietà di appoggio usata solo per costruire i gruppi non deve finire nel JSON.
+for (const period of periods) {
+  for (const day of period.days) {
+    delete day.openPhotoGroup;
+  }
 }
 
 // Le voci d'indice generano un periodo con zero foto/testo: le rimuoviamo.
@@ -105,13 +135,15 @@ for (const period of realPeriods) {
   for (const day of period.days) {
     let counter = 0;
     for (const item of day.items) {
-      if (item.type !== "photo") continue;
-      counter += 1;
-      const extension = path.extname(item.file) || ".jpg";
-      const key = `bacheca/${period.slug}/${day.slug}/original/${String(counter).padStart(2, "0")}${extension}`;
-      item.key = key;
-      manifest.push({ key, source: path.join(sourceDir, item.file) });
-      delete item.file;
+      if (item.type !== "photo-group") continue;
+      for (const photo of item.photos) {
+        counter += 1;
+        const extension = path.extname(photo.file) || ".jpg";
+        const key = `bacheca/${period.slug}/${day.slug}/original/${String(counter).padStart(2, "0")}${extension}`;
+        photo.key = key;
+        manifest.push({ key, source: path.join(sourceDir, photo.file) });
+        delete photo.file;
+      }
     }
   }
 }

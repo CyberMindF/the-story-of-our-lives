@@ -72,8 +72,9 @@
     }
   ],
   "bonus": {
-    "available": false,
-    "label": "Bonus"
+    "available": true,
+    "label": "Bonus",
+    "key": "cuffiette/bonus/bonus.mp3"
   },
   "stolenWords": {
     "introduction": "Qui scriverò ogni tanto le frasi delle canzoni che mi hanno fatto pensare a te, a noi, alla situazione, un po’ tutto, magari le più importanti",

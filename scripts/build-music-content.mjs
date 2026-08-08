@@ -55,7 +55,7 @@ const content = {
   },
   songsIntroduction: take(9),
   songs,
-  bonus: { available: false, label: take(163) },
+  bonus: { available: true, label: take(163), key: "cuffiette/bonus/bonus.mp3" },
   stolenWords: { introduction: take(166), items: stolenWords }
 };
 

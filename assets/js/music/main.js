@@ -7,6 +7,8 @@ const elements = {
   songsList: document.querySelector("#songs-list"),
   stolenIntroduction: document.querySelector("#stolen-introduction"),
   stolenWords: document.querySelector("#stolen-words"),
+  bonusSection: document.querySelector("#bonus-section"),
+  bonusAudio: document.querySelector("#bonus-audio"),
   error: document.querySelector("#music-error")
 };
 
@@ -60,6 +62,12 @@ function renderMusic(data) {
     elements.trackList.append(link);
     elements.songsList.append(createSong(song, index));
   });
+
+  // L'audio bonus passa sempre dall'endpoint autenticato, mai da un percorso statico.
+  if (data.bonus?.available && data.bonus.key) {
+    elements.bonusAudio.src = `../api/media/${data.bonus.key}`;
+    elements.bonusSection.hidden = false;
+  }
 
   data.stolenWords.items.forEach((item) => {
     const quote = document.createElement("blockquote");

@@ -1,0 +1,141 @@
+.lettere-page { min-height: 100dvh; color: #f4f7fb; }
+.lettere-eyebrow { margin: 0 0 .65rem; color: #b8cad9; font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+
+.lettere-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+.lettere-hero h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.6rem, 7vw, 4.2rem); font-weight: 400; line-height: .95; letter-spacing: -.04em; }
+.lettere-intro { margin: 1.25rem auto 0; max-width: 34rem; color: #d1dde6; font-size: 1.05rem; line-height: 1.8; }
+
+.letter-form { width: min(100%, 46rem); margin: 0 auto; display: grid; gap: 1.15rem; padding-bottom: clamp(2.5rem, 6vw, 4rem); }
+.letter-field { display: grid; gap: .5rem; }
+.letter-field > span { color: #eef3f7; font-size: .9rem; font-weight: 700; }
+.letter-field textarea { width: 100%; box-sizing: border-box; min-height: 10rem; padding: .9rem; border: 1px solid rgba(255,255,255,.17); border-radius: .85rem; background: rgba(4,12,25,.46); color: #f4f7fb; font: inherit; line-height: 1.6; resize: vertical; }
+.letter-field textarea::placeholder { color: #879bab; opacity: 1; }
+
+.letter-submit-row { display: flex; justify-content: flex-end; }
+.letter-submit-row button { min-height: 2.9rem; padding: .7rem 1.15rem; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; background: rgba(255,255,255,.1); color: #fff; font: inherit; font-weight: 750; cursor: pointer; }
+.letter-submit-row button:hover { border-color: rgba(255,255,255,.42); background: rgba(255,255,255,.16); }
+.letter-submit-row button:disabled { cursor: wait; opacity: .58; }
+
+.letter-status { margin: 0; font-size: .86rem; }
+.letter-status:empty { display: none; }
+.letter-status.is-success { color: #a7dfbd; }
+.letter-status.is-error { color: #ffb4b4; }
+
+.lettere-archive { padding-bottom: clamp(3rem, 7vw, 5rem); border-top: 1px solid rgba(255,255,255,.16); padding-top: clamp(2.5rem, 6vw, 4rem); }
+.lettere-section-heading { margin-bottom: 4.5rem; }
+.lettere-section-heading h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 400; letter-spacing: -.03em; }
+
+.letters-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 1.5rem 1.25rem; }
+.letter-card { display: grid; justify-items: center; gap: .6rem; padding: 0; border: 0; border-radius: .5rem; background: none; color: #f4f7fb; text-align: center; cursor: pointer; font: inherit; }
+
+/* La busta: si apre al passaggio del mouse/focus, come se stesse per far uscire la lettera.
+   Un solo triangolo per la patta: ruotato attorno al bordo superiore, la sua altezza (scaleY)
+   scende a 0 e poi ricresce dall'altra parte, capovolta, come se si fosse ripiegata all'indietro. */
+.envelope { position: relative; width: 100%; max-width: 9rem; aspect-ratio: 4 / 3; filter: drop-shadow(0 .8rem 1.4rem rgba(0,0,0,.4)); transition: transform .2s ease; }
+.letter-card:hover .envelope, .letter-card:focus-visible .envelope { transform: translateY(-.25rem); }
+
+.envelope-back { position: absolute; inset: 0; z-index: 2; border-radius: 2px; background: linear-gradient(155deg, #f8f2e6, #e6dbc0); }
+
+/* Ordine diverso tra apertura e chiusura: all'apertura la busta si apre e poi esce il foglio;
+   alla chiusura deve succedere il contrario, il foglio rientra subito e solo dopo la busta si
+   richiude — altrimenti la patta si chiude sopra un foglio ancora fuori. Per questo transform e
+   transition sono definiti due volte: una sulla regola base (governa il ritorno a riposo, cioè
+   la chiusura) e una sulla regola :hover (governa l'apertura), con delay diversi tra le due. */
+.envelope-paper { position: absolute; z-index: 1; left: 9%; right: 9%; top: -62%; height: 88%; border-radius: 1px; background: linear-gradient(180deg, #fffcf4, #f3ecd8); box-shadow: 0 .3rem .6rem rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.05); transform: translateY(75%) rotate(-1.5deg); transition: transform .3s ease; }
+.envelope-paper::before { content: ""; position: absolute; left: 16%; right: 16%; top: 26%; height: 0; border-top: 2px solid rgba(60,50,35,.14); box-shadow: 0 9px 0 rgba(60,50,35,.11), 0 18px 0 rgba(60,50,35,.08); }
+.letter-card:hover .envelope-paper, .letter-card:focus-visible .envelope-paper { transform: translateY(0%) rotate(-1.5deg); transition: transform .45s cubic-bezier(.2,.8,.2,1) .5s; }
+
+/* Due copie identiche della stessa patta, sincronizzate sullo stesso scaleY: quella davanti (sopra
+   il foglio) sparisce esattamente quando l'altezza tocca lo 0, e quella dietro (sotto il foglio)
+   compare nello stesso istante — visivamente resta un solo movimento continuo. La chiusura della
+   patta è ritardata (vedi sopra) finché il foglio non è già rientrato. */
+.envelope-flap { position: absolute; inset: 0; background: linear-gradient(155deg, #efe3c8, #ddcda3); clip-path: polygon(0 0, 100% 0, 50% 60%); transform-origin: top center; transition: transform .4s ease .3s, opacity 0s linear .5s; }
+.letter-card:hover .envelope-flap, .letter-card:focus-visible .envelope-flap { transform: scaleY(-1); transition: transform .5s ease, opacity 0s linear .22s; }
+
+.envelope-flap-front { z-index: 3; }
+.letter-card:hover .envelope-flap-front, .letter-card:focus-visible .envelope-flap-front { opacity: 0; }
+
+.envelope-flap-behind { z-index: 0; opacity: 0; }
+.letter-card:hover .envelope-flap-behind, .letter-card:focus-visible .envelope-flap-behind { opacity: 1; }
+
+.envelope-seal { position: absolute; top: 54%; left: 50%; width: 1.9rem; height: 1.9rem; border-radius: 50%; background: #a5473f; box-shadow: 0 .25rem .5rem rgba(0,0,0,.35), inset 0 -.15rem .25rem rgba(0,0,0,.25); transform: translate(-50%, -50%); z-index: 4; transition: opacity .2s ease, transform .2s ease; }
+.envelope-seal::before { position: absolute; inset: 0; display: grid; place-items: center; color: #f3ddc4; font-size: .95rem; content: "♡"; }
+.letter-card:hover .envelope-seal, .letter-card:focus-visible .envelope-seal { opacity: 0; transform: translate(-50%, -50%) scale(.6); }
+
+.letter-card.is-unread .envelope-seal { background: #c0392b; }
+.letter-card.is-unread .envelope-seal::before { color: #fbe6d6; }
+.letter-card:not(.is-unread) .envelope { opacity: .82; }
+.letter-card:not(.is-unread) .envelope-seal { background: #8a8378; }
+.letter-card:not(.is-unread) .envelope-seal::before { color: #d8d2c4; }
+
+.letter-card-label { display: grid; gap: .15rem; }
+.letter-card-author { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 1.1rem; color: #e9cf9d; }
+.letter-card-date { color: #aebfcd; font-size: .8rem; }
+.letter-card-status { color: #f3dfb8; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+.letter-card-status:empty { display: none; }
+
+.letters-empty, .letters-error { color: #aebfcd; font-size: .95rem; }
+.letters-error { color: var(--error-color); }
+
+.lettere-home-link { display: flex; align-items: center; gap: .6rem; width: fit-content; margin: 0 auto clamp(3rem, 7vw, 5rem); padding: .8rem 1.1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; background: rgba(255,255,255,.08); color: #f4f7fb; font-weight: 700; text-decoration: none; }
+
+/* La lettera aperta si legge su un foglio chiaro, come un momento a parte dal resto del sito.
+   Angoli netti e una lieve rotazione, per sembrare un foglio vero appoggiato lì, non una card.
+   La dimensione del foglio dipende dalla lunghezza del testo (vedi letterSizeCategory in main.js):
+   un biglietto breve resta piccolo, una lettera lunga diventa un vero foglio grande. */
+.letter-dialog { margin: auto; padding: 0; border: 0; border-radius: 0; width: min(100% - 3rem, 34rem); max-height: min(100% - 3rem, 42rem); background: transparent; overflow: visible; }
+.letter-dialog[data-letter-size="bigliettino"] { width: min(100% - 3rem, 21rem); }
+.letter-dialog[data-letter-size="foglio-a4"] { width: min(100% - 3rem, 50rem); max-height: min(100% - 3rem, 48rem); }
+.letter-dialog::backdrop { background: rgba(6, 10, 18, .88); }
+.letter-dialog[open] { display: block; }
+.letter-paper {
+  position: relative;
+  z-index: 1;
+  max-height: min(90dvh, 42rem);
+  padding: clamp(2rem, 6vw, 3rem);
+  border-radius: 2px;
+  background-color: #f6f1e7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='1.6'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  color: #2b2620;
+  box-shadow: 0 .5rem 0 rgba(0,0,0,.06), 0 2rem 6rem rgba(0,0,0,.5);
+  transform: rotate(var(--letter-rotation, -2.4deg));
+  transition: transform .45s cubic-bezier(.22,.9,.28,1), opacity .3s ease;
+  overflow-y: auto;
+}
+.letter-dialog[data-letter-size="foglio-a4"] .letter-paper { max-height: min(92dvh, 48rem); }
+.letter-dialog[data-letter-size="bigliettino"] .letter-paper { padding: clamp(1.5rem, 5vw, 2.2rem); }
+.letter-paper-date { margin: 0 0 1.25rem; color: #7a7061; font-size: .8rem; letter-spacing: .04em; text-transform: uppercase; }
+.letter-paper-body { margin: 0; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: clamp(1.15rem, 2.2vw, 1.35rem); line-height: 1.85; white-space: pre-wrap; }
+.letter-paper-signature { margin: 1.5rem 0 0; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 1.3rem; color: #7a5c3a; text-align: right; }
+
+.letter-dialog-close { position: absolute; z-index: 2; top: -3.25rem; right: -1.25rem; display: inline-flex; align-items: center; justify-content: center; width: 2.6rem; height: 2.6rem; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; background: #1a2333; color: #f4f7fb; cursor: pointer; }
+.letter-dialog-close:hover { background: #253247; }
+.letter-dialog-close svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.letter-field textarea,
+.lettere-home-link { outline: none; }
+
+.letter-field textarea:focus-visible,
+.lettere-home-link:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+
+.letter-card,
+.letter-dialog-close { -webkit-tap-highlight-color: transparent; }
+.letter-card:focus,
+.letter-card:focus-visible,
+.letter-card:hover,
+.letter-dialog-close:focus,
+.letter-dialog-close:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  background: none !important;
+  border-color: transparent !important;
+}
+
+@media (max-width: 560px) {
+  .letter-dialog-close { top: -3rem; right: 0; }
+}
+
+@media (max-width: 480px) {
+  .letter-card-status { margin-left: 0; }
+}

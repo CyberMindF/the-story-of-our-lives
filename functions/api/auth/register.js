@@ -46,14 +46,16 @@ export async function onRequestPost(context) {
       return json({ error: "Esiste già un account con questa email." }, 409);
     }
 
-    // Per ora il nickname coincide con la parte dell'email che precede la chiocciola.
-    const nickname = email.split("@")[0];
+    // Chi si registra può scegliere come farsi chiamare; senza scelta, si usa l'email come prima.
+    const requestedNickname = typeof body.nickname === "string" ? body.nickname.trim().slice(0, 40) : "";
+    const nickname = requestedNickname || email.split("@")[0];
+    const notifyEmailUpdates = body.notifyEmailUpdates === true ? 1 : 0;
     const result = await env.DB
       .prepare(`
-        INSERT INTO users (email, nickname, password, is_activated)
-        VALUES (?, ?, ?, 1)
+        INSERT INTO users (email, nickname, password, is_activated, notify_email_updates)
+        VALUES (?, ?, ?, 1, ?)
       `)
-      .bind(email, nickname, password)
+      .bind(email, nickname, password, notifyEmailUpdates)
       .run();
 
     // Dopo la registrazione l'utente entra subito con una nuova sessione.

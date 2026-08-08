@@ -22,40 +22,44 @@
               "href": "https://youtu.be/tpSifiOnql8?si=YkLs7G46HfvGpFmH"
             },
             {
-              "type": "photo",
-              "caption": "Non puoi capire come mi sentivo emozionato a essere finalmente davanti quel portone che avevo visto solo su maps",
-              "key": "bacheca/settembre/giorno-1/original/01.jpg",
-              "thumbKey": "bacheca/settembre/giorno-1/thumb/01.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": "Non puoi capire come mi sentivo emozionato a essere finalmente davanti quel portone che avevo visto solo su maps",
+                  "key": "bacheca/settembre/giorno-1/original/01.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Qui ancora non sapevo nemmeno quale fosse di preciso il tuo balcone. Ma una cosa divertente è che non volevo stare troppo sotto perché non volevo che mi vedessi ahaha spero che ci vedessimo nello stesso momento sotto",
+                  "key": "bacheca/settembre/giorno-1/original/02.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-1/original/03.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": "Qui ancora non sapevo nemmeno quale fosse di preciso il tuo balcone. Ma una cosa divertente è che non volevo stare troppo sotto perché non volevo che mi vedessi ahaha spero che ci vedessimo nello stesso momento sotto",
-              "key": "bacheca/settembre/giorno-1/original/02.jpg",
-              "thumbKey": "bacheca/settembre/giorno-1/thumb/02.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-1/original/03.jpg",
-              "thumbKey": "bacheca/settembre/giorno-1/thumb/03.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Inutile dire come mi batteva il cuore quando mi hai mandato questa foto. Sono rimasto a fissare il numero dell’ascensore e poi appena è diventato 1 sono scappato via ahaha. Quando sei uscita sembravi un sogno",
-              "key": "bacheca/settembre/giorno-1/original/04.jpg",
-              "thumbKey": "bacheca/settembre/giorno-1/thumb/04.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-1/original/05.jpg",
-              "thumbKey": "bacheca/settembre/giorno-1/thumb/05.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Purtroppo questo gattino è l’unica cosa che racconta quella sera, ma quella sera c’è stato anche il nostro primo appuntamento, i polpi, il cameriere, i regali, la letterina, la piazza ancora con l’imbarazzo senza sapere che dire. Non ricordo nemmeno com’eri vestita ahaha, ricordo la gonna nera di jeans tipo. Però eri stupenda, questo lo ricordo. E che avevi il lucidalabbra",
-              "key": "bacheca/settembre/giorno-1/original/06.jpg",
-              "thumbKey": "bacheca/settembre/giorno-1/thumb/06.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": "Inutile dire come mi batteva il cuore quando mi hai mandato questa foto. Sono rimasto a fissare il numero dell’ascensore e poi appena è diventato 1 sono scappato via ahaha. Quando sei uscita sembravi un sogno",
+                  "key": "bacheca/settembre/giorno-1/original/04.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-1/original/05.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Purtroppo questo gattino è l’unica cosa che racconta quella sera, ma quella sera c’è stato anche il nostro primo appuntamento, i polpi, il cameriere, i regali, la letterina, la piazza ancora con l’imbarazzo senza sapere che dire. Non ricordo nemmeno com’eri vestita ahaha, ricordo la gonna nera di jeans tipo. Però eri stupenda, questo lo ricordo. E che avevi il lucidalabbra",
+                  "key": "bacheca/settembre/giorno-1/original/06.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -72,10 +76,14 @@
               "text": "Credo che questa sia letteralmente l’unica foto del nostro secondo giorno, a meno che non mi sto confondendo. È una ed è semplice, però alla fine questa foto quanti ricordi racchiude? Il mc, la musica in macchina, le chiacchierate, tu che ti lamentavi perché non mi sbrigavo a cambiare canzone ahaha. Mi ricordo che quel giorno comunque abbiamo riso tanto. È stato bello scegliere la canzone del tuo compleanno insieme. Che poi se ti ricordi, abbiamo scelto pure la torta insieme, e in qualche modo avevamo parlato insieme pure del vestito mesi prima ahaha. Comunque ricordo che avevo voglia di prenderti e ballare con qualche canzone quel lento, e te l’ho anche chiesto, però ho fatto finta che stessi scherzando ahaha mi imbarazzava, ma allo stesso tempo avevo voglia di farlo. Eri molto bella con il sole tutto il tempo in faccia, ti illuminava gli occhi come nelle foto che mi mandavi ogni tanto. Non mi ricordo poi che abbiamo fatto per tutto il resto della giornata, credo che quella sera siamo andati mangiare quella pizza e abbiamo parlato. So che siamo stati anche a casa, ma non so se è stato prima o dopo la pizza"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-2/original/01.jpg",
-              "thumbKey": "bacheca/settembre/giorno-2/thumb/01.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-2/original/01.jpg"
+                }
+              ]
             }
           ]
         },
@@ -84,146 +92,168 @@
           "slug": "giorno-3",
           "items": [
             {
-              "type": "photo",
-              "caption": "Non ha senso che mi metta a commentare ogni foto, però posso solo dire un po’ per tutte che comunque eravamo bellissimi",
-              "key": "bacheca/settembre/giorno-3/original/01.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/01.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": "Non ha senso che mi metta a commentare ogni foto, però posso solo dire un po’ per tutte che comunque eravamo bellissimi",
+                  "key": "bacheca/settembre/giorno-3/original/01.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/02.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/02.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/02.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/03.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/04.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/05.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/03.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/03.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/06.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Vorrei abbracciarti così",
+                  "key": "bacheca/settembre/giorno-3/original/07.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Guarda quanto erano grandi i tuoi occhi in quel momento ahaha",
+                  "key": "bacheca/settembre/giorno-3/original/08.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/04.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/04.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/05.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/05.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/06.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/06.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Vorrei abbracciarti così",
-              "key": "bacheca/settembre/giorno-3/original/07.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/07.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Guarda quanto erano grandi i tuoi occhi in quel momento ahaha",
-              "key": "bacheca/settembre/giorno-3/original/08.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/08.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/09.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/09.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/10.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/10.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/09.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/10.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Come vorrei dormire sempre e per sempre ahaha"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/11.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/11.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/11.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/12.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/12.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/12.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/13.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/14.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/13.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/13.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/15.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/16.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Hey. Comunque eri carina quando ti nascondevi, mi ricordo che pure quello è stato un bel momento divertente",
+                  "key": "bacheca/settembre/giorno-3/original/17.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/14.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/14.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/18.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/19.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/20.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/15.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/15.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/16.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/16.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Hey. Comunque eri carina quando ti nascondevi, mi ricordo che pure quello è stato un bel momento divertente",
-              "key": "bacheca/settembre/giorno-3/original/17.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/17.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/18.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/18.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/19.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/19.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/20.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/20.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/21.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/21.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/22.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/22.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/23.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/23.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/21.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/22.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/23.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -234,32 +264,38 @@
               "href": "https://youtu.be/cNGjD0VG4R8?si=RbsM4ba0ef8ETXSi"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/24.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/24.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Qui sembrava quasi che mi stessi guardando ahaha",
-              "key": "bacheca/settembre/giorno-3/original/25.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/25.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/26.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/26.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/24.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Qui sembrava quasi che mi stessi guardando ahaha",
+                  "key": "bacheca/settembre/giorno-3/original/25.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/26.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Beh che dire di queste 4 foto? Te le ho fatte a sgamo, sperando che nessuno mi vedesse e facendomi forte del fatto che tutte le tue amiche te le stessero facendo. Allora ho pensato che forse mi potevo “mimetizzare” ahaha e fartene qualcuna pure io. Poi si vabbé mi sono imbarazzato e ho pensato che forse qualcuno potesse pensare male e mi sono fermato. Mi ricordo che quella sera eri perfetta, avrei voluto farti foto tutto il tempo. Però amo questa foto qui accanto. Ne ho fatte solo 4, ma puoi dire quello che vuoi, che non ti piace, che fa schifo, non lo so. Ma per me vederti sorridere in quel modo non ha prezzo. Eri bella. Con la tua coroncina e la tua fascia “birthday queen” ahaha e quel vestito rosso che hai aspettato così tanto per mettere e che sono felice di averti visto addosso. Quando ci ripenso, penso che quella serata per me è stata un po’ magica. Ho tanti ricordi belli. Tipo te che balli felice, gli sguardi, il video che ti hanno fatto che mi ha fatto commuovere ahaha, te che ti butti su di me ahaha, vedere le tue amiche per la prima volta, anche se non mi sono nemmeno presentato ahaha. E vedere pure come ti prendevano in giro per come mangi 😌"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-3/original/27.jpg",
-              "thumbKey": "bacheca/settembre/giorno-3/thumb/27.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-3/original/27.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -272,70 +308,79 @@
           "slug": "giorno-4",
           "items": [
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/01.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/01.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/01.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/02.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/02.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/02.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": "Non so perché anche se ti vedi appena, mi piaceva un sacco guardare questa foto, hai quello sguardo che sembrava proprio innamorato",
+                  "key": "bacheca/settembre/giorno-4/original/03.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/04.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/05.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": "Non so perché anche se ti vedi appena, mi piaceva un sacco guardare questa foto, hai quello sguardo che sembrava proprio innamorato",
-              "key": "bacheca/settembre/giorno-4/original/03.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/03.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/06.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/07.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/08.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/04.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/04.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/05.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/05.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/06.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/06.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/07.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/07.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/08.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/08.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/09.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/09.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/10.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/10.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-4/original/11.jpg",
-              "thumbKey": "bacheca/settembre/giorno-4/thumb/11.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/09.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/10.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-4/original/11.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -348,186 +393,207 @@
           "slug": "giorno-5",
           "items": [
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/01.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/01.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/01.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/02.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/03.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/02.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/02.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": "Mi ricordo che quel giorno avevo voglia di farti foto a caso, eri bella. E poi volevo darti un po’ di fastidio forse ahaha guarda quanto mi stavi odiando",
+                  "key": "bacheca/settembre/giorno-5/original/04.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Di quelle giornate mi ricordo tanto il fatto che non avevamo mai fame e volevamo semplicemente stare insieme, anche senza mangiare ahaha. Però un po’ mi sentivo in colpa che non ti facessi mangiare e quindi qui ero contento perché avevi fame e ti avevo comprato tutto quello che volevi ahaha. Mi ricordo che avevo preso il kebab ed è caduto tutto l’olio e mi ricordo che questa cosa ci aveva fatto ridere. Poi vabbé le nuggest. E ti sblocco un ricordo, che si è appena sbloccato a me. Ti ricordi che ci conoscevano tipo TUTTI? Perché la sera prima mentre andavamo in bagno avevamo conosciuto tipo tutti quelli del B&B, e quel giorno abbiamo scoperto che erano praticamente tutti quelli che lavoravano lì ahaha. Però ci hanno tratto bene",
+                  "key": "bacheca/settembre/giorno-5/original/05.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/03.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/03.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/06.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/07.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/08.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "30 euro di caramelle 👀. Però in questa foto si vedono sia le giuggiole che gli ovetti. E se ci fai caso anche un cuoricino",
+                  "key": "bacheca/settembre/giorno-5/original/09.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Io mi ricordo perché ridevi. Ahaha eri stronza e io ti baciavo e tu stavi ferma e io mi lamentavo e a te veniva da ridere. Però è venuta una bella foto lo ammetto",
+                  "key": "bacheca/settembre/giorno-5/original/10.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": "Mi ricordo che quel giorno avevo voglia di farti foto a caso, eri bella. E poi volevo darti un po’ di fastidio forse ahaha guarda quanto mi stavi odiando",
-              "key": "bacheca/settembre/giorno-5/original/04.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/04.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/11.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/12.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/13.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/14.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": "Di quelle giornate mi ricordo tanto il fatto che non avevamo mai fame e volevamo semplicemente stare insieme, anche senza mangiare ahaha. Però un po’ mi sentivo in colpa che non ti facessi mangiare e quindi qui ero contento perché avevi fame e ti avevo comprato tutto quello che volevi ahaha. Mi ricordo che avevo preso il kebab ed è caduto tutto l’olio e mi ricordo che questa cosa ci aveva fatto ridere. Poi vabbé le nuggest. E ti sblocco un ricordo, che si è appena sbloccato a me. Ti ricordi che ci conoscevano tipo TUTTI? Perché la sera prima mentre andavamo in bagno avevamo conosciuto tipo tutti quelli del B&B, e quel giorno abbiamo scoperto che erano praticamente tutti quelli che lavoravano lì ahaha. Però ci hanno tratto bene",
-              "key": "bacheca/settembre/giorno-5/original/05.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/05.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/15.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/16.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/06.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/06.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/07.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/07.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/08.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/08.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "30 euro di caramelle 👀. Però in questa foto si vedono sia le giuggiole che gli ovetti. E se ci fai caso anche un cuoricino",
-              "key": "bacheca/settembre/giorno-5/original/09.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/09.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Io mi ricordo perché ridevi. Ahaha eri stronza e io ti baciavo e tu stavi ferma e io mi lamentavo e a te veniva da ridere. Però è venuta una bella foto lo ammetto",
-              "key": "bacheca/settembre/giorno-5/original/10.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/10.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/11.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/11.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/12.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/12.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/13.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/13.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/14.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/14.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/15.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/15.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/16.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/16.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/17.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/17.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Non sai quanto mi manca a volte vedere quel faccino",
-              "key": "bacheca/settembre/giorno-5/original/18.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/18.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/17.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Non sai quanto mi manca a volte vedere quel faccino",
+                  "key": "bacheca/settembre/giorno-5/original/18.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Tutte queste foto mi piacciono perché tante sono stupide ahaha e boh mi fanno ridere, era bella perché stavamo “giocando” a farci le foto, era bello. E poi vabbé c’è quella faccia che hai fatto che è alla fine è diventata uno sticker ahaha. Comunque guarda le ultime quattro in sequenza, fanno riderissimo ahaha, chissà che ti avevo detto"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/19.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/19.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/19.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/20.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/21.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/20.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/20.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/22.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/23.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/24.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Il nostro sfondo",
+                  "key": "bacheca/settembre/giorno-5/original/25.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/21.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/21.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/22.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/22.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/23.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/23.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/24.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/24.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Il nostro sfondo",
-              "key": "bacheca/settembre/giorno-5/original/25.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/25.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/26.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/26.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/27.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/27.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/26.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/27.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Queste due foto sono belle, eravamo super abbracciati. Ma ti giuro che non capisco com’eravamo messi, come avevamo le mani? Ahaha c’è una mia mano dietro di me e una tua mano che spunta da giù. Non lo so, mi confondono ahaha"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-5/original/28.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/28.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Lo sai, questa è una delle mie preferite, perché tu ridi, lo so, non ti stai ammazzando dalle risate ahaha, ma quel sorriso mi piace",
-              "key": "bacheca/settembre/giorno-5/original/29.jpg",
-              "thumbKey": "bacheca/settembre/giorno-5/thumb/29.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-5/original/28.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Lo sai, questa è una delle mie preferite, perché tu ridi, lo so, non ti stai ammazzando dalle risate ahaha, ma quel sorriso mi piace",
+                  "key": "bacheca/settembre/giorno-5/original/29.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -540,22 +606,24 @@
           "slug": "giorno-6",
           "items": [
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/01.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/01.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/02.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/02.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/03.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/03.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/01.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/02.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/03.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -566,88 +634,99 @@
               "text": "Me lo sono ricordato perché questa cosa delle caramelle a forma di cuore era una di quelle. Infatti ne ho prese solo 2, per qualche motivo non volevo che pensassi che facevo delle cose solo per farti vedere che sono dolce ahaha. E quindi anche qui “le caramelle a forma di cuore ok, ma solo 2 giusto per il simbolo”. Non lo so, non volevo “esagerare”. Come se darti troppo amore o fare troppe cose belle potesse sembrare “troppo”. Però tante cose avrei voluto farle. Un po’ come la cosa di ballare se ci pensi no? Entrambi eravamo tipo “ma no dai che cavolata 😅”. Però in realtà avremmo voluto tutti e due"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/04.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/04.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/04.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Quel giorno ti avrei comprato pure tutto il bar ahaha ero troppo triste che stava per finire tutto",
+                  "key": "bacheca/settembre/giorno-6/original/05.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": "Quel giorno ti avrei comprato pure tutto il bar ahaha ero troppo triste che stava per finire tutto",
-              "key": "bacheca/settembre/giorno-6/original/05.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/05.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/06.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/07.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/08.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/06.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/06.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/09.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/10.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/11.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/07.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/07.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": "Chi lo avrebbe detto che quel gesto piccolo, poi sarebbe diventato così importante?",
+                  "key": "bacheca/settembre/giorno-6/original/12.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/13.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Questa foto è troppo tenera ahaha",
+                  "key": "bacheca/settembre/giorno-6/original/14.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/15.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/08.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/08.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/09.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/09.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/10.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/10.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/11.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/11.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Chi lo avrebbe detto che quel gesto piccolo, poi sarebbe diventato così importante?",
-              "key": "bacheca/settembre/giorno-6/original/12.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/12.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/13.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/13.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Questa foto è troppo tenera ahaha",
-              "key": "bacheca/settembre/giorno-6/original/14.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/14.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/15.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/15.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/16.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/16.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/settembre/giorno-6/original/17.jpg",
-              "thumbKey": "bacheca/settembre/giorno-6/thumb/17.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/16.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/settembre/giorno-6/original/17.jpg"
+                }
+              ]
             },
             {
               "type": "external",
@@ -672,16 +751,19 @@
           "slug": "bonus",
           "items": [
             {
-              "type": "photo",
-              "caption": "La maglietta sporca del tuo trucco",
-              "key": "bacheca/settembre/bonus/original/01.jpg",
-              "thumbKey": "bacheca/settembre/bonus/thumb/01.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": "Lo scontrino del nostro primo appuntamento che porto ancora nel mio portafogli",
-              "key": "bacheca/settembre/bonus/original/02.jpg",
-              "thumbKey": "bacheca/settembre/bonus/thumb/02.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": "La maglietta sporca del tuo trucco",
+                  "key": "bacheca/settembre/bonus/original/01.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": "Lo scontrino del nostro primo appuntamento che porto ancora nel mio portafogli",
+                  "key": "bacheca/settembre/bonus/original/02.jpg"
+                }
+              ]
             }
           ]
         }
@@ -696,68 +778,90 @@
           "slug": "giorno-1",
           "items": [
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-1/original/01.jpg",
-              "thumbKey": "bacheca/maggio/giorno-1/thumb/01.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-1/original/01.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Inizia tutto di nuovo davanti a questo portone. Tu forse non puoi capire l’emozione di esserci davanti, perché tu giustamente ci vivi. Ma per me è stupendo ogni volta, racchiude un po’ quella magia. È come se sapessi che dietro quel portone si trova la felicità e tutto quello che voglio. E questo portone è così difficile da raggiungere che ogni volta che ci sono stato davanti, mi ha fatto battere il cuore. Per me è speciale, non perché è un posto che non avevo mai visto, anzi, l’ho visto molte volte, ma poterlo vedere con i miei occhi è qualcosa di unico ogni singola volta"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-1/original/02.jpg",
-              "thumbKey": "bacheca/maggio/giorno-1/thumb/02.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-1/original/03.jpg",
-              "thumbKey": "bacheca/maggio/giorno-1/thumb/03.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-1/original/02.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-1/original/03.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Beh in qualche modo queste due foto sono speciali forse no? Abbiamo potuto vedere davvero il nostro filo rosso. Quella lettere che ti avevo scritto con il disegno mi piaceva così tanto che volevo renderla ancora più speciale con questo momento qui. E ora sono quali incredulo che sia diventato realtà. Spero che queste foto e questo filo, siano un augurio. E spero che davvero, per quanto sia tutto complicato, io e te abbiamo conosciuto il nostro filo rosso"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-1/original/04.jpg",
-              "thumbKey": "bacheca/maggio/giorno-1/thumb/04.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-1/original/04.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Sono contento che ci sia questa foto, la nostra prima cosa cucinata insieme"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-1/original/05.jpg",
-              "thumbKey": "bacheca/maggio/giorno-1/thumb/05.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-1/original/05.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-1/original/06.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-1/original/06.jpg",
-              "thumbKey": "bacheca/maggio/giorno-1/thumb/06.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-1/original/07.jpg",
-              "thumbKey": "bacheca/maggio/giorno-1/thumb/07.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-1/original/07.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Di questo momento ricordo due cose, io che sniffo continuamente il tuo profumo, e il battito del tuo cuore. Avevo la testa poggiata lì e lo sentivo perfettamente e non lo sentivo da troppo tempo, mi mancava. Ora grazie al tuo regalo, lo potrò portare sempre con me. Vorrei poter fare lo stesso con il tuo profumo"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-1/original/08.jpg",
-              "thumbKey": "bacheca/maggio/giorno-1/thumb/08.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-1/original/08.jpg"
+                }
+              ]
             }
           ]
         },
@@ -766,52 +870,66 @@
           "slug": "giorno-2",
           "items": [
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-2/original/01.jpg",
-              "thumbKey": "bacheca/maggio/giorno-2/thumb/01.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-2/original/01.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Non so perché ma questa foto mi piace, sei bella. E il nostro secondo giorno inizia così, con un piatto di pasta al pesto davanti, che nessuno dei due ama, ma che entrambi non mangiavamo da tanto ahaha"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-2/original/02.jpg",
-              "thumbKey": "bacheca/maggio/giorno-2/thumb/02.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-2/original/02.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Comunque ti devo dire, hai fatto una foto stupenda, ceh mi piace proprio com’è venuta la luce e tutto. Mi dispiace che quelle candeline non potessero essere accese, sarebbe stato ancora più carino. Però sono felice che ti abbiamo fatto ridere così tanto che mi sono accorto dopo del rilevatore di fumo ahaha. Spero che questa sorpresa ti sia piaciuta tanto, pensavo da tanto a una cosa del genere e non volevo andare via senza essere riuscito a farla. Prima avevo pensato a una cosa diversa, da fare in un altro momento a gennaio. Ma mi sono dovuto adattare, spero che sia stato un bell’adattamento"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-2/original/03.jpg",
-              "thumbKey": "bacheca/maggio/giorno-2/thumb/03.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-2/original/04.jpg",
-              "thumbKey": "bacheca/maggio/giorno-2/thumb/04.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-2/original/05.jpg",
-              "thumbKey": "bacheca/maggio/giorno-2/thumb/05.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-2/original/03.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-2/original/04.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-2/original/05.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Ed eccoti qua, una bellissima sirena, con suo regalo ahaha. Sono felice di avere queste foto, e devo dire che in particolare questa mi piace tanto, perché sembri davvero felice. Comunque devo dire che anche se purtroppo non ho il video, sono fiero della faccia che hai fatto. Hai aperto la bocca a hai iniziato a sorridere, parlavi, non so se lo facevi per smascherare o meno, però non riuscivi a smettere di sorridere ahaha e sinceramente era esattamente quello che speravo di ottenere, volevo che fossi felice e che avessi anche tu il tuo momento magico e perfetto. Mi dispiace che le kinder cards non ti piacciono. Pensavo di si. Uffa"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-2/original/06.jpg",
-              "thumbKey": "bacheca/maggio/giorno-2/thumb/06.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-2/original/06.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -822,10 +940,14 @@
               "text": "Purtroppo il secondo giorno finisce così, però devo ammettere che dopo c’è comunque stato qualcosa di bello no? Lo so, forse non si può definire “bello” un momento in cui si piange, però alla fine quando c’è una conferma, una rivelazione, o anche solo un bel discorso fatto con le lacrime agli occhi, sai che in quel momento viene dal cuore, che ci sono meno filtri, meno muri o armature no? E comunque sono quelle cose che ti fanno sorridere"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-2/original/07.jpg",
-              "thumbKey": "bacheca/maggio/giorno-2/thumb/07.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-2/original/07.jpg"
+                }
+              ]
             }
           ]
         },
@@ -834,10 +956,14 @@
           "slug": "giorno-3",
           "items": [
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-3/original/01.jpg",
-              "thumbKey": "bacheca/maggio/giorno-3/thumb/01.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-3/original/01.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -848,16 +974,24 @@
               "text": "Questa invece serve a ricordaci un giorno che la stanza 7 è bellissima, se mai dovesse servirci, chiederò proprio quella ahaha"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-3/original/02.jpg",
-              "thumbKey": "bacheca/maggio/giorno-3/thumb/02.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-3/original/02.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/giorno-3/original/03.jpg",
-              "thumbKey": "bacheca/maggio/giorno-3/thumb/03.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/giorno-3/original/03.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -870,72 +1004,97 @@
           "slug": "screenshots",
           "items": [
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/01.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/01.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/01.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/02.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/02.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/02.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/03.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/03.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/03.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Beh che dire? Si è bello essere così vicini, ma non ci voleva un genio per dirlo no? Amo davvero il fatto che mi dici “vieni” e in 2 secondi sono da te. Vorrei che potesse essere così per sempre. Vorrei che vivessimo nella stessa città, non per vederci tutti i giorni, ma quanto meno per vederci più facilmente, anche fosse una volta al mese. Però non so. Qualcosa mi dice che se fossimo nella stessa città staremmo già vivendo insieme da un pezzo ahaha"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/04.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/04.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/04.jpg"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Ho messo quel messaggio che volevi nel documento, metto qui il link. Messaggio . Ma anche io volevo salvare la tua risposta, perché comunque è bella, ci sono cose importanti, e si anche se potrei prenderla in qualsiasi momento da ig, così sarà più facile recuperarla"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/05.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/05.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/05.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/06.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/06.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/06.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/07.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/07.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/07.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/08.jpg"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/09.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/08.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/08.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/09.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/09.jpg"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/maggio/screenshots/original/10.jpg",
-              "thumbKey": "bacheca/maggio/screenshots/thumb/10.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/maggio/screenshots/original/10.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -982,16 +1141,24 @@
               "text": "Una menzione onorevole a questa foto che mentre cercavo di creare il mondo bianco, è uscita, e mi ha colpito molto perché somiglia abbastanza a quello che mi sarebbe piaciuto fare per una di quelle sere tranne per qualcosa ahaha. Quindi mi andava di fartela vedere"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/altre-cose/generale/original/01.png",
-              "thumbKey": "bacheca/altre-cose/generale/thumb/01.png"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/altre-cose/generale/original/01.png"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/altre-cose/generale/original/02.jpg",
-              "thumbKey": "bacheca/altre-cose/generale/thumb/02.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/altre-cose/generale/original/02.jpg"
+                }
+              ]
             },
             {
               "type": "text",
@@ -1002,20 +1169,28 @@
               "text": "Mi ricordo che quella volta ci ho messo giorni a pensare per bene a come fare questo disegno su minecraft. In qualche modo volevo che rappresentasse quello che avevo fatto nel disegno che ti ho dato. Ci doveva essere il cerchio, d’oro come quello del disegno, la rosa perché era il tuo fiore preferito e il fuoco del nostro amato cuore infuocato. E non puoi capire per quanto tempo ho cercato quelle lettere in quel modo, volevo che insomma fosse tutto perfetto, come sempre perché volevo strapparti un sorriso"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/altre-cose/generale/original/03.jpg",
-              "thumbKey": "bacheca/altre-cose/generale/thumb/03.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/altre-cose/generale/original/03.jpg"
+                }
+              ]
             },
             {
               "type": "external",
               "href": "https://drive.google.com/file/d/1PdOnPObHoWqi54CbtuDOjAVUui5s3gVw/view?usp=sharing"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/altre-cose/generale/original/04.png",
-              "thumbKey": "bacheca/altre-cose/generale/thumb/04.png"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/altre-cose/generale/original/04.png"
+                }
+              ]
             },
             {
               "type": "text",
@@ -1026,42 +1201,57 @@
               "text": "Beh come non menzionare le mie amate margherite? Devo ammettere che sono sempre state un fiore molto bello per me, anche se sai è un fiore comune quindi forse di solito non gli si da molto peso. Non avrei mai pensato che sarebbe diventato un simbolo così importante per me, per quanto questa mia passione sia nata da una cavolata forse stupida, ora ogni volta che vedo le margherite, mi vieni in mente"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/altre-cose/generale/original/05.jpg",
-              "thumbKey": "bacheca/altre-cose/generale/thumb/05.jpg"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/altre-cose/generale/original/05.jpg"
+                }
+              ]
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/altre-cose/generale/original/06.png",
-              "thumbKey": "bacheca/altre-cose/generale/thumb/06.png"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/altre-cose/generale/original/06.png"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "Per farti vedere anche questo. È il personaggio che ho fatto su The Sims. Lo so, non hai capelli così tanto rossi, ma non volevo farli semplicemente marroni. Volevo che comunque ci fosse il tuo rossiccio”. Le piace la fotografia, e le composizioni floreali. Ovviamente le ho fatto anche tutti gli altri vestiti, pensando un po’ al tuo stile, devo dire che è venuta molto bellina. Si chiama Denesme ahaha. Una delle prime cose che le ho fatto fare (anche perché non l’avevo mai provata sta cosa) è stato appunto farle fare una composizione floreale. E potevo scegliere la “base”, ovviamente controllo se ci sono le margherite, e si c’erano. E senza nemmeno guardare prendo la più costosa perché volevo farne una bella. E in poche parole fa questa composizione che si chiama “Crema di agrumi”, composta come? Tulipani, rose e margherite. Ovviamente non ci avevo fatto caso eh ahaha e non ho scelto io questa “accoppiata” ceh wow"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/altre-cose/generale/original/07.png",
-              "thumbKey": "bacheca/altre-cose/generale/thumb/07.png"
-            },
-            {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/altre-cose/generale/original/08.png",
-              "thumbKey": "bacheca/altre-cose/generale/thumb/08.png"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/altre-cose/generale/original/07.png"
+                },
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/altre-cose/generale/original/08.png"
+                }
+              ]
             },
             {
               "type": "text",
               "text": "E questo è il quartiere dove ho messo la casa. Pensa che faccia ho fatto l’ho visto quando stavo cercando dove metterla ahaha"
             },
             {
-              "type": "photo",
-              "caption": null,
-              "key": "bacheca/altre-cose/generale/original/09.png",
-              "thumbKey": "bacheca/altre-cose/generale/thumb/09.png"
+              "type": "photo-group",
+              "photos": [
+                {
+                  "type": "photo",
+                  "caption": null,
+                  "key": "bacheca/altre-cose/generale/original/09.png"
+                }
+              ]
             }
           ]
         }

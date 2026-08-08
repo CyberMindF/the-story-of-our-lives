@@ -96,6 +96,33 @@ body.access-locked .app-shell {
   margin-top: 0.75rem;
 }
 
+.access-nickname-field {
+  margin-top: 0.75rem;
+}
+
+.access-checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.9rem;
+  color: var(--text-color);
+  font-size: 0.86rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+}
+
+.access-checkbox-field input {
+  width: auto;
+  margin: 0;
+  accent-color: var(--focus-color);
+}
+
+.access-nickname-field + label {
+  margin-top: 0.75rem;
+}
+
 /* La nota completa l'etichetta senza competere visivamente con i campi del form. */
 .access-card > .access-key-hint {
   margin: 0.2rem 0 0.45rem;

@@ -56,6 +56,10 @@ export function createAccessGate({ onUnlock, beforeLogout, onLogoutError } = {})
       payload.email = elements.email.value.trim();
       payload.password = elements.password.value;
     }
+    if (mode === "register") {
+      payload.nickname = elements.nickname.value.trim();
+      payload.notifyEmailUpdates = elements.notify.checked;
+    }
 
     setLoading(true);
     elements.error.textContent = "";
@@ -120,6 +124,8 @@ export function createAccessGate({ onUnlock, beforeLogout, onLogoutError } = {})
     elements.accountFields.hidden = isKeyOnly;
     elements.email.required = !isKeyOnly;
     elements.password.required = !isKeyOnly;
+    elements.nicknameField.hidden = !isRegister;
+    elements.notifyField.hidden = !isRegister;
     elements.showLoginButton.setAttribute("aria-pressed", String(mode === "login"));
     elements.showRegisterButton.setAttribute("aria-pressed", String(isRegister));
     elements.error.textContent = "";
@@ -165,6 +171,10 @@ function getAccessElements() {
     accountFields: document.getElementById("access-account-fields"),
     email: document.getElementById("access-email"),
     password: document.getElementById("access-password"),
+    nicknameField: document.getElementById("access-nickname-field"),
+    nickname: document.getElementById("access-nickname"),
+    notifyField: document.getElementById("access-notify-field"),
+    notify: document.getElementById("access-notify"),
     key: document.getElementById("access-key"),
     submitButton: document.getElementById("access-submit-button"),
     showLoginButton: document.getElementById("show-login-button"),

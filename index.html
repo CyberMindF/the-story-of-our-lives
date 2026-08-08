@@ -72,6 +72,16 @@
           <input id="access-password" class="masked-text-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" minlength="8" data-1p-ignore data-lpignore="true" required />
         </div>
 
+        <div id="access-nickname-field" class="access-nickname-field" hidden>
+          <label for="access-nickname">Come vuoi essere chiamata</label>
+          <input id="access-nickname" type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Il tuo nome o soprannome" />
+        </div>
+
+        <label id="access-notify-field" class="access-checkbox-field" hidden>
+          <input id="access-notify" type="checkbox" />
+          <span>Avvisami via email se ci sono aggiornamenti</span>
+        </label>
+
         <label for="access-key">La chiave</label>
         <p id="access-key-hint" class="access-key-hint">Ti ricordi la chiave? È sempre quella che porti al polso.</p>
         <input id="access-key" type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" aria-describedby="access-key-hint" data-1p-ignore data-lpignore="true" required />

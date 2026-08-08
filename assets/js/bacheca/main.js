@@ -52,42 +52,57 @@ function renderIndex(periods) {
 
 // Foto consecutive diventano un'unica griglia; testo ed esterni interrompono la griglia
 // senza perdere l'ordine originale di lettura.
+function buildPhotoGrid(group) {
+  const grid = document.createElement("div");
+  grid.className = "bacheca-grid";
+  group.photos.forEach((photo, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "bacheca-thumb";
+    const img = document.createElement("img");
+    img.src = mediaUrl(photo.thumbKey || photo.key);
+    img.alt = photo.caption || "Foto della Bacheca dei Ricordi";
+    img.loading = "lazy";
+    button.append(img);
+    button.addEventListener("click", () => openLightbox(group.photos, index));
+    grid.append(button);
+  });
+  return grid;
+}
+
+function buildText(item) {
+  const p = document.createElement("p");
+  p.className = "bacheca-text";
+  p.textContent = item.text;
+  return p;
+}
+
+// Nell'originale una didascalia sta sempre affiancata (prima o dopo) al suo gruppo di
+// foto, mai mescolata con quelle di un altro momento: qui li teniamo uniti nello stesso
+// blocco visivo invece di separare "tutte le foto della giornata" da "tutti i testi".
 function renderDayItems(items) {
   const fragment = document.createDocumentFragment();
-  let photoBuffer = [];
 
-  function flushPhotos() {
-    if (photoBuffer.length === 0) return;
-    const grid = document.createElement("div");
-    grid.className = "bacheca-grid";
-    const gallery = photoBuffer;
-    gallery.forEach((photo, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "bacheca-thumb";
-      const img = document.createElement("img");
-      img.src = mediaUrl(photo.thumbKey || photo.key);
-      img.alt = photo.caption || "Foto della Bacheca dei Ricordi";
-      img.loading = "lazy";
-      button.append(img);
-      button.addEventListener("click", () => openLightbox(gallery, index));
-      grid.append(button);
-    });
-    fragment.append(grid);
-    photoBuffer = [];
-  }
+  for (let i = 0; i < items.length; i += 1) {
+    const item = items[i];
+    const next = items[i + 1];
 
-  for (const item of items) {
-    if (item.type === "photo") {
-      photoBuffer.push(item);
-      continue;
-    }
-    flushPhotos();
-    if (item.type === "text") {
-      const p = document.createElement("p");
-      p.className = "bacheca-text";
-      p.textContent = item.text;
-      fragment.append(p);
+    if (item.type === "photo-group" && next?.type === "text") {
+      const unit = document.createElement("div");
+      unit.className = "bacheca-unit";
+      unit.append(buildPhotoGrid(item), buildText(next));
+      fragment.append(unit);
+      i += 1;
+    } else if (item.type === "text" && next?.type === "photo-group") {
+      const unit = document.createElement("div");
+      unit.className = "bacheca-unit";
+      unit.append(buildText(item), buildPhotoGrid(next));
+      fragment.append(unit);
+      i += 1;
+    } else if (item.type === "photo-group") {
+      fragment.append(buildPhotoGrid(item));
+    } else if (item.type === "text") {
+      fragment.append(buildText(item));
     } else if (item.type === "external" && item.href) {
       const a = document.createElement("a");
       a.className = "bacheca-external";
@@ -98,7 +113,6 @@ function renderDayItems(items) {
       fragment.append(a);
     }
   }
-  flushPhotos();
   return fragment;
 }
 

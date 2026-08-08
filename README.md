@@ -26,7 +26,7 @@ Apri l'indirizzo mostrato da Wrangler, normalmente `http://localhost:8788`. La r
 
 Gli endpoint sono organizzati in `functions/api/auth/`:
 
-- `POST /api/auth/register`: registra un nuovo utente e crea una sessione.
+- `POST /api/auth/register`: registra un nuovo utente e crea una sessione. Il nickname è scelto liberamente in fase di registrazione (facoltativo: se vuoto, resta la parte dell'email prima della chiocciola). La preferenza `notify_email_updates` è impostabile solo qui, non al login, perché prima dell'autenticazione non si conosce ancora l'utente per pre-spuntarla correttamente; salva solo la preferenza, l'invio delle email non è implementato.
 - `POST /api/auth/login`: verifica email, password e chiave, poi crea una sessione.
 - `GET /api/auth/session`: controlla se il token è ancora valido.
 - `POST /api/auth/session`: con token valido, verifica nuovamente la chiave.
@@ -127,6 +127,12 @@ La pagina `suggerimenti/` permette all'utente autenticato di proporre qualunque 
 
 `POST /api/suggestions` ricava l'autore dalla sessione e conserva la proposta in `world_suggestions` con stato iniziale `pending`, sullo stesso modello delle proposte per Le Storie.
 
+## Lettere
+
+La pagina `lettere/` sostituisce l'idea originale della Cassetta delle Lettere (un upload manuale su Drive, necessario quando non si poteva chattare normalmente): ora che la comunicazione quotidiana passa da WhatsApp, resta solo il bisogno di lasciarsi un messaggio più lungo e pensato. Chi scrive compone solo testo (nessun allegato per ora); la lettura avviene in una vista dedicata in stile foglio di carta, corsivo, firmata con il nickname dell'autore.
+
+Con soli due account non serve indicare un destinatario: `letters` in D1 conserva autore, testo, data e `read_at`; chi non ha scritto la lettera è per definizione chi la riceve. `GET /api/letters` elenca tutte le lettere con `isMine` calcolato lato server; `POST /api/letters` ne crea una nuova; `POST /api/letters/:id` la segna come letta, ma solo se chi la apre non ne è l'autore. Non è ancora raggiungibile dall'hub principale, per lo stesso motivo dei Suggerimenti: non è uno degli otto luoghi originali del Mondo Bianco.
+
 ## Redirect legacy
 
 `_redirects` alla radice del progetto fa da ponte con i vecchi short link `rsgmsfcfm.short.gy/<slug>` dell'export originale: ogni slug (`il-calendario`, `la-mappa`, ecc.) reindirizza con 301 alla route reale corrispondente. `la-bacheca` è 302 e punta temporaneamente a `/mondo-bianco/`, finché quella pagina non è migrata. Short.gy resta un servizio esterno: per usare questi alias bisogna aggiornare manualmente ogni short link perché punti a `https://<dominio>/<slug>` invece del vecchio URL Notion.
@@ -177,6 +183,7 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 - `functions/api/telemetry/`: eventi generali e cronologia dei tentativi.
 - `functions/api/stories/`: ricezione autenticata delle proposte per nuove storie.
 - `functions/api/suggestions.js`: ricezione autenticata dei suggerimenti liberi per il Mondo Bianco.
+- `functions/api/letters.js`, `functions/api/letters/[id].js`: elenco/scrittura delle lettere e conferma di lettura.
 - `functions/api/media/[[path]].js`: accesso autenticato ai media privati conservati in R2.
 - `content/bacheca.json`: struttura della Bacheca dei Ricordi, con chiavi R2 di foto e miniature.
 - `scripts/build-bacheca-content.mjs`, `scripts/upload-bacheca-media.mjs`, `scripts/build-bacheca-thumbnails.mjs`: ricostruzione della struttura, import degli originali e generazione miniature per la Bacheca.
