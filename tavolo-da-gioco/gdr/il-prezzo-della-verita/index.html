@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>🪄 Il Prezzo della Verità | Mondo Bianco</title>
+    <link rel="icon" href="../../../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../../assets/css/themes.css?v=1" />
+    <link rel="stylesheet" href="../../../assets/css/components/shell.css?v=1" />
+    <link rel="stylesheet" href="../../../assets/css/components/world-atmosphere.css?v=2" />
+    <link rel="stylesheet" href="../../../assets/css/components/world-shell.css?v=1" />
+    <link rel="stylesheet" href="../../../assets/css/pages/tavolo.css?v=2" />
+  </head>
+  <body class="world-atmosphere tavolo-page" data-logout-url="../../../">
+    <div class="place-shell tavolo-shell">
+      <header class="place-header">
+        <a class="place-home-link" href="../" aria-label="Torna a Gioco di Ruolo">
+          <span aria-hidden="true">←</span><span class="place-name-optional">Gioco di Ruolo</span>
+        </a>
+        <div class="place-userbar">
+          <p id="user-greeting" class="user-greeting"></p>
+          <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="tavolo-hero tavolo-hero-text-only" aria-labelledby="adventure-title">
+          <p class="tavolo-eyebrow">Un'avventura del Gioco di Ruolo</p>
+          <h1 id="adventure-title"><span aria-hidden="true">🪄</span> Il Prezzo della Verità</h1>
+        </section>
+
+        <section class="tavolo-rules-section" aria-labelledby="rules-title">
+          <details class="rules-toggle" open>
+            <summary id="rules-title">Regolamento di questa avventura <span class="rules-eyebrow">(super semplice e semplificato)</span><span class="rules-icon" aria-hidden="true">＋</span></summary>
+
+            <div class="rules-body">
+              <article class="rules-block">
+                <h3>Le regole in breve</h3>
+                <p>Quando fai qualcosa di incerto tira un dado a otto facce (d8) e sommaci una statistica:</p>
+                <div class="stats-grid">
+                  <div class="stat-card"><span aria-hidden="true">🧠</span><strong>Mente</strong><p>ragionare, ricordare, risolvere</p></div>
+                  <div class="stat-card"><span aria-hidden="true">❤️‍🔥</span><strong>Cuore</strong><p>persuadere, resistere emotivamente, connettersi</p></div>
+                  <div class="stat-card"><span aria-hidden="true">💪🏼</span><strong>Corpo</strong><p>muoverti, nasconderti, resistere fisicamente</p></div>
+                  <div class="stat-card"><span aria-hidden="true">✨</span><strong>Magia</strong><p>incantesimi e percezione magica</p></div>
+                </div>
+                <ul class="outcome-list">
+                  <li><strong>10+</strong> → funziona come vuoi</li>
+                  <li><strong>6-9</strong> → funziona, ma qualcosa complica le cose</li>
+                  <li><strong>5 o meno</strong> → qualcosa va storto</li>
+                </ul>
+              </article>
+
+              <article class="rules-block">
+                <h3>Tre abilità speciali</h3>
+                <p>Una per scena, automatiche, senza tiro:</p>
+                <ul class="ability-list">
+                  <li><strong>Lettura dell'eco</strong> — tocchi un oggetto e percepisci un'emozione o un ricordo recente legato a esso</li>
+                  <li><strong>Luce senziente</strong> — evochi una piccola luce che puoi guidare con la mente</li>
+                  <li><strong>Senso della menzogna</strong> — una volta per scena, puoi chiedermi se quello che ti ha detto qualcuno è una bugia</li>
+                </ul>
+              </article>
+
+              <article class="rules-block">
+                <h3>Cos'è una scena?</h3>
+                <p>Tendenzialmente una scena è semplicemente una serie di azioni che si svolgono nel gioco in un unico arco temporale e di solito in un unico luogo</p>
+              </article>
+
+              <article class="rules-block">
+                <h3>Punti Stress</h3>
+                <p>Hai 10 Punti Stress. Quando le cose vanno male ne perdi, quando ti riposi ne recuperi. Arrivare a 0 significa avere gravi conseguenza in base alla scena</p>
+              </article>
+
+              <article class="rules-block">
+                <h3>Magia</h3>
+                <p>Puoi lanciare 3 incantesimi tramite gli slot disponibili, ogni scena. Oltre questi 3, ogni lancio aggiuntivo costerà 1 Punto Stress.</p>
+              </article>
+            </div>
+          </details>
+        </section>
+
+        <div class="tavolo-campaign">
+          <p>Bene adesso che sai tutto direi che è tutto pronto! Quindi beh non ti resta che andare a leggere la prima parte della storia che si chiama “Il Prezzo della Verità” e fare la tua mossa ahaha. Quando apri, parti da “L'Avventura” e poi ti lasci guidare. Beh speriamo buon divertimento allora! (dai ormai ho fatto tutto 👀)</p>
+          <a class="tavolo-link" href="https://rsgmsfcfm.short.gy/gdr" target="_blank" rel="noopener noreferrer">Vai all'avventura <span aria-hidden="true">↗</span></a>
+        </div>
+
+        <a class="tavolo-home-link" href="../"><span aria-hidden="true">←</span> Torna a Gioco di Ruolo</a>
+      </main>
+    </div>
+
+    <script type="module" src="../../../auth-guard.js?v=2" data-auth-gateway="../../../"></script>
+    <script type="module" src="../../../assets/js/world/main.js?v=1"></script>
+  </body>
+</html>

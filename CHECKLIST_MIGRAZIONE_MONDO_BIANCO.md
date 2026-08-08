@@ -55,19 +55,19 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 
 - [X] **Migrare la pagina Le Storie.** Importare le quattro storie con titolo, data, testo e immagini, offrendo indice e modalità di lettura senza alterare la voce originale.
 
-- [ ] **Migrare la pagina La Mappa.** Importare Thailandia, Oslo, Sharm el-Sheikh, Olanda, Roma e la prossima meta, con immagini e testi disponibili sia in vista visuale sia in lista accessibile.
+- [X] **Migrare la pagina La Mappa.** Importare Thailandia, Oslo, Sharm el-Sheikh, Olanda, Roma e la prossima meta, con immagini e testi disponibili sia in vista visuale sia in lista accessibile.
 
-- [ ] **Migrare la pagina Le Cuffiette.** Strutturare playlist, nove brani, introduzioni, testi, `Parole Rubate` e bonus, usando player accessibili e caricamento progressivo.
+- [X] **Migrare la pagina Le Cuffiette.** Strutturare playlist, nove brani, introduzioni, testi, `Parole Rubate` e bonus, usando player accessibili e caricamento progressivo. Il bonus resta indicato ma non viene esposto finché non sarà trasferito nello storage privato previsto in P2.
 
-- [ ] **Migrare la pagina I Ponti in modalità fedele.** Riprodurre metafora Bifrost, quattro destinazioni e testi originali mantenendo temporaneamente i collegamenti Google verificati.
+- [X] **Migrare la pagina I Ponti in modalità fedele.** Riprodurre metafora Bifrost, quattro destinazioni e testi originali mantenendo temporaneamente i collegamenti Google verificati. Controllare la Sezione in fondo a questo documento per le idee. Quando la pagina esiste, collegare anche il richiamo "I Ponti" già evidenziato (senza link) nell'introduzione delle canzoni in Le Cuffiette (`assets/js/music/main.js`, `renderSongsIntroduction`).
 
-- [ ] **Migrare Il Tavolo da Gioco in modalità fedele.** Portare introduzione, regolamento, statistiche, Stress, Magia e abilità, lasciando inizialmente il gioco come contenuto informativo.
+- [X] **Migrare Il Tavolo da Gioco in modalità fedele.** Portare introduzione, regolamento, statistiche, Stress, Magia e abilità, lasciando inizialmente il gioco come contenuto informativo. Pensare però a una visualizzazione che possa successivamente accogliere giochi avventure e altro rendedo il tavolo da gioco una sorta di "hub" dei giochi
 
-- [ ] **Integrare il cruciverba nel Tavolo da Gioco.** Aggiungerlo all'elenco dei giochi, verificare apertura diretta protetta, ritorno al Tavolo e conservazione dei progressi esistenti.
+- [X] **Integrare il cruciverba nel Tavolo da Gioco.** Aggiungerlo all'elenco dei giochi, verificare apertura diretta protetta, ritorno al Tavolo e conservazione dei progressi esistenti.
 
-- [ ] **Creare una pagina 404 interna.** Fornire un ritorno sicuro al Mondo Bianco, senza esporre dettagli tecnici e senza perdere lo stato di autenticazione.
+- [X] **Creare una pagina 404 interna.** Fornire un ritorno sicuro al Mondo Bianco, senza esporre dettagli tecnici e senza perdere lo stato di autenticazione.
 
-- [ ] **Implementare i redirect legacy.** Reindirizzare vecchi URL e short link controllabili alle nuove route, evitando catene di redirect e collegamenti rotti.
+- [X] **Implementare i redirect legacy.** Reindirizzare vecchi URL e short link controllabili alle nuove route, evitando catene di redirect e collegamenti rotti. Implementato in `_redirects` (Cloudflare Pages): 7 alias permanenti (301) con lo stesso slug dei vecchi short link `rsgmsfcfm.short.gy/<slug>`, più `la-bacheca` temporaneo (302) verso l'hub finché quella pagina non esiste. **Azione manuale da fare su short.gy**: aggiornare ogni short link facendolo puntare a `https://<dominio-reale>/<slug>` (stesso slug, nuovo dominio) invece del vecchio URL Notion — non è automatizzabile da qui perché short.gy è un servizio esterno. Esclusi `dthc` (playlist Spotify) e `gdr` (documento esterno de Il Prezzo della Verità): non sono link di navigazione tra pagine, restano collegamenti diretti ai contenuti esterni.
 
 ## P2 - Archivi personali e media
 
@@ -101,7 +101,9 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 
 - [ ] **Migrare il documento Bifrost.** Recuperare il contenuto esterno e trasformarlo in uno spazio interno coerente con I Ponti.
 
-- [ ] **Recuperare Il Prezzo della Verità.** Acquisire e inventariare la campagna esterna non presente nell'export prima di progettare il gioco persistente.
+- [ ] **Recuperare Il Prezzo della Verità.** Acquisire e inventariare la campagna esterna non presente nell'export prima di progettare il gioco persistente. Contesto raccolto l'08/08/2026: l'avventura era un documento Google usato come "play-by-chat" manuale (Rory scriveva la scena, inseriva link/immagini dentro il documento stesso, Desy rispondeva nello stesso posto); ambientazione a tema scuola di magia (da qui l'emoji 🪄 scelta invece del generico 🐉, riservato alla categoria "Gioco di Ruolo"). Rory deve ancora mostrare il documento originale/screenshot per capire struttura reale (scene, immagini, bivi) prima di decidere se: (a) restare un documento esterno collegato, (b) diventare contenuto interno versionato letto in sola lettura, oppure (c) diventare la prima vera avventura del gioco persistente (stato personaggio + turni). Decisione da prendere insieme, non bloccare le altre pagine per questo.
+
+- [ ] **Aggiungere la seconda avventura del Gioco di Ruolo.** Rory ha già pronta una seconda storia giocabile, con un regolamento diverso da `Il Prezzo della Verità` (non condividono lo stesso sistema di regole). Struttura già pronta ad accoglierla: `tavolo-da-gioco/gdr/index.html` elenca le avventure in `.tavolo-games-grid-compact` (oggi solo IPDV), ognuna con pagina propria (`tavolo-da-gioco/gdr/<slug>/index.html`) che contiene testo introduttivo e regolamento specifici, sul modello di `tavolo-da-gioco/gdr/il-prezzo-della-verita/`. Non condividere il regolamento tra le due: ognuna tiene il proprio. Aspettare titolo, testo e regole da Rory prima di crearla.
 
 - [ ] **Implementare lo stato del personaggio GDR.** Salvare Mente, Cuore, Corpo, Magia, Stress, abilità e scena corrente in D1.
 
@@ -119,9 +121,14 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 
 ## P4 - Telemetria, qualità e rilascio
 
+- [ ] **Risolvere la frattura stilistica tra Mondo Bianco e cruciverba.** Segnalato l'08/08/2026: entrando nel cruciverba dal Tavolo da Gioco sembra di finire su un sito diverso. Causa: il cruciverba usa `assets/css/components/shell.css` con pannelli chiari/scuri e variabili proprie (`--panel-color`, `--text-color`, `--muted-color`, ecc.) selezionabili tramite i 4 temi in `themes.css` (Ocean, Velvet, Red of You, Green of Me); le pagine del Mondo Bianco invece hanno una palette fissa "notturna" (blu scuro, stelle, oro) quasi tutta hardcoded nei rispettivi `assets/css/pages/*.css`, senza selettore tema visibile. Due direzioni possibili, da decidere insieme prima di implementare (non farlo di corsa, è un refactoring importante che tocca molti file):
+  1. **Aggiungere un 5° tema "the-white-world"** dentro `themes.css`/il theme-switcher del cruciverba: una variante scura coerente con l'estetica del Mondo Bianco (stelle, blu notte, oro), cosicché scegliendolo il cruciverba assomigli visivamente alle altre pagine. Impatto contenuto: nuovo blocco di variabili + voce nello switcher, nessuna modifica alle pagine mondo.
+  2. **Centralizzare i temi su tutta la piattaforma**: unificare il sistema di variabili (oggi il cruciverba usa `--panel-color`/`--text-color`/ecc., le pagine mondo usano colori fissi più `--focus-color`/`--error-color` da `themes.css`) in un unico set condiviso, ed esporre lo stesso selettore tema anche nelle pagine mondo. Impatto ampio: tocca `themes.css`, `assets/css/components/*.css`, tutte le `assets/css/pages/*.css` del mondo e probabilmente il modulo JS del theme-switcher.
+  Nota collegata: durante la migrazione de I Ponti/Cuffiette si era ipotizzato di relegare i 4 temi esistenti al solo cruciverba (dato che le pagine mondo non li usano già oggi) — ma il Mappamondo racconta che "il Mondo Bianco può cambiare come vogliamo", quindi un tema selezionabile anche lì avrebbe senso narrativo, non solo tecnico. Da rivalutare insieme a questa voce.
+
 - [ ] **Estendere gli eventi al Mondo Bianco.** Registrare aperture significative di hub e pagine usando il sistema `events`, senza duplicare stato o contenuti.
 
-- [ ] **Aggiungere eventi media essenziali.** Registrare volontariamente riproduzione/completamento dei brani e apertura delle raccolte, evitando tracking di scroll, tasti o singole foto caricate automaticamente.
+- [ ] **Aggiungere eventi media essenziali.** Registrare volontariamente riproduzione/completamento dei brani, apertura delle raccolte e click sul link della playlist delle Cuffiette, evitando tracking di scroll, tasti o singole foto caricate automaticamente.
 
 - [ ] **Aggiungere eventi di Ponti e GDR.** Registrare invio lettera, turno di gioco e altre azioni esplicite senza salvare il testo privato nei metadata.
 
@@ -152,3 +159,15 @@ La migrazione può considerarsi conclusa quando il Portone coincide con l'access
 
 IDEA
 Fare una pagina dove lei può lasciare un messaggio o una lettera o anche io. Questa appare proprio come una lettera, quindi scritta in "corsivo" e nel finale c'è scritto il nostro "nick" o nome, da vedere. Tipo "~ Desy", in basso a destra.
+
+IDEA
+Sostituire l'embed SoundCloud delle Cuffiette con un player audio proprio del sito, quando i nove brani saranno ospitati direttamente (R2 o storage posseduto) invece che su SoundCloud.
+
+FATTO (08/08/2026)
+Pagina "Feedback" → implementata come `suggerimenti/` (titolo facoltativo + messaggio libero, autenticata, salvata in `world_suggestions` tramite `POST /api/suggestions`, stato `pending` da revisionare). Raggiungibile per ora solo dal bottone "Suggerisci" nella pagina 404; non è ancora un luogo dell'hub principale (non è una pagina narrativa, è un'utility). Da rivedere in futuro: dove altro linkarla, e se serve un'interfaccia per leggere/gestire le proposte ricevute.
+
+IDEA
+Aggiungere alla registrazione la possibilità di scegliere un nick/nome, invece di pescarlo dalla email
+
+IDEA
+Aggiugnere la possibilità di mettere alla registrazione una checkbox "avvisami per email se ci sono aggiornamenti"

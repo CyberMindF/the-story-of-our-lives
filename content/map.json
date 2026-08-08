@@ -1,0 +1,81 @@
+{
+  "title": "La Mappa",
+  "introduction": [
+    "Ti ricordi? Per un po’ abbiamo sognato il mondo a portata di mano, quando sentivamo che avremmo potuto collezionare mille esperienze insieme e girare ogni angolo del mondo solo io e te, come se fosse la nostra piccola o grande avventura di vita e ora che abbiamo un mondo tutto nostro possiamo mettere qui tutte quelle mete che un giorno andremo a vedere. Ma fino ad allora lasciamo che quei sogni possano viene qui, in questo posto che di sogni è composto",
+    "E come ti ho detto una volta sarebbe stato bellissimo avere un album dei ricordi, da tenere sotto il letto e da aprire ogni volta che stavamo insieme, per riguardare quelle vecchie, i viaggi, ma anche i momenti belli che avevamo immortalato. E aggiornarlo man mano con ogni foto del bacio sotto il monumento di turno o davanti a qualcosa di bello che avremmo trovato in quella nuova città ahaha. E pian piano magari ce ne sarebbe servito un nuovo dopo un po’"
+  ],
+  "destinations": [
+    {
+      "id": "thailandia",
+      "name": "Thailandia",
+      "coordinates": { "latitude": 13.7563, "longitude": 100.5018 },
+      "paragraphs": [
+        "Beh come non iniziare con quel sogno che si era fatto così concreto? Ormai sembrava così vicino che sembrava che potessimo toccarlo vero? Avevamo una data, si parlava di settembre di quest’anno, che è guarda caso è il nostro anniversario e anche il tuo compleanno, e questo evento così bello succede proprio in quei giorni lì. Però ormai della Thailandia sapevamo tutto, ci eravamo informati su cosa si mangiava, sui costi, su come gestire i soldi, come andare in giro, dove vivere e quali luoghi visitare",
+        "Ricordo quanti di questi templi stupendi e colorati mi hai fatto vedere e quanto ho immaginato le nostre foto proprio li sotto piccoli piccoli mentre ci davamo un bacino o ci abbracciavamo felici",
+        "E tutti i posti belli immersi nella natura in cui volevamo abitare, e mi ricordo che proprio questo posto io ti prendevo in giro perché sapevo che tu non ci saresti mai nemmeno salita lì ahaha. Comunque sai? In Thailandia ci sono le tigri"
+      ],
+      "images": [
+        { "src": "../assets/images/world/map/thailandia-lanterne.webp", "alt": "Lanterne luminose salgono nel cielo durante un festival in Thailandia", "beforeParagraph": 0 },
+        { "src": "../assets/images/world/map/thailandia-tempio.webp", "alt": "Il tempio bianco Wat Rong Khun in Thailandia", "beforeParagraph": 1 },
+        { "src": "../assets/images/world/map/thailandia-tempio-natura.webp", "alt": "Un tempio thailandese immerso nella natura", "beforeParagraph": 1 },
+        { "src": "../assets/images/world/map/thailandia-natura.webp", "alt": "Un alloggio sospeso nella natura thailandese", "beforeParagraph": 2 }
+      ]
+    },
+    {
+      "id": "oslo",
+      "name": "Oslo",
+      "coordinates": { "latitude": 59.9139, "longitude": 10.7522 },
+      "paragraphs": [
+        "Ti ricordi che una volta ti ho detto che ho sempre amato l’aurora boreale e che un giorno avrei voluto vederla, beh sai un posto dove si può vedere? Indovina un po’ a Oslo. Lo dice anche la canzone “Tu sei, la cosa più bella che ho, l’aurora nel cielo di Oslo, la droga più forte che io conosco. Sei tu” Questa città ha qualcosa di speciale a prescindere direi. Forse una volta avevamo parlato del fatto di andare in Norvegia, ma non è quello il punto. Come tu mi hai fatto notare, Oslo è un po’ la nostra canzone. Quindi sicuramente una delle cose da fare sarebbe stata quella di ascoltare Oslo a Oslo no? Ahaha",
+        "A quanto pare tutta la Norvegia è famosa per posti bellissimi come questo e per tutte le sue architetture vichinghe, quindi sicuramente ci sarebbe stato qualcosa di bello da vedere oltre l’aurora boreale"
+      ],
+      "images": [
+        { "src": "../assets/images/world/map/oslo-aurora.webp", "alt": "Aurora boreale tra le montagne della Norvegia", "beforeParagraph": 0 },
+        { "src": "../assets/images/world/map/oslo-architettura.webp", "alt": "Architettura tradizionale norvegese immersa nel paesaggio", "beforeParagraph": 1 }
+      ]
+    },
+    {
+      "id": "sharm-el-sheikh",
+      "name": "Sharm el-Sheikh",
+      "coordinates": { "latitude": 27.9158, "longitude": 34.33 },
+      "paragraphs": [
+        "Beh che c’è da dire qui? Forse è anche inutile mettere foto, tu ci sei già stata e hai visto tantissime cose e mi hai anche mandato tante foto. Ti sei divertita e rilassata ed è stato bello. E in quei giorni abbiamo parlato tanto del fatto ci saresti voluta tornare, e ti avevo promesso che lo avremmo sicuramente fatto, alla fine i costi non erano nemmeno eccessivi. Avevamo la speranza che almeno ci mettessero in qualche stanza più decente rispetto a quella in cui hanno messo te ahaha. Sarebbe stato bello passare del tempo a rilassarci e basta alla piscina del resort, avrei guardato male tutti i bagnini. Ricordo tante delle foto che mi hai mandato, e ti ricordi quella che mi avevi fatto modificare? Ti avevo sempre detto che tu avevi dei lineamenti così, eri bella anche con quel vestito addosso ahaha e poi era rosso mi pare giusto? È proprio il tuo colore. Mi ricordo che mi avevi mandato delle foto e che volevi che le commentassi, ma alla fine non l’ho mai fatto. Però le ho viste, solo che non riuscivo a commentarle come volevi tu. Però mi ricordo di un vestitino che ti eri messa, eri meravigliosa, ricordo solo che ero a bocca aperta quando l’ho visto era semplice, ma così bello che mi aveva lasciato senza parole. Ricordo che te l’ho detto. E ridevo dire la verità, ricordo solo che forse era bianco e blu o azzurro e ricordo come mi sono sentito quando l’ho visto, ma non ricordo assolutamente com’era fatto ahaha"
+      ],
+      "images": [
+        { "src": "../assets/images/world/map/sharm-el-sheikh.webp", "alt": "Il mare e la costa di Sharm el-Sheikh", "beforeParagraph": 0 }
+      ]
+    },
+    {
+      "id": "olanda",
+      "name": "Olanda",
+      "coordinates": { "latitude": 52.3676, "longitude": 4.9041 },
+      "paragraphs": [
+        "Cose si può non parlare dell’ultima meta? A te che piacciono così tanto i fiori e che ho scoperto che ti piacciono anche i tulipani, avrei voluto portarti in mezzo letteralmente a un mare di fiori colorati. Ho cercato su internet, sono circa 7 milioni di fiori ahaha pensa che mazzo gigante 👀 e pensa che belle foto che si possono fare qui",
+        "Però mi sono informato e ci sono tante cose carine da vedere in Olanda, tipo questo posto. Dicono che sia come la Venezia Norvegese, con i canali e ci si muove senza auto e come vedi è immerso nel verde. Sembra un posto davvero bellissimo e chissà l’aria com’è bella e pulita lì",
+        "Quando ho scoperto questa cosa ti ho immaginata subito lì. Tra le casetta e tu gigante che ridi per qualcosa di stupido che ho detto. Non lo so perché, ho in mente proprio questa foto. Te in mezzo alle macchinine e ai piccoli palazzi che ridi di gusto e tutto immortalato semplicemente in una foto. Beh comunque se non si fosse capito in Olanda c’è un’Olanda in miniatura ahaha"
+      ],
+      "images": [
+        { "src": "../assets/images/world/map/olanda-tulipani.webp", "alt": "Lunghe file di tulipani colorati nei Paesi Bassi", "beforeParagraph": 0 },
+        { "src": "../assets/images/world/map/olanda-giethoorn.webp", "alt": "Case e canali nel villaggio verde di Giethoorn", "beforeParagraph": 1 },
+        { "src": "../assets/images/world/map/olanda-miniatura.webp", "alt": "Una città olandese riprodotta in miniatura", "beforeParagraph": 2 }
+      ]
+    },
+    {
+      "id": "roma",
+      "name": "Roma",
+      "coordinates": { "latitude": 41.9028, "longitude": 12.4964 },
+      "paragraphs": ["roma roma"],
+      "images": []
+    },
+    {
+      "id": "prossima-meta",
+      "name": "La Prossima Meta è da Decidere…",
+      "coordinates": null,
+      "isOpen": true,
+      "paragraphs": [
+        "Beh che dire quindi? Questa per adesso è la nostra mappa sai tipo quelle messe sulle bacheche con le puntine? E come tutte le mappe vere c’è sempre uno spazietto per una nuova puntina. E ogni volta che vogliamo possiamo venire qui, guardare questi posti e aggiungerne di nuovi. Magari un posto che hai sempre voluto vedere o forse uno che abbiamo sognato insieme e che per il momento mi sfugge. Qui dentro si è l’unico posto dove si può ancora sognare, senza che nessuno ci chieda di smettere di farlo"
+      ],
+      "images": []
+    }
+  ]
+}

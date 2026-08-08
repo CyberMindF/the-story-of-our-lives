@@ -93,6 +93,20 @@ La pagina `storie/` permette all'utente autenticato di lasciare una storia compl
 
 `POST /api/stories/suggestions` ricava l'autore dalla sessione e assegna la data sul server. Le proposte vengono conservate in `story_suggestions` con stato iniziale `pending`, così possono essere revisionate prima di entrare nella raccolta pubblicata.
 
+## Suggerimenti liberi
+
+La pagina `suggerimenti/` permette all'utente autenticato di proporre qualunque idea per il Mondo Bianco (nuove pagine, ricordi, funzionalità), con un titolo facoltativo e un messaggio libero. È raggiungibile dal bottone "Suggerisci" nella pagina 404 interna.
+
+`POST /api/suggestions` ricava l'autore dalla sessione e conserva la proposta in `world_suggestions` con stato iniziale `pending`, sullo stesso modello delle proposte per Le Storie.
+
+## Redirect legacy
+
+`_redirects` alla radice del progetto fa da ponte con i vecchi short link `rsgmsfcfm.short.gy/<slug>` dell'export originale: ogni slug (`il-calendario`, `la-mappa`, ecc.) reindirizza con 301 alla route reale corrispondente. `la-bacheca` è 302 e punta temporaneamente a `/mondo-bianco/`, finché quella pagina non è migrata. Short.gy resta un servizio esterno: per usare questi alias bisogna aggiornare manualmente ogni short link perché punti a `https://<dominio>/<slug>` invece del vecchio URL Notion.
+
+## Pagina 404
+
+`404.html` alla radice del progetto viene servita automaticamente da Cloudflare Pages per qualunque URL non esistente, indipendentemente dalla profondità del percorso. Usa esclusivamente percorsi assoluti (`/assets/...`, `/mondo-bianco/`, `/suggerimenti/`) invece che relativi, perché la pagina può essere raggiunta da URL rotti a qualsiasi livello di annidamento. Non richiede autenticazione propria: il bottone di ritorno passa dal guard reale di `/mondo-bianco/`, che riporta l'utente già autenticato dentro l'hub o lo instrada dal Portone se la sessione non è valida.
+
 ## Pubblicazione
 
 Collega il repository GitHub a un progetto Cloudflare Pages. Non è necessario un comando di build; la directory di output è la root del repository. Prima del primo utilizzo:
@@ -122,8 +136,10 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 - `mondo-bianco/index.html`: home autenticata del Mondo Bianco.
 - `assets/css/themes.css`: variabili e quattro temi condivisi dalla piattaforma.
 - `assets/css/components/`: componenti condivisi, come shell e accesso.
-- `assets/css/pages/`: stile specifico di Portone, hub e cruciverba.
+- `assets/css/pages/`: stile specifico delle singole pagine e dei luoghi.
 - `assets/js/world/main.js`: inizializzazione condivisa delle pagine del Mondo Bianco.
+- `content/calendar.json`, `content/stories.json`, `content/map.json`, `content/music.json`: raccolte statiche ordinate direttamente dalla posizione nell'array.
+- `scripts/build-music-content.mjs`: ricostruisce i nove brani e le citazioni delle Cuffiette dalla fonte originale congelata, senza correggerne il testo.
 - `tavolo-da-gioco/cruciverba/index.html`: pagina del cruciverba.
 - `assets/js/crossword/main.js`: entry point e interfaccia del cruciverba.
 - `assets/js/shared/`: autenticazione, API, navigazione, visite e temi riutilizzabili.
@@ -132,6 +148,9 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 - `functions/api/crossword/`: API dello stato persistente del cruciverba.
 - `functions/api/telemetry/`: eventi generali e cronologia dei tentativi.
 - `functions/api/stories/`: ricezione autenticata delle proposte per nuove storie.
+- `functions/api/suggestions.js`: ricezione autenticata dei suggerimenti liberi per il Mondo Bianco.
+- `404.html`: pagina non trovata, servita automaticamente da Cloudflare Pages con percorsi assoluti.
+- `_redirects`: alias verso le nuove route per i vecchi short link controllabili.
 - `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.
 - `wrangler.toml`: configurazione Cloudflare e binding D1.
 - `final-message.json`: contenuto della schermata finale.

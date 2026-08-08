@@ -1,0 +1,20 @@
+# Alias con lo stesso slug dei vecchi short link (rsgmsfcfm.short.gy/<slug>).
+# Short.gy resta un servizio esterno che non possiamo reindirizzare da qui: ogni short
+# link va aggiornato manualmente puntando a "https://<questo-dominio>/<slug>" al posto
+# del vecchio URL Notion. Da qui in poi ci pensa questo file a portare alla pagina reale.
+#
+# Esclusi perché non sono link di navigazione tra pagine, restano collegamenti a
+# contenuti esterni così come sono: /dthc (playlist Spotify delle Cuffiette) e
+# /gdr (documento esterno de Il Prezzo della Verità).
+
+/i-ponti          /ponti/            301
+/il-calendario    /calendario/       301
+/il-mappamondo    /mappamondo/       301
+/il-tavolo        /tavolo-da-gioco/  301
+/la-cuffiette     /cuffiette/        301
+/la-mappa         /mappa/            301
+/le-storie        /storie/           301
+
+# La Bacheca dei Ricordi non è ancora migrata (P2): redirect temporaneo all'hub
+# finché non esiste una pagina reale, per evitare un collegamento rotto nel frattempo.
+/la-bacheca       /mondo-bianco/     302
