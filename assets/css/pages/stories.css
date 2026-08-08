@@ -1,0 +1,437 @@
+.stories-page {
+  min-height: 100dvh;
+  color: #f4f7fb;
+}
+
+.stories-shell {
+  --place-shell-width: 76rem;
+}
+
+.stories-hero {
+  display: grid;
+  grid-template-columns: minmax(17rem, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(2rem, 7vw, 6rem);
+  align-items: center;
+  padding: clamp(3.5rem, 8vw, 7rem) 0 clamp(4rem, 9vw, 7rem);
+}
+
+.stories-hero-figure {
+  position: relative;
+  margin: 0;
+}
+
+.stories-hero-figure::before {
+  position: absolute;
+  inset: 8% -8% -5% 8%;
+  z-index: -1;
+  border-radius: 45% 55% 52% 48%;
+  background: color-mix(in srgb, var(--focus-color) 22%, transparent);
+  filter: blur(2.5rem);
+  content: "";
+}
+
+.stories-hero-figure img {
+  display: block;
+  width: 100%;
+  max-height: 39rem;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  border-radius: 48% 48% 1.5rem 1.5rem;
+  object-fit: cover;
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.35);
+}
+
+.stories-eyebrow {
+  margin: 0 0 0.65rem;
+  color: #b8cad9;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.stories-title-block h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.stories-title-block h1 span {
+  display: inline-block;
+  font-family: system-ui, sans-serif;
+  font-size: 0.46em;
+  vertical-align: 0.18em;
+}
+
+.stories-introduction {
+  max-width: 42rem;
+  margin: 2rem 0 0;
+  color: #d4e0e9;
+  font-size: clamp(1rem, 1.8vw, 1.16rem);
+  line-height: 1.8;
+}
+
+.stories-collection {
+  width: min(100%, 64rem);
+  margin-inline: auto;
+  padding-bottom: clamp(3rem, 8vw, 6rem);
+}
+
+.stories-collection-label {
+  margin-bottom: 1rem;
+}
+
+.stories-list {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.story-entry {
+  scroll-margin-top: 6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.story-entry summary {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1.2rem;
+  align-items: center;
+  min-height: 6.5rem;
+  padding: 1.1rem 0;
+  list-style: none;
+  cursor: pointer;
+  transition: padding 180ms ease, color 180ms ease;
+}
+
+.story-entry summary::-webkit-details-marker {
+  display: none;
+}
+
+.story-number {
+  min-width: 2.2rem;
+  color: color-mix(in srgb, var(--focus-color) 75%, #fff);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.15rem;
+  font-style: italic;
+}
+
+.story-heading {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.story-heading strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.story-heading time {
+  color: #aebfcd;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+.story-toggle {
+  color: #bdd0de;
+  font-size: 1.8rem;
+  font-weight: 300;
+  transition: transform 180ms ease;
+}
+
+.story-entry summary:hover {
+  color: color-mix(in srgb, var(--focus-color) 55%, #fff);
+}
+
+.story-entry[open] summary {
+  padding-top: 1.8rem;
+}
+
+.story-entry[open] .story-toggle {
+  transform: rotate(45deg);
+}
+
+.story-content {
+  width: min(100% - 2rem, 48rem);
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2rem) 0 clamp(3rem, 7vw, 5rem);
+}
+
+.story-prose {
+  color: #d9e3eb;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.03rem, 1.7vw, 1.14rem);
+  line-height: 1.9;
+}
+
+.story-prose p {
+  margin: 0 0 0.85rem;
+}
+
+.story-player {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0 0 2rem;
+  border: 0;
+  border-radius: 1rem;
+  background: #071120;
+}
+
+.story-content figure {
+  margin: 2.5rem 0 0;
+}
+
+.story-content figure img {
+  display: block;
+  width: 100%;
+  max-height: 56rem;
+  border-radius: 1rem;
+  object-fit: cover;
+}
+
+.story-suggestion {
+  width: min(100%, 64rem);
+  margin: clamp(2rem, 7vw, 5rem) auto 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+}
+
+.suggestion-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 7rem;
+  padding: 1.2rem clamp(1.2rem, 3vw, 2rem);
+  list-style: none;
+  cursor: pointer;
+}
+
+.suggestion-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.suggestion-trigger > span:first-child {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.suggestion-trigger .stories-eyebrow {
+  margin: 0;
+}
+
+.suggestion-trigger strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.suggestion-toggle {
+  color: #bdd0de;
+  font-size: 1.8rem;
+  font-weight: 300;
+  transition: transform 180ms ease;
+}
+
+.story-suggestion[open] .suggestion-toggle {
+  transform: rotate(45deg);
+}
+
+.suggestion-panel {
+  padding: 0 clamp(1rem, 2.5vw, 1.75rem) clamp(1.25rem, 3vw, 1.75rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.suggestion-introduction {
+  width: 100%;
+  margin: 1.5rem auto;
+  color: #c9d7e2;
+  line-height: 1.65;
+}
+
+.suggestion-form {
+  display: grid;
+  gap: 1.15rem;
+  align-content: start;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.suggestion-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.suggestion-field > span {
+  color: #eef3f7;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.suggestion-field small {
+  color: #9fb2c1;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.suggestion-field input,
+.suggestion-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  border-radius: 0.85rem;
+  background: rgba(4, 12, 25, 0.46);
+  color: #f4f7fb;
+  font: inherit;
+  line-height: 1.55;
+}
+
+.suggestion-field input {
+  min-height: 3.1rem;
+  padding: 0.75rem 0.9rem;
+}
+
+.suggestion-field textarea {
+  min-height: 7rem;
+  padding: 0.9rem;
+  resize: vertical;
+}
+
+.suggestion-field textarea[name="storyText"] {
+  min-height: 15rem;
+}
+
+.suggestion-field input::placeholder,
+.suggestion-field textarea::placeholder {
+  color: #879bab;
+  opacity: 1;
+}
+
+.suggestion-submit-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.suggestion-submit-row button {
+  flex: 0 0 auto;
+  min-height: 2.9rem;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.suggestion-submit-row button:hover {
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.suggestion-submit-row button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.suggestion-status {
+  margin: 0;
+  font-size: 0.86rem;
+}
+
+.suggestion-status:empty {
+  display: none;
+}
+
+.suggestion-status.is-success {
+  color: #a7dfbd;
+}
+
+.suggestion-status.is-error {
+  color: #ffb4b4;
+}
+
+.suggestion-field input:focus-visible,
+.suggestion-field textarea:focus-visible,
+.suggestion-trigger:focus-visible,
+.suggestion-submit-row button:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 3px;
+}
+
+.stories-home-link {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  width: fit-content;
+  margin: clamp(3rem, 8vw, 6rem) auto 0;
+  padding: 0.8rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f7fb;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.stories-error {
+  padding: 1rem;
+  border: 1px solid var(--error-color);
+  border-radius: 0.8rem;
+}
+
+.story-entry summary:focus-visible,
+.stories-home-link:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 4px;
+}
+
+@media (max-width: 760px) {
+  .stories-hero {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding-top: 3rem;
+  }
+
+  .stories-hero-figure {
+    width: min(78vw, 24rem);
+    margin-inline: auto;
+  }
+
+  .stories-title-block {
+    text-align: left;
+  }
+
+  .story-entry summary {
+    grid-template-columns: 1fr auto;
+    gap: 0.8rem;
+    min-height: 7rem;
+  }
+
+  .story-number {
+    display: none;
+  }
+
+  .suggestion-submit-row {
+    justify-content: stretch;
+  }
+
+  .suggestion-submit-row button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-toggle,
+  .suggestion-toggle {
+    transition: none;
+  }
+}

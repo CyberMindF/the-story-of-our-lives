@@ -8,17 +8,18 @@
     <link rel="stylesheet" href="../assets/css/themes.css?v=1" />
     <link rel="stylesheet" href="../assets/css/components/shell.css?v=1" />
     <link rel="stylesheet" href="../assets/css/components/world-atmosphere.css?v=2" />
-    <link rel="stylesheet" href="../assets/css/pages/world.css?v=7" />
+    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/pages/world.css?v=8" />
   </head>
-  <body class="world-atmosphere world-page">
-    <div class="app-shell world-shell">
+  <body class="world-atmosphere world-page" data-logout-url="../">
+    <div class="place-shell world-shell">
       <!-- L'intestazione mantiene identità del luogo e controlli dell'utente senza coprire la scena. -->
-      <header class="world-header">
-        <a class="world-mark" href="./" aria-label="Home del Mondo Bianco">
+      <header class="place-header world-header">
+        <a class="place-home-link world-mark" href="./" aria-label="Home del Mondo Bianco">
           <span aria-hidden="true">⭕</span>
           <span>Il Mondo Bianco</span>
         </a>
-        <div class="hero-userbar">
+        <div class="place-userbar">
           <p id="user-greeting" class="user-greeting"></p>
           <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
@@ -77,10 +78,10 @@
           <!-- I luoghi restano esattamente otto; quelli non migrati non producono link rotti. -->
           <div class="world-places-grid">
             <span class="world-place-card is-pending"><span class="world-place-emoji">📸</span><strong>La Bacheca dei Ricordi</strong><small>In arrivo</small></span>
-            <span class="world-place-card is-pending"><span class="world-place-emoji">🌍</span><strong>Il Mappamondo</strong><small>In arrivo</small></span>
+            <a class="world-place-card is-available" href="../mappamondo/"><span class="world-place-emoji">🌍</span><strong>Il Mappamondo</strong><small>Entra</small></a>
             <span class="world-place-card is-pending"><span class="world-place-emoji">🌈</span><strong>I Ponti</strong><small>In arrivo</small></span>
-            <span class="world-place-card is-pending"><span class="world-place-emoji">📖</span><strong>Le Storie</strong><small>In arrivo</small></span>
-            <span class="world-place-card is-pending"><span class="world-place-emoji">📅</span><strong>Il Calendario</strong><small>In arrivo</small></span>
+            <a class="world-place-card is-available" href="../storie/"><span class="world-place-emoji">📖</span><strong>Le Storie</strong><small>Entra</small></a>
+            <a class="world-place-card is-available" href="../calendario/"><span class="world-place-emoji">📅</span><strong>Il Calendario</strong><small>Entra</small></a>
             <span class="world-place-card is-pending"><span class="world-place-emoji">🎧</span><strong>Le Cuffiette</strong><small>In arrivo</small></span>
             <a class="world-place-card is-available" href="../tavolo-da-gioco/cruciverba/"><span class="world-place-emoji">🐉</span><strong>Il Tavolo da Gioco</strong><small>Entra</small></a>
             <span class="world-place-card is-pending"><span class="world-place-emoji">🗺️</span><strong>La Mappa</strong><small>In arrivo</small></span>
@@ -90,6 +91,6 @@
     </div>
 
     <script type="module" src="../auth-guard.js?v=2" data-auth-gateway="../"></script>
-    <script type="module" src="../assets/js/hub/main.js?v=2"></script>
+    <script type="module" src="../assets/js/world/main.js?v=1"></script>
   </body>
 </html>

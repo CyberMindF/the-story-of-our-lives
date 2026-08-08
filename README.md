@@ -87,6 +87,12 @@ Ogni parola in `data.json` possiede un `id` stabile, indipendente dall'ordine de
 
 Il backend legge la soluzione da `data.json` e calcola autonomamente `is_completed` e `completed_at`. Il frontend sincronizza dopo un secondo di pausa, evita valori duplicati e mantiene `localStorage` come fallback. Se il database è ancora vuoto, il progresso locale esistente viene trasferito automaticamente al primo caricamento.
 
+## Proposte per Le Storie
+
+La pagina `storie/` permette all'utente autenticato di lasciare una storia completa oppure un'idea da sviluppare. Il form accetta un titolo facoltativo, il testo, indicazioni sulla musica e indicazioni sulle immagini desiderate; non carica file e non pubblica automaticamente il contenuto.
+
+`POST /api/stories/suggestions` ricava l'autore dalla sessione e assegna la data sul server. Le proposte vengono conservate in `story_suggestions` con stato iniziale `pending`, così possono essere revisionate prima di entrare nella raccolta pubblicata.
+
 ## Pubblicazione
 
 Collega il repository GitHub a un progetto Cloudflare Pages. Non è necessario un comando di build; la directory di output è la root del repository. Prima del primo utilizzo:
@@ -117,6 +123,7 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 - `assets/css/themes.css`: variabili e quattro temi condivisi dalla piattaforma.
 - `assets/css/components/`: componenti condivisi, come shell e accesso.
 - `assets/css/pages/`: stile specifico di Portone, hub e cruciverba.
+- `assets/js/world/main.js`: inizializzazione condivisa delle pagine del Mondo Bianco.
 - `tavolo-da-gioco/cruciverba/index.html`: pagina del cruciverba.
 - `assets/js/crossword/main.js`: entry point e interfaccia del cruciverba.
 - `assets/js/shared/`: autenticazione, API, navigazione, visite e temi riutilizzabili.
@@ -124,6 +131,7 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 - `functions/api/auth/`: API di registrazione, login e sessione.
 - `functions/api/crossword/`: API dello stato persistente del cruciverba.
 - `functions/api/telemetry/`: eventi generali e cronologia dei tentativi.
+- `functions/api/stories/`: ricezione autenticata delle proposte per nuove storie.
 - `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.
 - `wrangler.toml`: configurazione Cloudflare e binding D1.
 - `final-message.json`: contenuto della schermata finale.

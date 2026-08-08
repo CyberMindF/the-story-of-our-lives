@@ -45,15 +45,15 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 
 - [X] **Migrare la pagina Il Mondo Bianco.** Creare l'hub con testo di benvenuto, immagine principale, citazione, canzone e gli otto luoghi originali, attivando i collegamenti interni man mano che le rispettive pagine vengono migrate e senza aggiungere il cruciverba come nono luogo.
 
-- [ ] **Migrare la pagina Il Mappamondo.** Conservare integralmente il racconto fondativo R/D, l'immagine del globo e l'accompagnamento, presentandolo come prologo leggibile e responsive.
+- [X] **Migrare la pagina Il Mappamondo.** Conservare integralmente il racconto fondativo R/D, l'immagine del globo e l'accompagnamento, presentandolo come prologo leggibile e responsive.
 
-- [ ] **Completare la shell condivisa del Mondo Bianco.** Partendo da atmosfera, temi, autenticazione, saluto e logout già condivisi, aggiungere ritorno all'hub, stato di caricamento e cornice comune usando hub e Mappamondo come casi reali.
+- [X] **Completare la shell condivisa del Mondo Bianco.** Partendo da atmosfera, temi, autenticazione, saluto e logout già condivisi, aggiungere ritorno all'hub, stato di caricamento e cornice comune usando hub e Mappamondo come casi reali.
 
 - [ ] **Progettare la navigazione responsive.** Dopo aver definito l'hub e una seconda pagina reale, rendere raggiungibili luoghi e ritorno alla home su desktop e telefono mantenendo orientamento e accessibilità.
 
-- [ ] **Migrare la pagina Il Calendario.** Trasformare le 27 date originali in una timeline strutturata, ordinata e mobile-first, preservando testo e ricorrenze senza aggiungere date automaticamente.
+- [X] **Migrare la pagina Il Calendario.** Trasformare le 27 date originali in una timeline strutturata, ordinata e mobile-first, preservando testo e ricorrenze senza aggiungere date automaticamente.
 
-- [ ] **Migrare la pagina Le Storie.** Importare le quattro storie con titolo, data, testo e immagini, offrendo indice e modalità di lettura senza alterare la voce originale.
+- [X] **Migrare la pagina Le Storie.** Importare le quattro storie con titolo, data, testo e immagini, offrendo indice e modalità di lettura senza alterare la voce originale.
 
 - [ ] **Migrare la pagina La Mappa.** Importare Thailandia, Oslo, Sharm el-Sheikh, Olanda, Roma e la prossima meta, con immagini e testi disponibili sia in vista visuale sia in lista accessibile.
 
@@ -148,3 +148,7 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 ## Criterio di completamento generale
 
 La migrazione può considerarsi conclusa quando il Portone coincide con l'accesso reale, il Mondo Bianco è la home autenticata, il cruciverba è un gioco interno del Tavolo da Gioco, ogni link diretto ritorna alla destinazione richiesta dopo l'accesso, tutti i contenuti originali risultano verificati e nessun media personale è raggiungibile senza autorizzazione server.
+
+
+IDEA
+Fare una pagina dove lei può lasciare un messaggio o una lettera o anche io. Questa appare proprio come una lettera, quindi scritta in "corsivo" e nel finale c'è scritto il nostro "nick" o nome, da vedere. Tipo "~ Desy", in basso a destra.

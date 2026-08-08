@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>📅 Il Calendario | Mondo Bianco</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/css/themes.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/shell.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/world-atmosphere.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/pages/calendar.css?v=9" />
+  </head>
+  <body class="world-atmosphere calendar-page" data-logout-url="../">
+    <div class="place-shell calendar-shell">
+      <header class="place-header">
+        <a class="place-home-link" href="../mondo-bianco/" aria-label="Torna al Mondo Bianco">
+          <span aria-hidden="true">←</span>
+          <span class="place-name-optional">Il Mondo Bianco</span>
+        </a>
+        <div class="place-userbar">
+          <p id="user-greeting" class="user-greeting"></p>
+          <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="calendar-hero" aria-labelledby="calendar-title">
+          <figure class="calendar-figure">
+            <img src="../assets/images/world/calendario.png" alt="Un calendario aperto su settembre con il giorno 17 cerchiato, accanto a un mazzo di fiori" />
+          </figure>
+          <div class="calendar-title-block">
+            <h1 id="calendar-title"><span aria-hidden="true">📅</span> Il Calendario</h1>
+          </div>
+        </section>
+
+        <section class="calendar-introduction" aria-labelledby="calendar-intro-title">
+          <h2 id="calendar-intro-title">Un posto per ricordare</h2>
+          <p>Mi piaceva l’idea che ci fosse un posto dove poter ricordare le nostre date importanti. (comunque hai notato che l’emoji del calendario ha il 17? 👀, non l’ho messo io è proprio così ahaha). Comunque spero che man mano ricorderò altre date belle importanti, purtroppo di tutto il nostro passato non ricordo tantissime cose, so che ce ne sono state tante, ma non ricordo quando. Tipo la prima volta che ci siamo detti ti amo, il giorno che abbiamo “inventato” il “noi”, tutte le volte che ci siamo detti qualcosa di bellissimo senza nemmeno dargli troppa importanza, perché pensavamo che ce le saremmo detti per sempre. Per esempio mi ricordo che quando ti hanno rubato il telefono tu eri tanto triste perché c’erano tutti gli screen che ti eri fatta delle nostre chat. E mi dispiace che quegli screen non me li hai mai mandati, che appunto si sono persi così. Avrei voluto averli per ricordarli tutti. Quella volta ti avevo promesso che un giorno ci saremmo messi su ig a recuperare pian piano tutto. Ma non potevo farlo da solo e alla fine non lo abbiamo mai fatto. Ma quella promessa non l’ho mai dimenticata, come alla fine tante altre</p>
+        </section>
+
+        <section class="calendar-history" aria-labelledby="history-title">
+          <div class="calendar-section-heading">
+            <p class="calendar-eyebrow">Dal 2021 a oggi</p>
+            <h2 id="history-title">Le nostre date</h2>
+            <p id="calendar-count" class="calendar-count" aria-live="polite">Caricamento delle date…</p>
+          </div>
+          <div id="calendar-timeline" class="calendar-timeline"></div>
+        </section>
+
+        <a class="calendar-home-link" href="../mondo-bianco/"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
+      </main>
+    </div>
+
+    <script type="module" src="../auth-guard.js?v=2" data-auth-gateway="../"></script>
+    <script type="module" src="../assets/js/world/main.js?v=1"></script>
+    <script type="module" src="../assets/js/calendar/main.js?v=6"></script>
+  </body>
+</html>

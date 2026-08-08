@@ -14,27 +14,25 @@ const themeController = createThemeController({
   toast: null
 });
 
-// Mostra l'hub soltanto dopo la verifica condivisa di sessione e Chiave.
+// Inizializza gli elementi comuni soltanto dopo la verifica dell'accesso alla pagina.
 async function init() {
   themeController.applySavedTheme();
   createWorldStars();
   const user = await window.mondoBiancoAuthReady;
-  if (!user) {
-    return;
-  }
+  if (!user) return;
 
   elements.greeting.textContent = `Ciao, ${user.nickname}`;
   elements.logoutButton.addEventListener("click", logout);
 }
 
-// Revoca la sessione e riporta al Portone.
+// Revoca la sessione e torna al Portone senza conservare la pagina interna corrente.
 async function logout() {
   elements.logoutButton.disabled = true;
   const response = await revokeAuthSession();
   if (response.ok) {
     clearAccessUnlock();
     clearRequestedDestination();
-    window.location.replace("../");
+    window.location.replace(document.body.dataset.logoutUrl || "../");
     return;
   }
   elements.logoutButton.disabled = false;

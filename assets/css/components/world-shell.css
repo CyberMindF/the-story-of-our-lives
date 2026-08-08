@@ -1,0 +1,77 @@
+/* Cornice condivisa dalle pagine interne del Mondo Bianco. */
+.place-shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, var(--place-shell-width, 76rem));
+  margin: 0 auto;
+  padding: max(1rem, env(safe-area-inset-top)) clamp(1rem, 4vw, 3rem) clamp(4rem, 8vw, 7rem);
+}
+
+.place-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 4.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.place-home-link {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  color: #f4f7fb;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.place-userbar {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  min-height: 2.5rem;
+  margin: 0;
+  padding: 0.3rem 0.35rem 0.3rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(8, 16, 30, 0.42);
+  box-shadow: 0 0.6rem 1.8rem rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(14px);
+}
+
+.place-userbar .user-greeting {
+  margin: 0;
+  color: #d4e0e9;
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.place-userbar .logout-button {
+  display: inline-grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f7fb;
+}
+
+.place-userbar .logout-button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.place-home-link:focus-visible,
+.place-userbar .logout-button:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 4px;
+}
+
+@media (max-width: 680px) {
+  .place-home-link .place-name-optional {
+    display: none;
+  }
+}
