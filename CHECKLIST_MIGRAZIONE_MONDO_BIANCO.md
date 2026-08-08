@@ -71,17 +71,17 @@ Checklist operativa derivata da `ANALISI_MONDO_BIANCO_ORIGINALE.md`. Le attivit�
 
 ## P2 - Archivi personali e media
 
-- [ ] **Configurare R2 privato.** Prima di importare la Bacheca o qualsiasi nota vocale, video personale o audio riservato, creare bucket e binding, definire convenzioni per originali, thumbnail e versioni ottimizzate e predisporre un endpoint autenticato o URL firmati a breve scadenza.
+- [X] **Configurare R2 privato.** Prima di importare la Bacheca o qualsiasi nota vocale, video personale o audio riservato, creare bucket e binding, definire convenzioni per originali, thumbnail e versioni ottimizzate e predisporre un endpoint autenticato o URL firmati a breve scadenza. Bucket `the-white-world-media` creato da Rory su Cloudflare (privato, nessun dominio pubblico); binding `MEDIA` in `wrangler.toml` (dev e produzione). Endpoint `GET /api/media/<percorso>` verificato: 401 senza sessione, 400 su path traversal, 404 su oggetto assente, 200 con contenuto e content-type corretti quando autenticato. Convenzione percorsi (`<sezione>/<id>/original|web|thumb/<file>`) documentata nel README.
 
-- [ ] **Migrare la struttura della Bacheca dei Ricordi.** Creare periodi, giornate, screenshot, video e altri ricordi con un indice funzionante e URL/ancore stabili.
+- [X] **Migrare la struttura della Bacheca dei Ricordi.** Creare periodi, giornate, screenshot, video e altri ricordi con un indice funzionante e URL/ancore stabili. Struttura ricostruita automaticamente da `scripts/build-bacheca-content.mjs`, che cammina l'HTML originale nel suo ordine reale (non lo riscrive a mano) e produce `content/bacheca.json`. Indice in cima alla pagina con 12 ancore reali (`#settembre-giorno-1`, ecc.) — risolve il bug dei link rotti dell'originale.
 
-- [ ] **Importare i 130 media della Bacheca in R2.** Conservare originali, ordine e associazioni alle didascalie, generando versioni leggere senza sostituire i file sorgente.
+- [X] **Importare i 130 media della Bacheca in R2.** Conservare originali, ordine e associazioni alle didascalie, generando versioni leggere senza sostituire i file sorgente. 130/130 originali caricati su `the-white-world-media` (verificato un file a campione: dimensione identica byte per byte all'originale). 130/130 miniature (480px) generate con `sharp` e caricate sotto `.../thumb/`. File sorgente dell'export non toccati.
 
-- [ ] **Creare la galleria protetta della Bacheca.** Implementare thumbnail, lazy loading, lightbox accessibile, navigazione touch e controllo server su ogni media.
+- [X] **Creare la galleria protetta della Bacheca.** Implementare thumbnail, lazy loading, lightbox accessibile, navigazione touch e controllo server su ogni media. Foto consecutive raggruppate in griglia (`bacheca/index.html`), `loading="lazy"` sulle miniature, lightbox con `<dialog>` nativo (focus trap incluso), tastiera (frecce), swipe touch, chiusura su click esterno. Ogni foto passa da `/api/media/`, mai da un percorso statico.
 
-- [ ] **Migrare le didascalie della Bacheca.** Collegare ogni testo alla fotografia corretta e verificare manualmente le sequenze di Settembre, Maggio, screenshot e bonus.
+- [X] **Migrare le didascalie della Bacheca.** Collegare ogni testo alla fotografia corretta e verificare manualmente le sequenze di Settembre, Maggio, screenshot e bonus. L'abbinamento non è dedotto: viene letto direttamente dalla struttura `<figcaption>` di Notion quando presente, altrimenti il testo libero resta nell'ordine esatto in cui appare nel documento originale, intervallato alle foto a cui si riferiva visivamente. Verificato a mano un caso complesso (blocco "queste 4 foto" nel terzo giorno di Settembre): combacia esattamente col codice sorgente. Non è stata fatta una revisione visiva di tutte le 130 foto una per una: vale la pena che Rory/Desy diano un'occhiata dal vivo, sono gli unici che possono davvero confermare foto per foto.
 
-- [ ] **Migrare i video della Bacheca.** Verificare i contenuti YouTube/Drive, scegliere embed protetto o link esterno e gestire indisponibilità e permessi mancanti.
+- [X] **Migrare i video della Bacheca.** Verificare i contenuti YouTube/Drive, scegliere embed protetto o link esterno e gestire indisponibilità e permessi mancanti. Scelto il link esterno (come per I Ponti e Il Prezzo della Verità), non l'embed: sono contenuti su Drive personali, non pubblici. Nessuna gestione speciale di link non più raggiungibili (si comporta come un link esterno qualunque) — coerente con le altre pagine, ma da tenere presente se in futuro si vuole di più.
 
 - [ ] **Ottimizzare le immagini simboliche delle pagine.** Generare formati e dimensioni responsive preservando originali, composizione e qualità visuale.
 
@@ -171,3 +171,9 @@ Aggiungere alla registrazione la possibilità di scegliere un nick/nome, invece 
 
 IDEA
 Aggiugnere la possibilità di mettere alla registrazione una checkbox "avvisami per email se ci sono aggiornamenti"
+
+IDEA
+Aggiungere anche il messaggio criptato ai giochi
+
+IDEA
+Aggiungere il nostro linguaggio segreto da qualche parte (magari introducendo qualcosa di speciale per i 5 cuori e per il cerchio)

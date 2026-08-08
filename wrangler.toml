@@ -12,3 +12,11 @@ database_name = "DB"
 database_id = "88ced79e-291f-42d0-a114-68473edbc5e7"
 binding = "DB"
 database_name = "DB"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "the-white-world-media"
+
+[[env.production.r2_buckets]]
+binding = "MEDIA"
+bucket_name = "the-white-world-media"

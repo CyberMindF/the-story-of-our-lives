@@ -43,6 +43,34 @@ Le future pagine del Mondo Bianco possono usare il guard condiviso prima del pro
 
 Il tag va inserito prima dello script specifico della pagina. Il guard nasconde il contenuto durante il rapido controllo iniziale e pubblica la Promise `window.mondoBiancoAuthReady`, che l'entry point della pagina deve attendere. `data-auth-gateway` deve indicare la directory che contiene il Portone; può essere `./`, `../` o un altro percorso relativo in base alla posizione della pagina. Se sessione o Chiave non sono valide, il guard conserva l'indirizzo richiesto e porta all'accesso principale. Dopo login, registrazione o conferma della sola Chiave, il browser torna automaticamente alla pagina iniziale. Sono accettate soltanto destinazioni dello stesso dominio e mai URL sotto `/api/`.
 
+## Media privati (R2)
+
+Il binding `MEDIA` punta al bucket R2 `the-white-world-media`, privato: nessun accesso pubblico o dominio personalizzato, l'unico modo per leggerlo è `GET /api/media/<percorso>`, che verifica la sessione prima di restituire l'oggetto (401 senza sessione valida, 400 su tentativi di path traversal, 404 se l'oggetto non esiste). Il frontend richiama questo endpoint da pagina già protetta dal guard, non serve altra autenticazione lato client.
+
+Convenzione dei percorsi dentro il bucket, per sezione e variante:
+
+```
+<sezione>/<identificatore>/original/<file>   # originale conservato integralmente
+<sezione>/<identificatore>/web/<file>        # versione ottimizzata per la visualizzazione
+<sezione>/<identificatore>/thumb/<file>      # miniatura per gallerie/anteprime
+```
+
+Per esempio la Bacheca dei Ricordi userà `bacheca/<periodo>/<giorno>/original|web|thumb/<file>`; l'MP3 bonus delle Cuffiette userà semplicemente `cuffiette/bonus/<file>`. D1 conserva soltanto i percorsi/chiavi da associare ai contenuti, mai i file stessi.
+
+In locale, `wrangler pages dev` emula R2 nello stesso modo di D1; per caricare un oggetto di prova:
+
+```bash
+npx wrangler r2 object put the-white-world-media/<percorso> --local --file <file-locale>
+```
+
+## La Bacheca dei Ricordi
+
+`content/bacheca.json` (periodi → giorni → foto/testo/link esterni, nell'ordine originale) è ricostruito da `scripts/build-bacheca-content.mjs`, che legge l'HTML congelato dell'export invece del testo semplificato: solo così si recupera l'abbinamento reale tra ogni foto e la sua didascalia (il `<figcaption>` di Notion quando esiste). Lo script assegna anche la chiave R2 definitiva a ogni foto e scrive un manifest locale non pubblicato (`reports/export/bacheca-media-manifest.json`) con la mappa file-sorgente → chiave.
+
+`scripts/upload-bacheca-media.mjs` carica gli originali secondo il manifest (`--local` per l'emulazione di sviluppo, `--remote` di default per il bucket vero). `scripts/build-bacheca-thumbnails.mjs` genera con `sharp` una miniatura da 480px per ogni foto e la carica sotto `.../thumb/`, aggiungendo `thumbKey` a ogni voce di `content/bacheca.json`. Entrambi sono idempotenti: si possono rilanciare in sicurezza.
+
+La pagina `bacheca/` raggruppa le foto consecutive in una griglia con lightbox accessibile (tastiera, swipe, `<dialog>` nativo); i link a video/immagini esterne su Drive restano collegamenti esterni, non embed.
+
 ## Database
 
 Le migrazioni sono in `migrations/`:
@@ -149,6 +177,9 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 - `functions/api/telemetry/`: eventi generali e cronologia dei tentativi.
 - `functions/api/stories/`: ricezione autenticata delle proposte per nuove storie.
 - `functions/api/suggestions.js`: ricezione autenticata dei suggerimenti liberi per il Mondo Bianco.
+- `functions/api/media/[[path]].js`: accesso autenticato ai media privati conservati in R2.
+- `content/bacheca.json`: struttura della Bacheca dei Ricordi, con chiavi R2 di foto e miniature.
+- `scripts/build-bacheca-content.mjs`, `scripts/upload-bacheca-media.mjs`, `scripts/build-bacheca-thumbnails.mjs`: ricostruzione della struttura, import degli originali e generazione miniature per la Bacheca.
 - `404.html`: pagina non trovata, servita automaticamente da Cloudflare Pages con percorsi assoluti.
 - `_redirects`: alias verso le nuove route per i vecchi short link controllabili.
 - `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.

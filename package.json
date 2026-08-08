@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/CyberMindF/the-story-of-our-lives#readme",
   "devDependencies": {
+    "sharp": "^0.35.3",
     "wrangler": "^4.119.0"
   }
 }
