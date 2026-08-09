@@ -43,6 +43,16 @@ il resto.
 - [x] #13 — stile unificato bottoni/card: già in buona parte fatto durante la componentizzazione
   (`.btn`, `.card`, `.card--*` condivisi, usati in 9 pagine su 16); non ho trovato duplicazioni
   vistose da normalizzare oltre a quello.
+- [x] Cielo/atmosfera per tema (chiesto il 09/08/2026): le stelle in realtà c'erano già su
+  tutti i temi (150 ovunque, mai limitate a "the-white-world"), ma il cielo restava sempre lo
+  stesso blu notte — `themes.css` aveva già un gradiente diverso per ogni tema ma non si è mai
+  visto: `body.world-atmosphere` (in `world-atmosphere.css`) ha la stessa specificità e carica
+  dopo, quindi vinceva sempre lui. Spostati i 4 gradienti (velvet/sea/red-of-you/green-of-me)
+  dentro `world-atmosphere.css`, dove ora sono davvero applicati — verificato con screenshot
+  che ogni tema ha un cielo genuinamente diverso (viola scuro, verde bosco, verdemare chiaro
+  di giorno, vinaccia). Sea è chiaro invece che notturno: stelle scurite per restare visibili.
+  "The-white-world" invariato (è il cielo storico del sito). Altri effetti (oltre al cielo)
+  rimandati, come richiesto.
 
 ## Fase C — Redesign di pagina (dopo la Fase B, per non rifarle due volte)
 
@@ -108,3 +118,5 @@ Portati qui dalla vecchia `CHECKLIST_MIGRAZIONE_MONDO_BIANCO.md` (ora eliminata,
 28. Una pagina per le mie domande, a cui vorrei che rispondesse, quindi deve essere tipo "domanda" e tipo text box dove lei potrebbe rispondere alle domande. Ovviamente richiede un salvataggio in DB
 
 29. Aggiungere al calendario 20 maggio, la rinascia di fuochetto
+
+30. Rivedere la favicon
