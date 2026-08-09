@@ -13,6 +13,17 @@ il resto.
 - [x] Card del calendario senza colore mese — `--calendar-green`/`--calendar-red` erano su
   `.calendar-page` (pensato per il `<body>`), ma il CSS di pagina è scoped al componente da
   quando è uno `styleUrl`; spostate su `:host` (`web/src/styles/pages/calendar.css`).
+- [x] La conferma della Chiave (`isAccessUnlocked`) non scadeva quasi mai: viveva in
+  `sessionStorage`, valido finché la scheda del browser resta aperta — ma su mobile (o
+  riscrivendo sempre l'indirizzo nella stessa scheda) la scheda non si "chiude" mai davvero, e
+  la Chiave non veniva più richiesta anche a distanza di giorni. Ora scade dopo un'ora di
+  inattività reale, non da quando è stata data: si rinnova navigando (`authGuard`) e
+  interagendo con la pagina (`App`), così non chiede mai la Chiave a metà di un uso attivo.
+
+## Extra (fuori scaletta, chiesti durante la Fase B)
+
+- [x] #31 — occhiolino "mostra password" nel Portone: un solo campo condiviso da login e
+  registrazione, quindi un solo toggle copre entrambi.
 
 ## Fase A — Quick win (COMPLETATA)
 
@@ -123,5 +134,7 @@ Portati qui dalla vecchia `CHECKLIST_MIGRAZIONE_MONDO_BIANCO.md` (ora eliminata,
 
 31. Aggiungere un occhiolino "mostra password" nei campi password del Portone, sia nel login che nella registrazione.
 
+32. Aggiungere l'1 luglio, il giorno del suo esame di maturità, e il giorno che le ho mandato il mazzo di rosa con la lettera
+
 BUG
-32. Anche quando il token/la sessione risultano validi, non si arriva mai al passaggio "inserisci solo la Chiave" (modalità `key` del Portone, per chi ha già una sessione valida ma deve solo riconfermare la Chiave) — da investigare.
+1. Anche quando il token/la sessione risultano validi, non si arriva mai al passaggio "inserisci solo la Chiave" (modalità `key` del Portone, per chi ha già una sessione valida ma deve solo riconfermare la Chiave) — da investigare.
