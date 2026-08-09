@@ -25,7 +25,7 @@ interface YearGroup {
 const MONTH_FORMATTER = new Intl.DateTimeFormat('it-IT', { month: 'long', timeZone: 'UTC' });
 
 // Porting fedele di assets/js/calendar/main.js: stessa fonte dati (content/calendar.json),
-// stessa validazione (esattamente 27 date, id univoci, formato data), stesso raggruppamento
+// stessa validazione (numero di date fisso, id univoci, formato data), stesso raggruppamento
 // per anno e stessa alternanza di colore. La costruzione del DOM cella-per-cella
 // dell'originale diventa un ciclo dichiarativo nel template (vedi calendario.html), non
 // più createElement manuale — semplificazione naturale, stesso risultato visivo.
@@ -55,8 +55,8 @@ export class Calendario implements OnInit {
 
   // Verifica quantità, identificatori e formato delle date senza correggere i dati.
   private validateCalendar(data: { events: CalendarEvent[] }): void {
-    if (!Array.isArray(data.events) || data.events.length !== 27) {
-      throw new Error('Il Calendario deve contenere esattamente 27 date.');
+    if (!Array.isArray(data.events) || data.events.length !== 28) {
+      throw new Error('Il Calendario deve contenere esattamente 28 date.');
     }
 
     const ids = new Set<string>();
