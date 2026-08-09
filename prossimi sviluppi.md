@@ -76,9 +76,16 @@ il resto.
 ## Fase C — Redesign di pagina (dopo la Fase B, per non rifarle due volte)
 
 - [ ] #3 — bacheca dei ricordi
-- [ ] #6 — i ponti (alleggerire o spostare il focus sulle lettere)
+- [x] #6 — i ponti: la pagina era un elenco di vecchi Google Doc pre-lancio, resa obsoleta da
+  Lettere. Non ho cancellato nulla di reale (i 3 link Drive funzionano ancora) — "La Cassetta
+  delle Lettere" è ora la card in evidenza, i vecchi ponti sono raccolti in un pannello
+  richiudibile secondario ("I ponti di prima, da quando vivevamo ancora su Drive").
 - [ ] #7 — cuffiette: traccia bonus
-- [ ] #9 — centralizzare di più le lettere
+- [x] #9 — centralizzare di più le lettere: cercato ogni `routerLink="/lettere"` nell'app,
+  trovato **un solo** punto d'ingresso in tutto il sito (dentro I Ponti, pagina di per sé poco
+  visibile). Aggiunta una scorciatoia diretta sotto la griglia dei luoghi nella home del Mondo
+  Bianco — non una nona card: la griglia ha un vincolo esplicito nel codice ("restano
+  esattamente otto") lasciato apposta intatto.
 - [x] #11 + #17 — accorciare la navigazione dei GDR / navigazione responsive: aggiunta
   un'icona "casa" fissa nella userbar (tutte le pagine tranne il Mondo Bianco stesso) che porta
   dritti lì in un click, invece dei 4 passaggi precedenti (avventura → il prezzo della verità →
