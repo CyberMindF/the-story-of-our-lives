@@ -11,4 +11,10 @@ import { CrosswordService } from '../crossword.service';
 })
 export class CrosswordModals {
   constructor(protected readonly crossword: CrosswordService) {}
+
+  protected onCompletionBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.crossword.closeCompletionModal();
+    }
+  }
 }

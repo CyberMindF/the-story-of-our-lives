@@ -53,7 +53,7 @@
   <button class="letter-dialog-close" type="button" aria-label="Chiudi" (click)="closeLetterAnimated()">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
   </button>
-  <div #dialogPaper class="letter-paper" [style.--letter-rotation]="dialogRotation() + 'deg'">
+  <div #dialogPaper class="letter-paper card--handwritten" [style.--letter-rotation]="dialogRotation() + 'deg'">
     @if (dialogLetter(); as letter) {
       <p class="letter-paper-date">{{ formatDate(letter.createdAt) }}</p>
       <p class="letter-paper-body">{{ letter.body }}</p>
