@@ -194,7 +194,7 @@
 }
 
 .world-letters-shortcut {
-  width: fit-content;
+  width: min(100%, 16rem);
   margin: 1.75rem auto 0;
 }
 
