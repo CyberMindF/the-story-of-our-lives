@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
+import { ContentMessage } from '../../shared/content-message/content-message';
 
 interface Coordinates {
   latitude: number;
@@ -50,7 +51,7 @@ interface PinView {
 @Component({
   selector: 'app-mappa',
   standalone: true,
-  imports: [AppShell],
+  imports: [AppShell, ContentMessage],
   styleUrls: ['../../../styles/pages/map.css'],
   templateUrl: './mappa.html'
 })

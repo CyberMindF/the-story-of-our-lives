@@ -65,7 +65,7 @@
   </div>
 
   @if (loadError()) {
-    <p class="bacheca-error" role="alert">Non è stato possibile caricare la Bacheca dei Ricordi.</p>
+    <app-content-message message="Non è stato possibile caricare la Bacheca dei Ricordi." tone="error" [panel]="true" extraClass="bacheca-error" />
   }
 
 </app-shell>

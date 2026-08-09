@@ -1,0 +1,14 @@
+<div class="modal" [class.hidden]="!open" role="dialog" aria-modal="true" [attr.aria-labelledby]="dialogId + '-title'" [attr.aria-describedby]="dialogId + '-text'" (click)="onBackdropClick($event)">
+  <div class="modal-card card--dialog">
+    <h2 [id]="dialogId + '-title'">{{ title }}</h2>
+    <p [id]="dialogId + '-text'">{{ description }}</p>
+    @if (cancelLabel) {
+      <div class="modal-actions">
+        <button type="button" (click)="cancel.emit()">{{ cancelLabel }}</button>
+        <button type="button" (click)="confirm.emit()">{{ confirmLabel }}</button>
+      </div>
+    } @else {
+      <button type="button" (click)="confirm.emit()">{{ confirmLabel }}</button>
+    }
+  </div>
+</div>

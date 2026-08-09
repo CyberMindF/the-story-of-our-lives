@@ -3,6 +3,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
+import { ContentMessage } from '../../shared/content-message/content-message';
 
 interface Story {
   id: string;
@@ -29,7 +30,7 @@ interface StoryView {
 @Component({
   selector: 'app-storie',
   standalone: true,
-  imports: [AppShell, FormStatus],
+  imports: [AppShell, FormStatus, ContentMessage],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/stories.css'],
   templateUrl: './storie.html'

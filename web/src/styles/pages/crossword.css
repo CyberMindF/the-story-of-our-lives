@@ -289,6 +289,10 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
   text-align: center;
 }
 
+.modal-card p {
+  white-space: pre-line;
+}
+
 .modal-actions {
   display: flex;
   justify-content: center;

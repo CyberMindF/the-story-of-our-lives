@@ -40,10 +40,10 @@
       }
     </div>
     @if (letters().length === 0 && !loadError()) {
-      <p class="letters-empty">Non c'è ancora nessuna lettera. Scrivi la prima.</p>
+      <app-content-message message="Non c'è ancora nessuna lettera. Scrivi la prima." />
     }
     @if (loadError()) {
-      <p class="letters-error" role="alert">Non è stato possibile caricare le lettere.</p>
+      <app-content-message message="Non è stato possibile caricare le lettere." tone="error" />
     }
   </section>
 

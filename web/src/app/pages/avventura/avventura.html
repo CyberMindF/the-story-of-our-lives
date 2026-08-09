@@ -124,10 +124,10 @@
         }
       </div>
       @if (turns().length === 0 && !loadError()) {
-        <p class="gdr-thread-empty">Nessun turno ancora: scrivi tu il primo, cosa fa e cosa pensa il tuo personaggio.</p>
+        <app-content-message message="Nessun turno ancora: scrivi tu il primo, cosa fa e cosa pensa il tuo personaggio." extraClass="gdr-thread-message" />
       }
       @if (loadError()) {
-        <p class="gdr-thread-empty" role="alert">Non è stato possibile caricare il turno.</p>
+        <app-content-message message="Non è stato possibile caricare il turno." tone="error" extraClass="gdr-thread-message" />
       }
       <form class="gdr-turn-form" aria-label="Scrivi il tuo turno" #turnForm (ngSubmit)="submitTurn(turnForm)">
         <label class="sr-only" for="turn-body">Il tuo turno</label>

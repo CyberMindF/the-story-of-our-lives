@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
 import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
+import { ContentMessage } from '../../shared/content-message/content-message';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 
@@ -25,7 +26,7 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
 @Component({
   selector: 'app-avventura',
   standalone: true,
-  imports: [AppShell, IpdvNavigation],
+  imports: [AppShell, IpdvNavigation, ContentMessage],
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './avventura.html'
 })

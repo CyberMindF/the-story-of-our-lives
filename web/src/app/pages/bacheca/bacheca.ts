@@ -1,6 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, signal } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
+import { ContentMessage } from '../../shared/content-message/content-message';
 
 interface Photo {
   key: string;
@@ -62,7 +63,7 @@ interface IndexLink {
 @Component({
   selector: 'app-bacheca',
   standalone: true,
-  imports: [AppShell, NgTemplateOutlet],
+  imports: [AppShell, NgTemplateOutlet, ContentMessage],
   styleUrls: ['../../../styles/pages/bacheca.css'],
   templateUrl: './bacheca.html'
 })

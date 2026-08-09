@@ -62,8 +62,11 @@ accessibilita', route, API e telemetria devono restare invariati.
 ### Blocco 3 - Logica e overlay
 
 - [ ] Estrarre il flusso FormData solo per endpoint e gestione errori equivalenti.
-- [ ] Valutare una primitive dialog accessibile.
-- [ ] Consolidare loading, error ed empty state ripetuti.
+- [x] Estratta `ConfirmationDialog`: i tre modali del cruciverba condividono struttura,
+  attributi ARIA, backdrop e azioni. I dialog specializzati di Bacheca e Lettere restano
+  intenzionalmente separati.
+- [x] Estratto `ContentMessage` per empty/error state, con `role="alert"` e variante pannello
+  centralizzati in `feedback.css`.
 
 ### Blocco 4 - Verifica conclusiva
 
@@ -88,3 +91,6 @@ accessibilita', route, API e telemetria devono restare invariati.
 - [x] Rimossi `asset-root` e tutti i symlink applicativi; zero riferimenti residui nel codice.
 - [x] Esternalizzati tutti i 12 template inline in file `.html` dedicati.
 - [x] Build e audit Wrangler della nuova struttura: 36/36 route/viewport.
+- [x] Riparata la suite Angular rimasta allo scaffold iniziale: test reali su creazione root,
+  150 stelle e router outlet, `2/2` verdi.
+- [x] Secondo audit dopo dialog e content state: 36/36 route/viewport.

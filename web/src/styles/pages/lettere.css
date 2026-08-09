@@ -66,9 +66,6 @@
 .letter-card-status { color: #f3dfb8; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
 .letter-card-status:empty { display: none; }
 
-.letters-empty, .letters-error { color: #aebfcd; font-size: .95rem; }
-.letters-error { color: var(--error-color); }
-
 /* La lettera aperta si legge su un foglio chiaro, come un momento a parte dal resto del sito.
    Angoli netti e una lieve rotazione, per sembrare un foglio vero appoggiato lì, non una card.
    La dimensione del foglio dipende dalla lunghezza del testo (vedi letterSizeCategory in main.js):

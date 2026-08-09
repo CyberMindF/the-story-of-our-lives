@@ -33,6 +33,7 @@
               "src/styles/components/cards.css",
               "src/styles/components/typography.css",
               "src/styles/components/forms.css",
+              "src/styles/components/feedback.css",
               "src/styles.css"
             ]
           },

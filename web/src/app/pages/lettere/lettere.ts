@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, inject, signal } from '@angul
 import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
+import { ContentMessage } from '../../shared/content-message/content-message';
 
 interface Letter {
   id: number;
@@ -22,7 +23,7 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 
 @Component({
   selector: 'app-lettere',
   standalone: true,
-  imports: [AppShell, FormStatus],
+  imports: [AppShell, FormStatus, ContentMessage],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/lettere.css'],
   templateUrl: './lettere.html'

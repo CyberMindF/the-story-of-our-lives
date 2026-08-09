@@ -95,7 +95,7 @@
       }
     </div>
     @if (loadError()) {
-      <p class="map-error" role="alert">Non è stato possibile caricare la mappa.</p>
+      <app-content-message message="Non è stato possibile caricare la mappa." tone="error" [panel]="true" />
     }
   </section>
 

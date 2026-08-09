@@ -476,12 +476,6 @@
   border-color: rgba(240, 219, 179, 0.42);
 }
 
-.map-error {
-  padding: 1rem;
-  border: 1px solid var(--error-color);
-  border-radius: 0.8rem;
-}
-
 .map-pin:focus-visible,
 .dream-map-scroll:focus-visible,
 .map-preview-copy a:focus-visible {

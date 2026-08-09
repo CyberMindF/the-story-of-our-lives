@@ -274,12 +274,6 @@
   outline-offset: 3px;
 }
 
-.stories-error {
-  padding: 1rem;
-  border: 1px solid var(--error-color);
-  border-radius: 0.8rem;
-}
-
 .story-entry summary:focus-visible {
   outline: 3px solid var(--focus-color);
   outline-offset: 4px;

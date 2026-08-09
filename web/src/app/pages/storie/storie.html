@@ -48,7 +48,7 @@
       }
     </div>
     @if (loadError()) {
-      <p class="stories-error" role="alert">Non è stato possibile caricare le storie.</p>
+      <app-content-message message="Non è stato possibile caricare le storie." tone="error" [panel]="true" />
     }
   </section>
 
