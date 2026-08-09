@@ -5,6 +5,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   selector: 'app-ipdv-navigation',
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
+  styleUrls: ['./ipdv-navigation.css'],
   templateUrl: './ipdv-navigation.html'
 })
 export class IpdvNavigation {}
