@@ -1,6 +1,8 @@
 /*
- * L'atmosfera identifica stabilmente il Mondo Bianco.
- * I temi cambiano soltanto bagliori e accenti, senza sostituire il cielo del mondo.
+ * Il cielo di "the-white-world" (il tema di default/notte) resta quello storico del Mondo
+ * Bianco. Gli altri 4 temi hanno un cielo proprio (gradienti già scritti in precedenza in
+ * themes.css ma mai visti — vinceva sempre questa regola: spostati qui per essere davvero
+ * applicati, vedi prossimi sviluppi.md #1).
  */
 body.world-atmosphere {
   --world-sky-top: #0b1120;
@@ -40,24 +42,36 @@ body.world-atmosphere {
   box-shadow: 0 0 5px 1px var(--world-star);
 }
 
-/* Ocean raffredda il bagliore, ma conserva il cielo comune. */
+/* Ocean è un cielo chiaro (unico tema diurno): le stelle diventano piccoli riflessi scuri,
+   altrimenti sparirebbero su uno sfondo così chiaro. */
 body.world-atmosphere[data-theme="sea"] {
-  --world-glow: rgba(111, 190, 184, 0.2);
-  --world-star: rgba(226, 247, 244, 0.76);
+  --world-star: rgba(53, 81, 84, 0.35);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(255, 255, 255, 0.72), transparent 24%),
+    radial-gradient(circle at 82% 14%, rgba(205, 232, 227, 0.42), transparent 18%),
+    radial-gradient(circle at 68% 72%, rgba(196, 226, 220, 0.3), transparent 20%),
+    linear-gradient(180deg, #f1faf8 0%, var(--bg-color) 52%, #c4dbd6 100%);
 }
 
-/* Velvet aggiunge una luce lunare rosata senza trasformare il luogo. */
+/* Velvet aggiunge una luce lunare rosata e un cielo scuro proprio. */
 body.world-atmosphere[data-theme="velvet"] {
-  --world-glow: rgba(222, 168, 194, 0.17);
   --world-star: rgba(250, 224, 235, 0.72);
+  background:
+    radial-gradient(circle at top left, rgba(240, 199, 212, 0.08), transparent 22%),
+    linear-gradient(180deg, #1f1620 0%, var(--bg-color) 56%, #0d090f 100%);
 }
 
 body.world-atmosphere[data-theme="red-of-you"] {
-  --world-glow: rgba(216, 62, 88, 0.18);
   --world-star: rgba(255, 222, 228, 0.7);
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255, 213, 223, 0.16), transparent 18%),
+    radial-gradient(circle at 76% 16%, rgba(255, 219, 227, 0.12), transparent 16%),
+    linear-gradient(180deg, #7a1126 0%, var(--bg-color) 58%, #2f0610 100%);
 }
 
 body.world-atmosphere[data-theme="green-of-me"] {
-  --world-glow: rgba(112, 156, 119, 0.18);
   --world-star: rgba(225, 238, 225, 0.7);
+  background:
+    radial-gradient(circle at 14% 14%, rgba(224, 236, 224, 0.08), transparent 22%),
+    linear-gradient(180deg, #304a37 0%, var(--bg-color) 54%, #152118 100%);
 }
