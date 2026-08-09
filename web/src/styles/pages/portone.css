@@ -19,7 +19,7 @@
 
 .portone-story {
   min-width: 0;
-  color: #f5f7fb;
+  color: var(--text-color);
 }
 
 .portone-heading {
@@ -28,7 +28,7 @@
 
 .portone-kicker {
   margin: 0 0 0.5rem;
-  color: #b9ccdc;
+  color: var(--muted-color);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.13em;
@@ -58,7 +58,7 @@
 .portone-intro {
   max-width: 42rem;
   margin: 1.25rem 0 1.75rem;
-  color: #d5e0e9;
+  color: var(--muted-color);
   font-size: clamp(1rem, 2vw, 1.15rem);
   line-height: 1.65;
 }
@@ -81,7 +81,7 @@
 .portone-hint {
   width: min(100%, 43rem);
   margin-top: 1.25rem;
-  color: #cbd9e4;
+  color: var(--muted-color);
 }
 
 .portone-hint summary {
@@ -96,7 +96,7 @@
 }
 
 .portone-hint-words {
-  color: #f5f7fb;
+  color: var(--text-color);
 }
 
 .portone-card {

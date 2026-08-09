@@ -66,7 +66,7 @@
 .stories-introduction {
   max-width: 42rem;
   margin: 2rem 0 0;
-  color: #d4e0e9;
+  color: var(--muted-color);
   font-size: clamp(1rem, 1.8vw, 1.16rem);
   line-height: 1.8;
 }
@@ -127,13 +127,13 @@
 }
 
 .story-heading time {
-  color: #aebfcd;
+  color: var(--muted-color);
   font-size: 0.8rem;
   letter-spacing: 0.08em;
 }
 
 .story-toggle {
-  color: #bdd0de;
+  color: var(--muted-color);
   font-size: 1.8rem;
   font-weight: 300;
   transition: transform 180ms ease;
@@ -158,7 +158,7 @@
 }
 
 .story-prose {
-  color: #d9e3eb;
+  color: var(--muted-color);
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.03rem, 1.7vw, 1.14rem);
   line-height: 1.9;
@@ -231,7 +231,7 @@
 }
 
 .suggestion-toggle {
-  color: #bdd0de;
+  color: var(--muted-color);
   font-size: 1.8rem;
   font-weight: 300;
   transition: transform 180ms ease;
@@ -249,7 +249,7 @@
 .suggestion-introduction {
   width: 100%;
   margin: 1.5rem auto;
-  color: #c9d7e2;
+  color: var(--muted-color);
   line-height: 1.65;
 }
 

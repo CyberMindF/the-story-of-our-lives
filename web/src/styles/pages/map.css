@@ -45,7 +45,7 @@
 
 .map-introduction p {
   margin: 0;
-  color: #d2dee7;
+  color: var(--muted-color);
   font-size: clamp(1rem, 1.6vw, 1.12rem);
   line-height: 1.8;
 }
@@ -126,7 +126,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #eef6f7;
+  color: var(--muted-color);
   text-align: left;
   transform: translate(-50%, -50%);
   transition: none;
@@ -179,7 +179,7 @@
 }
 
 .pin-label small {
-  color: #9db5c2;
+  color: var(--muted-color);
   font-size: 0.58rem;
   letter-spacing: 0.1em;
 }
@@ -290,7 +290,7 @@
   display: -webkit-box;
   margin: 1rem 0;
   overflow: hidden;
-  color: #c9d7e1;
+  color: var(--muted-color);
   font-size: 0.88rem;
   line-height: 1.6;
   -webkit-box-orient: vertical;
@@ -442,7 +442,7 @@
 .destination-passage > p {
   width: auto;
   margin: 0;
-  color: #d3dfe7;
+  color: var(--muted-color);
   font-size: clamp(1rem, 1.55vw, 1.1rem);
   line-height: 1.85;
 }

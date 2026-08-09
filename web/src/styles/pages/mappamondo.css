@@ -8,7 +8,7 @@
 }
 
 .globe-back {
-  color: #e6edf3;
+  color: var(--muted-color);
 }
 
 .globe-hero {
