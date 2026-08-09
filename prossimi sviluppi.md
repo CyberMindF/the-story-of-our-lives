@@ -120,3 +120,8 @@ Portati qui dalla vecchia `CHECKLIST_MIGRAZIONE_MONDO_BIANCO.md` (ora eliminata,
 29. Aggiungere al calendario 20 maggio, la rinascia di fuochetto
 
 30. Rivedere la favicon
+
+31. Aggiungere un occhiolino "mostra password" nei campi password del Portone, sia nel login che nella registrazione.
+
+BUG
+32. Anche quando il token/la sessione risultano validi, non si arriva mai al passaggio "inserisci solo la Chiave" (modalità `key` del Portone, per chi ha già una sessione valida ma deve solo riconfermare la Chiave) — da investigare.
