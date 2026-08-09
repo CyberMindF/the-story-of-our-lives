@@ -29,6 +29,7 @@ export class Portone implements OnInit {
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly unlocked = signal(false);
+  protected readonly showPassword = signal(false);
 
   protected email = '';
   protected password = '';
@@ -99,6 +100,10 @@ export class Portone implements OnInit {
   protected setMode(mode: AccessMode): void {
     this.mode.set(mode);
     this.errorMessage.set('');
+  }
+
+  protected toggleShowPassword(): void {
+    this.showPassword.update((value) => !value);
   }
 
   // Invia i dati richiesti dalla modalità corrente e completa l'accesso quando sono validi.

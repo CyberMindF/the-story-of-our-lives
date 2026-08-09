@@ -52,19 +52,34 @@
 
           <label class="access-field">
             <span>Password</span>
-            <input
-              class="masked-text-input"
-              type="text"
-              autocomplete="off"
-              autocapitalize="none"
-              spellcheck="false"
-              minlength="8"
-              required
-              data-1p-ignore
-              data-lpignore="true"
-              name="password"
-              [(ngModel)]="password"
-            />
+            <span class="access-password-wrapper">
+              <input
+                [class.masked-text-input]="!showPassword()"
+                type="text"
+                autocomplete="off"
+                autocapitalize="none"
+                spellcheck="false"
+                minlength="8"
+                required
+                data-1p-ignore
+                data-lpignore="true"
+                name="password"
+                [(ngModel)]="password"
+              />
+              <button
+                type="button"
+                class="access-password-toggle"
+                [attr.aria-pressed]="showPassword()"
+                [attr.aria-label]="showPassword() ? 'Nascondi password' : 'Mostra password'"
+                (click)="toggleShowPassword()"
+              >
+                @if (showPassword()) {
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.4 5.5A10.6 10.6 0 0 1 12 5c5.5 0 9 5.5 9.5 7-.3.9-1 2.2-2.2 3.4M6.2 6.8C4 8.3 2.7 10.4 2.5 12c.6 1.9 3 6.5 9 6.5 1.4 0 2.6-.25 3.7-.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                } @else {
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+                }
+              </button>
+            </span>
           </label>
         </div>
       }
