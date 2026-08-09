@@ -47,7 +47,8 @@
 }
 
 .place-userbar .logout-button,
-.place-userbar .suggest-link {
+.place-userbar .suggest-link,
+.place-userbar .home-shortcut-link {
   display: inline-grid;
   width: 1.9rem;
   height: 1.9rem;
@@ -63,11 +64,13 @@
 }
 
 .place-userbar .logout-button:hover,
-.place-userbar .suggest-link:hover {
+.place-userbar .suggest-link:hover,
+.place-userbar .home-shortcut-link:hover {
   background: var(--button-hover-bg);
 }
 
-.place-userbar .suggest-link svg {
+.place-userbar .suggest-link svg,
+.place-userbar .home-shortcut-link svg {
   width: 1rem;
   height: 1rem;
   fill: none;
@@ -77,7 +80,8 @@
 
 .place-home-link:focus-visible,
 .place-userbar .logout-button:focus-visible,
-.place-userbar .suggest-link:focus-visible {
+.place-userbar .suggest-link:focus-visible,
+.place-userbar .home-shortcut-link:focus-visible {
   outline: 3px solid var(--focus-color);
   outline-offset: 4px;
 }

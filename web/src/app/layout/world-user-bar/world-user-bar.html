@@ -1,6 +1,11 @@
 <div class="place-userbar" [class]="extraClass">
   <p class="user-greeting">{{ userName() ? 'Ciao, ' + userName() : '' }}</p>
   <app-theme-switcher />
+  @if (showHomeShortcut) {
+    <a routerLink="/mondo-bianco" class="home-shortcut-link" aria-label="Vai a Il Mondo Bianco" title="Il Mondo Bianco">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9" /></svg>
+    </a>
+  }
   @if (showSuggestLink) {
     <a routerLink="/suggerimenti" class="suggest-link" aria-label="Manda un suggerimento" title="Suggerisci">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-6 6c0 2.5 1.4 3.8 2.2 4.6.5.5.8 1.1.8 1.4h6c0-.3.3-.9.8-1.4.8-.8 2.2-2.1 2.2-4.6a6 6 0 0 0-6-6Z" /></svg>

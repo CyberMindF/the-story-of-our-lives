@@ -15,6 +15,7 @@ export class WorldHeader {
   @Input() homeLabel = 'Il Mondo Bianco';
   @Input() homeLabelCollapsible = true;
   @Input() showSuggestLink = true;
+  @Input() showHomeShortcut = true;
   @Input() extraClass = '';
   @Input() homeLinkExtraClass = '';
   @Input() userbarExtraClass = '';

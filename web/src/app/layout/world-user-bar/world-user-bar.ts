@@ -13,6 +13,7 @@ import { ThemeSwitcher } from '../../shared/theme-switcher';
 export class WorldUserBar {
   @Input() extraClass = '';
   @Input() showSuggestLink = true;
+  @Input() showHomeShortcut = true;
   @Input() beforeLogout: (() => Promise<void>) | null = null;
 
   private readonly authService = inject(AuthService);

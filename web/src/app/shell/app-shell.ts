@@ -16,6 +16,7 @@ export class AppShell implements OnInit {
   @Input() homeLabel = 'Il Mondo Bianco';
   @Input() homeLabelCollapsible = true;
   @Input() showSuggestLink = true;
+  @Input() showHomeShortcut = true;
   @Input() showBackLink = true;
   @Input() shellClass = '';
   @Input() headerExtraClass = '';
