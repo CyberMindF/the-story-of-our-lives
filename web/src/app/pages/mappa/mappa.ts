@@ -1,6 +1,7 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
+import { ContentMessage } from '../../shared/content-message/content-message';
 
 interface Coordinates {
   latitude: number;
@@ -51,11 +52,12 @@ interface PinView {
 @Component({
   selector: 'app-mappa',
   standalone: true,
-  imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/map.css'],
+  imports: [AppShell, ContentMessage],
+  styleUrls: ['../../../styles/pages/map.css'],
   templateUrl: './mappa.html'
 })
 export class Mappa implements OnInit {
+  private readonly staticContent = inject(StaticContentService);
   protected readonly introduction = signal<string[]>([]);
   protected readonly destinationViews = signal<DestinationView[]>([]);
   protected readonly pins = signal<PinView[]>([]);
@@ -85,12 +87,7 @@ export class Mappa implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      const response = await fetch('/content/map.json');
-      if (!response.ok) {
-        throw new Error(`Caricamento fallito: ${response.status}`);
-      }
-
-      const data = (await response.json()) as { introduction: string[]; destinations: Destination[] };
+      const data = await this.staticContent.load<{ introduction: string[]; destinations: Destination[] }>('/content/map.json');
       if (!Array.isArray(data.introduction) || !Array.isArray(data.destinations) || data.destinations.length !== 6) {
         throw new Error('La mappa deve contenere introduzione e sei destinazioni');
       }

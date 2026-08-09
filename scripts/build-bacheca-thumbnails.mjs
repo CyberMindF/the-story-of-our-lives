@@ -7,11 +7,11 @@ import sharp from "sharp";
 
 // Genera una miniatura (larghezza massima 480px) per ogni foto del manifest e la carica
 // su R2 nella stessa posizione dell'originale ma sotto "thumb" invece di "original".
-// Aggiorna content/bacheca.json aggiungendo "thumbKey" a ogni foto corrispondente.
+// Aggiorna il JSON pubblico della Bacheca aggiungendo "thumbKey" a ogni foto corrispondente.
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const manifestPath = path.join(projectRoot, "reports", "export", "bacheca-media-manifest.json");
-const contentPath = path.join(projectRoot, "content", "bacheca.json");
+const manifestPath = path.join(projectRoot, "sources", "manifests", "bacheca-media-manifest.json");
+const contentPath = path.join(projectRoot, "web", "public", "content", "bacheca.json");
 const bucketName = "the-white-world-media";
 const maxWidth = 480;
 const scopeFlag = process.argv.includes("--local") ? "--local" : "--remote";
@@ -52,7 +52,7 @@ for (const [index, entry] of manifest.entries()) {
 
 await rm(tempDir, { recursive: true, force: true });
 
-// Aggiunge thumbKey a ogni foto in content/bacheca.json, mantenendo tutto il resto invariato.
+// Aggiunge thumbKey a ogni foto nel JSON pubblico, mantenendo tutto il resto invariato.
 const content = JSON.parse(await readFile(contentPath, "utf8"));
 for (const period of content.periods) {
   for (const day of period.days) {

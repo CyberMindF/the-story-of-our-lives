@@ -4,6 +4,7 @@ export interface ThemeDefinition {
   id: string;
   label: string;
   swatch: string;
+  icon: string;
 }
 
 const STORAGE_KEY = 'noi-crossword-theme-v15';
@@ -13,11 +14,11 @@ const DEFAULT_THEME_ID = 'the-white-world';
 // pagine vecchie e nuove finché la migrazione non è completa, per non perdere la scelta
 // dell'utente durante il passaggio.
 const THEMES: ThemeDefinition[] = [
-  { id: 'the-white-world', label: 'Notte', swatch: '#17243a' },
-  { id: 'sea', label: 'Ocean', swatch: '#467d77' },
-  { id: 'velvet', label: 'Velvet', swatch: '#5d4452' },
-  { id: 'red-of-you', label: 'Red of You', swatch: '#bf3553' },
-  { id: 'green-of-me', label: 'Green of Me', swatch: '#486a53' }
+  { id: 'the-white-world', label: 'Notte', swatch: '#17243a', icon: '🌙' },
+  { id: 'sea', label: 'Ocean', swatch: '#467d77', icon: '🌊' },
+  { id: 'velvet', label: 'Velvet', swatch: '#5d4452', icon: '💜' },
+  { id: 'red-of-you', label: 'Red of You', swatch: '#bf3553', icon: '❤️' },
+  { id: 'green-of-me', label: 'Green of Me', swatch: '#486a53', icon: '💚' }
 ];
 
 // Porting di assets/js/shared/theme.js: stessa persistenza (localStorage) e stessa

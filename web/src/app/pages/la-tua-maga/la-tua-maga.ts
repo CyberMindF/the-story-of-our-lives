@@ -1,7 +1,8 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
+import { FormSubmission } from '../../shared/form-submission/form-submission';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 
@@ -26,11 +27,13 @@ interface Character {
 @Component({
   selector: 'app-la-tua-maga',
   standalone: true,
-  imports: [FormsModule, RouterLink, RouterLinkActive, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/tavolo.css'],
+  imports: [FormsModule, AppShell, IpdvNavigation],
+  providers: [FormSubmission],
+  styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './la-tua-maga.html'
 })
 export class LaTuaMaga implements OnInit {
+  protected readonly submission = inject(FormSubmission);
   protected name = '';
   protected catName = '';
   protected description = '';
@@ -43,7 +46,6 @@ export class LaTuaMaga implements OnInit {
   protected inventory = '';
 
   protected readonly fieldsDisabled = signal(true);
-  protected readonly saving = signal(false);
   protected readonly statusMessage = signal('Sto caricando la scheda...');
   protected readonly statTotal = computed(() => this.statMente + this.statCuore + this.statCorpo + this.statMagia);
 
@@ -84,22 +86,14 @@ export class LaTuaMaga implements OnInit {
   }
 
   protected async saveCharacter(form: HTMLFormElement): Promise<void> {
-    this.saving.set(true);
-    this.statusMessage.set('Sto salvando...');
-
-    try {
-      const formData = new FormData(form);
-      formData.set('adventure', ADVENTURE);
-      const response = await fetch('/api/gdr/character', { method: 'POST', credentials: 'same-origin', body: formData });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(result.error || 'Salvataggio non riuscito.');
-      }
-      this.statusMessage.set('Scheda salvata.');
-    } catch (error) {
-      this.statusMessage.set(error instanceof Error ? error.message : 'Salvataggio non riuscito.');
-    } finally {
-      this.saving.set(false);
-    }
+    this.statusMessage.set('');
+    await this.submission.submit(form, {
+      url: '/api/gdr/character',
+      pendingMessage: 'Sto salvando...',
+      successMessage: 'Scheda salvata.',
+      fallbackError: 'Salvataggio non riuscito.',
+      prepareData: (data) => data.set('adventure', ADVENTURE),
+      resetOnSuccess: false
+    });
   }
 }

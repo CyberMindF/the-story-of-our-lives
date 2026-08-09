@@ -48,7 +48,7 @@
       }
     </div>
     @if (loadError()) {
-      <p class="stories-error" role="alert">Non è stato possibile caricare le storie.</p>
+      <app-content-message message="Non è stato possibile caricare le storie." tone="error" [panel]="true" />
     }
   </section>
 
@@ -64,33 +64,32 @@
     <div class="suggestion-panel">
       <p class="suggestion-introduction">Lasciami una storia o una tua idea, e poi io la scriverò aggiungendo una nuova pagina a questa raccolta.</p>
       <form class="suggestion-form" enctype="multipart/form-data" #storyForm (ngSubmit)="submitSuggestion(storyForm)">
-        <label class="suggestion-field">
+        <label class="form-field">
           <span>Titolo <small>facoltativo</small></span>
           <input name="title" type="text" maxlength="160" autocomplete="off" placeholder="Come si potrebbe chiamare?" />
         </label>
 
-        <label class="suggestion-field suggestion-field-wide">
+        <label class="form-field">
           <span>La storia o l'idea</span>
           <textarea name="storyText" rows="10" maxlength="50000" required placeholder="Puoi lasciarmi una storia oppure un'idea che vorresti che facessi io..."></textarea>
         </label>
 
-        <label class="suggestion-field suggestion-field-wide">
+        <label class="form-field">
           <span>Musica <small>facoltativa</small></span>
           <textarea name="musicNotes" rows="3" maxlength="2000" placeholder="Scrivi il titolo, incolla un link oppure raccontami che tipo di musica immagini."></textarea>
         </label>
 
-        <label class="suggestion-field suggestion-field-wide">
+        <label class="form-field">
           <span>Immagini <small>facoltative</small></span>
           <textarea name="imageNotes" rows="3" maxlength="2000" placeholder="Raccontami quali immagini vorresti, per esempio: un'immagine che rappresenta questo mondo."></textarea>
         </label>
 
-        <div class="suggestion-submit-row suggestion-field-wide">
-          <button type="submit" class="btn btn-submit" [disabled]="submitting()">Lascia la storia</button>
+        <div class="form-submit-row">
+          <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Lascia la storia</button>
         </div>
-        <p class="suggestion-status suggestion-field-wide" [class.is-success]="submitStatus() === 'success'" [class.is-error]="submitStatus() === 'error'" role="status" aria-live="polite">{{ submitMessage() }}</p>
+        <app-form-status [message]="submission.message()" [status]="submission.status()" />
       </form>
     </div>
   </details>
 
-  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
 </app-shell>

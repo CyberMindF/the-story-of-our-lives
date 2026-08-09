@@ -6,7 +6,7 @@
   </section>
 
   <form class="suggestion-form" aria-label="Invia un suggerimento" #suggestionForm (ngSubmit)="submit(suggestionForm)">
-    <label class="suggestion-field">
+    <label class="form-field">
       <span>Dove</span>
       <select name="category" required>
         <option value="" disabled selected>Scegli dove...</option>
@@ -21,19 +21,18 @@
         <option value="altro">✨ Qualcos'altro / tutto il sito</option>
       </select>
     </label>
-    <label class="suggestion-field">
+    <label class="form-field">
       <span>Titolo <small>(facoltativo)</small></span>
       <input type="text" name="title" maxlength="160" autocomplete="off" />
     </label>
-    <label class="suggestion-field">
+    <label class="form-field">
       <span>Cosa vorresti aggiungere o cambiare</span>
       <textarea name="message" required maxlength="8000" placeholder="Scrivi qui la tua idea..."></textarea>
     </label>
-    <div class="suggestion-submit-row">
-      <button type="submit" class="btn btn-submit" [disabled]="submitting()">Invia suggerimento</button>
+    <div class="form-submit-row">
+      <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Invia suggerimento</button>
     </div>
-    <p class="suggestion-status" [class.is-success]="status() === 'success'" [class.is-error]="status() === 'error'" role="status" aria-live="polite">{{ statusMessage() }}</p>
+    <app-form-status [message]="submission.message()" [status]="submission.status()" />
   </form>
 
-  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
 </app-shell>

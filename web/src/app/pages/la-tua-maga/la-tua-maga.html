@@ -1,9 +1,5 @@
 <app-shell homeHref="/tavolo-da-gioco/gdr/il-prezzo-della-verita" homeAria="Torna a Il Prezzo della Verità" homeLabel="Il Prezzo della Verità">
-  <nav class="ipdv-nav" aria-label="Pagine dell'avventura">
-    <a routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/avventura">L'Avventura</a>
-    <a routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/la-tua-maga" routerLinkActive="is-current" [routerLinkActiveOptions]="{exact: true}" aria-current="page">La Tua Maga</a>
-    <a routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/i-tuoi-appunti">I Tuoi Appunti</a>
-  </nav>
+  <app-ipdv-navigation />
 
   <section class="maga-hero" aria-labelledby="maga-title">
     <p class="tavolo-eyebrow">Il Prezzo della Verità</p>
@@ -83,10 +79,9 @@
     </section>
 
     <div class="maga-save-row">
-      <button type="submit" class="btn btn-submit" [disabled]="fieldsDisabled() || saving()">Salva scheda</button>
-      <p class="appunti-status" role="status" aria-live="polite">{{ statusMessage() }}</p>
+      <button type="submit" class="btn btn-submit" [disabled]="fieldsDisabled() || submission.submitting()">Salva scheda</button>
+      <p class="appunti-status" role="status" aria-live="polite">{{ submission.message() || statusMessage() }}</p>
     </div>
   </form>
 
-  <a class="place-bottom-link btn" routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita"><span aria-hidden="true">←</span> Torna a Il Prezzo della Verità</a>
 </app-shell>

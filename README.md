@@ -65,9 +65,9 @@ npx wrangler r2 object put the-white-world-media/<percorso> --local --file <file
 
 ## La Bacheca dei Ricordi
 
-`content/bacheca.json` (periodi → giorni → foto/testo/link esterni, nell'ordine originale) è ricostruito da `scripts/build-bacheca-content.mjs`, che legge l'HTML congelato dell'export invece del testo semplificato: solo così si recupera l'abbinamento reale tra ogni foto e la sua didascalia (il `<figcaption>` di Notion quando esiste). Lo script assegna anche la chiave R2 definitiva a ogni foto e scrive un manifest locale non pubblicato (`reports/export/bacheca-media-manifest.json`) con la mappa file-sorgente → chiave.
+`web/public/content/bacheca.json` (periodi → giorni → foto/testo/link esterni, nell'ordine originale) è ricostruito da `scripts/build-bacheca-content.mjs`, che legge l'HTML congelato dell'export invece del testo semplificato: solo così si recupera l'abbinamento reale tra ogni foto e la sua didascalia (il `<figcaption>` di Notion quando esiste). Lo script assegna anche la chiave R2 definitiva a ogni foto e scrive un manifest locale non pubblicato (`sources/manifests/bacheca-media-manifest.json`) con la mappa file-sorgente → chiave.
 
-`scripts/upload-bacheca-media.mjs` carica gli originali secondo il manifest (`--local` per l'emulazione di sviluppo, `--remote` di default per il bucket vero). `scripts/build-bacheca-thumbnails.mjs` genera con `sharp` una miniatura da 480px per ogni foto e la carica sotto `.../thumb/`, aggiungendo `thumbKey` a ogni voce di `content/bacheca.json`. Entrambi sono idempotenti: si possono rilanciare in sicurezza.
+`scripts/upload-bacheca-media.mjs` carica gli originali secondo il manifest (`--local` per l'emulazione di sviluppo, `--remote` di default per il bucket vero). `scripts/build-bacheca-thumbnails.mjs` genera con `sharp` una miniatura da 480px per ogni foto e la carica sotto `.../thumb/`, aggiungendo `thumbKey` a ogni voce di `web/public/content/bacheca.json`. Entrambi sono idempotenti: si possono rilanciare in sicurezza.
 
 La pagina `bacheca/` raggruppa le foto consecutive in una griglia con lightbox accessibile (tastiera, swipe, `<dialog>` nativo); i link a video/immagini esterne su Drive restano collegamenti esterni, non embed.
 
@@ -114,13 +114,13 @@ Prima dell'autenticazione, `POST /api/visits` crea una visita anonima identifica
 
 ## Aspetto del cruciverba
 
-Il cruciverba (`/tavolo-da-gioco/cruciverba`) usa `AppShell`, lo stesso cielo stellato e gli stessi temi delle altre pagine. La UI specifica è suddivisa nei componenti sotto `web/src/app/pages/cruciverba/`; logica, persistenza, sincronizzazione e telemetria vivono nel `CrosswordService`. Il CSS specifico resta `assets/css/pages/crossword.css`, caricato direttamente dal componente Angular.
+Il cruciverba (`/tavolo-da-gioco/cruciverba`) usa `AppShell`, lo stesso cielo stellato e gli stessi temi delle altre pagine. La UI specifica è suddivisa nei componenti sotto `web/src/app/pages/cruciverba/`; logica, persistenza, sincronizzazione e telemetria vivono nel `CrosswordService`. Il CSS specifico resta `web/src/styles/pages/crossword.css`, caricato direttamente dal componente Angular.
 
 ## Struttura delle pagine Angular
 
 Le route lazy sono dichiarate in `web/src/app/app.routes.ts`. Ogni pagina usa `AppShell` per header, userbar, temi e logout; i contenuti vivono in `web/src/app/pages/`, mentre servizi e componenti trasversali sono in `web/src/app/core/` e `web/src/app/shared/`. Il vecchio sistema di template e gli HTML generati sono congelati in `legacy-archive/` e non fanno parte della build.
 
-Bottoni e card hanno classi condivise in `assets/css/components/buttons.css` (`.btn`, con i modifier `.btn-accent` per il colore oro ricorrente e `.btn-submit` per i bottoni di invio nei form) e `assets/css/components/cards.css` (`.card` per il pannello "frost" scuro, `.card--compact` per le righe di lista, `.card--paper` per l'inserto a foglio chiaro usato in Calendario e Mappamondo, `.card--dialog` per le finestre modali).
+Bottoni e card hanno classi condivise in `web/src/styles/components/buttons.css` (`.btn`, con i modifier `.btn-accent` per il colore oro ricorrente e `.btn-submit` per i bottoni di invio nei form) e `web/src/styles/components/cards.css` (`.card` per il pannello "frost" scuro, `.card--compact` per le righe di lista, `.card--paper` per l'inserto a foglio chiaro usato in Calendario e Mappamondo, `.card--dialog` per le finestre modali).
 
 Il selettore tema (5 pallini colorati: Notte/Ocean/Velvet/Red of You/Green of Me) è gestito da `ThemeService` e conserva la scelta nello stesso `localStorage` usato dal sito precedente. Cambia subito `--focus-color` e il tint del cielo stellato.
 
@@ -155,7 +155,7 @@ Con soli due account non serve indicare un destinatario: `letters` in D1 conserv
 
 L'avventura del Gioco di Ruolo era finora un link esterno a un documento Google usato come "play-by-chat" manuale. Rory ha fornito l'export HTML dei 3 documenti originali (L'Avventura, La Tua Maga, I Tuoi Appunti) più le immagini dei personaggi; ora vivono dentro il sito, in `tavolo-da-gioco/gdr/il-prezzo-della-verita/`:
 
-- `avventura/` — l'incipit completo (mondo, scuola, backstory, i 5 NPC con ritratto) fino all'apertura di Atto I, seguito da un vero thread di gioco: chi legge e il master scrivono i turni in ordine cronologico, salvati in D1 (`gdr_turns`, uno per avventura, condiviso tra i due account) tramite `GET`/`POST /api/gdr/turns`. I ritratti sono immagini pubbliche statiche in `assets/images/gdr/il-prezzo-della-verita/` (arte decorativa generata, non media personale, quindi niente `/api/media/`).
+- `avventura/` — l'incipit completo (mondo, scuola, backstory, i 5 NPC con ritratto) fino all'apertura di Atto I, seguito da un vero thread di gioco: chi legge e il master scrivono i turni in ordine cronologico, salvati in D1 (`gdr_turns`, uno per avventura, condiviso tra i due account) tramite `GET`/`POST /api/gdr/turns`. I ritratti sono immagini pubbliche statiche in `web/public/assets/images/gdr/il-prezzo-della-verita/` (arte decorativa generata, non media personale, quindi niente `/api/media/`).
 - `la-tua-maga/` — la scheda personaggio, compilabile: nome, gatta, descrizione, statistiche (Mente/Cuore/Corpo/Magia), Punti Stress, slot magia e inventario si salvano in D1 (`gdr_characters`, uno per utente per avventura) tramite `GET`/`POST /api/gdr/character`. Le parti fisse del regolamento (abilità speciali, elenco incantesimi, tabella "Effetti Selvaggi") restano testo di riferimento.
 - `i-tuoi-appunti/` — un blocco note reale, salvato in D1 (`gdr_notes`, uno per utente per avventura) tramite `GET`/`POST /api/gdr/notes`, non in localStorage.
 
@@ -163,7 +163,7 @@ Le tre pagine sono collegate da una barra di pillole in cima (`.ipdv-nav`, stess
 
 ## Redirect legacy
 
-`_redirects` alla radice del progetto fa da ponte con i vecchi short link `rsgmsfcfm.short.gy/<slug>` dell'export originale: ogni slug (`il-calendario`, `la-mappa`, `la-bacheca`, ecc.) reindirizza con 301 alla route Angular corrispondente. Short.gy resta un servizio esterno: per usare questi alias bisogna aggiornare manualmente ogni short link perché punti a `https://<dominio>/<slug>` invece del vecchio URL Notion.
+`web/public/_redirects` fa da ponte con i vecchi short link `rsgmsfcfm.short.gy/<slug>` dell'export originale: ogni slug (`il-calendario`, `la-mappa`, `la-bacheca`, ecc.) reindirizza con 301 alla route Angular corrispondente. Short.gy resta un servizio esterno: per usare questi alias bisogna aggiornare manualmente ogni short link perché punti a `https://<dominio>/<slug>` invece del vecchio URL Notion.
 
 ## Pagina 404
 
@@ -189,17 +189,18 @@ npm run analyze:export
 npm run verify:links
 ```
 
-I testi puliti delle pagine vengono salvati e versionati in `content/original/`, così restano disponibili su ogni computer. Inventario tecnico e verifica dei collegamenti vengono versionati in `reports/export/`. Il riepilogo leggibile è in `REPORT_VERIFICA_EXPORT.md`.
+I testi puliti delle pagine vengono salvati e versionati in `sources/notion-original/`, così restano disponibili senza essere pubblicati insieme all'app. Inventario tecnico, verifica dei collegamenti e riepilogo leggibile sono conservati in `sources/migration-reports/`; il manifest operativo della Bacheca si trova in `sources/manifests/`.
 
 ## File principali
 
-- `data.json`: parole, definizioni, coordinate e ordine narrativo.
+- `web/public/data.json`: parole, definizioni, coordinate e ordine narrativo.
 - `web/src/app/portone/`: Portone e interfaccia di autenticazione.
 - `web/src/app/pages/`: pagine lazy del Mondo Bianco.
-- `assets/css/themes.css`: variabili e quattro temi condivisi dalla piattaforma.
-- `assets/css/components/`: componenti condivisi, come shell e accesso.
-- `assets/css/pages/`: stile specifico delle singole pagine e dei luoghi.
-- `content/calendar.json`, `content/stories.json`, `content/map.json`, `content/music.json`: raccolte statiche ordinate direttamente dalla posizione nell'array.
+- `web/src/styles/themes.css`: variabili e temi condivisi dalla piattaforma.
+- `web/src/styles/components/`: primitive CSS condivise, come shell, accesso, bottoni e form.
+- `web/src/styles/pages/`: stile specifico delle singole pagine e dei luoghi.
+- `web/public/content/`: raccolte statiche pubbliche ordinate direttamente dalla posizione nell'array.
+- `sources/`: fonti originali, immagini sostituite, report di migrazione e manifest non pubblicati.
 - `scripts/build-music-content.mjs`: ricostruisce i nove brani e le citazioni delle Cuffiette dalla fonte originale congelata, senza correggerne il testo.
 - `web/src/app/pages/cruciverba/`: componenti e servizio del cruciverba.
 - `web/src/app/core/`, `web/src/app/shared/`: autenticazione, API, navigazione, visite, temi e UI condivisa.
@@ -214,11 +215,11 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 - `functions/api/gdr/turns.js`: lettura/scrittura del thread di gioco condiviso (i turni del play-by-chat).
 - `web/src/app/pages/{gdr,il-prezzo-della-verita,avventura,la-tua-maga,i-tuoi-appunti}/`: hub e pagine dell'avventura.
 - `functions/api/media/[[path]].js`: accesso autenticato ai media privati conservati in R2.
-- `content/bacheca.json`: struttura della Bacheca dei Ricordi, con chiavi R2 di foto e miniature.
+- `web/public/content/bacheca.json`: struttura della Bacheca dei Ricordi, con chiavi R2 di foto e miniature.
 - `scripts/build-bacheca-content.mjs`, `scripts/upload-bacheca-media.mjs`, `scripts/build-bacheca-thumbnails.mjs`: ricostruzione della struttura, import degli originali e generazione miniature per la Bacheca.
-- `scripts/optimize-world-images.mjs`: converte in WebP (qualità 82, tramite `sharp`) le immagini hero/decorative pubbliche (`assets/images/world/`, `assets/images/gdr/`), lasciando intatti gli originali PNG/JPG accanto al file ottimizzato. Idempotente: si può rilanciare in sicurezza dopo aver aggiunto nuove immagini in quelle cartelle.
+- `scripts/optimize-world-images.mjs`: converte in WebP (qualità 82, tramite `sharp`) le immagini hero/decorative pubbliche (`web/public/assets/images/world/`, `web/public/assets/images/gdr/`), lasciando intatti gli originali PNG/JPG accanto al file ottimizzato. Idempotente: si può rilanciare in sicurezza dopo aver aggiunto nuove immagini in quelle cartelle.
 - `legacy-archive/`: frontend vanilla congelato e non pubblicato, mantenuto temporaneamente per confronti e rollback.
-- `_redirects`: alias verso le nuove route per i vecchi short link controllabili.
+- `web/public/_redirects`: alias verso le nuove route per i vecchi short link controllabili.
 - `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.
 - `wrangler.toml`: configurazione Cloudflare e binding D1.
 - `final-message.json`: contenuto della schermata finale.

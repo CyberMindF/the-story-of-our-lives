@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 
 const sourcePath = "ExportBlock-fbd237dd-039c-4dc5-9ab4-b9f20c5dcf16-Part-1/Gruppo pagine/📖 Le Storie 31479ac3576c80e9a2e1e4bccf7f1108.html";
-const outputPath = "content/stories.json";
+const outputPath = "web/public/content/stories.json";
 
 // Converte le entità usate dall'export Notion senza alterare il testo originale.
 function decodeHtml(value) {
@@ -58,7 +58,7 @@ for (const match of html.matchAll(storyPattern)) {
 if (stories.length !== 4) throw new Error(`Attese 4 storie, trovate ${stories.length}`);
 
 stories[2].videoUrl = "https://www.youtube-nocookie.com/embed/nagMxzLZfLk";
-stories[2].image = "../assets/images/world/campo-erba.png";
+stories[2].image = "../assets/images/world/campo-erba.webp";
 stories[2].imageAlt = "Un campo d'erba azzurro e luminoso sotto una grande luna e un cielo stellato";
 
 await writeFile(

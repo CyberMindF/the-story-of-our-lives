@@ -1,0 +1,11 @@
+<div class="modal" [class.hidden]="!crossword.completionModalOpen()" role="dialog" aria-modal="true" aria-labelledby="completion-letter-text" (click)="onCompletionBackdropClick($event)">
+  <div class="completion-letter card--handwritten">
+    <p id="completion-letter-text" class="completion-letter-body">Ho raccolto qui una parte di noi.
+Hai ritrovato tutti i nostri ricordi.</p>
+    <button type="button" class="btn completion-letter-close" (click)="crossword.closeCompletionModal()">Chiudi</button>
+  </div>
+</div>
+
+<app-confirmation-dialog dialogId="reset" title="Ricominciare da capo?" description="Questo cancellerà tutte le lettere inserite finora." confirmLabel="Cancella tutto" cancelLabel="Annulla" [open]="crossword.resetModalOpen()" (confirm)="crossword.resetProgress()" (cancel)="crossword.closeResetModal()" />
+
+<app-confirmation-dialog dialogId="check" title="Controllare le risposte?" description="Le lettere inserite saranno indicate come corrette o errate. Le celle vuote non verranno considerate." confirmLabel="Controlla" cancelLabel="Annulla" [open]="crossword.checkModalOpen()" (confirm)="crossword.confirmCheck()" (cancel)="crossword.closeCheckModal()" />

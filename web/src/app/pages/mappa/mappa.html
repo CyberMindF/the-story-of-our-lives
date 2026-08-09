@@ -95,9 +95,8 @@
       }
     </div>
     @if (loadError()) {
-      <p class="map-error" role="alert">Non è stato possibile caricare la mappa.</p>
+      <app-content-message message="Non è stato possibile caricare la mappa." tone="error" [panel]="true" />
     }
   </section>
 
-  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
 </app-shell>

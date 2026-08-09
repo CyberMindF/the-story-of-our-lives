@@ -81,8 +81,7 @@
   }
 
   @if (loadError()) {
-    <p class="music-error" role="alert">Non è stato possibile caricare Le Cuffiette.</p>
+    <app-content-message message="Non è stato possibile caricare Le Cuffiette." tone="error" [panel]="true" />
   }
 
-  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
 </app-shell>

@@ -1,0 +1,16 @@
+<div class="theme-switcher" role="group" aria-label="Scegli un tema">
+  @for (theme of themeService.themes; track theme.id) {
+    <button
+      type="button"
+      class="theme-chip"
+      [class.is-selected]="themeService.activeThemeId() === theme.id"
+      [style.--chip-color]="theme.swatch"
+      [attr.aria-label]="'Attiva il tema ' + theme.label"
+      [attr.aria-pressed]="themeService.activeThemeId() === theme.id"
+      (click)="themeService.applyTheme(theme.id)"
+    >
+      <span class="theme-chip-icon" aria-hidden="true">{{ theme.icon }}</span>
+      <span class="theme-chip-caption" aria-hidden="true">{{ theme.label }}</span>
+    </button>
+  }
+</div>

@@ -1,0 +1,158 @@
+/* Cornice condivisa dalle pagine interne del Mondo Bianco. */
+.place-shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, var(--place-shell-width, 76rem));
+  margin: 0 auto;
+  padding: max(1rem, env(safe-area-inset-top)) clamp(1rem, 4vw, 3rem) clamp(4rem, 8vw, 7rem);
+}
+
+.place-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 4.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.place-home-link {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  color: var(--text-color);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.place-userbar {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  min-height: 2.5rem;
+  margin: 0;
+  padding: 0.3rem 0.35rem 0.3rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(8, 16, 30, 0.42);
+  box-shadow: 0 0.6rem 1.8rem rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(14px);
+}
+
+.place-userbar .user-greeting {
+  margin: 0;
+  color: #d4e0e9;
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.place-userbar .logout-button,
+.place-userbar .suggest-link {
+  display: inline-grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--button-bg);
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.place-userbar .logout-button:hover,
+.place-userbar .suggest-link:hover {
+  background: var(--button-hover-bg);
+}
+
+.place-userbar .suggest-link svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.place-home-link:focus-visible,
+.place-userbar .logout-button:focus-visible,
+.place-userbar .suggest-link:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 4px;
+}
+
+/* Selettore tema: un pallino per tema (colore rappresentativo + icona), pensato per stare
+   nella barra utente di ogni pagina senza pannelli a parte. Il nome resta un'etichetta a
+   comparsa (hover/focus), per non allargare la barra su ogni pagina. */
+.place-userbar .theme-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.15rem;
+}
+
+.place-userbar .theme-chip {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  min-height: 0;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  background: var(--chip-color, #fff);
+  cursor: pointer;
+}
+
+.place-userbar .theme-chip.is-selected {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+.place-userbar .theme-chip:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+.place-userbar .theme-chip-icon {
+  font-size: 0.72rem;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+
+.place-userbar .theme-chip-caption {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.4rem;
+  background: rgba(10, 16, 28, 0.92);
+  color: #f4f7fb;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.25rem);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.place-userbar .theme-chip:hover .theme-chip-caption,
+.place-userbar .theme-chip:focus-visible .theme-chip-caption {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Link "torna a..." in fondo alla pagina: stessa pillola di .btn (styles/components/
+   buttons.css), con solo il posizionamento in fondo pagina come delta specifico. */
+.place-bottom-link {
+  margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;
+}
+
+@media (max-width: 680px) {
+  .place-home-link .place-name-optional {
+    display: none;
+  }
+}

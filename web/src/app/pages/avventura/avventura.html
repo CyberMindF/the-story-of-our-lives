@@ -1,9 +1,5 @@
 <app-shell homeHref="/tavolo-da-gioco/gdr/il-prezzo-della-verita" homeAria="Torna a Il Prezzo della Verità" homeLabel="Il Prezzo della Verità">
-  <nav class="ipdv-nav" aria-label="Pagine dell'avventura">
-    <a routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/avventura" routerLinkActive="is-current" [routerLinkActiveOptions]="{exact: true}" aria-current="page">L'Avventura</a>
-    <a routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/la-tua-maga">La Tua Maga</a>
-    <a routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/i-tuoi-appunti">I Tuoi Appunti</a>
-  </nav>
+  <app-ipdv-navigation />
 
   <section class="avventura-hero" aria-labelledby="avventura-title">
     <p class="tavolo-eyebrow">Il Prezzo della Verità</p>
@@ -128,21 +124,20 @@
         }
       </div>
       @if (turns().length === 0 && !loadError()) {
-        <p class="gdr-thread-empty">Nessun turno ancora: scrivi tu il primo, cosa fa e cosa pensa il tuo personaggio.</p>
+        <app-content-message message="Nessun turno ancora: scrivi tu il primo, cosa fa e cosa pensa il tuo personaggio." extraClass="gdr-thread-message" />
       }
       @if (loadError()) {
-        <p class="gdr-thread-empty" role="alert">Non è stato possibile caricare il turno.</p>
+        <app-content-message message="Non è stato possibile caricare il turno." tone="error" extraClass="gdr-thread-message" />
       }
       <form class="gdr-turn-form" aria-label="Scrivi il tuo turno" #turnForm (ngSubmit)="submitTurn(turnForm)">
         <label class="sr-only" for="turn-body">Il tuo turno</label>
         <textarea id="turn-body" name="body" required maxlength="20000" placeholder="Scrivi cosa fa o dice il tuo personaggio..."></textarea>
         <div class="gdr-turn-submit-row">
-          <button type="submit" class="btn btn-submit" [disabled]="submitting()">Invia turno</button>
+          <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Invia turno</button>
         </div>
-        <p class="appunti-status" role="status" aria-live="polite">{{ statusMessage() }}</p>
+        <p class="appunti-status" role="status" aria-live="polite">{{ submission.message() }}</p>
       </form>
     </section>
   </div>
 
-  <a class="place-bottom-link btn" routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita"><span aria-hidden="true">←</span> Torna a Il Prezzo della Verità</a>
 </app-shell>

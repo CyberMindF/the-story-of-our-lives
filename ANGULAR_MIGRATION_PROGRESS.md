@@ -1,5 +1,10 @@
 # Migrazione Angular — stato di avanzamento (aggiornato ad ogni passo, non a fine lavoro)
 
+> Il porting funzionale e' concluso. Il refactoring successivo e' tracciato separatamente in
+> `ANGULAR_COMPONENTIZATION_PROGRESS.md`.
+> Durante quel refactoring `asset-root` e i symlink pubblici sono stati rimossi: i riferimenti
+> alle vecchie posizioni nelle fasi sottostanti descrivono soltanto la storia della migrazione.
+
 > Se stai riprendendo questo lavoro (Claude, Codex o chiunque altro): leggi questo file per primo.
 > È pensato per essere autosufficiente — non presuppone accesso alla cronologia della chat né a
 > `~/.claude/plans/` (fuori dal repo, potrebbe non essere visibile al tuo tool). Dopo aver letto
@@ -224,7 +229,7 @@ Su scelta dell'utente, la pulizia non cancella subito i sorgenti sostituiti: li 
 - [x] Rimosso il catch-all manuale ciclico `/* /index.html 200`: la documentazione Cloudflare corrente conferma che Pages riconosce automaticamente una SPA dalla presenza di `index.html` e assenza di `404.html` nella directory pubblicata.
 - [x] Confronto browser sistematico contro l'archivio: legacy `34/34` e Angular `36/36` (17 pagine protette + 404, desktop/mobile), senza errori console/rete, immagini rotte o overflow orizzontale. Gli screenshot campionati risultano visualmente equivalenti; sfondo e 150 stelle sono presenti.
 - [x] Build produzione con Node 24.19.0 e verifica Wrangler della dist: 8 redirect validi, route/fallback 200, alias 301, API anonima 401 JSON e zero file legacy nell'output.
-- [x] Controllo link esterni con `scripts/verify-external-links.mjs`: `36/36` raggiungibili con risposta 200; report in `reports/export/external-links-verification.json`.
+- [x] Controllo link esterni con `scripts/verify-external-links.mjs`: `36/36` raggiungibili con risposta 200; report archiviato in `sources/migration-reports/external-links-verification.json`.
 - [ ] Test su dispositivo touch reale del cruciverba (tastiera virtuale e `visualViewport`); resta una verifica hardware consigliata, non un pezzo di frontend ancora da portare.
 
 Dopo questa fase: **Fase 8** (cutover: merge su `main` e preview/deploy Cloudflare). L'eventuale eliminazione definitiva di `legacy-archive/` avverra' solo in un commit successivo e separato.

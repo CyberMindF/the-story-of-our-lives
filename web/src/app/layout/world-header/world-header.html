@@ -1,0 +1,7 @@
+<header class="place-header" [class]="extraClass">
+  <a class="place-home-link" [class]="homeLinkExtraClass" [routerLink]="homeHref" [attr.aria-label]="homeAria">
+    <span aria-hidden="true">{{ homeIcon }}</span>
+    <span [class.place-name-optional]="homeLabelCollapsible">{{ homeLabel }}</span>
+  </a>
+  <app-world-user-bar [extraClass]="userbarExtraClass" [showSuggestLink]="showSuggestLink" [beforeLogout]="beforeLogout" />
+</header>

@@ -1,0 +1,114 @@
+# Refactoring Angular: componentizzazione
+
+## Obiettivo
+
+Ridurre a una sola implementazione ogni struttura o comportamento realmente condiviso,
+senza trasformare semplici elementi HTML in wrapper Angular privi di valore. Aspetto,
+accessibilita', route, API e telemetria devono restare invariati.
+
+## Criteri
+
+- Un componente condiviso possiede struttura, comportamento o semantica riutilizzata; una
+  classe CSS basta quando cambia soltanto l'aspetto di un elemento nativo.
+- Niente componenti universali governati da molti flag: preferire componenti piccoli e
+  composizione.
+- Ogni estrazione elimina le copie originarie.
+- Le differenze intenzionali restano locali e vengono documentate.
+- Build e audit browser desktop/mobile seguono ogni blocco strutturale.
+
+## Baseline
+
+- Porting funzionale: commit `0f50ba7` su `main`.
+- Audit Angular: 36/36 route/viewport senza errori console, rete, immagini o overflow.
+- Il frontend vanilla resta solo in `legacy-archive/` come riferimento.
+
+## Audit iniziale
+
+### Duplicazioni confermate
+
+- Link inferiore di ritorno: 16 copie; 10 identiche verso il Mondo Bianco e 6 con la stessa
+  struttura verso il parent locale.
+- `AppShell` concentra header, utente/logout, layout e telemetria.
+- `ipdv-nav`: stessi tre link copiati in Avventura, La Tua Maga e I Tuoi Appunti.
+- Flusso FormData e feedback ripetuti tra Suggerimenti, Storie, Lettere e pagine GDR, con
+  contratti API non ancora del tutto uniformi.
+- CSS di campi e feedback duplicato soprattutto tra Suggerimenti e Storie.
+
+### Ripetizioni intenzionali
+
+- Hero, card narrative e sezioni specifiche non diventano componenti generici solo perche'
+  usano gli stessi tag.
+- I bottoni nativi restano `button`/`a` con API CSS `.btn` finche' non condividono anche un
+  comportamento.
+- I dialog di Lettere e Bacheca hanno contenuti e interazioni diverse: prima di unificarli va
+  individuata una primitive accessibile realmente comune.
+
+## Roadmap
+
+### Blocco 1 - Layout condiviso
+
+- [x] Estratti `WorldHeader` e `WorldUserBar`.
+- [x] Estratto `BackLink`; rimosse tutte le 16 copie dai template pagina.
+- [x] `AppShell` ridotta a composizione layout e telemetria.
+
+### Blocco 2 - Navigazione e feedback
+
+- [x] Estratta `IpdvNavigation`; rimosse le tre copie e centralizzato lo stato attivo accessibile.
+- [x] Modellato il contratto equivalente di Suggerimenti, Storie e Lettere in `FormSubmission`,
+  con un'istanza isolata per pagina e callback successiva opzionale.
+- [x] Estratto `FormStatus` e consolidato in `forms.css` il CSS comune di campi, focus,
+  placeholder, riga submit e feedback. Le sole differenze di altezza/responsive restano locali.
+
+### Blocco 3 - Logica e overlay
+
+- [x] Centralizzato in `FormSubmission` il flusso POST FormData equivalente di Suggerimenti,
+  Storie, Lettere, Avventura e La Tua Maga, incluse preparazione payload, reset opzionale,
+  parsing errori e callback successiva.
+- [x] Estratto `StaticContentService`: Calendario, Cuffiette, Mappa, Storie e Bacheca
+  condividono caricamento, controllo HTTP e parsing dei JSON statici; validazione e stato
+  specifici restano nelle rispettive pagine.
+- [x] Estratta `ConfirmationDialog`: i tre modali del cruciverba condividono struttura,
+  attributi ARIA, backdrop e azioni. I dialog specializzati di Bacheca e Lettere restano
+  intenzionalmente separati.
+- [x] Estratto `ContentMessage` per empty/error state, con `role="alert"` e variante pannello
+  centralizzati in `feedback.css`.
+
+### Blocco 4 - Verifica conclusiva
+
+- [x] Build production e test strict.
+- [x] Audit browser completo desktop/mobile.
+- [x] Audit finale delle duplicazioni residue e motivazione di quelle intenzionali.
+
+## Verifiche eseguite
+
+- Build production Angular pulita, senza warning.
+- Audit della dist servita da Wrangler: 36/36 route/viewport, nessun errore console/rete,
+  immagine rotta o overflow.
+- Ispezione visuale desktop di Suggerimenti e mobile di Storie dopo il consolidamento CSS.
+- Metriche sorgente: zero `place-bottom-link` nei template pagina e zero `ipdv-nav` duplicati.
+
+## Autonomia del frontend
+
+- [x] Spostati CSS attivi in `web/src/styles/`.
+- [x] Spostati immagini, contenuti, `data.json`, favicon e redirect in `web/public/`.
+- [x] Inclusa l'immagine del Portone in `web/public/assets/images/portone/`.
+- [x] Aggiornati gli script di generazione e ottimizzazione ai nuovi percorsi.
+- [x] Rimossi `asset-root` e tutti i symlink applicativi; zero riferimenti residui nel codice.
+- [x] Esternalizzati tutti i 12 template inline in file `.html` dedicati.
+- [x] Build e audit Wrangler della nuova struttura: 36/36 route/viewport.
+- [x] Riparata la suite Angular rimasta allo scaffold iniziale: test reali su creazione root,
+  150 stelle e router outlet, `2/2` verdi.
+- [x] Secondo audit dopo dialog e content state: 36/36 route/viewport.
+- [x] Build production e test Angular `2/2` dopo la centralizzazione dei contenuti statici.
+- [x] Audit conclusivo Wrangler + Chrome headless: `36/36`, senza errori console/rete,
+  eccezioni, immagini rotte o overflow.
+
+## Differenze intenzionali residue
+
+- L'autosave di I Tuoi Appunti resta locale: usa debounce, payload costruito senza form e
+  feedback progressivo, quindi non condivide il contratto dei submit espliciti.
+- Le letture e azioni API di autenticazione, Lettere, GDR e Cruciverba restano nei rispettivi
+  servizi o componenti perche' hanno risposte, cache e stati applicativi differenti.
+- I dialog di Lettere e Bacheca restano specializzati; solo le conferme equivalenti del
+  cruciverba usano `ConfirmationDialog`.
+- I formatter data restano distinti dove cambia il formato visibile richiesto dalla pagina.

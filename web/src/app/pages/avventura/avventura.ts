@@ -1,6 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
+import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
+import { ContentMessage } from '../../shared/content-message/content-message';
+import { FormSubmission } from '../../shared/form-submission/form-submission';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 
@@ -25,15 +27,15 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
 @Component({
   selector: 'app-avventura',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/tavolo.css'],
+  imports: [AppShell, IpdvNavigation, ContentMessage],
+  providers: [FormSubmission],
+  styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './avventura.html'
 })
 export class Avventura implements OnInit {
+  protected readonly submission = inject(FormSubmission);
   protected readonly turns = signal<Turn[]>([]);
   protected readonly loadError = signal(false);
-  protected readonly submitting = signal(false);
-  protected readonly statusMessage = signal('');
 
   async ngOnInit(): Promise<void> {
     await this.loadTurns();
@@ -59,25 +61,12 @@ export class Avventura implements OnInit {
   }
 
   protected async submitTurn(form: HTMLFormElement): Promise<void> {
-    this.submitting.set(true);
-    this.statusMessage.set('Sto inviando...');
-
-    try {
-      const formData = new FormData(form);
-      formData.set('adventure', ADVENTURE);
-      const response = await fetch('/api/gdr/turns', { method: 'POST', credentials: 'same-origin', body: formData });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(result.error || 'Invio non riuscito.');
-      }
-
-      form.reset();
-      this.statusMessage.set('');
-      await this.loadTurns();
-    } catch (error) {
-      this.statusMessage.set(error instanceof Error ? error.message : 'Invio non riuscito.');
-    } finally {
-      this.submitting.set(false);
-    }
+    await this.submission.submit(form, {
+      url: '/api/gdr/turns',
+      pendingMessage: 'Sto inviando...',
+      successMessage: '',
+      prepareData: (data) => data.set('adventure', ADVENTURE),
+      afterSuccess: () => this.loadTurns()
+    });
   }
 }

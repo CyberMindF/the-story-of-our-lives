@@ -5,8 +5,8 @@ migrazione Angular. I file sono stati spostati qui durante la Fase 7: non devono
 importati, serviti o copiati nell'output di produzione.
 
 La struttura relativa originale e' stata mantenuta per rendere possibili confronti e
-ripristini puntuali. Il frontend attivo vive in `../web/`; CSS, immagini, contenuti JSON e
-Cloudflare Functions rimangono nelle rispettive cartelle della root perche' sono ancora usati.
+ripristini puntuali. Il frontend attivo, inclusi CSS, immagini e contenuti JSON pubblici, vive
+interamente in `../web/`; nella root restano backend, script e documentazione.
 
 Il confronto visuale/funzionale e il test locale della build pubblicabile sono completati.
 L'archivio resta intenzionalmente disponibile fino al cutover Cloudflare e potra' essere

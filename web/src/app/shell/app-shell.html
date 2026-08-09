@@ -1,0 +1,20 @@
+<div class="place-shell" [class]="shellClass">
+  <app-world-header
+    [homeHref]="homeHref"
+    [homeAria]="homeAria"
+    [homeIcon]="homeIcon"
+    [homeLabel]="homeLabel"
+    [homeLabelCollapsible]="homeLabelCollapsible"
+    [showSuggestLink]="showSuggestLink"
+    [extraClass]="headerExtraClass"
+    [homeLinkExtraClass]="homeLinkExtraClass"
+    [userbarExtraClass]="userbarExtraClass"
+    [beforeLogout]="beforeLogout"
+  />
+  <main>
+    <ng-content />
+    @if (showBackLink) {
+      <app-back-link [href]="homeHref" [label]="homeAria" />
+    }
+  </main>
+</div>

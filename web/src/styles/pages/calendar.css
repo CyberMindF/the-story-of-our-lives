@@ -1,0 +1,211 @@
+:host {
+  --calendar-red: #9f4057;
+  --calendar-red-dark: #7f2e42;
+  --calendar-green: #4f725b;
+  --calendar-green-dark: #385542;
+}
+
+.calendar-shell {
+  --place-shell-width: 76rem;
+}
+
+.calendar-hero {
+  padding: clamp(4rem, 10vw, 8rem) 0 clamp(3rem, 8vw, 6rem);
+}
+
+.calendar-figure {
+  width: min(100%, 64rem);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: clamp(1.2rem, 3vw, 2rem);
+  box-shadow: 0 2rem 6rem rgba(0, 0, 0, 0.32);
+}
+
+.calendar-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.calendar-title-block {
+  width: min(100%, 64rem);
+  margin: clamp(1rem, 2.5vw, 1.5rem) auto 0;
+}
+
+.calendar-title-block h1 {
+  margin: 0;
+  font-size: var(--hero-size-lg);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.calendar-title-block h1 span {
+  display: inline-block;
+  margin-right: 0.12em;
+  font-family: system-ui, sans-serif;
+  font-size: 0.52em;
+  letter-spacing: 0;
+  vertical-align: 0.16em;
+}
+
+.calendar-eyebrow {
+  margin: 0 0 0.7rem;
+  color: #b8cad9;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.calendar-introduction {
+  width: min(100%, 53rem);
+  margin: 0 auto clamp(4rem, 10vw, 8rem);
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+}
+
+.calendar-introduction h2,
+.calendar-section-heading h2 {
+  margin: 0 0 1rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.calendar-introduction p {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.05rem, 1.8vw, 1.18rem);
+  line-height: 1.8;
+}
+
+.calendar-history {
+  width: min(100%, 64rem);
+  margin: 0 auto;
+}
+
+.calendar-section-heading {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.calendar-count {
+  color: #b8cad9;
+}
+
+.calendar-timeline {
+  display: grid;
+  gap: clamp(3rem, 7vw, 5rem);
+}
+
+.calendar-year h3 {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 0 0 1.25rem;
+  color: #eef4f8;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 400;
+}
+
+.calendar-year h3::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.calendar-year ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.calendar-year li {
+  display: flex;
+  min-width: 0;
+  min-height: 17rem;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.05rem;
+  background: #f7f4f0;
+  color: #2c3943;
+  box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.2);
+}
+
+.calendar-year time {
+  display: block;
+  width: 100%;
+}
+
+.date-face {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 9.5rem;
+  text-align: center;
+}
+
+.date-face-month {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  background: linear-gradient(135deg, var(--calendar-green), var(--calendar-green-dark));
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.accent-red .date-face-month {
+  background: linear-gradient(135deg, var(--calendar-red), var(--calendar-red-dark));
+}
+
+.date-face-day {
+  align-self: center;
+  color: #25333d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 3.7rem;
+  line-height: 1;
+}
+
+.date-face-year {
+  padding-bottom: 0.7rem;
+  color: #71808b;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.calendar-year li > p {
+  flex: 1;
+  margin: 0;
+  padding: 1rem;
+  border-top: 1px solid rgba(44, 57, 67, 0.1);
+  background: #fffdf9;
+  color: #3d4c57;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 820px) {
+  .calendar-year ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .calendar-year ol {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-year li {
+    min-height: 0;
+  }
+}

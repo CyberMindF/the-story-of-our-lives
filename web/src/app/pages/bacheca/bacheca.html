@@ -65,10 +65,9 @@
   </div>
 
   @if (loadError()) {
-    <p class="bacheca-error" role="alert">Non è stato possibile caricare la Bacheca dei Ricordi.</p>
+    <app-content-message message="Non è stato possibile caricare la Bacheca dei Ricordi." tone="error" [panel]="true" extraClass="bacheca-error" />
   }
 
-  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
 </app-shell>
 
 <dialog #lightbox class="bacheca-lightbox" aria-label="Foto ingrandita">

@@ -1,0 +1,9 @@
+.suggerimenti-page { min-height: 100dvh; color: #f4f7fb; }
+.suggerimenti-eyebrow { margin: 0 0 .65rem; color: #b8cad9; font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+
+.suggerimenti-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+.suggerimenti-hero h1 { margin: 0; font-size: var(--hero-size-md); line-height: .95; letter-spacing: -.04em; }
+.suggerimenti-intro { margin: 1.25rem auto 0; max-width: 34rem; color: #d1dde6; font-size: 1.05rem; line-height: 1.8; }
+
+.suggestion-form { width: min(100%, 46rem); margin: 0 auto; display: grid; gap: 1.15rem; padding-bottom: clamp(3rem, 7vw, 5rem); }
+.form-field textarea { min-height: 12rem; }

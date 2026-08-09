@@ -1,7 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
+import { ContentMessage } from '../../shared/content-message/content-message';
 
 interface Photo {
   key: string;
@@ -63,11 +64,12 @@ interface IndexLink {
 @Component({
   selector: 'app-bacheca',
   standalone: true,
-  imports: [RouterLink, AppShell, NgTemplateOutlet],
-  styleUrls: ['../../../../asset-root/assets/css/pages/bacheca.css'],
+  imports: [AppShell, NgTemplateOutlet, ContentMessage],
+  styleUrls: ['../../../styles/pages/bacheca.css'],
   templateUrl: './bacheca.html'
 })
 export class Bacheca implements OnInit, AfterViewInit {
+  private readonly staticContent = inject(StaticContentService);
   @ViewChild('lightbox') private lightboxRef?: ElementRef<HTMLDialogElement>;
 
   protected readonly introduction = signal<string[]>([]);
@@ -83,11 +85,7 @@ export class Bacheca implements OnInit, AfterViewInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      const response = await fetch('/content/bacheca.json');
-      if (!response.ok) {
-        throw new Error(`Caricamento fallito: ${response.status}`);
-      }
-      const data = (await response.json()) as BachecaData;
+      const data = await this.staticContent.load<BachecaData>('/content/bacheca.json');
 
       this.introduction.set(data.introduction);
       this.indexLinks.set(this.buildIndexLinks(data.periods));

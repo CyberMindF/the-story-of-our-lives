@@ -1,5 +1,5 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 
 interface CalendarEvent {
@@ -25,28 +25,25 @@ interface YearGroup {
 const MONTH_FORMATTER = new Intl.DateTimeFormat('it-IT', { month: 'long', timeZone: 'UTC' });
 
 // Porting fedele di assets/js/calendar/main.js: stessa fonte dati (content/calendar.json),
-// stessa validazione (esattamente 27 date, id univoci, formato data), stesso raggruppamento
+// stessa validazione (numero di date fisso, id univoci, formato data), stesso raggruppamento
 // per anno e stessa alternanza di colore. La costruzione del DOM cella-per-cella
 // dell'originale diventa un ciclo dichiarativo nel template (vedi calendario.html), non
 // più createElement manuale — semplificazione naturale, stesso risultato visivo.
 @Component({
   selector: 'app-calendario',
   standalone: true,
-  imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/calendar.css'],
+  imports: [AppShell],
+  styleUrls: ['../../../styles/pages/calendar.css'],
   templateUrl: './calendario.html'
 })
 export class Calendario implements OnInit {
+  private readonly staticContent = inject(StaticContentService);
   protected readonly yearGroups = signal<YearGroup[]>([]);
   protected readonly countLabel = signal('Caricamento delle date…');
 
   async ngOnInit(): Promise<void> {
     try {
-      const response = await fetch('/content/calendar.json');
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      const data = (await response.json()) as { events: CalendarEvent[] };
+      const data = await this.staticContent.load<{ events: CalendarEvent[] }>('/content/calendar.json');
       this.validateCalendar(data);
       this.yearGroups.set(this.groupByYear(data.events));
       this.countLabel.set(`${data.events.length} date custodite`);
@@ -58,8 +55,8 @@ export class Calendario implements OnInit {
 
   // Verifica quantità, identificatori e formato delle date senza correggere i dati.
   private validateCalendar(data: { events: CalendarEvent[] }): void {
-    if (!Array.isArray(data.events) || data.events.length !== 27) {
-      throw new Error('Il Calendario deve contenere esattamente 27 date.');
+    if (!Array.isArray(data.events) || data.events.length !== 28) {
+      throw new Error('Il Calendario deve contenere esattamente 28 date.');
     }
 
     const ids = new Set<string>();
