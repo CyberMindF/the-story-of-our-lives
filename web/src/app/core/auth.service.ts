@@ -17,7 +17,11 @@ export interface AuthSessionResponse {
 export type AccessMode = 'login' | 'register' | 'key';
 
 const ACCESS_SESSION_KEY = 'noi-crossword-access-session-v1';
+const ACCESS_SESSION_TOUCHED_AT_KEY = 'noi-crossword-access-session-touched-at-v1';
 const KNOWN_ACCOUNT_STORAGE_KEY = 'noi-crossword-known-account-v1';
+// Quanto resta valida la conferma della Chiave senza attività, non da quando è stata data:
+// ogni interazione la rinnova (vedi touchAccessUnlock), scade solo restando inattivi.
+const ACCESS_UNLOCK_IDLE_TIMEOUT_MS = 60 * 60 * 1000;
 
 // Porting fedele di assets/js/shared/auth.js. In più: currentUser come signal, così la shell
 // (saluto/logout) e la guardia di rotta possono reagire senza dover rileggere il DOM.
@@ -75,21 +79,39 @@ export class AuthService {
     return localStorage.getItem(KNOWN_ACCOUNT_STORAGE_KEY) === 'true' ? 'login' : 'register';
   }
 
-  // Verifica se la Chiave è già stata confermata in questa scheda per l'utente corrente.
+  // Verifica se la Chiave è ancora valida per l'utente corrente: stesso utente e attività
+  // recente. Usare sessionStorage da solo (scheda aperta) non basta — su mobile, o riscrivendo
+  // sempre l'indirizzo nella stessa scheda, la scheda spesso non si "chiude" mai davvero,
+  // quindi senza un limite di tempo la Chiave non verrebbe più richiesta (bug segnalato il
+  // 09/08/2026).
   isAccessUnlocked(userId: number | string): boolean {
-    return sessionStorage.getItem(ACCESS_SESSION_KEY) === String(userId);
+    if (sessionStorage.getItem(ACCESS_SESSION_KEY) !== String(userId)) {
+      return false;
+    }
+    const touchedAt = Number(sessionStorage.getItem(ACCESS_SESSION_TOUCHED_AT_KEY));
+    return Number.isFinite(touchedAt) && Date.now() - touchedAt < ACCESS_UNLOCK_IDLE_TIMEOUT_MS;
   }
 
   // Memorizza lo sblocco della scheda e, dopo login o registrazione, la presenza dell'account.
   rememberAccessUnlock(userId: number | string, rememberAccount = false): void {
     sessionStorage.setItem(ACCESS_SESSION_KEY, String(userId));
+    sessionStorage.setItem(ACCESS_SESSION_TOUCHED_AT_KEY, String(Date.now()));
     if (rememberAccount) {
       localStorage.setItem(KNOWN_ACCOUNT_STORAGE_KEY, 'true');
+    }
+  }
+
+  // Rinnova la finestra di inattività senza richiedere di nuovo la Chiave: va chiamato durante
+  // l'uso normale (navigazione, interazione), mai per sbloccare un utente non ancora confermato.
+  touchAccessUnlock(userId: number | string): void {
+    if (sessionStorage.getItem(ACCESS_SESSION_KEY) === String(userId)) {
+      sessionStorage.setItem(ACCESS_SESSION_TOUCHED_AT_KEY, String(Date.now()));
     }
   }
 
   // Rimuove soltanto lo sblocco locale della scheda, senza cancellare progresso o preferenze.
   clearAccessUnlock(): void {
     sessionStorage.removeItem(ACCESS_SESSION_KEY);
+    sessionStorage.removeItem(ACCESS_SESSION_TOUCHED_AT_KEY);
   }
 }

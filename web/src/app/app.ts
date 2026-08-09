@@ -2,8 +2,17 @@ import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
+import { AuthService } from './core/auth.service';
 import { ThemeService } from './core/theme.service';
 import { WorldStars } from './shared/world-stars';
+
+// Eventi usati come "prova di attività" per rinnovare lo sblocco della Chiave (vedi
+// AuthService.touchAccessUnlock) — non serve seguire ogni movimento del mouse, basta sapere
+// che qualcuno sta ancora interagendo con la pagina.
+const ACTIVITY_EVENTS = ['pointerdown', 'keydown'] as const;
+// Non scrivere su sessionStorage a ogni singolo click: un tocco al minuto basta per restare
+// entro la finestra di inattività di un'ora.
+const ACTIVITY_TOUCH_THROTTLE_MS = 60 * 1000;
 
 const ROUTE_BODY_CLASSES = [
   'access-locked',
@@ -33,6 +42,8 @@ export class App {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly themeService = inject(ThemeService);
+  private readonly authService = inject(AuthService);
+  private lastActivityTouchAt = 0;
 
   constructor() {
     document.body.classList.add('world-atmosphere');
@@ -43,6 +54,27 @@ export class App {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => this.applyRouteBodyClasses());
+
+    const onActivity = () => this.touchAccessUnlockThrottled();
+    ACTIVITY_EVENTS.forEach((eventName) => document.addEventListener(eventName, onActivity, { passive: true }));
+    this.destroyRef.onDestroy(() => {
+      ACTIVITY_EVENTS.forEach((eventName) => document.removeEventListener(eventName, onActivity));
+    });
+  }
+
+  // Rinnova lo sblocco della Chiave durante l'uso attivo, anche restando sulla stessa pagina
+  // (es. una lunga sessione di cruciverba), non solo quando si cambia rotta.
+  private touchAccessUnlockThrottled(): void {
+    const userId = this.authService.currentUser()?.id;
+    if (userId === undefined) {
+      return;
+    }
+    const now = Date.now();
+    if (now - this.lastActivityTouchAt < ACTIVITY_TOUCH_THROTTLE_MS) {
+      return;
+    }
+    this.lastActivityTouchAt = now;
+    this.authService.touchAccessUnlock(userId);
   }
 
   private applyRouteBodyClasses(): void {
