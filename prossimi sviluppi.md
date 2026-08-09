@@ -79,7 +79,17 @@ il resto.
 - [ ] #6 — i ponti (alleggerire o spostare il focus sulle lettere)
 - [ ] #7 — cuffiette: traccia bonus
 - [ ] #9 — centralizzare di più le lettere
-- [ ] #11 + #17 — accorciare la navigazione dei GDR / navigazione responsive
+- [x] #11 + #17 — accorciare la navigazione dei GDR / navigazione responsive: aggiunta
+  un'icona "casa" fissa nella userbar (tutte le pagine tranne il Mondo Bianco stesso) che porta
+  dritti lì in un click, invece dei 4 passaggi precedenti (avventura → il prezzo della verità →
+  gdr → tavolo da gioco → mondo bianco). Verificato anche su mobile: nessun overflow.
+  - **Bug trovato per strada**: la navigazione a 3 link tra Avventura/La Tua Maga/I Tuoi
+    Appunti (`IpdvNavigation`) era senza stile da quando è stata estratta in un componente
+    condiviso — i link blu sottolineati di default del browser, non le pillole previste. Stesso
+    tipo di bug della card del calendario (Fase A/B): il CSS restava nel file di pagina invece
+    che nello `styleUrl` del componente, quindi l'encapsulation di Angular non lo faceva mai
+    arrivare a destinazione. Controllati anche gli altri componenti condivisi (dialog,
+    form-status, header, userbar, back-link): usano tutti CSS già globale, nessun altro caso.
 - [ ] #5 — capire se il mappamondo si può migliorare
 
 ## Fase D — Feature nuova (tocca anche il backend)
