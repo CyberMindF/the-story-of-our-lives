@@ -1,5 +1,10 @@
 # Analisi tecnica del Mondo Bianco originale
 
+> **Stato:** documento storico preparatorio alla migrazione, completata il 9 agosto 2026.
+> Percorsi, architettura proposta e fasi descritte qui fotografano il piano iniziale e non
+> costituiscono la roadmap corrente. Per lo stato del porting vedere
+> `ANGULAR_MIGRATION_PROGRESS.md`; per le attivita' future vedere `prossimi sviluppi.md`.
+
 ## 1. Scopo e perimetro
 
 Questo documento analizza l'esportazione HTML originale di Notion presente in `ExportBlock-fbd237dd-039c-4dc5-9ab4-b9f20c5dcf16-Part-1`. L'obiettivo è preservare struttura, contenuti, tono e simboli prima della migrazione nella nuova applicazione.
