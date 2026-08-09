@@ -3,9 +3,8 @@
 2. implementare una piccola pagina "profilo" dove poter cambiare il nick e password
     1. fare in modo che se c'è un cambio password, la precedente venga loggata per memoria
 3. la bacheca dei ricordi è ancora totalmente da rivedere
-4. rivedere la pagina di login stilisticamente parlando
 5. capire se il mappamondo si può migliorare
-6. i ponti allo stato attuale è una pagina un po' inutile, un po' "cimitero", potrebbe diventare leggermente più piccola o non mettere il focus su i ponti
+6. i ponti allo stato attuale è una pagina un po' inutile, un po' "cimitero", potrebbe diventare leggermente più piccola o non mettere il focus su i ponti ma sulle lettere
 7. rivedere la parte della traccia bonus nelle cuffiette, fa un po' schifo
 8. rivedere il selettore dei temi, non mi piace molto in questo momento, non mostra il nome ne le icone dei temi
 9. capire come centralizzare un po' di più le lettere
@@ -24,3 +23,11 @@ Portati qui dalla vecchia `CHECKLIST_MIGRAZIONE_MONDO_BIANCO.md` (ora eliminata,
 24. Ricerca globale protetta: cercare per parola dentro titoli, date, storie, canzoni, mete e ricordi tutti insieme, invece di aprire ogni pagina a cercare a occhio. Deve restare autenticata (nessun contenuto indicizzabile o raggiungibile da chi non ha fatto login). Rimandata: più un'idea per quando il sito avrà più contenuto da cercare, che una necessità adesso.
 25. La Mappa — aggiungere la Sicilia tra le mete (è la terra di Rory, tanti posti bellissimi). Posti già in mente: il fiume Amenano sotto l'ostello (a Catania), le Gole dell'Alcantara, i laghetti di Avola (probabilmente Cavagrande del Cassibile, le piscine naturali vicino Avola — da confermare). Isola Bella a Taormina. Da scrivere insieme quando Rory ha i testi pronti, stesso trattamento delle altre mete (non un posto "originale" preesistente, va segnato come aggiunta).
 26. La Mappa — completare Roma: nel contenuto attuale (`content/map.json`) è ancora un segnaposto quasi vuoto ("roma roma", nessuna immagine) — fedele all'originale Notion, che la lasciava incompleta apposta. Serve il testo vero da Rory prima di poterla scrivere.
+
+
+27. Rendere le scritte più personali/romantiche, alla fine il sito "sono io" mentre l'utilizzatrice è lei. Quidni il sito bene o male è tutto "parlato" come se parlassi a lei, mentre per alcuni testi è stato scelto di renderli generici. Individuali e renderli personali
+
+28. Una pagina per le mie domande, a cui vorrei che rispondesse, quindi deve essere tipo "domanda" e tipo text box dove lei potrebbe rispondere alle domande. Ovviamente richiede un salvataggio in DB
+
+BUG
+1. Quando entro in una pagina l'altezza a cui vengo settato in quella pagina rimane la medesima in cui ero prima. Quindi non mi porta in alto nella pagina. Cosa che non va bene

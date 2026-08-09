@@ -2,7 +2,7 @@
 .suggerimenti-eyebrow { margin: 0 0 .65rem; color: #b8cad9; font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 
 .suggerimenti-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
-.suggerimenti-hero h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.6rem, 7vw, 4.2rem); font-weight: 400; line-height: .95; letter-spacing: -.04em; }
+.suggerimenti-hero h1 { margin: 0; font-size: var(--hero-size-md); line-height: .95; letter-spacing: -.04em; }
 .suggerimenti-intro { margin: 1.25rem auto 0; max-width: 34rem; color: #d1dde6; font-size: 1.05rem; line-height: 1.8; }
 
 .suggestion-form { width: min(100%, 46rem); margin: 0 auto; display: grid; gap: 1.15rem; padding-bottom: clamp(3rem, 7vw, 5rem); }
@@ -21,9 +21,7 @@
 .suggestion-field select option { color: #0c1626; }
 
 .suggestion-submit-row { display: flex; justify-content: flex-end; align-items: center; }
-.suggestion-submit-row button { flex: 0 0 auto; min-height: 2.9rem; padding: .7rem 1.15rem; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; background: rgba(255,255,255,.1); color: #fff; font: inherit; font-weight: 750; cursor: pointer; }
-.suggestion-submit-row button:hover { border-color: rgba(255,255,255,.42); background: rgba(255,255,255,.16); }
-.suggestion-submit-row button:disabled { cursor: wait; opacity: .58; }
+.suggestion-submit-row button { flex: 0 0 auto; }
 
 .suggestion-status { margin: 0; font-size: .86rem; }
 .suggestion-status:empty { display: none; }
@@ -32,5 +30,4 @@
 
 .suggestion-field input:focus-visible,
 .suggestion-field select:focus-visible,
-.suggestion-field textarea:focus-visible,
-.suggestion-submit-row button:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+.suggestion-field textarea:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }

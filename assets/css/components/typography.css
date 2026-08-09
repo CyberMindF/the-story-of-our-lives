@@ -1,0 +1,24 @@
+/* Tipografia hero condivisa del Mondo Bianco. Normalizzazione del 09/08/2026, vedi CLAUDE.md.
+   Estrae solo ciò che è già identico tra le pagine: la famiglia/peso del font (ripetuti
+   ovunque senza eccezioni) e i due cluster di dimensioni già byte-identici. Gli hero con un
+   layout strutturalmente diverso (con/senza figura a fianco, colonna più stretta) mantengono
+   la propria dimensione: non è drift, è una differenza intenzionale. */
+:root {
+  --hero-size-md: clamp(2.6rem, 7vw, 4.2rem);
+  --hero-size-lg: clamp(3rem, 7vw, 6rem);
+}
+
+.ponti-hero h1,
+.tavolo-hero h1,
+.calendar-title-block h1,
+.bacheca-hero h1,
+.lettere-hero h1,
+.suggerimenti-hero h1,
+.world-opening h1,
+.globe-hero h1,
+.stories-title-block h1,
+.music-hero h1,
+.map-hero h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+}

@@ -1,0 +1,96 @@
+<app-shell>
+  <section class="stories-hero" aria-labelledby="stories-title">
+    <figure class="stories-hero-figure">
+      <img src="assets/images/world/storie.webp" alt="Un antico libro aperto su un piedistallo bianco tra le nuvole" />
+    </figure>
+    <div class="stories-title-block">
+      <h1 id="stories-title"><span aria-hidden="true">📖</span> Le Storie</h1>
+      <p class="stories-introduction">{{ introduction() }}</p>
+    </div>
+  </section>
+
+  <section class="stories-collection" aria-label="Raccolta delle storie">
+    <p class="stories-eyebrow stories-collection-label">La raccolta</p>
+    <div class="stories-list" aria-live="polite">
+      @for (view of stories(); track view.story.id) {
+        <details [id]="'story-' + view.story.id" class="story-entry">
+          <summary>
+            <span class="story-number">{{ (view.position + 1).toString().padStart(2, '0') }}</span>
+            <span class="story-heading">
+              <strong>{{ view.story.title }}</strong>
+              <time [attr.datetime]="view.story.date">{{ view.formattedDate }}</time>
+            </span>
+            <span class="story-toggle" aria-hidden="true">+</span>
+          </summary>
+          <div class="story-content">
+            @if (view.videoSrc) {
+              <iframe
+                class="story-player"
+                [title]="'Accompagnamento per ' + view.story.title"
+                [src]="view.videoSrc"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+              ></iframe>
+            }
+            <div class="story-prose">
+              @for (paragraph of view.bodyParagraphs; track $index) {
+                <p>{{ paragraph }}</p>
+              }
+            </div>
+            @if (view.story.image) {
+              <figure>
+                <img [src]="view.story.image" [alt]="view.story.imageAlt" loading="lazy" />
+              </figure>
+            }
+          </div>
+        </details>
+      }
+    </div>
+    @if (loadError()) {
+      <p class="stories-error" role="alert">Non è stato possibile caricare le storie.</p>
+    }
+  </section>
+
+  <details class="story-suggestion">
+    <summary class="suggestion-trigger">
+      <span>
+        <span class="stories-eyebrow">Una pagina ancora bianca</span>
+        <strong>Lasciami una storia</strong>
+      </span>
+      <span class="suggestion-toggle" aria-hidden="true">+</span>
+    </summary>
+
+    <div class="suggestion-panel">
+      <p class="suggestion-introduction">Lasciami una storia o una tua idea, e poi io la scriverò aggiungendo una nuova pagina a questa raccolta.</p>
+      <form class="suggestion-form" enctype="multipart/form-data" #storyForm (ngSubmit)="submitSuggestion(storyForm)">
+        <label class="suggestion-field">
+          <span>Titolo <small>facoltativo</small></span>
+          <input name="title" type="text" maxlength="160" autocomplete="off" placeholder="Come si potrebbe chiamare?" />
+        </label>
+
+        <label class="suggestion-field suggestion-field-wide">
+          <span>La storia o l'idea</span>
+          <textarea name="storyText" rows="10" maxlength="50000" required placeholder="Puoi lasciarmi una storia oppure un'idea che vorresti che facessi io..."></textarea>
+        </label>
+
+        <label class="suggestion-field suggestion-field-wide">
+          <span>Musica <small>facoltativa</small></span>
+          <textarea name="musicNotes" rows="3" maxlength="2000" placeholder="Scrivi il titolo, incolla un link oppure raccontami che tipo di musica immagini."></textarea>
+        </label>
+
+        <label class="suggestion-field suggestion-field-wide">
+          <span>Immagini <small>facoltative</small></span>
+          <textarea name="imageNotes" rows="3" maxlength="2000" placeholder="Raccontami quali immagini vorresti, per esempio: un'immagine che rappresenta questo mondo."></textarea>
+        </label>
+
+        <div class="suggestion-submit-row suggestion-field-wide">
+          <button type="submit" class="btn btn-submit" [disabled]="submitting()">Lascia la storia</button>
+        </div>
+        <p class="suggestion-status suggestion-field-wide" [class.is-success]="submitStatus() === 'success'" [class.is-error]="submitStatus() === 'error'" role="status" aria-live="polite">{{ submitMessage() }}</p>
+      </form>
+    </div>
+  </details>
+
+  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
+</app-shell>

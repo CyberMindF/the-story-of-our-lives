@@ -1,0 +1,30 @@
+<app-shell
+  shellClass="crossword-shell"
+  homeHref="/tavolo-da-gioco"
+  homeAria="Torna al Tavolo da Gioco"
+  homeLabel="Il Tavolo da Gioco"
+  [trackPageOpened]="false"
+  [beforeLogout]="beforeLogout"
+>
+  <section class="crossword-hero" aria-labelledby="title">
+    <h1 id="title">{{ crossword.title() }}</h1>
+    <p class="subtitle" id="subtitle">{{ crossword.subtitle() }}</p>
+    <div class="crossword-status">
+      <p id="completion-status">{{ crossword.completionStatusText() }}</p>
+      <p id="check-summary" aria-live="polite">{{ crossword.checkSummary() }}</p>
+    </div>
+  </section>
+
+  <div class="layout">
+    <section class="board-panel" aria-labelledby="title">
+      <app-crossword-toolbar />
+      <app-crossword-grid />
+    </section>
+
+    <app-crossword-clues />
+  </div>
+
+  <a class="place-bottom-link btn" routerLink="/tavolo-da-gioco"><span aria-hidden="true">←</span> Torna al Tavolo da Gioco</a>
+</app-shell>
+
+<app-crossword-modals />

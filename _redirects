@@ -15,6 +15,8 @@
 /la-mappa         /mappa/            301
 /le-storie        /storie/           301
 
-# La Bacheca dei Ricordi non è ancora migrata (P2): redirect temporaneo all'hub
-# finché non esiste una pagina reale, per evitare un collegamento rotto nel frattempo.
-/la-bacheca       /mondo-bianco/     302
+/la-bacheca       /bacheca/          301
+
+# Non aggiungere un catch-all verso /index.html: senza un 404.html nella directory
+# pubblicata, Cloudflare Pages riconosce automaticamente la build come SPA e applica il
+# fallback al documento root. La regola manuale sarebbe un ciclo e Wrangler la ignora.

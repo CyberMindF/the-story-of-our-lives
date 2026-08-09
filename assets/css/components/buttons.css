@@ -1,0 +1,57 @@
+/* Pillola condivisa: usabile su <a> (dove il reset di button in shell.css non arriva,
+   perché si applica solo al tag button) e su <button> (dove estende, senza sostituirlo,
+   il reset già gratuito di shell.css). Normalizzazione del 09/08/2026, vedi CLAUDE.md. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: fit-content;
+  padding: 0.8rem 1.1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--button-bg);
+  color: var(--text-color);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.btn:hover {
+  background: var(--button-hover-bg);
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 4px;
+}
+
+/* Colore oro già ripetuto identico e hardcoded in più pagine (link/pillole in rilievo).
+   Non varia per tema oggi: renderlo dipendente da una var di tema è fuori dal perimetro
+   di questa normalizzazione (vedi punto 1 di "prossimi sviluppi.md"). */
+.btn-accent {
+  color: #f3dfb8;
+}
+
+/* Variante per bottoni submit reali nei form: stessa pillola, bordo/sfondo più marcati e
+   testo bianco fisso, più uno stato :disabled — riunisce il blocco byte-identico ripetuto
+   in più pagine (lettere, suggerimenti, storie, tavolo). */
+.btn-submit {
+  min-height: 2.9rem;
+  padding: 0.7rem 1.15rem;
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font: inherit;
+  font-weight: 750;
+}
+
+.btn-submit:hover {
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.btn-submit:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}

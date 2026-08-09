@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>💌 Lettere | Mondo Bianco</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/css/themes.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/shell.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/world-atmosphere.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=3" />
+    <link rel="stylesheet" href="../assets/css/components/buttons.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/cards.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/typography.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/pages/lettere.css?v=8" />
+  </head>
+  <body class="world-atmosphere lettere-page" data-logout-url="../">
+    <div class="place-shell lettere-shell">
+      <header class="place-header">
+        <a class="place-home-link" href="../mondo-bianco/" aria-label="Torna al Mondo Bianco">
+          <span aria-hidden="true">←</span><span class="place-name-optional">Il Mondo Bianco</span>
+        </a>
+        <div class="place-userbar">
+          <p id="user-greeting" class="user-greeting"></p>
+          <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema"></div>
+          <a href="../suggerimenti/" class="suggest-link" aria-label="Manda un suggerimento" title="Suggerisci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-6 6c0 2.5 1.4 3.8 2.2 4.6.5.5.8 1.1.8 1.4h6c0-.3.3-.9.8-1.4.8-.8 2.2-2.1 2.2-4.6a6 6 0 0 0-6-6Z" /></svg>
+          </a>
+          <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="lettere-hero" aria-labelledby="lettere-title">
+          <p class="lettere-eyebrow">Il Mondo Bianco</p>
+          <h1 id="lettere-title"><span aria-hidden="true">💌</span> Lettere</h1>
+          <p class="lettere-intro">Scrivi qualcosa quando ti va, o leggi quello che ho lasciato io. Restano qui, una dopo l'altra, per quando vorrete tornarci.</p>
+        </section>
+
+        <form id="letter-form" class="letter-form" aria-label="Scrivi una lettera">
+          <label class="letter-field">
+            <span>La tua lettera</span>
+            <textarea name="body" required maxlength="20000" placeholder="Scrivi qui..."></textarea>
+          </label>
+          <div class="letter-submit-row">
+            <button id="letter-submit" type="submit" class="btn btn-submit">Invia lettera</button>
+          </div>
+          <p id="letter-status" class="letter-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <section class="lettere-archive" aria-labelledby="archive-title">
+          <div class="lettere-section-heading">
+            <p class="lettere-eyebrow">L'archivio</p>
+            <h2 id="archive-title">Le lettere</h2>
+          </div>
+          <div id="letters-list" class="letters-list"></div>
+          <p id="letters-empty" class="letters-empty" hidden>Non c'è ancora nessuna lettera. Scrivi la prima.</p>
+          <p id="letters-error" class="letters-error" role="alert" hidden>Non è stato possibile caricare le lettere.</p>
+        </section>
+
+        <a class="place-bottom-link btn" href="../mondo-bianco/"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
+      </main>
+    </div>
+
+    <dialog id="letter-dialog" class="letter-dialog" aria-label="Lettera">
+      <button id="letter-dialog-close" class="letter-dialog-close" type="button" aria-label="Chiudi">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+      <div class="letter-paper">
+        <p id="letter-dialog-date" class="letter-paper-date"></p>
+        <p id="letter-dialog-body" class="letter-paper-body"></p>
+        <p id="letter-dialog-signature" class="letter-paper-signature"></p>
+      </div>
+    </dialog>
+    <script type="module" src="../auth-guard.js?v=2" data-auth-gateway="../"></script>
+    <script type="module" src="../assets/js/world/main.js?v=2"></script>
+    <script type="module" src="../assets/js/lettere/main.js?v=6"></script>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>💡 Suggerimenti | Mondo Bianco</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/css/themes.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/shell.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/world-atmosphere.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=3" />
+    <link rel="stylesheet" href="../assets/css/components/buttons.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/cards.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/typography.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/pages/suggerimenti.css?v=2" />
+  </head>
+  <body class="world-atmosphere suggerimenti-page" data-logout-url="../">
+    <div class="place-shell suggerimenti-shell">
+      <header class="place-header">
+        <a class="place-home-link" href="../mondo-bianco/" aria-label="Torna al Mondo Bianco">
+          <span aria-hidden="true">←</span><span class="place-name-optional">Il Mondo Bianco</span>
+        </a>
+        <div class="place-userbar">
+          <p id="user-greeting" class="user-greeting"></p>
+          <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema"></div>
+          <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="suggerimenti-hero" aria-labelledby="suggerimenti-title">
+          <p class="suggerimenti-eyebrow">Il Mondo Bianco</p>
+          <h1 id="suggerimenti-title"><span aria-hidden="true">💡</span> Suggerimenti</h1>
+          <p class="suggerimenti-intro">Se hai un'idea per una nuova pagina, un ricordo da aggiungere o qualcosa che vorresti vedere in questo mondo, scrivila qui. Quando potrò la leggerò e la aggiungerò.</p>
+        </section>
+
+        <form id="suggestion-form" class="suggestion-form" aria-label="Invia un suggerimento">
+          <label class="suggestion-field">
+            <span>Dove</span>
+            <select name="category" required>
+              <option value="" disabled selected>Scegli dove...</option>
+              <option value="calendario">📅 Il Calendario</option>
+              <option value="mappa">🗺️ La Mappa dei Sogni</option>
+              <option value="storie">📖 Le Storie</option>
+              <option value="cuffiette">🎧 Le Cuffiette</option>
+              <option value="bacheca">📌 La Bacheca dei Ricordi</option>
+              <option value="ponti">🌈 I Ponti</option>
+              <option value="lettere">💌 Le Lettere</option>
+              <option value="tavolo-da-gioco">🎲 Il Tavolo da Gioco</option>
+              <option value="altro">✨ Qualcos'altro / tutto il sito</option>
+            </select>
+          </label>
+          <label class="suggestion-field">
+            <span>Titolo <small>(facoltativo)</small></span>
+            <input type="text" name="title" maxlength="160" autocomplete="off" />
+          </label>
+          <label class="suggestion-field">
+            <span>Cosa vorresti aggiungere o cambiare</span>
+            <textarea name="message" required maxlength="8000" placeholder="Scrivi qui la tua idea..."></textarea>
+          </label>
+          <div class="suggestion-submit-row">
+            <button id="suggestion-submit" type="submit" class="btn btn-submit">Invia suggerimento</button>
+          </div>
+          <p id="suggestion-status" class="suggestion-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <a class="place-bottom-link btn" href="../mondo-bianco/"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
+      </main>
+    </div>
+
+    <script type="module" src="../auth-guard.js?v=2" data-auth-gateway="../"></script>
+    <script type="module" src="../assets/js/world/main.js?v=2"></script>
+    <script type="module" src="../assets/js/suggestions/main.js?v=1"></script>
+  </body>
+</html>

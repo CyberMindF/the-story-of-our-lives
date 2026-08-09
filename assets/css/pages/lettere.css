@@ -2,7 +2,7 @@
 .lettere-eyebrow { margin: 0 0 .65rem; color: #b8cad9; font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 
 .lettere-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
-.lettere-hero h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.6rem, 7vw, 4.2rem); font-weight: 400; line-height: .95; letter-spacing: -.04em; }
+.lettere-hero h1 { margin: 0; font-size: var(--hero-size-md); line-height: .95; letter-spacing: -.04em; }
 .lettere-intro { margin: 1.25rem auto 0; max-width: 34rem; color: #d1dde6; font-size: 1.05rem; line-height: 1.8; }
 
 .letter-form { width: min(100%, 46rem); margin: 0 auto; display: grid; gap: 1.15rem; padding-bottom: clamp(2.5rem, 6vw, 4rem); }
@@ -12,9 +12,6 @@
 .letter-field textarea::placeholder { color: #879bab; opacity: 1; }
 
 .letter-submit-row { display: flex; justify-content: flex-end; }
-.letter-submit-row button { min-height: 2.9rem; padding: .7rem 1.15rem; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; background: rgba(255,255,255,.1); color: #fff; font: inherit; font-weight: 750; cursor: pointer; }
-.letter-submit-row button:hover { border-color: rgba(255,255,255,.42); background: rgba(255,255,255,.16); }
-.letter-submit-row button:disabled { cursor: wait; opacity: .58; }
 
 .letter-status { margin: 0; font-size: .86rem; }
 .letter-status:empty { display: none; }

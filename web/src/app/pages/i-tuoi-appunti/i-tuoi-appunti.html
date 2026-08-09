@@ -1,0 +1,28 @@
+<app-shell homeHref="/tavolo-da-gioco/gdr/il-prezzo-della-verita" homeAria="Torna a Il Prezzo della Verità" homeLabel="Il Prezzo della Verità">
+  <nav class="ipdv-nav" aria-label="Pagine dell'avventura">
+    <a routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/avventura">L'Avventura</a>
+    <a routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/la-tua-maga">La Tua Maga</a>
+    <a routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/i-tuoi-appunti" routerLinkActive="is-current" [routerLinkActiveOptions]="{exact: true}" aria-current="page">I Tuoi Appunti</a>
+  </nav>
+
+  <section class="appunti-hero" aria-labelledby="appunti-title">
+    <p class="tavolo-eyebrow">Il Prezzo della Verità</p>
+    <h1 id="appunti-title"><span aria-hidden="true">📓</span> I Tuoi Appunti</h1>
+    <p>Qui puoi scrivere i tuoi appunti sull'avventura, magari cose che ti vuoi segnare, nomi, idee, intuizioni, un po' quello che vuoi.</p>
+  </section>
+
+  <div class="appunti-body">
+    <label for="appunti-textarea" class="sr-only">I tuoi appunti</label>
+    <textarea
+      id="appunti-textarea"
+      class="appunti-textarea"
+      placeholder="Scrivi qui i tuoi appunti..."
+      [(ngModel)]="body"
+      [disabled]="disabled()"
+      (input)="onInput()"
+    ></textarea>
+    <p class="appunti-status" role="status" aria-live="polite">{{ statusMessage() }}</p>
+  </div>
+
+  <a class="place-bottom-link btn" routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita"><span aria-hidden="true">←</span> Torna a Il Prezzo della Verità</a>
+</app-shell>

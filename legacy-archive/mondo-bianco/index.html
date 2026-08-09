@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>⭕ Il Mondo Bianco</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/css/themes.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/shell.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/world-atmosphere.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=3" />
+    <link rel="stylesheet" href="../assets/css/components/buttons.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/cards.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/typography.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/pages/world.css?v=8" />
+  </head>
+  <body class="world-atmosphere world-page" data-logout-url="../">
+    <div class="place-shell world-shell">
+      <header class="place-header world-header">
+        <a class="place-home-link world-mark" href="./" aria-label="Home del Mondo Bianco">
+          <span aria-hidden="true">⭕</span><span>Il Mondo Bianco</span>
+        </a>
+        <div class="place-userbar">
+          <p id="user-greeting" class="user-greeting"></p>
+          <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema"></div>
+          <a href="../suggerimenti/" class="suggest-link" aria-label="Manda un suggerimento" title="Suggerisci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-6 6c0 2.5 1.4 3.8 2.2 4.6.5.5.8 1.1.8 1.4h6c0-.3.3-.9.8-1.4.8-.8 2.2-2.1 2.2-4.6a6 6 0 0 0-6-6Z" /></svg>
+          </a>
+          <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <!-- Canzone e citazione aprono il viaggio come nella pagina originale. -->
+        <section class="world-opening" aria-labelledby="world-title">
+          <p class="world-eyebrow">La nostra casa</p>
+          <h1 id="world-title"><span aria-hidden="true">⭕</span> Il Mondo Bianco</h1>
+          <div class="world-music">
+            <div class="world-player">
+              <p>
+                <svg class="world-music-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 18V5l10-2v13M9 9l10-2M6.5 21C4.57 21 3 19.88 3 18.5S4.57 16 6.5 16 10 17.12 10 18.5 8.43 21 6.5 21ZM16.5 19c-1.93 0-3.5-1.12-3.5-2.5s1.57-2.5 3.5-2.5 3.5 1.12 3.5 2.5-1.57 2.5-3.5 2.5Z" />
+                </svg>
+                <span>La nostra canzone, spero ti piaccia ancora</span>
+              </p>
+              <iframe
+                title="Il Cerchio su SoundCloud"
+                width="100%"
+                height="166"
+                scrolling="no"
+                frameborder="no"
+                allow="autoplay"
+                src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fflatline-22173025%2Fil-cerchio&amp;color=%23467d77&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=false"
+              ></iframe>
+            </div>
+            <blockquote>
+              <p>Non so da dove partirò<br />Ma ovunque sarò<br />Siamo un cerchio, che non ha inizio, né una fine<br />Perché da te io sempre tornerò</p>
+            </blockquote>
+          </div>
+        </section>
+
+        <!-- Immagine simbolica pubblica proveniente dall'home originale. -->
+        <figure class="world-figure">
+          <img src="../assets/images/world/mondo-bianco.webp" alt="Un divano e un letto bianchi sotto la luna, in un cielo pieno di stelle" />
+        </figure>
+
+        <section class="world-welcome" aria-labelledby="welcome-title">
+          <p class="world-eyebrow">Finalmente sei qui</p>
+          <h2 id="welcome-title">Benvenuta nel mondo bianco</h2>
+          <p>
+            Benvenuta nel mondo bianco, ne hai sentito tanto parlare e forse ti sei chiesta cos’è e cosa intendessi dire ogni volta e finalmente eccoti qui, anche tu ci sei entrata. Forse ti ricordi com’è nato e forse no. Ma non ti preoccupare qui dentro c’è tutto quello che devi sapere su questo mondo e anche molto di più. Spero che per te sarà bello vederlo, quanto lo è stato per me farlo e sinceramente spero davvero che anche tu prenderai il tuo posto qui dentro e che questo possa essere e rimanere un luogo dove forse niente ha senso, ma per noi due si. Allora ti lascio esplorarlo e viverlo, spero che amerai perderti tra i suoi luoghi e le mie idee, e che magari questa diventerà una meta dove tornare, anche perché lo sai, ogni tanto ho aggiunto qualcosa in più. Buon viaggio
+          </p>
+        </section>
+
+        <section class="world-places" aria-labelledby="places-title">
+          <div class="world-section-heading">
+            <p class="world-eyebrow">La mappa</p>
+            <h2 id="places-title">I posti di questo mondo</h2>
+          </div>
+
+          <!-- I luoghi restano esattamente otto; quelli non migrati non producono link rotti. -->
+          <div class="world-places-grid">
+            <a class="world-place-card card is-available" href="../bacheca/"><span class="world-place-emoji">📸</span><strong>La Bacheca dei Ricordi</strong><small>Entra</small></a>
+            <a class="world-place-card card is-available" href="../mappamondo/"><span class="world-place-emoji">🌍</span><strong>Il Mappamondo</strong><small>Entra</small></a>
+            <a class="world-place-card card is-available" href="../ponti/"><span class="world-place-emoji">🌈</span><strong>I Ponti</strong><small>Entra</small></a>
+            <a class="world-place-card card is-available" href="../storie/"><span class="world-place-emoji">📖</span><strong>Le Storie</strong><small>Entra</small></a>
+            <a class="world-place-card card is-available" href="../calendario/"><span class="world-place-emoji">📅</span><strong>Il Calendario</strong><small>Entra</small></a>
+            <a class="world-place-card card is-available" href="../cuffiette/"><span class="world-place-emoji">🎧</span><strong>Le Cuffiette</strong><small>Entra</small></a>
+            <a class="world-place-card card is-available" href="../tavolo-da-gioco/"><span class="world-place-emoji">🎲</span><strong>Il Tavolo da Gioco</strong><small>Entra</small></a>
+            <a class="world-place-card card is-available" href="../mappa/"><span class="world-place-emoji">🗺️</span><strong>La Mappa</strong><small>Entra</small></a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="../auth-guard.js?v=2" data-auth-gateway="../"></script>
+    <script type="module" src="../assets/js/world/main.js?v=2"></script>
+  </body>
+</html>

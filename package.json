@@ -1,9 +1,12 @@
 {
   "name": "cruciverba",
   "version": "1.0.0",
-  "description": "Cruciverba personalizzato con frontend statico e autenticazione Cloudflare Pages Functions/D1.",
-  "main": "assets/js/crossword/main.js",
+  "description": "Il Mondo Bianco con frontend Angular e backend Cloudflare Pages Functions/D1.",
   "scripts": {
+    "start": "npm --prefix web start",
+    "build": "npm --prefix web run build",
+    "dev:api": "wrangler pages dev web/dist/web/browser --port 8788",
+    "audit:angular": "node scripts/audit-angular-routes.mjs",
     "analyze:export": "node scripts/analyze-notion-export.mjs",
     "verify:links": "node scripts/verify-external-links.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"

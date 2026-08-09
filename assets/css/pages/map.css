@@ -22,9 +22,7 @@
 
 .map-hero h1 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(4rem, 10vw, 8rem);
-  font-weight: 400;
   line-height: 0.9;
   letter-spacing: -0.06em;
 }

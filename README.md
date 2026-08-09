@@ -1,26 +1,32 @@
 # Il Mondo Bianco
 
-Applicazione del Mondo Bianco con frontend HTML/CSS/JavaScript, autenticazione tramite Cloudflare Pages Functions e dati su D1. Il cruciverba e le future esperienze sono pagine interne protette.
+Applicazione del Mondo Bianco con frontend Angular, autenticazione tramite Cloudflare Pages Functions e dati su D1. Il precedente frontend HTML/JavaScript è conservato in `legacy-archive/` soltanto per confronti e ripristini durante il cutover.
 
 ## Avvio locale
 
-Non aprire direttamente `index.html`: il caricamento di `data.json` e gli endpoint `/api/auth/*` richiedono un server. Anche `python3 -m http.server` non è più sufficiente, perché serve soltanto i file statici e non esegue Pages Functions.
-
-Installa Wrangler, prepara la chiave locale e applica le migrazioni:
+Installa le dipendenze, prepara la chiave locale e applica le migrazioni:
 
 ```bash
 npm install
+npm --prefix web install
 cp .dev.vars.example .dev.vars
 npx wrangler d1 migrations apply DB --local
 ```
 
-Modifica `WORLD_KEY` dentro `.dev.vars`, poi avvia:
+Modifica `WORLD_KEY` dentro `.dev.vars`, genera la dist Angular e avvia il backend nel primo terminale:
 
 ```bash
-npx wrangler pages dev .
+npm run build
+npm run dev:api
 ```
 
-Apri l'indirizzo mostrato da Wrangler, normalmente `http://localhost:8788`. La root mostra il Portone e l'accesso; dopo l'autenticazione si entra nell'hub su `http://localhost:8788/mondo-bianco/`. Il cruciverba è disponibile in `http://localhost:8788/tavolo-da-gioco/cruciverba/`.
+Nel secondo terminale avvia Angular:
+
+```bash
+npm start
+```
+
+Apri `http://localhost:4200`. Angular inoltra `/api/**` al backend locale su `http://localhost:8788` tramite `web/proxy.conf.json`; la porta 8788 non è il frontend di sviluppo.
 
 ## Autenticazione
 
@@ -35,13 +41,7 @@ Il token originale viene inviato in un cookie `HttpOnly`; D1 conserva soltanto i
 
 ### Pagine protette e ritorno dopo l'accesso
 
-Le future pagine del Mondo Bianco possono usare il guard condiviso prima del proprio JavaScript:
-
-```html
-<script type="module" src="../auth-guard.js" data-auth-gateway="../"></script>
-```
-
-Il tag va inserito prima dello script specifico della pagina. Il guard nasconde il contenuto durante il rapido controllo iniziale e pubblica la Promise `window.mondoBiancoAuthReady`, che l'entry point della pagina deve attendere. `data-auth-gateway` deve indicare la directory che contiene il Portone; può essere `./`, `../` o un altro percorso relativo in base alla posizione della pagina. Se sessione o Chiave non sono valide, il guard conserva l'indirizzo richiesto e porta all'accesso principale. Dopo login, registrazione o conferma della sola Chiave, il browser torna automaticamente alla pagina iniziale. Sono accettate soltanto destinazioni dello stesso dominio e mai URL sotto `/api/`.
+Le route protette sono raccolte sotto `authGuard` in `web/src/app/app.routes.ts`. Se sessione o Chiave della scheda non sono valide, il Router conserva la destinazione richiesta e torna al Portone; dopo login, registrazione o conferma della Chiave riprende la navigazione originale. Sono accettate soltanto destinazioni dello stesso dominio e mai URL sotto `/api/`.
 
 ## Media privati (R2)
 
@@ -98,9 +98,9 @@ La tabella `events` contiene sezione, tipo, versione dello schema, metadati JSON
 
 Il cruciverba registra `crossword_opened`, `crossword_closed`, `word_completed`, `crossword_completed` e `theme_changed`. La chiusura include durata e progresso, viene inviata una sola volta per apertura e usa una richiesta `keepalive` quando la pagina viene abbandonata.
 
-Il resto del Mondo Bianco usa il client condiviso `assets/js/shared/telemetry.js` (`trackEvent(section, eventType, metadata)`):
+Il frontend usa `TelemetryService` in `web/src/app/core/telemetry.service.ts`:
 
-- `world_page_opened` parte da sola su ogni pagina che carica `assets/js/world/main.js` (cioè quasi tutte le pagine del mondo): sezione derivata dal primo segmento del percorso, path completo nei metadata. Una pagina nuova risulta già tracciata senza dover toccare questo sistema di nuovo.
+- `world_page_opened` parte dalla shell condivisa per le pagine del mondo: sezione derivata dal primo segmento del percorso e path completo nei metadata.
 - Cuffiette: `song_played` al click che carica il player SoundCloud (è un iframe di terze parti, non possiamo leggere play/pausa/fine reali — il click è il segnale più vicino disponibile); la traccia bonus, essendo audio nativo, usa invece `play`/`ended` veri per `song_played`/`song_completed`; `playlist_link_clicked` sul link alla playlist esterna.
 - Lettere, GDR, Suggerimenti: `letter_sent`, `gdr_turn_submitted`, `gdr_character_saved`, `suggestion_sent` sono registrati lato server subito dopo il salvataggio riuscito, con metadata minimi (es. lunghezza del testo o nome dell'avventura) — mai il testo scritto. Gli appunti GDR restano esclusi apposta: si autosalvano a ogni pausa di scrittura, tracciarli sarebbe rumoroso quanto tracciare i tasti.
 
@@ -114,18 +114,15 @@ Prima dell'autenticazione, `POST /api/visits` crea una visita anonima identifica
 
 ## Aspetto del cruciverba
 
-Il cruciverba (`tavolo-da-gioco/cruciverba/`) usa la stessa intestazione (`.place-header`/`.place-userbar`, con saluto, selettore tema, link ai Suggerimenti e logout), lo stesso link "torna a..." in fondo alla pagina e lo stesso cielo stellato (`world-atmosphere.css`) di tutte le altre pagine del Mondo Bianco — normalizzato il 09/08/2026, prima aveva una sua intestazione e nessun cielo. Il tema di default è `the-white-world` in `assets/css/themes.css`, ma come tutte le altre pagine è selezionabile (vedi sotto). È l'unica pagina non generata dal template condiviso: ha una shell diversa (`.app-shell`) ed è un caso singolo, non ripetuto, quindi non c'è duplicazione di markup da eliminare lì — l'header/userbar e il wiring del selettore tema restano scritti a mano in quella pagina, tenuti allineati manualmente a `templates/world-page.html`.
+Il cruciverba (`/tavolo-da-gioco/cruciverba`) usa `AppShell`, lo stesso cielo stellato e gli stessi temi delle altre pagine. La UI specifica è suddivisa nei componenti sotto `web/src/app/pages/cruciverba/`; logica, persistenza, sincronizzazione e telemetria vivono nel `CrosswordService`. Il CSS specifico resta `assets/css/pages/crossword.css`, caricato direttamente dal componente Angular.
 
-## Template delle pagine del Mondo Bianco
+## Struttura delle pagine Angular
 
-Le altre 16 pagine del Mondo Bianco (incluse le 4 del Gioco di Ruolo) sono generate da un template condiviso, invece di avere l'header/userbar/footer copiati a mano in ogni `index.html`:
+Le route lazy sono dichiarate in `web/src/app/app.routes.ts`. Ogni pagina usa `AppShell` per header, userbar, temi e logout; i contenuti vivono in `web/src/app/pages/`, mentre servizi e componenti trasversali sono in `web/src/app/core/` e `web/src/app/shared/`. Il vecchio sistema di template e gli HTML generati sono congelati in `legacy-archive/` e non fanno parte della build.
 
-- `templates/world-page.html`: lo scheletro condiviso (head, `.place-header`/`.place-userbar` con saluto, selettore tema, link Suggerimenti, logout, `<main>`, script comuni).
-- `templates/pages/<slug>.content.html`: il contenuto specifico di ogni pagina (quello che va dentro `<main>`); `<slug>.extrabody.html` per markup extra fuori da `<main>` (es. i dialog di Bacheca e Lettere).
-- `scripts/world-pages.manifest.mjs`: l'elenco delle pagine con titolo, classi, link "home", CSS/script aggiuntivi.
-- `scripts/build-world-pages.mjs`: legge template + manifest + contenuti e riscrive gli `index.html` finali nel repo. Va rilanciato (`node scripts/build-world-pages.mjs`) ogni volta che si tocca il template o un frammento di contenuto; i file generati sono normali file statici, Cloudflare Pages non cambia modo di servirli.
+Bottoni e card hanno classi condivise in `assets/css/components/buttons.css` (`.btn`, con i modifier `.btn-accent` per il colore oro ricorrente e `.btn-submit` per i bottoni di invio nei form) e `assets/css/components/cards.css` (`.card` per il pannello "frost" scuro, `.card--compact` per le righe di lista, `.card--paper` per l'inserto a foglio chiaro usato in Calendario e Mappamondo, `.card--dialog` per le finestre modali).
 
-Il selettore tema (5 pallini colorati: Notte/Ocean/Velvet/Red of You/Green of Me, gestito da `assets/js/shared/theme.js`) compare ora nella userbar di tutte queste pagine, con lo stesso `localStorage` già condiviso da sempre tra loro. Cambia subito `--focus-color` e il tint del cielo stellato; i colori hardcoded di ogni pagina non seguono ancora il tema — è un refactoring più profondo, non ancora fatto.
+Il selettore tema (5 pallini colorati: Notte/Ocean/Velvet/Red of You/Green of Me) è gestito da `ThemeService` e conserva la scelta nello stesso `localStorage` usato dal sito precedente. Cambia subito `--focus-color` e il tint del cielo stellato.
 
 ## Progresso persistente
 
@@ -166,15 +163,15 @@ Le tre pagine sono collegate da una barra di pillole in cima (`.ipdv-nav`, stess
 
 ## Redirect legacy
 
-`_redirects` alla radice del progetto fa da ponte con i vecchi short link `rsgmsfcfm.short.gy/<slug>` dell'export originale: ogni slug (`il-calendario`, `la-mappa`, ecc.) reindirizza con 301 alla route reale corrispondente. `la-bacheca` è 302 e punta temporaneamente a `/mondo-bianco/`, finché quella pagina non è migrata. Short.gy resta un servizio esterno: per usare questi alias bisogna aggiornare manualmente ogni short link perché punti a `https://<dominio>/<slug>` invece del vecchio URL Notion.
+`_redirects` alla radice del progetto fa da ponte con i vecchi short link `rsgmsfcfm.short.gy/<slug>` dell'export originale: ogni slug (`il-calendario`, `la-mappa`, `la-bacheca`, ecc.) reindirizza con 301 alla route Angular corrispondente. Short.gy resta un servizio esterno: per usare questi alias bisogna aggiornare manualmente ogni short link perché punti a `https://<dominio>/<slug>` invece del vecchio URL Notion.
 
 ## Pagina 404
 
-`404.html` alla radice del progetto viene servita automaticamente da Cloudflare Pages per qualunque URL non esistente, indipendentemente dalla profondità del percorso. Usa esclusivamente percorsi assoluti (`/assets/...`, `/mondo-bianco/`, `/suggerimenti/`) invece che relativi, perché la pagina può essere raggiunta da URL rotti a qualsiasi livello di annidamento. Non richiede autenticazione propria: il bottone di ritorno passa dal guard reale di `/mondo-bianco/`, che riporta l'utente già autenticato dentro l'hub o lo instrada dal Portone se la sessione non è valida.
+Le route sconosciute sono gestite dalla route wildcard Angular, che mostra la pagina 404 interna e mantiene i collegamenti al Mondo Bianco e ai suggerimenti. Il fallback SPA di Cloudflare Pages serve `index.html` anche sugli URL sconosciuti; la vecchia `404.html` resta in `legacy-archive/` soltanto come riferimento reversibile.
 
 ## Pubblicazione
 
-Collega il repository GitHub a un progetto Cloudflare Pages. Non è necessario un comando di build; la directory di output è la root del repository. Prima del primo utilizzo:
+Collega il repository GitHub a Cloudflare Pages usando `npm run build` come comando di build e `web/dist/web/browser` come directory di output. Prima del primo utilizzo:
 
 1. collega il database D1 al binding `DB`;
 2. configura il secret `WORLD_KEY`;
@@ -197,18 +194,15 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 ## File principali
 
 - `data.json`: parole, definizioni, coordinate e ordine narrativo.
-- `index.html`: Portone e interfaccia di autenticazione.
-- `mondo-bianco/index.html`: home autenticata del Mondo Bianco.
+- `web/src/app/portone/`: Portone e interfaccia di autenticazione.
+- `web/src/app/pages/`: pagine lazy del Mondo Bianco.
 - `assets/css/themes.css`: variabili e quattro temi condivisi dalla piattaforma.
 - `assets/css/components/`: componenti condivisi, come shell e accesso.
 - `assets/css/pages/`: stile specifico delle singole pagine e dei luoghi.
-- `assets/js/world/main.js`: inizializzazione condivisa delle pagine del Mondo Bianco.
 - `content/calendar.json`, `content/stories.json`, `content/map.json`, `content/music.json`: raccolte statiche ordinate direttamente dalla posizione nell'array.
 - `scripts/build-music-content.mjs`: ricostruisce i nove brani e le citazioni delle Cuffiette dalla fonte originale congelata, senza correggerne il testo.
-- `tavolo-da-gioco/cruciverba/index.html`: pagina del cruciverba.
-- `assets/js/crossword/main.js`: entry point e interfaccia del cruciverba.
-- `assets/js/shared/`: autenticazione, API, navigazione, visite e temi riutilizzabili.
-- `auth-guard.js`: protezione riutilizzabile e ritorno alla pagina richiesta dopo l'accesso.
+- `web/src/app/pages/cruciverba/`: componenti e servizio del cruciverba.
+- `web/src/app/core/`, `web/src/app/shared/`: autenticazione, API, navigazione, visite, temi e UI condivisa.
 - `functions/api/auth/`: API di registrazione, login e sessione.
 - `functions/api/crossword/`: API dello stato persistente del cruciverba.
 - `functions/api/telemetry/`: eventi generali e cronologia dei tentativi.
@@ -218,13 +212,12 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 - `functions/api/gdr/notes.js`: lettura/salvataggio del blocco appunti personale per le avventure del Gioco di Ruolo.
 - `functions/api/gdr/character.js`: lettura/salvataggio della scheda personaggio compilabile.
 - `functions/api/gdr/turns.js`: lettura/scrittura del thread di gioco condiviso (i turni del play-by-chat).
-- `tavolo-da-gioco/gdr/il-prezzo-della-verita/`: hub dell'avventura, con le sotto-pagine `avventura/`, `la-tua-maga/`, `i-tuoi-appunti/`.
-- `assets/js/gdr/`: logica delle pagine dell'avventura (scheda personaggio, thread di gioco).
+- `web/src/app/pages/{gdr,il-prezzo-della-verita,avventura,la-tua-maga,i-tuoi-appunti}/`: hub e pagine dell'avventura.
 - `functions/api/media/[[path]].js`: accesso autenticato ai media privati conservati in R2.
 - `content/bacheca.json`: struttura della Bacheca dei Ricordi, con chiavi R2 di foto e miniature.
 - `scripts/build-bacheca-content.mjs`, `scripts/upload-bacheca-media.mjs`, `scripts/build-bacheca-thumbnails.mjs`: ricostruzione della struttura, import degli originali e generazione miniature per la Bacheca.
 - `scripts/optimize-world-images.mjs`: converte in WebP (qualità 82, tramite `sharp`) le immagini hero/decorative pubbliche (`assets/images/world/`, `assets/images/gdr/`), lasciando intatti gli originali PNG/JPG accanto al file ottimizzato. Idempotente: si può rilanciare in sicurezza dopo aver aggiunto nuove immagini in quelle cartelle.
-- `404.html`: pagina non trovata, servita automaticamente da Cloudflare Pages con percorsi assoluti.
+- `legacy-archive/`: frontend vanilla congelato e non pubblicato, mantenuto temporaneamente per confronti e rollback.
 - `_redirects`: alias verso le nuove route per i vecchi short link controllabili.
 - `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.
 - `wrangler.toml`: configurazione Cloudflare e binding D1.

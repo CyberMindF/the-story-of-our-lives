@@ -1,0 +1,103 @@
+<app-shell>
+  <section class="map-hero" aria-labelledby="map-title">
+    <p class="map-eyebrow">I posti che abbiamo immaginato</p>
+    <h1 id="map-title"><span aria-hidden="true">🗺️</span> La Mappa</h1>
+    <div class="map-introduction">
+      @for (paragraph of introduction(); track $index) {
+        <p>{{ paragraph }}</p>
+      }
+    </div>
+  </section>
+
+  <section class="dream-map-section" aria-labelledby="dream-map-title">
+    <div class="map-section-heading">
+      <p class="map-eyebrow">Le puntine</p>
+      <h2 id="dream-map-title">La nostra mappa dei sogni</h2>
+    </div>
+
+    <div class="dream-map-layout">
+      <div class="dream-map-scroll" tabindex="0" aria-label="Mappa visuale delle destinazioni, scorribile orizzontalmente">
+        <div class="dream-map">
+          <img class="world-map-image" src="assets/images/world/map/world-equal-earth.svg" alt="" aria-hidden="true" />
+          <div class="map-grid" aria-hidden="true"></div>
+          <div class="map-pins">
+            @for (pin of pins(); track pin.destination.id) {
+              <button
+                type="button"
+                class="map-pin"
+                [class.is-open]="pin.destination.isOpen"
+                [style.--pin-x]="pin.x + '%'"
+                [style.--pin-y]="pin.y + '%'"
+                [attr.aria-label]="'Mostra ' + pin.destination.name"
+                [attr.aria-pressed]="selectedId() === pin.destination.id"
+                (click)="selectDestination(pin.destination.id)"
+              >
+                <span class="pin-dot"></span>
+                <span class="pin-label"><small>{{ (pin.index + 1).toString().padStart(2, '0') }}</small><strong>{{ pin.destination.name }}</strong></span>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      @if (selected(); as preview) {
+        <article class="map-preview" [class.has-no-image]="!preview.cover" aria-live="polite">
+          <div class="map-preview-image-wrap">
+            @if (preview.cover) {
+              <img class="map-preview-image" [src]="preview.cover.src" [alt]="preview.cover.alt" />
+            } @else {
+              <img class="map-preview-image" alt="" />
+            }
+            <span class="map-preview-number">{{ (preview.index + 1).toString().padStart(2, '0') }}</span>
+          </div>
+          <div class="map-preview-copy">
+            <p class="map-eyebrow">{{ preview.label }}</p>
+            <h3>{{ preview.view.destination.name }}</h3>
+            <p>{{ preview.firstParagraph }}</p>
+            <a [href]="'#destination-' + preview.view.destination.id">Leggi questo ricordo <span aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="destination-section" aria-labelledby="travel-diary-title">
+    <div class="map-section-heading">
+      <h2 id="travel-diary-title">Il diario di viaggio</h2>
+    </div>
+    <div class="destination-list">
+      @for (view of destinationViews(); track view.destination.id) {
+        <article
+          [id]="'destination-' + view.destination.id"
+          class="destination-entry"
+          [class.is-open]="view.destination.isOpen"
+          [class.has-no-images]="!view.hasImages"
+        >
+          <header class="destination-heading">
+            <span>{{ (view.index + 1).toString().padStart(2, '0') }}</span>
+            <h3>{{ view.destination.name }}</h3>
+          </header>
+          <div class="destination-narrative">
+            @for (passage of view.passages; track $index) {
+              <section class="destination-passage" [class.is-long]="passage.isLong">
+                @if (passage.images.length) {
+                  <div class="destination-gallery" [class]="'images-' + passage.images.length">
+                    @for (image of passage.images; track $index) {
+                      <figure><img [src]="image.src" [alt]="image.alt" loading="lazy" /></figure>
+                    }
+                  </div>
+                }
+                <p>{{ passage.text }}</p>
+              </section>
+            }
+          </div>
+        </article>
+      }
+    </div>
+    @if (loadError()) {
+      <p class="map-error" role="alert">Non è stato possibile caricare la mappa.</p>
+    }
+  </section>
+
+  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
+</app-shell>

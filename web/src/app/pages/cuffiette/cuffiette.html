@@ -1,0 +1,88 @@
+<app-shell>
+  <section class="music-hero" aria-labelledby="music-title">
+    <figure class="music-hero-figure">
+      <img src="assets/images/world/cuffiette.webp" alt="Un paio di cuffiette wireless su un tavolo di legno chiaro, accanto a una ciotola di rose bianche" />
+    </figure>
+    <h1 id="music-title"><span aria-hidden="true">🎧</span> Le Cuffiette</h1>
+    @if (data(); as musicData) {
+      <div class="playlist-card card">
+        <div>
+          <p class="music-eyebrow">La playlist</p>
+          <p class="playlist-name">{{ musicData.playlist.name }}</p>
+          <p>{{ musicData.playlist.introduction }}</p>
+        </div>
+        <a class="btn btn-accent" [href]="musicData.playlist.url" target="_blank" rel="noopener noreferrer" (click)="onPlaylistLinkClick()">
+          Apri la playlist <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    }
+  </section>
+
+  @if (data(); as musicData) {
+    <section class="songs-section" aria-labelledby="songs-title">
+      <div class="songs-heading">
+        <p class="music-eyebrow">Nove canzoni</p>
+        <h2 id="songs-title">Quelle che ho scritto pensando a noi</h2>
+        <p [innerHTML]="songsIntroductionHtml()"></p>
+      </div>
+      <div class="music-layout">
+        <nav class="track-list" aria-label="Indice delle canzoni">
+          @for (song of musicData.songs; track song.id; let i = $index) {
+            <a [href]="'#song-' + song.id"><span>{{ (i + 1).toString().padStart(2, '0') }}</span><strong>{{ song.title }}</strong></a>
+          }
+        </nav>
+        <div class="songs-list">
+          @for (song of musicData.songs; track song.id; let i = $index) {
+            <article [id]="'song-' + song.id" class="song-entry">
+              <header><span>{{ (i + 1).toString().padStart(2, '0') }}</span><h3>{{ song.title }}</h3></header>
+              <p class="song-introduction">{{ song.introduction }}</p>
+              <div class="song-player">
+                @if (isPlaying(song.id)) {
+                  <iframe [title]="'Player di ' + song.title" allow="autoplay" loading="lazy" [src]="soundcloudSrc(song)"></iframe>
+                } @else {
+                  <button type="button" class="btn btn-accent" (click)="loadPlayer(song)">Ascolta su SoundCloud <span aria-hidden="true">▶</span></button>
+                }
+              </div>
+              <details class="lyrics">
+                <summary>Leggi il testo completo <span aria-hidden="true">＋</span></summary>
+                <div>
+                  @for (line of song.lyrics.split('\n'); track $index) {
+                    <p>{{ line }}</p>
+                  }
+                </div>
+              </details>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    @if (bonusUrl(); as src) {
+      <section class="bonus-section" aria-labelledby="bonus-title">
+        <p class="music-eyebrow">Una traccia in più</p>
+        <h2 id="bonus-title">Bonus</h2>
+        <audio controls preload="none" [src]="src" (play)="onBonusPlay()" (ended)="onBonusEnded()"></audio>
+      </section>
+    }
+
+    <section class="stolen-section" aria-labelledby="stolen-title">
+      <p class="music-eyebrow">Frasi conservate</p>
+      <h2 id="stolen-title">Parole Rubate</h2>
+      <p>{{ musicData.stolenWords.introduction }}</p>
+      <div class="stolen-words">
+        @for (item of musicData.stolenWords.items; track $index) {
+          <blockquote>
+            <p>{{ item.quote }}</p>
+            <cite>{{ item.source }}</cite>
+          </blockquote>
+        }
+      </div>
+    </section>
+  }
+
+  @if (loadError()) {
+    <p class="music-error" role="alert">Non è stato possibile caricare Le Cuffiette.</p>
+  }
+
+  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
+</app-shell>

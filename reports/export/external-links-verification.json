@@ -1,9 +1,8 @@
 {
-  "generatedAt": "2026-08-07T22:32:52.838Z",
+  "generatedAt": "2026-08-09T12:51:36.097Z",
   "totals": {
     "total": 36,
-    "reachable": 35,
-    "network-error": 1
+    "reachable": 36
   },
   "results": [
     {
@@ -26,7 +25,7 @@
       ],
       "domain": "rsgmsfcfm.short.gy",
       "status": 200,
-      "finalUrl": "https://app.notion.com/p/La-Bacheca-dei-Ricordi-31479ac3576c80e2ab7cfa11d7923c60?clid=eyJpIjoiSjdFRnZyQmwtRjZhSUw0dDFRaExTIiwiaCI6IiIsInAiOiIvbGEtYmFjaGVjYSIsInQiOjE3ODYxNDE5MzN9.690HJnxxIY880ARnQSQDw58N940mAzTai8B9IQiwECg",
+      "finalUrl": "https://app.notion.com/p/La-Bacheca-dei-Ricordi-31479ac3576c80e2ab7cfa11d7923c60?clid=eyJpIjoiWnR4bGRkcllGNVV2SkMyUkhGYTk0IiwiaCI6IiIsInAiOiIvbGEtYmFjaGVjYSIsInQiOjE3ODYyNzk4NzB9.CfpUR4RxnXWhXlgykVQ3bfbnq7crifQgN0zFpyJh5PQ",
       "outcome": "reachable"
     },
     {
@@ -37,7 +36,7 @@
       ],
       "domain": "rsgmsfcfm.short.gy",
       "status": 200,
-      "finalUrl": "https://app.notion.com/p/Il-Mappamondo-31479ac3576c804da18ddd4d20aa9926?clid=eyJpIjoiZUYwLXRPRVNvTXo5QVpvQzRfSUhtIiwiaCI6IiIsInAiOiIvaWwtbWFwcGFtb25kbyIsInQiOjE3ODYxNDE5MzR9.kpWeIUI1TuP2VHlw5g1QGpvDg0deAW7vKViS_taBsFQ",
+      "finalUrl": "https://app.notion.com/p/Il-Mappamondo-31479ac3576c804da18ddd4d20aa9926?clid=eyJpIjoidEF3Q2VDQ2lURmE5VF8yby1WZ2xTIiwiaCI6IiIsInAiOiIvaWwtbWFwcGFtb25kbyIsInQiOjE3ODYyNzk4NzF9.ZaXxEcbQwCR59xBxDqjzS-nRJkPOW5yu7_kR6zlSMGI",
       "outcome": "reachable"
     },
     {
@@ -48,7 +47,7 @@
       ],
       "domain": "rsgmsfcfm.short.gy",
       "status": 200,
-      "finalUrl": "https://app.notion.com/p/I-Ponti-31479ac3576c80599f2eef4b8d5c6774?clid=eyJpIjoiRi1HMEhwZ19PT3RVMWhnTG5sZDJVIiwiaCI6IiIsInAiOiIvaS1wb250aSIsInQiOjE3ODYxNDE5MzV9.YBFp_UUoR-IJDKDU3eBlaoNYhqF8bVV8V4EiPEuQt8E",
+      "finalUrl": "https://app.notion.com/p/I-Ponti-31479ac3576c80599f2eef4b8d5c6774?clid=eyJpIjoiVElJcVFILVBrMHFNbExodmVCck1GIiwiaCI6IiIsInAiOiIvaS1wb250aSIsInQiOjE3ODYyNzk4NzJ9.asrROb-Waklh63fm1-fqr-PLge1CkgN14L1eDNHNjQE",
       "outcome": "reachable"
     },
     {
@@ -59,7 +58,7 @@
       ],
       "domain": "rsgmsfcfm.short.gy",
       "status": 200,
-      "finalUrl": "https://app.notion.com/p/Le-Storie-31479ac3576c80e9a2e1e4bccf7f1108?clid=eyJpIjoiRGxMSXdxaGxZNTAtMjNjdzhGM2RiIiwiaCI6IiIsInAiOiIvbGUtc3RvcmllIiwidCI6MTc4NjE0MTkzNn0.cOh1NhmPumFWdiM7iYgTLVoqJjGChDby5X8sQrJAL30",
+      "finalUrl": "https://app.notion.com/p/Le-Storie-31479ac3576c80e9a2e1e4bccf7f1108?clid=eyJpIjoiNkdwaVc0b1RPdHdSaFZYUDZDMEtJIiwiaCI6IiIsInAiOiIvbGUtc3RvcmllIiwidCI6MTc4NjI3OTg3Mn0.KK3ib_tPMRgxP6MTQ3dP_UqzzE_5XLgSNWPN6kGjDrc",
       "outcome": "reachable"
     },
     {
@@ -70,7 +69,7 @@
       ],
       "domain": "rsgmsfcfm.short.gy",
       "status": 200,
-      "finalUrl": "https://app.notion.com/p/Il-Calendario-31479ac3576c80e78ea2ff4f898c0139?clid=eyJpIjoiQXo3X2k3dE1FLUR3aVc3TTV5YUd2IiwiaCI6IiIsInAiOiIvaWwtY2FsZW5kYXJpbyIsInQiOjE3ODYxNDE5Mzd9.hxIYzev4VRI8xJDmzjC9POTfgnpaGJxIYdmo0Uvitao",
+      "finalUrl": "https://app.notion.com/p/Il-Calendario-31479ac3576c80e78ea2ff4f898c0139?clid=eyJpIjoiclZJei1hT3lsZ0l0eXRtOUpWYXllIiwiaCI6IiIsInAiOiIvaWwtY2FsZW5kYXJpbyIsInQiOjE3ODYyNzk4NzN9.kjNdSIbFjLwnO_AcSM21Q8ZaqVD7ZgsOORMtXzsuBmo",
       "outcome": "reachable"
     },
     {
@@ -80,10 +79,9 @@
         "⭕ Il Mondo Bianco"
       ],
       "domain": "rsgmsfcfm.short.gy",
-      "status": null,
-      "finalUrl": null,
-      "outcome": "network-error",
-      "error": "Command failed: curl --location --silent --show-error --output /dev/null --max-time 15 --user-agent MondoBiancoLinkVerifier/1.0 --write-out %{http_code}\t%{url_effective} https://rsgmsfcfm.short.gy/la-cuffiette\ncurl: (28) Connection timed out after 15006 milliseconds\n"
+      "status": 200,
+      "finalUrl": "https://app.notion.com/p/Le-Cuffiette-31479ac3576c80a7836bc576143df23a?clid=eyJpIjoiUGdHdzBnc0VVNFdMR3dPQnh2RmxiIiwiaCI6IiIsInAiOiIvbGEtY3VmZmlldHRlIiwidCI6MTc4NjI3OTg3NH0.7aKv1sKjdDc4wEm4od01_eF6625P30GISIuE2t1pFXo",
+      "outcome": "reachable"
     },
     {
       "href": "https://rsgmsfcfm.short.gy/il-tavolo",
@@ -93,7 +91,7 @@
       ],
       "domain": "rsgmsfcfm.short.gy",
       "status": 200,
-      "finalUrl": "https://app.notion.com/p/Il-Tavolo-da-Gioco-32b79ac3576c803bae9aef8c3afe520d?source=copy_link&clid=eyJpIjoiVHpaUndKUGNYT1duaVlFSGs3RFVtIiwiaCI6IiIsInAiOiIvaWwtdGF2b2xvIiwidCI6MTc4NjE0MTk1M30.IpmSZii85UGf7eDxu68G0nJW_hiftMOUb4PzIIUY2q0",
+      "finalUrl": "https://app.notion.com/p/Il-Tavolo-da-Gioco-32b79ac3576c803bae9aef8c3afe520d?source=copy_link&clid=eyJpIjoicFB2S3lmSWJ0eE85RVRBRHc0N29UIiwiaCI6IiIsInAiOiIvaWwtdGF2b2xvIiwidCI6MTc4NjI3OTg3NH0.LVcupLRkhZohr1GRfISxNjQ_Nlt43lS-TvKgPSX1Gig",
       "outcome": "reachable"
     },
     {
@@ -104,7 +102,7 @@
       ],
       "domain": "rsgmsfcfm.short.gy",
       "status": 200,
-      "finalUrl": "https://app.notion.com/p/La-Mappa-33979ac3576c803980f8e722d5d9c8d6?clid=eyJpIjoiWUF2dzd1TWFVTC1DU2tXbkVReWFjIiwiaCI6IiIsInAiOiIvbGEtbWFwcGEiLCJ0IjoxNzg2MTQxOTU0fQ.d-GZYDuxaOJIAiWojUCMR-fhsqRnm7d8tjUk6UHkoHA",
+      "finalUrl": "https://app.notion.com/p/La-Mappa-33979ac3576c803980f8e722d5d9c8d6?clid=eyJpIjoiZHotdU1RaV9ZQ3RCMWxEa1o0dVJWIiwiaCI6IiIsInAiOiIvbGEtbWFwcGEiLCJ0IjoxNzg2Mjc5ODc1fQ.Kpb2nwobis3-pRBErpUDBsQ8b5rNxl7NYgpEKuc0GxM",
       "outcome": "reachable"
     },
     {
@@ -203,7 +201,7 @@
       ],
       "domain": "rsgmsfcfm.short.gy",
       "status": 200,
-      "finalUrl": "https://open.spotify.com/playlist/0Vb1LueDMw2SjbQjCAfrMk?si=51ec3ea7faa14386&clid=eyJpIjoidnhDREVaV2xHUlBFOXdWWDFsVUhrIiwiaCI6IiIsInAiOiIvZHRoYyIsInQiOjE3ODYxNDE5NjB9.jjjEB8R8KJ_vp8O9Xg-ilGDseHoy6boRk86TkmAU6AU",
+      "finalUrl": "https://open.spotify.com/playlist/0Vb1LueDMw2SjbQjCAfrMk?si=51ec3ea7faa14386&clid=eyJpIjoiZW9TcV9YUVliRTFtNEN6Wk1SSldsIiwiaCI6IiIsInAiOiIvZHRoYyIsInQiOjE3ODYyNzk4ODN9.-olJt_p43Jpr1xyQUMf44UijpTMFp_YAlVVLccjXXn8",
       "outcome": "reachable"
     },
     {
@@ -302,7 +300,7 @@
       ],
       "domain": "rsgmsfcfm.short.gy",
       "status": 200,
-      "finalUrl": "https://drive.google.com/drive/folders/1zXOQIQeJUrqB2SQD9K_r3GQvXwEVOh5t?usp=drive_link&clid=eyJpIjoiUGMxMzNIQlJZZGR5dG11Mk83NTl1IiwiaCI6IiIsInAiOiIvZ2RyIiwidCI6MTc4NjE0MTk2NH0.QUBVgtn6gFjpBHmaT-MY5V8X_0x5W_PF3g7cuorsMyU",
+      "finalUrl": "https://drive.google.com/drive/folders/1zXOQIQeJUrqB2SQD9K_r3GQvXwEVOh5t?usp=drive_link&clid=eyJpIjoiTW85TkZCRXBrbjJtUXRYb1NqcnhmIiwiaCI6IiIsInAiOiIvZ2RyIiwidCI6MTc4NjI3OTg4Nn0.xrJBUQ8QUuwbXnbk6qh3SpRBE8wo8QcgNjE1Rt83UVM",
       "outcome": "reachable"
     },
     {

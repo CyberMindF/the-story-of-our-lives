@@ -51,9 +51,7 @@
 
 .stories-title-block h1 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(3.5rem, 8vw, 7rem);
-  font-weight: 400;
   line-height: 0.95;
   letter-spacing: -0.055em;
 }
@@ -321,25 +319,6 @@
 
 .suggestion-submit-row button {
   flex: 0 0 auto;
-  min-height: 2.9rem;
-  padding: 0.7rem 1.15rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  font: inherit;
-  font-weight: 750;
-  cursor: pointer;
-}
-
-.suggestion-submit-row button:hover {
-  border-color: rgba(255, 255, 255, 0.42);
-  background: rgba(255, 255, 255, 0.16);
-}
-
-.suggestion-submit-row button:disabled {
-  cursor: wait;
-  opacity: 0.58;
 }
 
 .suggestion-status {
@@ -361,8 +340,7 @@
 
 .suggestion-field input:focus-visible,
 .suggestion-field textarea:focus-visible,
-.suggestion-trigger:focus-visible,
-.suggestion-submit-row button:focus-visible {
+.suggestion-trigger:focus-visible {
   outline: 3px solid var(--focus-color);
   outline-offset: 3px;
 }

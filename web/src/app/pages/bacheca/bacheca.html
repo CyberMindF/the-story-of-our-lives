@@ -1,0 +1,94 @@
+<app-shell>
+  <section class="bacheca-hero" aria-labelledby="bacheca-title">
+    <p class="bacheca-eyebrow">Il Mondo Bianco</p>
+    <h1 id="bacheca-title"><span aria-hidden="true">📸</span> La Bacheca dei Ricordi</h1>
+    <div class="bacheca-intro">
+      @for (paragraph of introduction(); track $index) {
+        <p>{{ paragraph }}</p>
+      }
+    </div>
+  </section>
+
+  <nav class="bacheca-index" aria-label="Indice dei ricordi">
+    @for (link of indexLinks(); track link.id) {
+      <a [href]="'#' + link.id">{{ link.label }}</a>
+    }
+  </nav>
+
+  <ng-template #photoGrid let-photos="photos">
+    <div class="bacheca-grid">
+      @for (photo of photos; track $index; let i = $index) {
+        <button type="button" class="bacheca-thumb" (click)="openLightbox(photos, i)">
+          <img [src]="mediaUrl(photo.thumbKey || photo.key)" [alt]="photo.caption || 'Foto della Bacheca dei Ricordi'" loading="lazy" />
+        </button>
+      }
+    </div>
+  </ng-template>
+
+  <div class="bacheca-sections">
+    @for (period of periodViews(); track period.title) {
+      <section class="bacheca-period">
+        <h2>{{ period.title }}</h2>
+        @for (day of period.days; track day.id) {
+          <article class="bacheca-day" [id]="day.id" tabindex="-1">
+            @if (day.title) {
+              <h3>{{ day.title }}</h3>
+            }
+            @for (block of day.blocks; track $index) {
+              @switch (block.kind) {
+                @case ('unit') {
+                  <div class="bacheca-unit card">
+                    @if (block.leadingText) {
+                      <p class="bacheca-text">{{ block.text }}</p>
+                      <ng-container [ngTemplateOutlet]="photoGrid" [ngTemplateOutletContext]="{ photos: block.photos }" />
+                    } @else {
+                      <ng-container [ngTemplateOutlet]="photoGrid" [ngTemplateOutletContext]="{ photos: block.photos }" />
+                      <p class="bacheca-text">{{ block.text }}</p>
+                    }
+                  </div>
+                }
+                @case ('photo-grid') {
+                  <ng-container [ngTemplateOutlet]="photoGrid" [ngTemplateOutletContext]="{ photos: block.photos }" />
+                }
+                @case ('text') {
+                  <p class="bacheca-text">{{ block.text }}</p>
+                }
+                @case ('external') {
+                  <a class="bacheca-external btn btn-accent" [href]="block.href" target="_blank" rel="noopener noreferrer">Apri il contenuto esterno ↗</a>
+                }
+              }
+            }
+          </article>
+        }
+      </section>
+    }
+  </div>
+
+  @if (loadError()) {
+    <p class="bacheca-error" role="alert">Non è stato possibile caricare la Bacheca dei Ricordi.</p>
+  }
+
+  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
+</app-shell>
+
+<dialog #lightbox class="bacheca-lightbox" aria-label="Foto ingrandita">
+  @if (activeGallery().length > 1) {
+    <button class="lightbox-nav lightbox-prev" type="button" aria-label="Foto precedente" (click)="stepLightbox(-1)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6" /></svg>
+    </button>
+  }
+  <figure>
+    @if (activePhoto(); as photo) {
+      <img [src]="mediaUrl(photo.key)" [alt]="photo.caption || 'Foto della Bacheca dei Ricordi'" />
+      <figcaption>{{ photo.caption || '' }}</figcaption>
+    }
+  </figure>
+  @if (activeGallery().length > 1) {
+    <button class="lightbox-nav lightbox-next" type="button" aria-label="Foto successiva" (click)="stepLightbox(1)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
+    </button>
+  }
+  <button class="lightbox-close" type="button" aria-label="Chiudi" (click)="closeLightbox()">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+  </button>
+</dialog>

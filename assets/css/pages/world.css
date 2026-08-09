@@ -26,9 +26,7 @@
 
 .world-opening h1 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(3.5rem, 9vw, 7.5rem);
-  font-weight: 400;
   line-height: 0.92;
   letter-spacing: -0.055em;
 }
@@ -151,12 +149,8 @@
   align-items: center;
   min-height: 8rem;
   padding: 1.15rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 1.1rem;
-  background: rgba(255, 255, 255, 0.07);
   color: #f4f7fb;
   text-decoration: none;
-  backdrop-filter: blur(12px);
 }
 
 .world-place-emoji {

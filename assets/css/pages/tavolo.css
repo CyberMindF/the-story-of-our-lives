@@ -5,7 +5,7 @@
 .tavolo-hero { padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 4rem); }
 .tavolo-hero-figure { width: min(100%, 58rem); margin: 0 auto; overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: clamp(1.2rem, 3vw, 2rem); box-shadow: 0 2rem 6rem rgba(0,0,0,.32); }
 .tavolo-hero-figure img { display: block; width: 100%; height: auto; }
-.tavolo-hero h1 { width: min(100%, 58rem); margin: clamp(1.2rem, 3vw, 2rem) auto 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(3rem, 7vw, 6rem); font-weight: 400; line-height: .95; letter-spacing: -.05em; }
+.tavolo-hero h1 { width: min(100%, 58rem); margin: clamp(1.2rem, 3vw, 2rem) auto 0; font-size: var(--hero-size-lg); line-height: .95; letter-spacing: -.05em; }
 .tavolo-hero h1 span { display: inline-block; font-family: system-ui, sans-serif; font-size: .42em; vertical-align: .2em; }
 .tavolo-hero-text-only .tavolo-eyebrow { width: min(100%, 58rem); margin: 0 auto .65rem; }
 
@@ -28,26 +28,24 @@
 .rules-block > p { margin: 0 0 1rem; color: #d1dde6; line-height: 1.75; }
 
 .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; margin: 1rem 0; }
-.stat-card { padding: 1rem 1.15rem; border: 1px solid rgba(255,255,255,.14); border-radius: 1rem; background: rgba(255,255,255,.06); }
+.stat-card { padding: 1rem 1.15rem; }
 .stat-card span { font-size: 1.3rem; }
 .stat-card strong { display: block; margin: .3rem 0 .2rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.1rem; font-weight: 400; color: #e9cf9d; }
 .stat-card p { margin: 0; color: #c3d1dc; font-size: .88rem; line-height: 1.5; }
 
 .outcome-list, .ability-list { margin: 0; padding: 0; list-style: none; display: grid; gap: .6rem; }
-.outcome-list li, .ability-list li { padding: .75rem 1rem; border: 1px solid rgba(255,255,255,.12); border-radius: .8rem; background: rgba(255,255,255,.04); color: #d1dde6; line-height: 1.6; }
+.outcome-list li, .ability-list li, .maga-list li { padding: .75rem 1rem; border: 1px solid var(--panel-border-color); border-radius: .8rem; background: var(--panel-color); color: #d1dde6; line-height: 1.6; }
 .outcome-list strong, .ability-list strong { color: #f4f7fb; }
 
 .tavolo-campaign { width: min(100%, 46rem); margin: 0 auto clamp(3.5rem, 8vw, 6rem); display: grid; gap: 1.25rem; justify-items: start; }
 .tavolo-campaign p { margin: 0; color: #d1dde6; font-size: clamp(1.05rem, 1.6vw, 1.18rem); line-height: 1.85; }
-.tavolo-link { display: inline-flex; gap: .55rem; align-items: center; width: fit-content; padding: .8rem 1.1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; background: rgba(255,255,255,.08); color: #f3dfb8; font-weight: 750; text-decoration: none; }
-.tavolo-link:hover { background: rgba(255,255,255,.14); }
 
 .tavolo-games { padding-bottom: clamp(3rem, 7vw, 5rem); }
 .tavolo-section-heading { margin-bottom: 2rem; }
 .tavolo-section-heading h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 400; letter-spacing: -.03em; }
 .tavolo-games-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .tavolo-games-grid-compact { grid-template-columns: repeat(auto-fill, minmax(16rem, 20rem)); }
-.tavolo-game-card { display: grid; grid-template-columns: auto 1fr; gap: .3rem .8rem; align-items: center; min-height: 8rem; padding: 1.15rem; border: 1px solid rgba(255,255,255,.14); border-radius: 1.1rem; background: rgba(255,255,255,.07); color: #f4f7fb; text-decoration: none; backdrop-filter: blur(12px); }
+.tavolo-game-card { display: grid; grid-template-columns: auto 1fr; gap: .3rem .8rem; align-items: center; min-height: 8rem; padding: 1.15rem; color: #f4f7fb; text-decoration: none; }
 .tavolo-game-emoji { grid-row: 1 / span 2; font-size: 1.8rem; }
 .tavolo-game-card strong { align-self: end; line-height: 1.2; }
 .tavolo-game-card small { align-self: start; color: #aebfcd; }
@@ -56,7 +54,7 @@
 .tavolo-game-card.is-available:hover { background-color: rgba(255,255,255,.13); }
 
 
-.tavolo-link:focus-visible, .rules-toggle summary:focus-visible, .tavolo-game-card:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
+.rules-toggle summary:focus-visible, .tavolo-game-card:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
 
 /* Navigazione leggera tra le pagine di un'avventura (alternativa a una sidebar fissa):
    una fila di pillole in cima, come l'indice della Bacheca dei Ricordi. */
@@ -68,8 +66,7 @@
 
 .maga-field input:focus-visible, .maga-field textarea:focus-visible,
 .stat-input-row input:focus-visible, .maga-inventory:focus-visible,
-.maga-save-row button:focus-visible, .appunti-textarea:focus-visible,
-.gdr-turn-form textarea:focus-visible, .gdr-turn-form button:focus-visible {
+.appunti-textarea:focus-visible, .gdr-turn-form textarea:focus-visible {
   outline: 3px solid var(--focus-color); outline-offset: 2px;
 }
 
@@ -91,7 +88,7 @@
 .avventura-figure figcaption { padding: .7rem 1rem; background: rgba(4,12,25,.6); color: #aebfcd; font-size: .8rem; text-align: center; }
 
 .npc-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.25rem; }
-.npc-card { display: grid; align-content: start; gap: .7rem; padding: 1rem; border: 1px solid rgba(255,255,255,.14); border-radius: 1.1rem; background: rgba(255,255,255,.04); }
+.npc-card { display: grid; align-content: start; gap: .7rem; padding: 1rem; }
 .npc-card img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: .8rem; }
 .npc-card h4 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.15rem; font-weight: 400; color: #f0dbb3; }
 .npc-card p { margin: 0; color: #c3d1dc; font-size: .92rem; line-height: 1.6; }
@@ -115,9 +112,6 @@
 .gdr-turn-form { display: grid; gap: 1rem; }
 .gdr-turn-form textarea { width: 100%; box-sizing: border-box; min-height: 8rem; padding: 1rem; border: 1px solid rgba(255,255,255,.17); border-radius: .9rem; background: rgba(4,12,25,.46); color: #f4f7fb; font: inherit; line-height: 1.6; resize: vertical; }
 .gdr-turn-submit-row { display: flex; justify-content: flex-end; }
-.gdr-turn-submit-row button { min-height: 2.9rem; padding: .7rem 1.15rem; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; background: rgba(255,255,255,.1); color: #fff; font: inherit; font-weight: 750; cursor: pointer; }
-.gdr-turn-submit-row button:hover { border-color: rgba(255,255,255,.42); background: rgba(255,255,255,.16); }
-.gdr-turn-submit-row button:disabled { cursor: wait; opacity: .58; }
 
 /* Pagina "La Tua Maga": la scheda personaggio, compilabile e salvata in D1 (gdr_characters).
    Le parti fisse del regolamento (abilità, incantesimi, tabella magia selvaggia) restano testo. */
@@ -128,7 +122,6 @@
 .maga-fields p { margin: 0; color: #d1dde6; line-height: 1.6; }
 .maga-fields strong { color: #f4f7fb; }
 .maga-list { margin: 0; padding: 0; list-style: none; display: grid; gap: .6rem; }
-.maga-list li { padding: .75rem 1rem; border: 1px solid rgba(255,255,255,.12); border-radius: .8rem; background: rgba(255,255,255,.04); color: #d1dde6; line-height: 1.6; }
 
 .maga-field { display: grid; gap: .4rem; }
 .maga-field > span { color: #eef3f7; font-size: .9rem; font-weight: 700; }
@@ -145,9 +138,6 @@
 .maga-inventory { width: 100%; box-sizing: border-box; min-height: 8rem; padding: .9rem; border: 1px solid rgba(255,255,255,.17); border-radius: .8rem; background: rgba(4,12,25,.46); color: #f4f7fb; font: inherit; line-height: 1.6; resize: vertical; }
 
 .maga-save-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-.maga-save-row button { min-height: 2.9rem; padding: .7rem 1.15rem; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; background: rgba(255,255,255,.1); color: #fff; font: inherit; font-weight: 750; cursor: pointer; }
-.maga-save-row button:hover { border-color: rgba(255,255,255,.42); background: rgba(255,255,255,.16); }
-.maga-save-row button:disabled { cursor: wait; opacity: .58; }
 
 .wild-table-wrap { overflow-x: auto; }
 .wild-table { width: 100%; border-collapse: collapse; }

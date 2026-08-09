@@ -1,0 +1,37 @@
+        <section class="suggerimenti-hero" aria-labelledby="suggerimenti-title">
+          <p class="suggerimenti-eyebrow">Il Mondo Bianco</p>
+          <h1 id="suggerimenti-title"><span aria-hidden="true">💡</span> Suggerimenti</h1>
+          <p class="suggerimenti-intro">Se hai un'idea per una nuova pagina, un ricordo da aggiungere o qualcosa che vorresti vedere in questo mondo, scrivila qui. Quando potrò la leggerò e la aggiungerò.</p>
+        </section>
+
+        <form id="suggestion-form" class="suggestion-form" aria-label="Invia un suggerimento">
+          <label class="suggestion-field">
+            <span>Dove</span>
+            <select name="category" required>
+              <option value="" disabled selected>Scegli dove...</option>
+              <option value="calendario">📅 Il Calendario</option>
+              <option value="mappa">🗺️ La Mappa dei Sogni</option>
+              <option value="storie">📖 Le Storie</option>
+              <option value="cuffiette">🎧 Le Cuffiette</option>
+              <option value="bacheca">📌 La Bacheca dei Ricordi</option>
+              <option value="ponti">🌈 I Ponti</option>
+              <option value="lettere">💌 Le Lettere</option>
+              <option value="tavolo-da-gioco">🎲 Il Tavolo da Gioco</option>
+              <option value="altro">✨ Qualcos'altro / tutto il sito</option>
+            </select>
+          </label>
+          <label class="suggestion-field">
+            <span>Titolo <small>(facoltativo)</small></span>
+            <input type="text" name="title" maxlength="160" autocomplete="off" />
+          </label>
+          <label class="suggestion-field">
+            <span>Cosa vorresti aggiungere o cambiare</span>
+            <textarea name="message" required maxlength="8000" placeholder="Scrivi qui la tua idea..."></textarea>
+          </label>
+          <div class="suggestion-submit-row">
+            <button id="suggestion-submit" type="submit" class="btn btn-submit">Invia suggerimento</button>
+          </div>
+          <p id="suggestion-status" class="suggestion-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <a class="place-bottom-link btn" href="{{BASE}}mondo-bianco/"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>

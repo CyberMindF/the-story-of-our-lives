@@ -1,4 +1,11 @@
 
+/* Il cruciverba ha una griglia più larga delle altre pagine (tabellone + pannello
+   definizioni affiancati): stessa .place-shell condivisa, solo la larghezza massima cambia,
+   tramite la stessa var pensata apposta per questo caso in world-shell.css. */
+.crossword-shell {
+  --place-shell-width: 100rem;
+}
+
 .mobile-sheet-toggle {
   display: none;
 }
@@ -216,7 +223,7 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
 .clue-button {
   width: 100%;
   text-align: left;
-  border-radius: 12px;
+  border-radius: 0.8rem;
   padding: 0.75rem 0.85rem;
   background: var(--clue-bg);
 }
@@ -277,11 +284,8 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
 
 .modal-card {
   max-width: 28rem;
-  background: var(--panel-color);
   color: var(--text-color);
   padding: 1.5rem;
-  border-radius: 20px;
-  box-shadow: var(--shadow);
   text-align: center;
 }
 
@@ -346,7 +350,7 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
   }
 
 
-  .app-shell {
+  .crossword-shell {
     width: 100%;
     height: var(--app-viewport-height);
     min-height: 0;
@@ -358,6 +362,13 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
       0.8rem
       max(1.15rem, env(safe-area-inset-left));
     overflow: hidden;
+  }
+
+  .crossword-shell > main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .place-header,
@@ -547,7 +558,7 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
     -webkit-overflow-scrolling: touch;
   }
 
-  body[data-mobile-mode="sheet"] .app-shell {
+  body[data-mobile-mode="sheet"] .crossword-shell {
     min-height: 0;
     padding-bottom: calc(var(--mobile-sheet-peek-height) + max(0.8rem, env(safe-area-inset-bottom)));
   }

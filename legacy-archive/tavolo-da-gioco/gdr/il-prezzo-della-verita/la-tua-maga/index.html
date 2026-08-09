@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>✨ La Tua Maga | Il Prezzo della Verità</title>
+    <link rel="icon" href="../../../../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../../../assets/css/themes.css?v=2" />
+    <link rel="stylesheet" href="../../../../assets/css/components/shell.css?v=2" />
+    <link rel="stylesheet" href="../../../../assets/css/components/world-atmosphere.css?v=2" />
+    <link rel="stylesheet" href="../../../../assets/css/components/world-shell.css?v=3" />
+    <link rel="stylesheet" href="../../../../assets/css/components/buttons.css?v=1" />
+    <link rel="stylesheet" href="../../../../assets/css/components/cards.css?v=1" />
+    <link rel="stylesheet" href="../../../../assets/css/components/typography.css?v=1" />
+    <link rel="stylesheet" href="../../../../assets/css/pages/tavolo.css?v=4" />
+  </head>
+  <body class="world-atmosphere tavolo-page" data-logout-url="../../../../">
+    <div class="place-shell tavolo-shell">
+      <header class="place-header">
+        <a class="place-home-link" href="../" aria-label="Torna a Il Prezzo della Verità">
+          <span aria-hidden="true">←</span><span class="place-name-optional">Il Prezzo della Verità</span>
+        </a>
+        <div class="place-userbar">
+          <p id="user-greeting" class="user-greeting"></p>
+          <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema"></div>
+          <a href="../../../../suggerimenti/" class="suggest-link" aria-label="Manda un suggerimento" title="Suggerisci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-6 6c0 2.5 1.4 3.8 2.2 4.6.5.5.8 1.1.8 1.4h6c0-.3.3-.9.8-1.4.8-.8 2.2-2.1 2.2-4.6a6 6 0 0 0-6-6Z" /></svg>
+          </a>
+          <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <nav class="ipdv-nav" aria-label="Pagine dell'avventura">
+          <a href="../avventura/">L'Avventura</a>
+          <a href="./" class="is-current" aria-current="page">La Tua Maga</a>
+          <a href="../i-tuoi-appunti/">I Tuoi Appunti</a>
+        </nav>
+
+        <section class="maga-hero" aria-labelledby="maga-title">
+          <p class="tavolo-eyebrow">Il Prezzo della Verità</p>
+          <h1 id="maga-title"><span aria-hidden="true">✨</span> La Tua Maga</h1>
+          <p>Questa è la scheda del tuo personaggio e della tua gatta. Aggiornala man mano che andiamo avanti, quando ti dico magari "perdi questo" "guadagni quello" — si salva da sola.</p>
+        </section>
+
+        <form id="maga-form" class="maga-body">
+          <section class="maga-section" aria-labelledby="aspetto-title">
+            <h3 id="aspetto-title">Aspetto</h3>
+            <div class="maga-fields">
+              <label class="maga-field"><span>Nome</span><input id="char-name" name="name" type="text" maxlength="60" placeholder="Come si chiama la tua maga?" /></label>
+              <label class="maga-field"><span>Nome della gatta</span><input id="char-cat-name" name="catName" type="text" maxlength="60" placeholder="E la tua gatta?" /></label>
+              <p><strong>Età:</strong> 18</p>
+              <p><strong>Razza:</strong> Umana</p>
+              <label class="maga-field"><span>Descrizione fisica</span><textarea id="char-description" name="description" maxlength="2000" placeholder="Come la immagini?"></textarea></label>
+            </div>
+          </section>
+
+          <section class="maga-section" aria-labelledby="statistiche-title">
+            <h3 id="statistiche-title">Statistiche</h3>
+            <p>Distribuisci 12 punti (min 1, max 5 ciascuna). <span id="stat-total-hint" class="stat-total-hint"></span></p>
+            <div class="stats-grid">
+              <div class="stat-card card"><span aria-hidden="true">🧠</span><strong>Mente</strong><span class="stat-input-row"><input id="stat-mente" name="statMente" type="number" min="1" max="5" value="1" /> / 5</span></div>
+              <div class="stat-card card"><span aria-hidden="true">❤️‍🔥</span><strong>Cuore</strong><span class="stat-input-row"><input id="stat-cuore" name="statCuore" type="number" min="1" max="5" value="1" /> / 5</span></div>
+              <div class="stat-card card"><span aria-hidden="true">💪🏼</span><strong>Corpo</strong><span class="stat-input-row"><input id="stat-corpo" name="statCorpo" type="number" min="1" max="5" value="1" /> / 5</span></div>
+              <div class="stat-card card"><span aria-hidden="true">✨</span><strong>Magia</strong><span class="stat-input-row"><input id="stat-magia" name="statMagia" type="number" min="1" max="5" value="1" /> / 5</span></div>
+            </div>
+            <label class="maga-field maga-field-inline" style="margin-top: 1rem;"><span><strong>Punti Stress</strong></span><span class="stat-input-row"><input id="stress-current" name="stressCurrent" type="number" min="0" max="10" value="10" /> / 10</span></label>
+          </section>
+
+          <section class="maga-section" aria-labelledby="abilita-title">
+            <h3 id="abilita-title">Abilità speciali</h3>
+            <p>(una per scena, automatiche, nessun tiro necessario)</p>
+            <ul class="maga-list">
+              <li>Lettura dell'eco: tocchi un oggetto e percepisci un'emozione o un ricordo recente legato a esso</li>
+              <li>Luce senziente: evochi una piccola luce che puoi guidare con la mente</li>
+              <li>Senso della menzogna: una volta per scena, puoi chiedermi se quello che ti ha detto qualcuno è una bugia</li>
+              <li>Magia selvaggia: ogni volta che lanci un incantesimo, tira il D8 + Magia come sempre per vedere se riesce. Poi tira anche il D20 → se esce 1-5, la magia è andata fuori controllo: tira il D10 e consulta la tabella "Effetti Selvaggi". Puoi tirare tutti e tre i dadi insieme se vuoi per fare prima</li>
+            </ul>
+
+            <div class="wild-table-wrap" style="margin-top: 1.25rem;">
+              <table class="wild-table">
+                <tr><th>Tabella Effetti Selvaggi → Tira un D10</th><th>Effetto</th></tr>
+                <tr><td>1</td><td>L'incantesimo si ritorce: colpisce te invece del bersaglio. Perdi 2 Punti Stress.</td></tr>
+                <tr><td>2</td><td>L'incantesimo esplode: in modo vistoso e rumoroso. Funziona, ma chiunque nelle vicinanze se ne accorge.</td></tr>
+                <tr><td>3</td><td>Perdi il controllo per un momento: un oggetto vicino si rompe da solo in modo rumoroso. Perdi 1 Punto Stress.</td></tr>
+                <tr><td>4</td><td>Sovraccarico: il prossimo tiro ha -2. Il tuo corpo ha bruciato troppo in una volta sola.</td></tr>
+                <tr><td>5</td><td>Lasci un segno visibile: gli occhi brillano, le mani fumano leggermente, i capelli si muovono come se ci fosse vento. Dura una scena intera.</td></tr>
+                <tr><td>6</td><td>Un'onda di calore esplode dal tuo corpo: tutto quello che ti circonda per un metro prende fuoco brevemente.</td></tr>
+                <tr><td>7</td><td>L'incantesimo si duplica: colpisce due bersagli invece di uno, o ha effetto doppio sullo stesso.</td></tr>
+                <tr><td>8</td><td>Una scarica di energia pura parte dalle tue mani: non è l'incantesimo che volevi lanciare, è qualcosa di grezzo e potentissimo. Risolve la situazione nel modo più diretto possibile.</td></tr>
+                <tr><td>9</td><td>Una luce accecante esplode attorno a te per un istante: chiunque ti stia guardando è abbagliato per qualche secondo. Tu rimani al centro, illesa.</td></tr>
+                <tr><td>10</td><td>La magia ti attraversa completamente: senti la trama stessa attraversarti e per un istante sei pura energia. Descrivi la magia che ne scaturisce, qualsiasi cosa, che ti porti a risolvere la situazione. Non consuma slot, e recuperi 2 Punti Stress.</td></tr>
+              </table>
+            </div>
+          </section>
+
+          <section class="maga-section" aria-labelledby="incantesimi-title">
+            <h3 id="incantesimi-title">Incantesimi</h3>
+            <label class="maga-field maga-field-inline"><span>Slot disponibili</span><span class="stat-input-row"><input id="spell-slots-current" name="spellSlotsCurrent" type="number" min="0" max="3" value="3" /> / 3</span></label>
+            <ul class="maga-list" style="margin-top: 1rem;">
+              <li>Dardo magico: attacco base, silenzioso e affidabile</li>
+              <li>Scudo magico: blocca un colpo in arrivo</li>
+              <li>Individuazione del magico: percepisci la presenza di magia nelle vicinanze</li>
+              <li>Passo felpato: ti muovi in silenzio assoluto</li>
+              <li>Amicizia: predisponi positivamente qualcuno verso di te per breve tempo</li>
+              <li>Illusione minore: crei una piccola immagine o suono falso per distrarre</li>
+              <li>Individuazione dei pensieri: leggi la superficie della mente di qualcuno vicino</li>
+            </ul>
+          </section>
+
+          <section class="maga-section" aria-labelledby="inventario-title">
+            <h3 id="inventario-title">Inventario</h3>
+            <p>Un oggetto per riga: aggiungi o togli quello che serve.</p>
+            <textarea id="char-inventory" name="inventory" class="maga-inventory" maxlength="2000"></textarea>
+          </section>
+
+          <div class="maga-save-row">
+            <button id="maga-submit" type="submit" class="btn btn-submit">Salva scheda</button>
+            <p id="maga-status" class="appunti-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+
+        <a class="place-bottom-link btn" href="../"><span aria-hidden="true">←</span> Torna a Il Prezzo della Verità</a>
+      </main>
+    </div>
+
+    <script type="module" src="../../../../auth-guard.js?v=2" data-auth-gateway="../../../../"></script>
+    <script type="module" src="../../../../assets/js/world/main.js?v=2"></script>
+    <script type="module" src="../../../../assets/js/gdr/maga.js?v=1"></script>
+  </body>
+</html>

@@ -4,10 +4,11 @@
 
 Regola fissata il 09/08/2026: la duplicazione di codice (HTML, CSS, JS) deve tendere il più possibile a zero. Se lo stesso markup, la stessa regola CSS o la stessa logica dovrebbero ripetersi identici su più pagine, vanno estratti in qualcosa di condiviso invece di essere copiati e incollati.
 
-**Contesto**: il sito è HTML statico. Da 09/08/2026 le 16 pagine del Mondo Bianco (tutte tranne il cruciverba) sono generate da un template condiviso invece che copiate a mano — vedi `templates/world-page.html`, `templates/pages/*.content.html` e `scripts/build-world-pages.mjs` (dettagli nel README, sezione "Template delle pagine del Mondo Bianco"). Prima di questo sistema, aggiungere un'icona alla barra utente condivisa aveva richiesto modificare 15 file uno per uno — è il caso concreto che ha motivato la regola.
+**Contesto**: il frontend attivo è la SPA Angular in `web/`. Il precedente sito HTML/JavaScript è conservato solo come riferimento reversibile in `legacy-archive/` e non deve essere importato o pubblicato. Prima della migrazione, aggiungere un'icona alla barra utente aveva richiesto modificare 15 file: è il caso concreto che ha motivato questa regola. In Angular la shell comune vive in `web/src/app/shell/`, la logica condivisa in `web/src/app/core/` e `web/src/app/shared/`, le pagine in `web/src/app/pages/`.
 
 **Come applicarla**:
-- CSS/JS condivisi: già esiste il pattern giusto in `assets/css/components/` e `assets/js/shared/` — usarlo prima di duplicare uno stile o una funzione in un file di pagina.
-- HTML condiviso tra le pagine del Mondo Bianco: non copiare più header/userbar/footer a mano — aggiungere/modificare la pagina nel template (`templates/world-page.html` + un file in `templates/pages/`), aggiornare `scripts/world-pages.manifest.mjs`, poi rilanciare `node scripts/build-world-pages.mjs`. Il cruciverba resta l'unica eccezione voluta (shell diversa, pagina singola, nessuna duplicazione da eliminare lì).
+- CSS condiviso: usare prima `assets/css/components/`; bottoni e card hanno già le classi comuni in `buttons.css` e `cards.css`. I CSS di pagina in `assets/css/pages/` sono ancora sorgenti attivi caricati dai componenti Angular.
+- UI e logica condivise: usare `AppShell`, i componenti in `web/src/app/shared/` e i servizi in `web/src/app/core/`; non copiare header, userbar, autenticazione, temi o telemetria nei componenti pagina.
+- `legacy-archive/` è sola documentazione storica: non correggere il nuovo frontend importando codice da lì. Se serve recuperare un comportamento, portarlo esplicitamente in TypeScript e verificarlo.
 
 Vedi `prossimi sviluppi.md` per le cose ancora aperte sul progetto.

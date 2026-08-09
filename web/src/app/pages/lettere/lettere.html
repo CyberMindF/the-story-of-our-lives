@@ -1,0 +1,64 @@
+<app-shell>
+  <section class="lettere-hero" aria-labelledby="lettere-title">
+    <p class="lettere-eyebrow">Il Mondo Bianco</p>
+    <h1 id="lettere-title"><span aria-hidden="true">💌</span> Lettere</h1>
+    <p class="lettere-intro">Scrivi qualcosa quando ti va, o leggi quello che ho lasciato io. Restano qui, una dopo l'altra, per quando vorrete tornarci.</p>
+  </section>
+
+  <form class="letter-form" aria-label="Scrivi una lettera" #letterForm (ngSubmit)="submitLetter(letterForm)">
+    <label class="letter-field">
+      <span>La tua lettera</span>
+      <textarea name="body" required maxlength="20000" placeholder="Scrivi qui..."></textarea>
+    </label>
+    <div class="letter-submit-row">
+      <button type="submit" class="btn btn-submit" [disabled]="submitting()">Invia lettera</button>
+    </div>
+    <p class="letter-status" [class.is-success]="submitStatus() === 'success'" [class.is-error]="submitStatus() === 'error'" role="status" aria-live="polite">{{ submitMessage() }}</p>
+  </form>
+
+  <section class="lettere-archive" aria-labelledby="archive-title">
+    <div class="lettere-section-heading">
+      <p class="lettere-eyebrow">L'archivio</p>
+      <h2 id="archive-title">Le lettere</h2>
+    </div>
+    <div class="letters-list">
+      @for (letter of letters(); track letter.id) {
+        <button type="button" class="letter-card" [class.is-unread]="isUnread(letter)" #cardBtn (click)="openLetter(letter, cardBtn)">
+          <span class="envelope" aria-hidden="true">
+            <span class="envelope-back"></span>
+            <span class="envelope-flap envelope-flap-behind"></span>
+            <span class="envelope-paper"></span>
+            <span class="envelope-flap envelope-flap-front"></span>
+            <span class="envelope-seal"></span>
+          </span>
+          <span class="letter-card-label">
+            <span class="letter-card-author">{{ letter.isMine ? 'Tu' : letter.author }}</span>
+            <span class="letter-card-date">{{ formatDate(letter.createdAt) }}</span>
+          </span>
+          <span class="letter-card-status">{{ isUnread(letter) ? 'Da leggere' : '' }}</span>
+        </button>
+      }
+    </div>
+    @if (letters().length === 0 && !loadError()) {
+      <p class="letters-empty">Non c'è ancora nessuna lettera. Scrivi la prima.</p>
+    }
+    @if (loadError()) {
+      <p class="letters-error" role="alert">Non è stato possibile caricare le lettere.</p>
+    }
+  </section>
+
+  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
+</app-shell>
+
+<dialog #letterDialog class="letter-dialog" [attr.data-letter-size]="dialogSizeCategory()" aria-label="Lettera" (click)="onDialogClick($event)" (cancel)="onDialogCancel($event)">
+  <button class="letter-dialog-close" type="button" aria-label="Chiudi" (click)="closeLetterAnimated()">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+  </button>
+  <div #dialogPaper class="letter-paper" [style.--letter-rotation]="dialogRotation() + 'deg'">
+    @if (dialogLetter(); as letter) {
+      <p class="letter-paper-date">{{ formatDate(letter.createdAt) }}</p>
+      <p class="letter-paper-body">{{ letter.body }}</p>
+      <p class="letter-paper-signature">~ {{ letter.author }}</p>
+    }
+  </div>
+</dialog>
