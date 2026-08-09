@@ -23,7 +23,14 @@ il resto.
 ## Extra (fuori scaletta, chiesti durante la Fase B)
 
 - [x] #31 — occhiolino "mostra password" nel Portone: un solo campo condiviso da login e
-  registrazione, quindi un solo toggle copre entrambi.
+  registrazione, quindi un solo toggle copre entrambi. Icona rifatta con un design pulito
+  (Feather-style) dopo segnalazione che quella iniziale era storta.
+- [x] #32 — calendario: aggiunto l'1 luglio 2026 (esame di maturità + mazzo di rose con la
+  lettera), ora 29 date.
+- [x] #30 — favicon rifatta: il cuore su tessera crema non c'entrava con nient'altro nel sito.
+  Sostituito con un cerchio rosso infuocato su cielo notturno, coerente col ⭕ usato in ogni
+  header e con "il cerchio" della canzone. Stesso file riusato anche come sigillo decorativo
+  sulla card del Portone (`portone-seal`), verificato che stia bene anche lì.
 
 ## Fase A — Quick win (COMPLETATA)
 
