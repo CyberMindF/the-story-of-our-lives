@@ -1,6 +1,6 @@
 .globe-page {
   min-height: 100dvh;
-  color: #f4f7fb;
+  color: var(--text-color);
 }
 
 .globe-shell {
@@ -18,7 +18,7 @@
 .globe-eyebrow,
 .scene-number {
   margin: 0 0 0.7rem;
-  color: #b8cad9;
+  color: var(--muted-color);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.14em;

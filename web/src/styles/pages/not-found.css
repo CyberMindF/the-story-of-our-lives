@@ -1,7 +1,7 @@
-.not-found-page { display: flex; min-height: 100dvh; color: #f4f7fb; }
+.not-found-page { display: flex; min-height: 100dvh; color: var(--text-color); }
 .not-found-main { position: relative; z-index: 1; display: grid; justify-items: center; gap: .75rem; width: min(100% - 3rem, 32rem); margin: auto; padding: 3rem 0; text-align: center; }
 .not-found-mark { margin: 0; font-size: 2.6rem; }
-.not-found-eyebrow { margin: 0; color: #b8cad9; font-size: .8rem; font-weight: 700; letter-spacing: .18em; }
+.not-found-eyebrow { margin: 0; color: var(--muted-color); font-size: .8rem; font-weight: 700; letter-spacing: .18em; }
 .not-found-main h1 { margin: .5rem 0 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 400; line-height: 1.2; }
-.not-found-text { margin: 0; color: #d1dde6; font-size: 1rem; line-height: 1.7; }
+.not-found-text { margin: 0; color: var(--muted-color); font-size: 1rem; line-height: 1.7; }
 .not-found-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: 1.25rem; }

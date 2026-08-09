@@ -51,7 +51,7 @@
 
 .calendar-eyebrow {
   margin: 0 0 0.7rem;
-  color: #b8cad9;
+  color: var(--muted-color);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -91,7 +91,7 @@
 }
 
 .calendar-count {
-  color: #b8cad9;
+  color: var(--muted-color);
 }
 
 .calendar-timeline {

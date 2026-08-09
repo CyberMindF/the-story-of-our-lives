@@ -1,6 +1,6 @@
 .world-page {
   min-height: 100dvh;
-  color: #f4f7fb;
+  color: var(--text-color);
 }
 
 .world-shell {
@@ -8,7 +8,7 @@
 }
 
 .world-mark {
-  color: #f4f7fb;
+  color: var(--text-color);
 }
 
 .world-opening {
@@ -17,7 +17,7 @@
 
 .world-eyebrow {
   margin: 0 0 0.65rem;
-  color: #b8cad9;
+  color: var(--muted-color);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -149,7 +149,7 @@
   align-items: center;
   min-height: 8rem;
   padding: 1.15rem;
-  color: #f4f7fb;
+  color: var(--text-color);
   text-decoration: none;
 }
 

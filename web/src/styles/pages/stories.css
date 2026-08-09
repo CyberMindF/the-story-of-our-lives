@@ -1,6 +1,6 @@
 .stories-page {
   min-height: 100dvh;
-  color: #f4f7fb;
+  color: var(--text-color);
 }
 
 .stories-shell {
@@ -42,7 +42,7 @@
 
 .stories-eyebrow {
   margin: 0 0 0.65rem;
-  color: #b8cad9;
+  color: var(--muted-color);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.15em;

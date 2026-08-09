@@ -1,4 +1,4 @@
-.ponti-page { min-height: 100dvh; color: #f4f7fb; }
+.ponti-page { min-height: 100dvh; color: var(--text-color); }
 .ponti-shell { --place-shell-width: 76rem; }
 .ponti-hero { padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 4rem); }
 .ponti-hero-figure { width: min(100%, 58rem); margin: 0 auto; overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: clamp(1.2rem, 3vw, 2rem); box-shadow: 0 2rem 6rem rgba(0,0,0,.32); }
@@ -7,12 +7,12 @@
 .ponti-hero h1 span { display: inline-block; font-family: system-ui, sans-serif; font-size: .42em; vertical-align: .2em; }
 
 .ponti-intro { width: min(100%, 46rem); margin: 0 auto clamp(3.5rem, 8vw, 6rem); }
-.ponti-intro p { margin: 0; color: #d1dde6; font-size: clamp(1.05rem, 1.6vw, 1.18rem); line-height: 1.85; }
+.ponti-intro p { margin: 0; color: var(--muted-color); font-size: clamp(1.05rem, 1.6vw, 1.18rem); line-height: 1.85; }
 
 .ponti-destinations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; padding-bottom: clamp(3rem, 7vw, 5rem); }
 .ponti-card { display: flex; flex-direction: column; gap: .85rem; padding: clamp(1.5rem, 3vw, 2rem); }
-.ponti-card-title { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.35rem; font-weight: 400; color: #f4f7fb; }
-.ponti-card-text { margin: 0; color: #d1dde6; line-height: 1.7; }
+.ponti-card-title { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.35rem; font-weight: 400; color: var(--text-color); }
+.ponti-card-text { margin: 0; color: var(--muted-color); line-height: 1.7; }
 .ponti-link { margin-top: auto; }
 
 @media (max-width: 700px) {
