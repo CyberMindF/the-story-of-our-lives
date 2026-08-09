@@ -80,7 +80,12 @@ il resto.
   Lettere. Non ho cancellato nulla di reale (i 3 link Drive funzionano ancora) — "La Cassetta
   delle Lettere" è ora la card in evidenza, i vecchi ponti sono raccolti in un pannello
   richiudibile secondario ("I ponti di prima, da quando vivevamo ancora su Drive").
-- [ ] #7 — cuffiette: traccia bonus
+- [x] #7 — cuffiette: traccia bonus. Causa trovata: il CSS puntava a `#bonus-audio`, un id che
+  non esiste da nessuna parte nel template (selettore morto) — il player nativo del browser
+  era quindi completamente senza stile, una pillola bianca larga ~300px in mezzo a una pagina
+  scura. Stesso pattern "rivela al click" già usato per le 9 canzoni (bottone dorato, mai
+  autoplay) e `color-scheme: dark` sull'elemento audio così anche il widget nativo, una volta
+  rivelato, si vede scuro invece che nel tema chiaro di default del browser.
 - [x] #9 — centralizzare di più le lettere: cercato ogni `routerLink="/lettere"` nell'app,
   trovato **un solo** punto d'ingresso in tutto il sito (dentro I Ponti, pagina di per sé poco
   visibile). Aggiunta una scorciatoia diretta sotto la griglia dei luoghi nella home del Mondo
