@@ -65,7 +65,7 @@ npx wrangler r2 object put the-white-world-media/<percorso> --local --file <file
 
 ## La Bacheca dei Ricordi
 
-`web/public/content/bacheca.json` (periodi → giorni → foto/testo/link esterni, nell'ordine originale) è ricostruito da `scripts/build-bacheca-content.mjs`, che legge l'HTML congelato dell'export invece del testo semplificato: solo così si recupera l'abbinamento reale tra ogni foto e la sua didascalia (il `<figcaption>` di Notion quando esiste). Lo script assegna anche la chiave R2 definitiva a ogni foto e scrive un manifest locale non pubblicato (`reports/export/bacheca-media-manifest.json`) con la mappa file-sorgente → chiave.
+`web/public/content/bacheca.json` (periodi → giorni → foto/testo/link esterni, nell'ordine originale) è ricostruito da `scripts/build-bacheca-content.mjs`, che legge l'HTML congelato dell'export invece del testo semplificato: solo così si recupera l'abbinamento reale tra ogni foto e la sua didascalia (il `<figcaption>` di Notion quando esiste). Lo script assegna anche la chiave R2 definitiva a ogni foto e scrive un manifest locale non pubblicato (`sources/manifests/bacheca-media-manifest.json`) con la mappa file-sorgente → chiave.
 
 `scripts/upload-bacheca-media.mjs` carica gli originali secondo il manifest (`--local` per l'emulazione di sviluppo, `--remote` di default per il bucket vero). `scripts/build-bacheca-thumbnails.mjs` genera con `sharp` una miniatura da 480px per ogni foto e la carica sotto `.../thumb/`, aggiungendo `thumbKey` a ogni voce di `web/public/content/bacheca.json`. Entrambi sono idempotenti: si possono rilanciare in sicurezza.
 
@@ -189,7 +189,7 @@ npm run analyze:export
 npm run verify:links
 ```
 
-I testi puliti delle pagine vengono salvati e versionati in `web/public/content/original/`, così restano disponibili su ogni computer. Inventario tecnico e verifica dei collegamenti vengono versionati in `reports/export/`. Il riepilogo leggibile è in `REPORT_VERIFICA_EXPORT.md`.
+I testi puliti delle pagine vengono salvati e versionati in `sources/notion-original/`, così restano disponibili senza essere pubblicati insieme all'app. Inventario tecnico, verifica dei collegamenti e riepilogo leggibile sono conservati in `sources/migration-reports/`; il manifest operativo della Bacheca si trova in `sources/manifests/`.
 
 ## File principali
 
@@ -200,6 +200,7 @@ I testi puliti delle pagine vengono salvati e versionati in `web/public/content/
 - `web/src/styles/components/`: primitive CSS condivise, come shell, accesso, bottoni e form.
 - `web/src/styles/pages/`: stile specifico delle singole pagine e dei luoghi.
 - `web/public/content/`: raccolte statiche pubbliche ordinate direttamente dalla posizione nell'array.
+- `sources/`: fonti originali, immagini sostituite, report di migrazione e manifest non pubblicati.
 - `scripts/build-music-content.mjs`: ricostruisce i nove brani e le citazioni delle Cuffiette dalla fonte originale congelata, senza correggerne il testo.
 - `web/src/app/pages/cruciverba/`: componenti e servizio del cruciverba.
 - `web/src/app/core/`, `web/src/app/shared/`: autenticazione, API, navigazione, visite, temi e UI condivisa.

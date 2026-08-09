@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 // wrangler sovrascrive semplicemente l'oggetto già caricato con lo stesso contenuto.
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const manifestPath = path.join(projectRoot, "reports", "export", "bacheca-media-manifest.json");
+const manifestPath = path.join(projectRoot, "sources", "manifests", "bacheca-media-manifest.json");
 const bucketName = "the-white-world-media";
 const scopeFlag = process.argv.includes("--local") ? "--local" : "--remote";
 

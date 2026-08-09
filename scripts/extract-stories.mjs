@@ -58,7 +58,7 @@ for (const match of html.matchAll(storyPattern)) {
 if (stories.length !== 4) throw new Error(`Attese 4 storie, trovate ${stories.length}`);
 
 stories[2].videoUrl = "https://www.youtube-nocookie.com/embed/nagMxzLZfLk";
-stories[2].image = "../assets/images/world/campo-erba.png";
+stories[2].image = "../assets/images/world/campo-erba.webp";
 stories[2].imageAlt = "Un campo d'erba azzurro e luminoso sotto una grande luna e un cielo stellato";
 
 await writeFile(

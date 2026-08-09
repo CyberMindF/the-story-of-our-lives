@@ -28,6 +28,6 @@ Gli short link risolvono verso otto pagine Notion, una risorsa Spotify e una ris
 
 ## Metodo e limiti
 
-`scripts/analyze-notion-export.mjs` estrae in `web/public/content/original/` un file di testo versionato per ogni pagina e registra link, risorse esterne, riferimenti media e hash SHA-256 senza modificare la fonte. `scripts/verify-external-links.mjs` usa richieste sequenziali, segue i redirect e registra URL finale e stato HTTP.
+`scripts/analyze-notion-export.mjs` estrae in `sources/notion-original/` un file di testo versionato per ogni pagina e registra link, risorse esterne, riferimenti media e hash SHA-256 senza modificare la fonte. `scripts/verify-external-links.mjs` usa richieste sequenziali, segue i redirect e registra URL finale e stato HTTP.
 
-Il dettaglio completo è salvato e versionato in `reports/export/`, così resta disponibile durante la migrazione da altri computer. Una risposta HTTP positiva conferma la raggiungibilità al momento del test, ma non garantisce disponibilità futura, proprietà del contenuto o corretta visualizzazione dopo un'eventuale autenticazione del provider.
+Il dettaglio completo è salvato e versionato in `sources/migration-reports/`, così resta disponibile senza entrare nella build pubblica. Una risposta HTTP positiva conferma la raggiungibilità al momento del test, ma non garantisce disponibilità futura, proprietà del contenuto o corretta visualizzazione dopo un'eventuale autenticazione del provider.

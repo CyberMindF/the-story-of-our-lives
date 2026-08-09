@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 
-const sourcePath = new URL("../web/public/content/original/05-le-cuffiette.txt", import.meta.url);
+const sourcePath = new URL("../sources/notion-original/05-le-cuffiette.txt", import.meta.url);
 const outputPath = new URL("../web/public/content/music.json", import.meta.url);
 const lines = (await readFile(sourcePath, "utf8")).split(/\r?\n/);
 

@@ -20,7 +20,7 @@ const sourcePath = path.join(
   "📸 La Bacheca dei Ricordi 31479ac3576c80e2ab7cfa11d7923c60.html"
 );
 const contentOutputPath = path.join(projectRoot, "web", "public", "content", "bacheca.json");
-const manifestOutputPath = path.join(projectRoot, "reports", "export", "bacheca-media-manifest.json");
+const manifestOutputPath = path.join(projectRoot, "sources", "manifests", "bacheca-media-manifest.json");
 
 const daySlugs = {
   "Il primo giorno": "giorno-1",

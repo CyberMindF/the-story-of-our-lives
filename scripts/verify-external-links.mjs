@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const reportDirectory = path.join(projectRoot, "reports", "export");
+const reportDirectory = path.join(projectRoot, "sources", "migration-reports");
 const analysisPath = path.join(reportDirectory, "notion-export-analysis.json");
 const outputPath = path.join(reportDirectory, "external-links-verification.json");
 

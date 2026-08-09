@@ -10,7 +10,7 @@ import sharp from "sharp";
 // Aggiorna il JSON pubblico della Bacheca aggiungendo "thumbKey" a ogni foto corrispondente.
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const manifestPath = path.join(projectRoot, "reports", "export", "bacheca-media-manifest.json");
+const manifestPath = path.join(projectRoot, "sources", "manifests", "bacheca-media-manifest.json");
 const contentPath = path.join(projectRoot, "web", "public", "content", "bacheca.json");
 const bucketName = "the-white-world-media";
 const maxWidth = 480;
