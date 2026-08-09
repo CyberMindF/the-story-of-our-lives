@@ -70,5 +70,12 @@
       <a class="world-place-card card is-available" routerLink="/tavolo-da-gioco"><span class="world-place-emoji">🎲</span><strong>Il Tavolo da Gioco</strong><small>Entra</small></a>
       <a class="world-place-card card is-available" routerLink="/mappa"><span class="world-place-emoji">🗺️</span><strong>La Mappa</strong><small>Entra</small></a>
     </div>
+
+    <!-- Non è uno dei posti fissi (restano otto): le Lettere prima si raggiungevano solo
+         passando per i Ponti, senza nessun link diretto dalla home. Scorciatoia separata,
+         non una nona card, per non toccare quel numero. -->
+    <a class="world-letters-shortcut btn btn-accent" routerLink="/lettere">
+      <span aria-hidden="true">💌</span> Le Lettere
+    </a>
   </section>
 </app-shell>
