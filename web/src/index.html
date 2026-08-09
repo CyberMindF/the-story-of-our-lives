@@ -8,6 +8,17 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body>
+  <script>
+    // Applica il tema salvato prima del primo paint, altrimenti la pagina mostra sempre i
+    // colori di default finché Angular non fa il bootstrap ed esegue ThemeService.applySavedTheme()
+    // (lampo di tema sbagliato segnalato il 09/08/2026 — vedi prossimi sviluppi.md #12).
+    (function () {
+      try {
+        var theme = localStorage.getItem('noi-crossword-theme-v15');
+        if (theme) document.body.dataset.theme = theme;
+      } catch (e) {}
+    })();
+  </script>
   <app-root></app-root>
 </body>
 </html>

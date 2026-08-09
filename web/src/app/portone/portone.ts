@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AccessMode, AuthService, AuthUser } from '../core/auth.service';
 import { NavigationService } from '../core/navigation.service';
-import { ThemeService } from '../core/theme.service';
 import { VisitsService } from '../core/visits.service';
 
 // Porting di assets/js/shared/access-gate.js (createAccessGate) + assets/js/portone/main.js.
@@ -24,7 +23,6 @@ export class Portone implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly navigationService = inject(NavigationService);
   private readonly visitsService = inject(VisitsService);
-  private readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
 
   protected readonly mode = signal<AccessMode>('register');
@@ -77,7 +75,6 @@ export class Portone implements OnInit {
   });
 
   ngOnInit(): void {
-    this.themeService.applySavedTheme();
     void this.initialize();
   }
 
