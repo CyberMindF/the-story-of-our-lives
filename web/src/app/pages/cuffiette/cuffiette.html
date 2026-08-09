@@ -61,7 +61,11 @@
       <section class="bonus-section" aria-labelledby="bonus-title">
         <p class="music-eyebrow">Una traccia in più</p>
         <h2 id="bonus-title">Bonus</h2>
-        <audio controls preload="none" [src]="src" (play)="onBonusPlay()" (ended)="onBonusEnded()"></audio>
+        @if (bonusRevealed()) {
+          <audio class="bonus-audio" controls preload="none" [src]="src" (play)="onBonusPlay()" (ended)="onBonusEnded()"></audio>
+        } @else {
+          <button type="button" class="btn btn-accent" (click)="revealBonusPlayer()">Ascolta il bonus <span aria-hidden="true">▶</span></button>
+        }
       </section>
     }
 

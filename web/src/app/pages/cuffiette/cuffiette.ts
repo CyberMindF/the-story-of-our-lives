@@ -45,6 +45,7 @@ export class Cuffiette implements OnInit {
   protected readonly data = signal<MusicData | null>(null);
   protected readonly loadError = signal(false);
   protected readonly playingSongIds = signal<ReadonlySet<string>>(new Set());
+  protected readonly bonusRevealed = signal(false);
   protected readonly bonusUrl = computed(() => {
     const bonus = this.data()?.bonus;
     return bonus?.available && bonus.key ? `/api/media/${bonus.key}` : null;
@@ -76,6 +77,11 @@ export class Cuffiette implements OnInit {
 
   protected isPlaying(songId: string): boolean {
     return this.playingSongIds().has(songId);
+  }
+
+  // Stesso pattern delle canzoni: il player compare solo dopo un click esplicito, mai da solo.
+  protected revealBonusPlayer(): void {
+    this.bonusRevealed.set(true);
   }
 
   // iframe[src] è in RESOURCE_URL context per Angular: senza bypassSecurityTrustResourceUrl

@@ -60,7 +60,7 @@
 .lyrics > div { padding: 1rem clamp(1rem, 4vw, 3rem) 2rem; columns: 2 20rem; column-gap: 3rem; }
 .lyrics p { break-inside: avoid; margin: 0 0 1rem; color: var(--muted-color); line-height: 1.75; }
 .bonus-section { padding-right: clamp(1.5rem, 5vw, 4rem); padding-left: clamp(1.5rem, 5vw, 4rem); border: 1px dashed rgba(255,255,255,.2); border-radius: 1.2rem; background: rgba(255,255,255,.035); }
-#bonus-audio { width: 100%; max-width: 34rem; margin-top: 1rem; }
+.bonus-audio { display: block; width: 100%; max-width: 34rem; margin-top: 1rem; color-scheme: dark; }
 .stolen-words { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem; margin-top: 3rem; }
 .stolen-words blockquote { position: relative; margin: 0; padding: clamp(1.3rem, 3vw, 2rem); border: 1px solid rgba(255,255,255,.13); border-radius: 1rem; background: rgba(7,18,34,.58); overflow: hidden; }
 .stolen-words blockquote::before { position: absolute; top: -1.4rem; left: .6rem; color: rgba(233,207,157,.16); font-family: Georgia, "Times New Roman", serif; font-size: 6rem; content: "\201C"; }
