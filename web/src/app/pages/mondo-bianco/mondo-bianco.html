@@ -69,13 +69,11 @@
       <a class="world-place-card card is-available" routerLink="/cuffiette"><span class="world-place-emoji">🎧</span><strong>Le Cuffiette</strong><small>Entra</small></a>
       <a class="world-place-card card is-available" routerLink="/tavolo-da-gioco"><span class="world-place-emoji">🎲</span><strong>Il Tavolo da Gioco</strong><small>Entra</small></a>
       <a class="world-place-card card is-available" routerLink="/mappa"><span class="world-place-emoji">🗺️</span><strong>La Mappa</strong><small>Entra</small></a>
+      <!-- Non è uno degli otto luoghi originari, ma una scorciatoia aggiuntiva verso una
+           funzionalità interna ai Ponti. Condivide la griglia per mantenere l'allineamento. -->
+      <a class="world-place-card card is-available" routerLink="/lettere">
+        <span class="world-place-emoji">💌</span><strong>Le Lettere</strong><small>Entra</small>
+      </a>
     </div>
-
-    <!-- Non è uno dei posti fissi (restano otto): le Lettere prima si raggiungevano solo
-         passando per i Ponti, senza nessun link diretto dalla home. Scorciatoia separata,
-         stesso aspetto delle altre card per non stonare, ma fuori dalla griglia contata. -->
-    <a class="world-place-card world-letters-shortcut card is-available" routerLink="/lettere">
-      <span class="world-place-emoji">💌</span><strong>Le Lettere</strong><small>Entra</small>
-    </a>
   </section>
 </app-shell>

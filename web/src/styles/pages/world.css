@@ -193,11 +193,6 @@
   }
 }
 
-.world-letters-shortcut {
-  width: min(100%, 16rem);
-  margin: 1.75rem auto 0;
-}
-
 @media (max-width: 680px) {
   .world-header {
     min-height: 4.5rem;
