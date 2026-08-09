@@ -7,8 +7,10 @@
       [style.--chip-color]="theme.swatch"
       [attr.aria-label]="'Attiva il tema ' + theme.label"
       [attr.aria-pressed]="themeService.activeThemeId() === theme.id"
-      [title]="theme.label"
       (click)="themeService.applyTheme(theme.id)"
-    ></button>
+    >
+      <span class="theme-chip-icon" aria-hidden="true">{{ theme.icon }}</span>
+      <span class="theme-chip-caption" aria-hidden="true">{{ theme.label }}</span>
+    </button>
   }
 </div>
