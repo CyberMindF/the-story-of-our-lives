@@ -55,8 +55,8 @@ export class Calendario implements OnInit {
 
   // Verifica quantità, identificatori e formato delle date senza correggere i dati.
   private validateCalendar(data: { events: CalendarEvent[] }): void {
-    if (!Array.isArray(data.events) || data.events.length !== 28) {
-      throw new Error('Il Calendario deve contenere esattamente 28 date.');
+    if (!Array.isArray(data.events) || data.events.length !== 29) {
+      throw new Error('Il Calendario deve contenere esattamente 29 date.');
     }
 
     const ids = new Set<string>();
