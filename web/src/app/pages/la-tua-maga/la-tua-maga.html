@@ -79,8 +79,8 @@
     </section>
 
     <div class="maga-save-row">
-      <button type="submit" class="btn btn-submit" [disabled]="fieldsDisabled() || saving()">Salva scheda</button>
-      <p class="appunti-status" role="status" aria-live="polite">{{ statusMessage() }}</p>
+      <button type="submit" class="btn btn-submit" [disabled]="fieldsDisabled() || submission.submitting()">Salva scheda</button>
+      <p class="appunti-status" role="status" aria-live="polite">{{ submission.message() || statusMessage() }}</p>
     </div>
   </form>
 

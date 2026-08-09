@@ -61,7 +61,9 @@ accessibilita', route, API e telemetria devono restare invariati.
 
 ### Blocco 3 - Logica e overlay
 
-- [ ] Estrarre il flusso FormData solo per endpoint e gestione errori equivalenti.
+- [x] Centralizzato in `FormSubmission` il flusso POST FormData equivalente di Suggerimenti,
+  Storie, Lettere, Avventura e La Tua Maga, incluse preparazione payload, reset opzionale,
+  parsing errori e callback successiva.
 - [x] Estratto `StaticContentService`: Calendario, Cuffiette, Mappa, Storie e Bacheca
   condividono caricamento, controllo HTTP e parsing dei JSON statici; validazione e stato
   specifici restano nelle rispettive pagine.
@@ -74,8 +76,8 @@ accessibilita', route, API e telemetria devono restare invariati.
 ### Blocco 4 - Verifica conclusiva
 
 - [x] Build production e test strict.
-- [ ] Audit browser completo desktop/mobile.
-- [ ] Audit finale delle duplicazioni residue e motivazione di quelle intenzionali.
+- [x] Audit browser completo desktop/mobile.
+- [x] Audit finale delle duplicazioni residue e motivazione di quelle intenzionali.
 
 ## Verifiche eseguite
 
@@ -98,3 +100,15 @@ accessibilita', route, API e telemetria devono restare invariati.
   150 stelle e router outlet, `2/2` verdi.
 - [x] Secondo audit dopo dialog e content state: 36/36 route/viewport.
 - [x] Build production e test Angular `2/2` dopo la centralizzazione dei contenuti statici.
+- [x] Audit conclusivo Wrangler + Chrome headless: `36/36`, senza errori console/rete,
+  eccezioni, immagini rotte o overflow.
+
+## Differenze intenzionali residue
+
+- L'autosave di I Tuoi Appunti resta locale: usa debounce, payload costruito senza form e
+  feedback progressivo, quindi non condivide il contratto dei submit espliciti.
+- Le letture e azioni API di autenticazione, Lettere, GDR e Cruciverba restano nei rispettivi
+  servizi o componenti perche' hanno risposte, cache e stati applicativi differenti.
+- I dialog di Lettere e Bacheca restano specializzati; solo le conferme equivalenti del
+  cruciverba usano `ConfirmationDialog`.
+- I formatter data restano distinti dove cambia il formato visibile richiesto dalla pagina.

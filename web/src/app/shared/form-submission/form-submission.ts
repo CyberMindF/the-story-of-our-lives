@@ -8,6 +8,8 @@ interface FormSubmissionOptions {
   pendingMessage: string;
   successMessage: string | ((result: JsonResult) => string);
   fallbackError?: string;
+  prepareData?: (data: FormData) => void;
+  resetOnSuccess?: boolean;
   afterSuccess?: (result: JsonResult) => void | Promise<void>;
 }
 
@@ -23,10 +25,12 @@ export class FormSubmission {
     this.message.set(options.pendingMessage);
 
     try {
+      const data = new FormData(form);
+      options.prepareData?.(data);
       const response = await fetch(options.url, {
         method: 'POST',
         credentials: 'same-origin',
-        body: new FormData(form)
+        body: data
       });
       const result = (await response.json().catch(() => ({}))) as JsonResult;
       if (!response.ok) {
@@ -34,7 +38,9 @@ export class FormSubmission {
         throw new Error(message || 'Invio non riuscito.');
       }
 
-      form.reset();
+      if (options.resetOnSuccess !== false) {
+        form.reset();
+      }
       this.status.set('success');
       this.message.set(typeof options.successMessage === 'function' ? options.successMessage(result) : options.successMessage);
       await options.afterSuccess?.(result);

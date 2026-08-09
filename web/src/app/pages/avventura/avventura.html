@@ -133,9 +133,9 @@
         <label class="sr-only" for="turn-body">Il tuo turno</label>
         <textarea id="turn-body" name="body" required maxlength="20000" placeholder="Scrivi cosa fa o dice il tuo personaggio..."></textarea>
         <div class="gdr-turn-submit-row">
-          <button type="submit" class="btn btn-submit" [disabled]="submitting()">Invia turno</button>
+          <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Invia turno</button>
         </div>
-        <p class="appunti-status" role="status" aria-live="polite">{{ statusMessage() }}</p>
+        <p class="appunti-status" role="status" aria-live="polite">{{ submission.message() }}</p>
       </form>
     </section>
   </div>
