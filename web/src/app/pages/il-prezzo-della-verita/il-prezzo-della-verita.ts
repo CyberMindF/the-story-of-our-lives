@@ -7,7 +7,7 @@ import { AppShell } from '../../shell/app-shell';
   selector: 'app-il-prezzo-della-verita',
   standalone: true,
   imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/tavolo.css'],
+  styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './il-prezzo-della-verita.html'
 })
 export class IlPrezzoDellaVerita {}

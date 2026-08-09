@@ -1,5 +1,4 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 
 interface CalendarEvent {
@@ -32,8 +31,8 @@ const MONTH_FORMATTER = new Intl.DateTimeFormat('it-IT', { month: 'long', timeZo
 @Component({
   selector: 'app-calendario',
   standalone: true,
-  imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/calendar.css'],
+  imports: [AppShell],
+  styleUrls: ['../../../styles/pages/calendar.css'],
   templateUrl: './calendario.html'
 })
 export class Calendario implements OnInit {

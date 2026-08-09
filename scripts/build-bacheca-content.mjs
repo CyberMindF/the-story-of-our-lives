@@ -2,7 +2,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Ricostruisce content/bacheca.json camminando l'HTML originale nel suo ordine reale,
+// Ricostruisce il contenuto pubblico della Bacheca camminando l'HTML originale nel suo ordine reale,
 // senza correggerne il testo. Assegna anche la chiave R2 definitiva a ogni foto e produce
 // un manifest locale (percorso sorgente -> chiave R2) usato solo per l'import, mai pubblicato.
 
@@ -19,7 +19,7 @@ const sourcePath = path.join(
   "Gruppo pagine",
   "📸 La Bacheca dei Ricordi 31479ac3576c80e2ab7cfa11d7923c60.html"
 );
-const contentOutputPath = path.join(projectRoot, "content", "bacheca.json");
+const contentOutputPath = path.join(projectRoot, "web", "public", "content", "bacheca.json");
 const manifestOutputPath = path.join(projectRoot, "reports", "export", "bacheca-media-manifest.json");
 
 const daySlugs = {
@@ -157,7 +157,7 @@ await writeFile(
 await mkdir(path.dirname(manifestOutputPath), { recursive: true });
 await writeFile(manifestOutputPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 
-console.log(`content/bacheca.json creato con ${realPeriods.length} periodi e ${manifest.length} foto.`);
+console.log(`web/public/content/bacheca.json creato con ${realPeriods.length} periodi e ${manifest.length} foto.`);
 console.log(`Manifest di import creato: ${path.relative(projectRoot, manifestOutputPath)}`);
 
 function cleanText(value) {

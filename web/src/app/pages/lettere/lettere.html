@@ -11,9 +11,9 @@
       <textarea name="body" required maxlength="20000" placeholder="Scrivi qui..."></textarea>
     </label>
     <div class="letter-submit-row">
-      <button type="submit" class="btn btn-submit" [disabled]="submitting()">Invia lettera</button>
+      <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Invia lettera</button>
     </div>
-    <p class="letter-status" [class.is-success]="submitStatus() === 'success'" [class.is-error]="submitStatus() === 'error'" role="status" aria-live="polite">{{ submitMessage() }}</p>
+    <app-form-status [message]="submission.message()" [status]="submission.status()" />
   </form>
 
   <section class="lettere-archive" aria-labelledby="archive-title">
@@ -47,7 +47,6 @@
     }
   </section>
 
-  <a class="place-bottom-link btn" routerLink="/mondo-bianco"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
 </app-shell>
 
 <dialog #letterDialog class="letter-dialog" [attr.data-letter-size]="dialogSizeCategory()" aria-label="Lettera" (click)="onDialogClick($event)" (cancel)="onDialogCancel($event)">

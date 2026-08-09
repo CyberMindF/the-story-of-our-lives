@@ -7,7 +7,7 @@ import { AppShell } from '../../shell/app-shell';
   selector: 'app-tavolo-da-gioco',
   standalone: true,
   imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/tavolo.css'],
+  styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './tavolo-da-gioco.html'
 })
 export class TavoloDaGioco {}

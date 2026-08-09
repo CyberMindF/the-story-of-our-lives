@@ -112,7 +112,7 @@
   outline-offset: 2px;
 }
 
-/* Link "torna a..." in fondo alla pagina: stessa pillola di .btn (assets/css/components/
+/* Link "torna a..." in fondo alla pagina: stessa pillola di .btn (styles/components/
    buttons.css), con solo il posizionamento in fondo pagina come delta specifico. */
 .place-bottom-link {
   margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;

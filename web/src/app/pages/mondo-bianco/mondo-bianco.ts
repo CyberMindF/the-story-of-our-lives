@@ -9,7 +9,7 @@ import { AppShell } from '../../shell/app-shell';
   selector: 'app-mondo-bianco',
   standalone: true,
   imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/world.css'],
+  styleUrls: ['../../../styles/pages/world.css'],
   templateUrl: './mondo-bianco.html'
 })
 export class MondoBianco {}

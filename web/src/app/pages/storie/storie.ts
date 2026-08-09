@@ -1,7 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { FormStatus } from '../../shared/form-status/form-status';
+import { FormSubmission } from '../../shared/form-submission/form-submission';
 
 interface Story {
   id: string;
@@ -28,19 +29,18 @@ interface StoryView {
 @Component({
   selector: 'app-storie',
   standalone: true,
-  imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/stories.css'],
+  imports: [AppShell, FormStatus],
+  providers: [FormSubmission],
+  styleUrls: ['../../../styles/pages/stories.css'],
   templateUrl: './storie.html'
 })
 export class Storie implements OnInit {
   private readonly sanitizer = inject(DomSanitizer);
+  protected readonly submission = inject(FormSubmission);
 
   protected readonly introduction = signal('');
   protected readonly stories = signal<StoryView[]>([]);
   protected readonly loadError = signal(false);
-  protected readonly submitting = signal(false);
-  protected readonly submitStatus = signal<'' | 'success' | 'error'>('');
-  protected readonly submitMessage = signal('');
 
   async ngOnInit(): Promise<void> {
     await this.loadStories();
@@ -96,30 +96,10 @@ export class Storie implements OnInit {
   }
 
   protected async submitSuggestion(form: HTMLFormElement): Promise<void> {
-    this.submitting.set(true);
-    this.submitStatus.set('');
-    this.submitMessage.set('Sto conservando la tua storia...');
-
-    try {
-      const response = await fetch('/api/stories/suggestions', {
-        method: 'POST',
-        credentials: 'same-origin',
-        body: new FormData(form)
-      });
-      const result = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Invio non riuscito.');
-      }
-
-      form.reset();
-      this.submitStatus.set('success');
-      this.submitMessage.set(`La storia è stata conservata. Grazie, ${result.author}.`);
-    } catch (error) {
-      this.submitStatus.set('error');
-      this.submitMessage.set(error instanceof Error ? error.message : 'Invio non riuscito.');
-    } finally {
-      this.submitting.set(false);
-    }
+    await this.submission.submit(form, {
+      url: '/api/stories/suggestions',
+      pendingMessage: 'Sto conservando la tua storia...',
+      successMessage: (result) => `La storia è stata conservata. Grazie, ${String(result['author'] || '')}.`
+    });
   }
 }

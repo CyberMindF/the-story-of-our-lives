@@ -1,6 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
+import { FormStatus } from '../../shared/form-status/form-status';
+import { FormSubmission } from '../../shared/form-submission/form-submission';
 
 interface Letter {
   id: number;
@@ -21,19 +22,18 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 
 @Component({
   selector: 'app-lettere',
   standalone: true,
-  imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/lettere.css'],
+  imports: [AppShell, FormStatus],
+  providers: [FormSubmission],
+  styleUrls: ['../../../styles/pages/lettere.css'],
   templateUrl: './lettere.html'
 })
 export class Lettere implements OnInit {
+  protected readonly submission = inject(FormSubmission);
   @ViewChild('letterDialog') private dialogRef?: ElementRef<HTMLDialogElement>;
   @ViewChild('dialogPaper') private dialogPaperRef?: ElementRef<HTMLDivElement>;
 
   protected readonly letters = signal<Letter[]>([]);
   protected readonly loadError = signal(false);
-  protected readonly submitting = signal(false);
-  protected readonly submitStatus = signal<'' | 'success' | 'error'>('');
-  protected readonly submitMessage = signal('');
 
   protected readonly dialogLetter = signal<Letter | null>(null);
   protected readonly dialogRotation = signal(0);
@@ -174,30 +174,11 @@ export class Lettere implements OnInit {
   }
 
   protected async submitLetter(form: HTMLFormElement): Promise<void> {
-    this.submitting.set(true);
-    this.submitStatus.set('');
-    this.submitMessage.set('Sto inviando la lettera...');
-
-    try {
-      const response = await fetch('/api/letters', {
-        method: 'POST',
-        credentials: 'same-origin',
-        body: new FormData(form)
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(result.error || 'Invio non riuscito.');
-      }
-
-      form.reset();
-      this.submitStatus.set('success');
-      this.submitMessage.set('Lettera inviata.');
-      await this.loadLetters();
-    } catch (error) {
-      this.submitStatus.set('error');
-      this.submitMessage.set(error instanceof Error ? error.message : 'Invio non riuscito.');
-    } finally {
-      this.submitting.set(false);
-    }
+    await this.submission.submit(form, {
+      url: '/api/letters',
+      pendingMessage: 'Sto inviando la lettera...',
+      successMessage: 'Lettera inviata.',
+      afterSuccess: () => this.loadLetters()
+    });
   }
 }

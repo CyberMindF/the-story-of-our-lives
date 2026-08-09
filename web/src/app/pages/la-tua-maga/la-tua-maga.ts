@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 
@@ -26,8 +26,8 @@ interface Character {
 @Component({
   selector: 'app-la-tua-maga',
   standalone: true,
-  imports: [FormsModule, RouterLink, RouterLinkActive, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/tavolo.css'],
+  imports: [FormsModule, AppShell, IpdvNavigation],
+  styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './la-tua-maga.html'
 })
 export class LaTuaMaga implements OnInit {

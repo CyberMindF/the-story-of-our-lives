@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { CrosswordClues } from './crossword-clues/crossword-clues';
 import { CrosswordGrid } from './crossword-grid/crossword-grid';
@@ -13,9 +12,9 @@ import { CrosswordToolbar } from './crossword-toolbar/crossword-toolbar';
 @Component({
   selector: 'app-cruciverba',
   standalone: true,
-  imports: [RouterLink, AppShell, CrosswordToolbar, CrosswordGrid, CrosswordClues, CrosswordModals],
+  imports: [AppShell, CrosswordToolbar, CrosswordGrid, CrosswordClues, CrosswordModals],
   providers: [CrosswordService],
-  styleUrls: ['../../../../asset-root/assets/css/pages/crossword.css'],
+  styleUrls: ['../../../styles/pages/crossword.css'],
   // Il foglio storico deve raggiungere anche grid, indizi e modali, ora separati in componenti.
   encapsulation: ViewEncapsulation.None,
   templateUrl: './cruciverba.html'

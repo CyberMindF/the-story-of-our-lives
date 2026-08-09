@@ -261,85 +261,14 @@
   margin-inline: auto;
 }
 
-.suggestion-field {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.suggestion-field > span {
-  color: #eef3f7;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.suggestion-field small {
-  color: #9fb2c1;
-  font-size: 0.72rem;
-  font-weight: 500;
-}
-
-.suggestion-field input,
-.suggestion-field textarea {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.17);
-  border-radius: 0.85rem;
-  background: rgba(4, 12, 25, 0.46);
-  color: #f4f7fb;
-  font: inherit;
-  line-height: 1.55;
-}
-
-.suggestion-field input {
-  min-height: 3.1rem;
-  padding: 0.75rem 0.9rem;
-}
-
-.suggestion-field textarea {
+.form-field textarea {
   min-height: 7rem;
-  padding: 0.9rem;
-  resize: vertical;
 }
 
-.suggestion-field textarea[name="storyText"] {
+.form-field textarea[name="storyText"] {
   min-height: 15rem;
 }
 
-.suggestion-field input::placeholder,
-.suggestion-field textarea::placeholder {
-  color: #879bab;
-  opacity: 1;
-}
-
-.suggestion-submit-row {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.suggestion-submit-row button {
-  flex: 0 0 auto;
-}
-
-.suggestion-status {
-  margin: 0;
-  font-size: 0.86rem;
-}
-
-.suggestion-status:empty {
-  display: none;
-}
-
-.suggestion-status.is-success {
-  color: #a7dfbd;
-}
-
-.suggestion-status.is-error {
-  color: #ffb4b4;
-}
-
-.suggestion-field input:focus-visible,
-.suggestion-field textarea:focus-visible,
 .suggestion-trigger:focus-visible {
   outline: 3px solid var(--focus-color);
   outline-offset: 3px;
@@ -382,11 +311,11 @@
     display: none;
   }
 
-  .suggestion-submit-row {
+  .form-submit-row {
     justify-content: stretch;
   }
 
-  .suggestion-submit-row button {
+  .form-submit-row button {
     width: 100%;
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 
@@ -25,8 +25,8 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
 @Component({
   selector: 'app-avventura',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/tavolo.css'],
+  imports: [AppShell, IpdvNavigation],
+  styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './avventura.html'
 })
 export class Avventura implements OnInit {

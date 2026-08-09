@@ -13,11 +13,6 @@
 
 .letter-submit-row { display: flex; justify-content: flex-end; }
 
-.letter-status { margin: 0; font-size: .86rem; }
-.letter-status:empty { display: none; }
-.letter-status.is-success { color: #a7dfbd; }
-.letter-status.is-error { color: #ffb4b4; }
-
 .lettere-archive { padding-bottom: clamp(3rem, 7vw, 5rem); border-top: 1px solid rgba(255,255,255,.16); padding-top: clamp(2.5rem, 6vw, 4rem); }
 .lettere-section-heading { margin-bottom: 4.5rem; }
 .lettere-section-heading h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 400; letter-spacing: -.03em; }

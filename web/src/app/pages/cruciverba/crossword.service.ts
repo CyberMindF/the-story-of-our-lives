@@ -33,8 +33,7 @@ const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const LEGACY_ACCESS_STORAGE_KEY = 'noi-crossword-access';
 const WORD_ATTEMPT_DEBOUNCE_MS = 1000;
 const RESETTABLE_STORAGE_PREFIXES = ['noi-crossword-progress-', 'noi-crossword-theme-'];
-// data.json è servito dalla root della SPA tramite il symlink asset-root (vedi angular.json),
-// stesso file di assets/js/crossword/main.js che lo risolveva relativo al modulo.
+// data.json è servito direttamente dagli asset pubblici della SPA.
 const CROSSWORD_DATA_URL = '/data.json';
 
 type ProgressSource = 'local' | 'remote';

@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 
-const sourcePath = new URL("../content/original/05-le-cuffiette.txt", import.meta.url);
-const outputPath = new URL("../content/music.json", import.meta.url);
+const sourcePath = new URL("../web/public/content/original/05-le-cuffiette.txt", import.meta.url);
+const outputPath = new URL("../web/public/content/music.json", import.meta.url);
 const lines = (await readFile(sourcePath, "utf8")).split(/\r?\n/);
 
 // Restituisce le righe originali senza reinterpretarne o correggerne il testo.
@@ -60,4 +60,4 @@ const content = {
 };
 
 await writeFile(outputPath, `${JSON.stringify(content, null, 2)}\n`, "utf8");
-console.log(`Creato content/music.json con ${songs.length} brani e ${stolenWords.length} citazioni.`);
+console.log(`Creato web/public/content/music.json con ${songs.length} brani e ${stolenWords.length} citazioni.`);

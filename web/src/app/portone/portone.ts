@@ -15,8 +15,8 @@ import { VisitsService } from '../core/visits.service';
   standalone: true,
   imports: [FormsModule],
   styleUrls: [
-    '../../../asset-root/assets/css/components/access-gate.css',
-    '../../../asset-root/assets/css/pages/portone.css'
+    '../../styles/components/access-gate.css',
+    '../../styles/pages/portone.css'
   ],
   templateUrl: './portone.html'
 })

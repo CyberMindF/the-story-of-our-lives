@@ -1,5 +1,10 @@
 # Migrazione Angular — stato di avanzamento (aggiornato ad ogni passo, non a fine lavoro)
 
+> Il porting funzionale e' concluso. Il refactoring successivo e' tracciato separatamente in
+> `ANGULAR_COMPONENTIZATION_PROGRESS.md`.
+> Durante quel refactoring `asset-root` e i symlink pubblici sono stati rimossi: i riferimenti
+> alle vecchie posizioni nelle fasi sottostanti descrivono soltanto la storia della migrazione.
+
 > Se stai riprendendo questo lavoro (Claude, Codex o chiunque altro): leggi questo file per primo.
 > È pensato per essere autosufficiente — non presuppone accesso alla cronologia della chat né a
 > `~/.claude/plans/` (fuori dal repo, potrebbe non essere visibile al tuo tool). Dopo aver letto

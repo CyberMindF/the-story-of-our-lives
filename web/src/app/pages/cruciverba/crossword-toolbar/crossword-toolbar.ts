@@ -5,22 +5,7 @@ import { CrosswordService } from '../crossword.service';
   selector: 'app-crossword-toolbar',
   standalone: true,
   host: { style: 'display: contents' },
-  template: `
-    <div class="controls">
-      <button class="control-button" type="button" aria-label="Controlla le risposte" (click)="crossword.openCheckModal()">
-        <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
-        <span class="control-label">Controlla</span>
-      </button>
-      <button class="control-button" type="button" aria-label="Ricomincia il cruciverba" (click)="crossword.openResetModal()">
-        <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6M5.5 9A8 8 0 1 1 4 14" /></svg>
-        <span class="control-label">Ricomincia</span>
-      </button>
-      <button class="control-button developer-control" type="button" aria-label="Rivela tutto il cruciverba" hidden>
-        <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg>
-        <span class="control-label">Rivela</span>
-      </button>
-    </div>
-  `
+  templateUrl: './crossword-toolbar.html'
 })
 export class CrosswordToolbar {
   constructor(protected readonly crossword: CrosswordService) {}

@@ -22,36 +22,17 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              },
-              {
-                "glob": "data.json",
-                "input": "asset-root",
-                "output": "/"
-              },
-              {
-                "glob": "favicon.svg",
-                "input": "asset-root",
-                "output": "/"
-              },
-              {
-                "glob": "*.png",
-                "input": "asset-root/ExportBlock-fbd237dd-039c-4dc5-9ab4-b9f20c5dcf16-Part-1/Gruppo pagine/🌹Il Portone",
-                "output": "legacy/portone"
-              },
-              {
-                "glob": "_redirects",
-                "input": "asset-root",
-                "output": "/"
               }
             ],
             "styles": [
-              "asset-root/assets/css/themes.css",
-              "asset-root/assets/css/components/shell.css",
-              "asset-root/assets/css/components/world-atmosphere.css",
-              "asset-root/assets/css/components/world-shell.css",
-              "asset-root/assets/css/components/buttons.css",
-              "asset-root/assets/css/components/cards.css",
-              "asset-root/assets/css/components/typography.css",
+              "src/styles/themes.css",
+              "src/styles/components/shell.css",
+              "src/styles/components/world-atmosphere.css",
+              "src/styles/components/world-shell.css",
+              "src/styles/components/buttons.css",
+              "src/styles/components/cards.css",
+              "src/styles/components/typography.css",
+              "src/styles/components/forms.css",
               "src/styles.css"
             ]
           },

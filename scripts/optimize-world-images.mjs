@@ -9,8 +9,8 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const targets = [
-  "assets/images/world",
-  "assets/images/gdr/il-prezzo-della-verita"
+  "web/public/assets/images/world",
+  "web/public/assets/images/gdr/il-prezzo-della-verita"
 ];
 
 const QUALITY = 82;

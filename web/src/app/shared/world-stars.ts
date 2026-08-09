@@ -17,20 +17,7 @@ interface Star {
 @Component({
   selector: 'app-world-stars',
   standalone: true,
-  template: `
-    <div class="world-stars" aria-hidden="true">
-      @for (star of stars; track $index) {
-        <span
-          class="world-star"
-          [class.is-bright]="star.bright"
-          [style.--star-x]="star.x + '%'"
-          [style.--star-y]="star.y + '%'"
-          [style.--star-size]="star.size + 'px'"
-          [style.--star-opacity]="star.opacity"
-        ></span>
-      }
-    </div>
-  `
+  templateUrl: './world-stars.html'
 })
 export class WorldStars {
   protected readonly stars: Star[] = Array.from({ length: STAR_COUNT }, () => this.createStar());

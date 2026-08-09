@@ -7,7 +7,7 @@ import { AppShell } from '../../shell/app-shell';
   selector: 'app-ponti',
   standalone: true,
   imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/ponti.css'],
+  styleUrls: ['../../../styles/pages/ponti.css'],
   templateUrl: './ponti.html'
 })
 export class Ponti {}

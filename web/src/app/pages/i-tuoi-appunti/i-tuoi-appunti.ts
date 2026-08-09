@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 const SAVE_DEBOUNCE_MS = 800;
@@ -14,8 +14,8 @@ const SAVE_DEBOUNCE_MS = 800;
 @Component({
   selector: 'app-i-tuoi-appunti',
   standalone: true,
-  imports: [FormsModule, RouterLink, RouterLinkActive, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/tavolo.css'],
+  imports: [FormsModule, AppShell, IpdvNavigation],
+  styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './i-tuoi-appunti.html'
 })
 export class ITuoiAppunti implements OnInit, OnDestroy {

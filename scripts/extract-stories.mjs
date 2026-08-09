@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 
 const sourcePath = "ExportBlock-fbd237dd-039c-4dc5-9ab4-b9f20c5dcf16-Part-1/Gruppo pagine/📖 Le Storie 31479ac3576c80e9a2e1e4bccf7f1108.html";
-const outputPath = "content/stories.json";
+const outputPath = "web/public/content/stories.json";
 
 // Converte le entità usate dall'export Notion senza alterare il testo originale.
 function decodeHtml(value) {

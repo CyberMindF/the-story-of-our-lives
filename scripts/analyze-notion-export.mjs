@@ -7,7 +7,7 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 const exportRoot = path.join(projectRoot, "ExportBlock-fbd237dd-039c-4dc5-9ab4-b9f20c5dcf16-Part-1");
 const reportDirectory = path.join(projectRoot, "reports", "export");
 const reportPath = path.join(reportDirectory, "notion-export-analysis.json");
-const textDirectory = path.join(projectRoot, "content", "original");
+const textDirectory = path.join(projectRoot, "web", "public", "content", "original");
 
 // Analizza l'export senza modificarlo e salva un inventario dettagliato ripetibile.
 async function main() {

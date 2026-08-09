@@ -10,22 +10,7 @@ import { ThemeService } from '../core/theme.service';
 @Component({
   selector: 'app-theme-switcher',
   standalone: true,
-  template: `
-    <div class="theme-switcher" role="group" aria-label="Scegli un tema">
-      @for (theme of themeService.themes; track theme.id) {
-        <button
-          type="button"
-          class="theme-chip"
-          [class.is-selected]="themeService.activeThemeId() === theme.id"
-          [style.--chip-color]="theme.swatch"
-          [attr.aria-label]="'Attiva il tema ' + theme.label"
-          [attr.aria-pressed]="themeService.activeThemeId() === theme.id"
-          [title]="theme.label"
-          (click)="themeService.applyTheme(theme.id)"
-        ></button>
-      }
-    </div>
-  `
+  templateUrl: './theme-switcher.html'
 })
 export class ThemeSwitcher {
   protected readonly themeService = inject(ThemeService);

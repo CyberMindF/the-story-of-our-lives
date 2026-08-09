@@ -1,6 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 
 interface Photo {
@@ -63,8 +62,8 @@ interface IndexLink {
 @Component({
   selector: 'app-bacheca',
   standalone: true,
-  imports: [RouterLink, AppShell, NgTemplateOutlet],
-  styleUrls: ['../../../../asset-root/assets/css/pages/bacheca.css'],
+  imports: [AppShell, NgTemplateOutlet],
+  styleUrls: ['../../../styles/pages/bacheca.css'],
   templateUrl: './bacheca.html'
 })
 export class Bacheca implements OnInit, AfterViewInit {

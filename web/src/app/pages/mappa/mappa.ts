@@ -1,5 +1,4 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 
 interface Coordinates {
@@ -51,8 +50,8 @@ interface PinView {
 @Component({
   selector: 'app-mappa',
   standalone: true,
-  imports: [RouterLink, AppShell],
-  styleUrls: ['../../../../asset-root/assets/css/pages/map.css'],
+  imports: [AppShell],
+  styleUrls: ['../../../styles/pages/map.css'],
   templateUrl: './mappa.html'
 })
 export class Mappa implements OnInit {
