@@ -9,5 +9,5 @@ non devono entrare nella build Angular.
 - `migration-reports/`: analisi originale, inventari e verifiche storiche prodotti durante
   la migrazione. Non rappresentano la roadmap corrente.
 
-L'immagine `web/public/assets/images/portone/portone.png` resta pubblica perche' e' ancora
-utilizzata direttamente dall'app e non ha un equivalente WebP.
+Gli originali non vanno copiati in `web/public`: `scripts/optimize-world-images.mjs` genera
+le versioni WebP pubbliche nelle rispettive cartelle degli asset.
