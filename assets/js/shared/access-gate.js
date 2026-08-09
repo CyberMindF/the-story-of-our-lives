@@ -132,13 +132,13 @@ export function createAccessGate({ onUnlock, beforeLogout, onLogoutError } = {})
 
     if (isKeyOnly) {
       elements.title.textContent = "Ti ricordi della chiave?";
-      elements.text.textContent = "È la stessa con cui si apre anche il nostro mondo.";
+      elements.text.textContent = "Come la prima volta inseriscila nella serratura e il mondo si aprirà.";
     } else if (isRegister) {
-      elements.title.textContent = "Entra per la prima volta";
-      elements.text.textContent = "Crea il tuo accesso per custodire i progressi e ritrovare tutti i nostri ricordi.";
+      elements.title.textContent = "È la prima volta che sei qui?";
+      elements.text.textContent = "Crea il tuo account per entrare nel nostro mondo e accedere a tutte le funzionalità.";
     } else {
       elements.title.textContent = "Rieccoci nel nostro mondo";
-      elements.text.textContent = "Accedi con il tuo account per tornare alle parole che raccontano di noi.";
+      elements.text.textContent = "Accedi per tornare a sederti su quel divano.";
     }
     elements.submitButton.textContent = getSubmitLabel(mode);
 

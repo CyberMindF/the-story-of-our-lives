@@ -11,7 +11,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.65fr);
   gap: clamp(1.5rem, 5vw, 5rem);
-  align-items: center;
+  align-items: start;
   width: min(100%, 76rem);
   min-height: calc(100dvh - clamp(2rem, 8vw, 7rem));
   margin: 0 auto;
@@ -136,7 +136,6 @@
   .portone-layout {
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    align-items: start;
     min-height: auto;
   }
 

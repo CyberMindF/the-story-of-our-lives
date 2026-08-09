@@ -13,9 +13,6 @@
 11. capire come ottimizzare le pagine dei gdr, perché attualmente sono tante pagine e ci si perde un po', per tornare indietro ci vuole una vita. Attualmente il percorso è il mondom bianco->tavolo da gioco->giochi di ruolo->il prezzo della verità->le 3 pagine dell'avventura. Veramente troppi passaggi
 12. c'è ancora quel bug che il colore del bottone inizialmente è rosso, poi diventa verde
 13. Tutto il sito non sembra avere uno stile unificato, come card, bottoni, stili, in generale. Ovvio non è che tutte le pagine devono essere uguali, ma almeno avere un design riconoscibile tra loro. 
-14. togliere nel login il riferimento alla chiave nel box del login, tanto c'è la parte a sinistra.
-15. Spostare nella registrazione la checkbox sotto il bottone registrati. togliere nel login il riferimento alla chiave nel box del login, tanto c'è la parte a sinistra. Cambiare la cosa del nome in "imposta un nome", senza placeholder però
-
 Portati qui dalla vecchia `CHECKLIST_MIGRAZIONE_MONDO_BIANCO.md` (ora eliminata, cronologia completa nella storia di git):
 
 16. Aggiungere la seconda avventura del Gioco di Ruolo. Rory ha già pronta una seconda storia giocabile, con un regolamento diverso da "Il Prezzo della Verità" (non condividono lo stesso sistema di regole). Struttura già pronta ad accoglierla: `tavolo-da-gioco/gdr/index.html` elenca le avventure in `.tavolo-games-grid-compact` (oggi solo IPDV), ognuna con pagina propria (`tavolo-da-gioco/gdr/<slug>/index.html`) sul modello di `tavolo-da-gioco/gdr/il-prezzo-della-verita/`. Non condividere il regolamento tra le due: ognuna tiene il proprio. Aspettare titolo, testo e regole da Rory prima di crearla.

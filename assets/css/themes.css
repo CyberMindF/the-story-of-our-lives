@@ -1,26 +1,31 @@
+/* I valori di colore di :root coincidono con body[data-theme="the-white-world"] (tema di
+   default, vedi assets/js/shared/theme.js) invece di avere una loro palette chiara distinta:
+   il tema viene applicato via JS solo dopo il primo paint, quindi se :root avesse colori
+   diversi si vedrebbe un lampo del tema sbagliato prima che lo script giri (bug segnalato
+   il 09/08/2026 sul box di login del Portone). */
 :root {
   --cell-size: 2.6rem;
   --cell-font-size: 1.15rem;
-  --bg-color: #f7eeef;
-  --panel-color: #fff9f8;
-  --panel-border-color: rgba(0, 0, 0, 0.06);
-  --text-color: #31272a;
-  --muted-color: #78656b;
-  --border-color: #d5bcc2;
-  --selection-color: #f1dde3;
-  --active-color: #e7c3cd;
-  --correct-color: #dcebdd;
-  --error-color: #efd5d5;
-  --focus-color: #9c596c;
-  --complete-clue-bg: #f5fbf5;
-  --complete-clue-border: #84a588;
-  --button-bg: rgba(255, 255, 255, 0.48);
-  --button-hover-bg: rgba(255, 255, 255, 0.72);
-  --grid-scroll-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.28) 100%);
-  --cell-bg: rgba(255, 255, 255, 0.92);
-  --clue-bg: rgba(255, 255, 255, 0.54);
-  --drawer-bg: rgba(255, 249, 248, 0.58);
-  --shadow: 0 14px 36px rgba(102, 61, 74, 0.12);
+  --bg-color: #17243a;
+  --panel-color: rgba(255, 255, 255, 0.05);
+  --panel-border-color: rgba(255, 255, 255, 0.14);
+  --text-color: #f4f7fb;
+  --muted-color: #d1dde6;
+  --border-color: rgba(255, 255, 255, 0.18);
+  --selection-color: rgba(255, 255, 255, 0.12);
+  --active-color: rgba(255, 255, 255, 0.16);
+  --correct-color: rgba(167, 223, 189, 0.22);
+  --error-color: #5a3a3a;
+  --focus-color: #9fc6e0;
+  --complete-clue-bg: rgba(167, 223, 189, 0.14);
+  --complete-clue-border: rgba(167, 223, 189, 0.4);
+  --button-bg: rgba(255, 255, 255, 0.08);
+  --button-hover-bg: rgba(255, 255, 255, 0.16);
+  --grid-scroll-bg: linear-gradient(180deg, rgba(11, 17, 32, 0.2) 0%, rgba(11, 17, 32, 0.5) 100%);
+  --cell-bg: rgba(255, 255, 255, 0.07);
+  --clue-bg: rgba(255, 255, 255, 0.04);
+  --drawer-bg: rgba(8, 16, 30, 0.6);
+  --shadow: 0 24px 52px rgba(0, 0, 0, 0.4);
 }
 
 body[data-theme="velvet"] {

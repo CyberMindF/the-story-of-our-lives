@@ -40,22 +40,25 @@ body.access-locked .app-shell {
   font-size: clamp(1.65rem, 5vw, 2.2rem);
 }
 
-.access-card > p:not(.access-eyebrow):not(.access-error):not(.access-key-hint) {
+.access-card > p:not(.access-error) {
   margin: 0.65rem 0 1.4rem;
   color: var(--muted-color);
 }
 
-.access-eyebrow,
-.access-card label {
+/* Ogni campo (o il gruppo email/password) è un .access-field: etichetta + input con la
+   stessa piccola distanza interna ovunque, e la stessa distanza dal campo precedente —
+   prima email/password (nel grid) e chiave/nickname (fuori) avevano due valori diversi. */
+.access-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.access-field > span {
   color: var(--muted-color);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.access-eyebrow {
-  margin: 0 0 0.5rem;
 }
 
 .access-mode-switcher {
@@ -76,7 +79,12 @@ body.access-locked .app-shell {
 
 .access-account-fields {
   display: grid;
-  gap: 0.45rem;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.access-card > .access-field {
+  margin-top: 0.75rem;
 }
 
 .access-card input {
@@ -88,16 +96,6 @@ body.access-locked .app-shell {
   background: var(--cell-bg);
   color: var(--text-color);
   outline: none;
-}
-
-.access-card input + label,
-.access-account-fields + label {
-  display: block;
-  margin-top: 0.75rem;
-}
-
-.access-nickname-field {
-  margin-top: 0.75rem;
 }
 
 .access-checkbox-field {
@@ -117,18 +115,6 @@ body.access-locked .app-shell {
   width: auto;
   margin: 0;
   accent-color: var(--focus-color);
-}
-
-.access-nickname-field + label {
-  margin-top: 0.75rem;
-}
-
-/* La nota completa l'etichetta senza competere visivamente con i campi del form. */
-.access-card > .access-key-hint {
-  margin: 0.2rem 0 0.45rem;
-  color: var(--muted-color);
-  font-size: 0.84rem;
-  line-height: 1.35;
 }
 
 .access-card input:focus {
@@ -179,7 +165,6 @@ body.access-locked .app-shell {
     overflow: hidden;
   }
 
-  body.access-keyboard-open .access-eyebrow,
   body.access-keyboard-open .access-card > h1,
   body.access-keyboard-open .access-card > p:not(.access-error),
   body.access-keyboard-open .access-mode-switcher {

@@ -54,7 +54,6 @@
           src="./favicon.svg"
           alt=""
         />
-        <p class="access-eyebrow">La Chiave</p>
         <h1 id="access-title">Ti ricordi della chiave?</h1>
         <p id="access-text">È la stessa con cui si apre anche il nostro mondo.</p>
 
@@ -64,29 +63,35 @@
         </div>
 
         <div id="access-account-fields" class="access-account-fields">
-          <label for="access-email">Email</label>
-          <input id="access-email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required />
+          <label class="access-field">
+            <span>Email</span>
+            <input id="access-email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required />
+          </label>
 
-          <label for="access-password">Password</label>
           <!-- Campo mascherato senza semantica password per ridurre i suggerimenti invasivi del browser. -->
-          <input id="access-password" class="masked-text-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" minlength="8" data-1p-ignore data-lpignore="true" required />
+          <label class="access-field">
+            <span>Password</span>
+            <input id="access-password" class="masked-text-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" minlength="8" data-1p-ignore data-lpignore="true" required />
+          </label>
         </div>
 
-        <div id="access-nickname-field" class="access-nickname-field" hidden>
-          <label for="access-nickname">Come vuoi essere chiamata</label>
-          <input id="access-nickname" type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Il tuo nome o soprannome" />
-        </div>
+        <label id="access-nickname-field" class="access-field" hidden>
+          <span>Imposta un nome</span>
+          <input id="access-nickname" type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false" />
+        </label>
+
+        <label class="access-field">
+          <span>La chiave</span>
+          <input id="access-key" type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" data-1p-ignore data-lpignore="true" required />
+        </label>
+
+        <button id="access-submit-button" class="access-submit-button" type="submit">Registrati ed entra</button>
 
         <label id="access-notify-field" class="access-checkbox-field" hidden>
           <input id="access-notify" type="checkbox" />
           <span>Avvisami via email se ci sono aggiornamenti</span>
         </label>
 
-        <label for="access-key">La chiave</label>
-        <p id="access-key-hint" class="access-key-hint">Ti ricordi la chiave? È sempre quella che porti al polso.</p>
-        <input id="access-key" type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" aria-describedby="access-key-hint" data-1p-ignore data-lpignore="true" required />
-
-        <button id="access-submit-button" class="access-submit-button" type="submit">Registrati ed entra</button>
         <p id="access-error" class="access-error" aria-live="polite"></p>
         </form>
       </div>
