@@ -62,6 +62,9 @@ accessibilita', route, API e telemetria devono restare invariati.
 ### Blocco 3 - Logica e overlay
 
 - [ ] Estrarre il flusso FormData solo per endpoint e gestione errori equivalenti.
+- [x] Estratto `StaticContentService`: Calendario, Cuffiette, Mappa, Storie e Bacheca
+  condividono caricamento, controllo HTTP e parsing dei JSON statici; validazione e stato
+  specifici restano nelle rispettive pagine.
 - [x] Estratta `ConfirmationDialog`: i tre modali del cruciverba condividono struttura,
   attributi ARIA, backdrop e azioni. I dialog specializzati di Bacheca e Lettere restano
   intenzionalmente separati.
@@ -70,7 +73,7 @@ accessibilita', route, API e telemetria devono restare invariati.
 
 ### Blocco 4 - Verifica conclusiva
 
-- [ ] Build production e test strict.
+- [x] Build production e test strict.
 - [ ] Audit browser completo desktop/mobile.
 - [ ] Audit finale delle duplicazioni residue e motivazione di quelle intenzionali.
 
@@ -94,3 +97,4 @@ accessibilita', route, API e telemetria devono restare invariati.
 - [x] Riparata la suite Angular rimasta allo scaffold iniziale: test reali su creazione root,
   150 stelle e router outlet, `2/2` verdi.
 - [x] Secondo audit dopo dialog e content state: 36/36 route/viewport.
+- [x] Build production e test Angular `2/2` dopo la centralizzazione dei contenuti statici.

@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { TelemetryService } from '../../core/telemetry.service';
+import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
 
@@ -37,6 +38,7 @@ interface MusicData {
   templateUrl: './cuffiette.html'
 })
 export class Cuffiette implements OnInit {
+  private readonly staticContent = inject(StaticContentService);
   private readonly telemetryService = inject(TelemetryService);
   private readonly sanitizer = inject(DomSanitizer);
 
@@ -55,11 +57,7 @@ export class Cuffiette implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      const response = await fetch('/content/music.json');
-      if (!response.ok) {
-        throw new Error(`Caricamento fallito: ${response.status}`);
-      }
-      const data = (await response.json()) as MusicData;
+      const data = await this.staticContent.load<MusicData>('/content/music.json');
       if (data.songs?.length !== 9 || !Array.isArray(data.stolenWords?.items)) {
         throw new Error('Contenuto musicale incompleto');
       }

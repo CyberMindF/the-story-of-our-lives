@@ -1,4 +1,5 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 
 interface CalendarEvent {
@@ -36,16 +37,13 @@ const MONTH_FORMATTER = new Intl.DateTimeFormat('it-IT', { month: 'long', timeZo
   templateUrl: './calendario.html'
 })
 export class Calendario implements OnInit {
+  private readonly staticContent = inject(StaticContentService);
   protected readonly yearGroups = signal<YearGroup[]>([]);
   protected readonly countLabel = signal('Caricamento delle date…');
 
   async ngOnInit(): Promise<void> {
     try {
-      const response = await fetch('/content/calendar.json');
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      const data = (await response.json()) as { events: CalendarEvent[] };
+      const data = await this.staticContent.load<{ events: CalendarEvent[] }>('/content/calendar.json');
       this.validateCalendar(data);
       this.yearGroups.set(this.groupByYear(data.events));
       this.countLabel.set(`${data.events.length} date custodite`);

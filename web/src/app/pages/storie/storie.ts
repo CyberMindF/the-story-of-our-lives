@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
@@ -37,6 +38,7 @@ interface StoryView {
 })
 export class Storie implements OnInit {
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly staticContent = inject(StaticContentService);
   protected readonly submission = inject(FormSubmission);
 
   protected readonly introduction = signal('');
@@ -49,12 +51,7 @@ export class Storie implements OnInit {
 
   private async loadStories(): Promise<void> {
     try {
-      const response = await fetch('/content/stories.json');
-      if (!response.ok) {
-        throw new Error(`Caricamento fallito: ${response.status}`);
-      }
-
-      const data = (await response.json()) as { introduction: string; stories: Story[] };
+      const data = await this.staticContent.load<{ introduction: string; stories: Story[] }>('/content/stories.json');
       if (!Array.isArray(data.stories) || data.stories.length !== 4) {
         throw new Error('La raccolta deve contenere quattro storie');
       }
