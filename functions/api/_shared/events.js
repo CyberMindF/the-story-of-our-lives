@@ -7,7 +7,20 @@ const ALLOWED_EVENTS = new Set([
   "crossword_closed",
   "crossword_completed",
   "word_completed",
-  "theme_changed"
+  "theme_changed",
+  // Aperture di pagina nel Mondo Bianco (client, vedi assets/js/world/main.js).
+  "world_page_opened",
+  // Media delle Cuffiette (client, vedi assets/js/music/main.js).
+  "song_played",
+  "song_completed",
+  "playlist_link_clicked",
+  // Azioni esplicite registrate lato server, subito dopo la scrittura riuscita in D1.
+  // Gli appunti (autosalvati a ogni pausa di scrittura) restano esclusi: sarebbero rumorosi
+  // quanto tracciare i tasti, l'apertura della pagina è già coperta da world_page_opened.
+  "letter_sent",
+  "gdr_turn_submitted",
+  "gdr_character_saved",
+  "suggestion_sent"
 ]);
 const MAX_METADATA_LENGTH = 4096;
 

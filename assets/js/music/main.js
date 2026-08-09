@@ -1,3 +1,5 @@
+import { trackEvent } from "../shared/telemetry.js";
+
 const elements = {
   playlistName: document.querySelector("#playlist-name"),
   playlistIntroduction: document.querySelector("#playlist-introduction"),
@@ -13,6 +15,8 @@ const elements = {
 };
 
 // Crea il player SoundCloud soltanto dopo un'azione esplicita dell'utente.
+// Essendo un iframe di terze parti non possiamo leggere play/pausa/fine reali: il click che
+// carica il player è il segnale di "riproduzione" più vicino che abbiamo per queste canzoni.
 function loadPlayer(button, song) {
   const iframe = document.createElement("iframe");
   iframe.title = `Player di ${song.title}`;
@@ -20,6 +24,7 @@ function loadPlayer(button, song) {
   iframe.loading = "lazy";
   iframe.src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(song.soundcloudUrl)}&color=%23d8c8a8&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false`;
   button.replaceWith(iframe);
+  void trackEvent("music", "song_played", { songId: song.id });
 }
 
 // Costruisce una canzone completa mantenendo introduzione e testo separati.
@@ -67,7 +72,12 @@ function renderMusic(data) {
   if (data.bonus?.available && data.bonus.key) {
     elements.bonusAudio.src = `../api/media/${data.bonus.key}`;
     elements.bonusSection.hidden = false;
+    // A differenza delle canzoni su SoundCloud, questo è audio nativo: play/fine reali.
+    elements.bonusAudio.addEventListener("play", () => void trackEvent("music", "song_played", { bonus: true }), { once: true });
+    elements.bonusAudio.addEventListener("ended", () => void trackEvent("music", "song_completed", { bonus: true }));
   }
+
+  elements.playlistLink.addEventListener("click", () => void trackEvent("music", "playlist_link_clicked", {}));
 
   data.stolenWords.items.forEach((item) => {
     const quote = document.createElement("blockquote");

@@ -1,4 +1,5 @@
 import { getAuthenticatedSession, json } from "./auth/_shared.js";
+import { recordEvent } from "./_shared/events.js";
 
 const MAX_BODY_LENGTH = 20000;
 
@@ -51,6 +52,12 @@ export async function onRequestPost(context) {
       .prepare("INSERT INTO letters (author_id, body, created_at) VALUES (?, ?, ?)")
       .bind(session.user.id, text, createdAt)
       .run();
+
+    context.waitUntil(recordEvent(
+      context.env,
+      { userId: session.user.id, sessionId: session.sessionId },
+      { section: "lettere", eventType: "letter_sent", metadata: { bodyLength: text.length } }
+    ));
 
     return json(
       { saved: true, letterId: result.meta.last_row_id, author: session.user.nickname, createdAt },

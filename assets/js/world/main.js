@@ -2,6 +2,7 @@ import { clearAccessUnlock, revokeAuthSession } from "../shared/auth.js";
 import { clearRequestedDestination } from "../shared/navigation.js";
 import { createThemeController } from "../shared/theme.js";
 import { createWorldStars } from "../shared/world-atmosphere.js";
+import { sectionFromPath, trackEvent } from "../shared/telemetry.js";
 
 const elements = {
   greeting: document.getElementById("user-greeting"),
@@ -23,6 +24,8 @@ async function init() {
 
   elements.greeting.textContent = `Ciao, ${user.nickname}`;
   elements.logoutButton.addEventListener("click", logout);
+
+  void trackEvent(sectionFromPath(), "world_page_opened", { path: window.location.pathname });
 }
 
 // Revoca la sessione e torna al Portone senza conservare la pagina interna corrente.

@@ -10,7 +10,6 @@ input {
   padding: 1.25rem 2.5rem;
 }
 
-.hero,
 .board-panel,
 .clues-panel {
   background: var(--panel-color);
@@ -19,39 +18,51 @@ input {
   box-shadow: var(--shadow);
 }
 
-.hero {
+/* Intestazione e piè di pagina condivisi con il resto del Mondo Bianco: qui restano solo le
+   parti specifiche del cruciverba (titolo, sottotitolo, stato) — normalizzazione del 09/08/2026. */
+.crossword-hero {
+  padding: 1.5rem 0 1.25rem;
+}
+
+.crossword-hero h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  font-weight: 400;
+}
+
+.crossword-status {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: end;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  margin-top: 1rem;
 }
 
-.hero-copy {
-  min-width: 0;
-}
-
-.hero-userbar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  width: fit-content;
-  min-height: 2rem;
-  margin: 0 0 0.5rem auto;
-  padding: 0.2rem 0.25rem 0.2rem 0.65rem;
-  gap: 0.35rem;
-  border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--active-color) 72%, transparent);
-}
-
-.status-panel .user-greeting {
+.crossword-status p {
   margin: 0;
-  color: var(--text-color);
-  font-size: 0.92rem;
+}
+
+.crossword-home-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: fit-content;
+  margin: 1.5rem auto 0;
+  padding: 0.8rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f7fb;
   font-weight: 700;
-  line-height: 1;
+  text-decoration: none;
+}
+
+.crossword-home-link:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.crossword-home-link:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 4px;
 }
 
 .logout-button {
@@ -95,117 +106,9 @@ h2 {
 }
 
 .subtitle,
-.status-panel p {
+.crossword-status p {
   margin: 0.35rem 0 0;
   color: var(--muted-color);
-}
-
-.status-panel {
-  text-align: right;
-}
-
-
-.theme-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-left: auto;
-}
-
-.theme-label {
-  color: var(--muted-color);
-  font-size: 0.92rem;
-}
-
-.theme-switcher {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.55rem;
-}
-
-.theme-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  justify-content: flex-start;
-  width: 100%;
-}
-
-.theme-chip-icon {
-  width: 1rem;
-  height: 1rem;
-  position: relative;
-  display: inline-block;
-  flex: 0 0 auto;
-  color: currentColor;
-}
-
-.theme-chip-icon-sun {
-  width: 0.68rem;
-  height: 0.68rem;
-  margin: 0.16rem;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.9;
-}
-
-.theme-chip-icon-sun::before,
-.theme-chip-icon-sun::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.82;
-}
-
-.theme-chip-icon-sun::before {
-  background:
-    linear-gradient(currentColor, currentColor) center top / 0.08rem 0.22rem no-repeat,
-    linear-gradient(currentColor, currentColor) center bottom / 0.08rem 0.22rem no-repeat,
-    linear-gradient(currentColor, currentColor) left center / 0.22rem 0.08rem no-repeat,
-    linear-gradient(currentColor, currentColor) right center / 0.22rem 0.08rem no-repeat;
-  inset: -0.26rem;
-}
-
-.theme-chip-icon-sun::after {
-  transform: rotate(45deg);
-  background:
-    linear-gradient(currentColor, currentColor) center top / 0.08rem 0.2rem no-repeat,
-    linear-gradient(currentColor, currentColor) center bottom / 0.08rem 0.2rem no-repeat,
-    linear-gradient(currentColor, currentColor) left center / 0.2rem 0.08rem no-repeat,
-    linear-gradient(currentColor, currentColor) right center / 0.2rem 0.08rem no-repeat;
-  inset: -0.26rem;
-}
-
-.theme-chip-icon-moon {
-  width: 1.15rem;
-  height: 1.15rem;
-  fill: currentColor;
-}
-
-.theme-chip-icon-moon .moon-disc {
-  opacity: 0.2;
-}
-
-.theme-chip-icon-moon .moon-crescent {
-  opacity: 0.88;
-}
-
-.theme-chip-icon-letter {
-  width: 1rem;
-  height: 1rem;
-  display: grid;
-  place-items: center;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  line-height: 1;
-  transform: translateY(0.07rem);
-}
-
-.theme-chip-name {
-  font-weight: 600;
 }
 
 button {
@@ -235,28 +138,3 @@ button:focus-visible,
   outline-offset: 2px;
 }
 
-.theme-chip {
-  padding: 0.5rem 0.85rem;
-  font-size: 0.92rem;
-}
-
-.theme-chip.is-selected {
-  background: var(--active-color);
-  border-color: var(--focus-color);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
-}
-
-body[data-theme="sea"] .theme-chip[data-theme="sea"] .theme-chip-icon-sun,
-body[data-theme="velvet"] .theme-chip[data-theme="velvet"] .theme-chip-icon-moon {
-  transform: translateY(-0.02rem);
-}
-
-.theme-toast {
-  display: none;
-}
-
-@media (max-width: 640px) {
-  .theme-switcher {
-    width: 100%;
-  }
-}

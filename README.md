@@ -94,9 +94,15 @@ La telemetria usa due endpoint autenticati e non rinnova la durata della session
 - `POST /api/telemetry/events`: registra eventi significativi delle diverse sezioni.
 - `POST /api/telemetry/word-attempts`: registra i tentativi del cruciverba dopo un secondo di pausa.
 
-La tabella `events` contiene sezione, tipo, versione dello schema, metadati JSON, utente e sessione. Validazione e inserimento SQL sono centralizzati in `recordEvent` dentro `functions/api/telemetry/_shared.js`. Per aggiungere un evento futuro bisogna inserirlo in `ALLOWED_EVENTS` nello stesso file e richiamare il client riutilizzabile `trackEvent`.
+La tabella `events` contiene sezione, tipo, versione dello schema, metadati JSON, utente e sessione. Validazione e inserimento SQL sono centralizzati in `recordEvent` dentro `functions/api/_shared/events.js` (`ALLOWED_EVENTS` elenca ogni tipo consentito). Gli eventi che il client può richiedere direttamente devono comparire anche in `CLIENT_EVENT_TYPES` dentro `functions/api/telemetry/events.js`; quelli registrati lato server (dopo una scrittura riuscita, tramite `context.waitUntil`) restano fuori da quella seconda lista apposta, così un client non può fingerli.
 
 Il cruciverba registra `crossword_opened`, `crossword_closed`, `word_completed`, `crossword_completed` e `theme_changed`. La chiusura include durata e progresso, viene inviata una sola volta per apertura e usa una richiesta `keepalive` quando la pagina viene abbandonata.
+
+Il resto del Mondo Bianco usa il client condiviso `assets/js/shared/telemetry.js` (`trackEvent(section, eventType, metadata)`):
+
+- `world_page_opened` parte da sola su ogni pagina che carica `assets/js/world/main.js` (cioè quasi tutte le pagine del mondo): sezione derivata dal primo segmento del percorso, path completo nei metadata. Una pagina nuova risulta già tracciata senza dover toccare questo sistema di nuovo.
+- Cuffiette: `song_played` al click che carica il player SoundCloud (è un iframe di terze parti, non possiamo leggere play/pausa/fine reali — il click è il segnale più vicino disponibile); la traccia bonus, essendo audio nativo, usa invece `play`/`ended` veri per `song_played`/`song_completed`; `playlist_link_clicked` sul link alla playlist esterna.
+- Lettere, GDR, Suggerimenti: `letter_sent`, `gdr_turn_submitted`, `gdr_character_saved`, `suggestion_sent` sono registrati lato server subito dopo il salvataggio riuscito, con metadata minimi (es. lunghezza del testo o nome dell'avventura) — mai il testo scritto. Gli appunti GDR restano esclusi apposta: si autosalvano a ogni pausa di scrittura, tracciarli sarebbe rumoroso quanto tracciare i tasti.
 
 I tentativi sono separati in `crossword_word_attempts`. Ogni parola usa come `word_id` il proprio numero progressivo nell'array di `data.json`, partendo da 1; non esiste un secondo ordinamento. Le celle interne ancora vuote sono rappresentate da `_`; le celle vuote finali vengono omesse. Il frontend evita richieste duplicate e il backend impedisce comunque inserimenti consecutivi identici per utente e parola.
 
@@ -105,6 +111,10 @@ Il backend legge la soluzione direttamente da `data.json` e calcola accuratezza 
 La tabella `sessions` resta la fonte ufficiale per autenticazione, scadenza e logout. La cronologia permanente registra invece in `events` le azioni `register`, `login_success`, `world_unlocked` e `logout`; `session_id` viene conservato come riferimento storico senza vincolo esterno, quindi gli eventi sopravvivono anche a una futura rimozione delle sessioni. I metadata auth contengono IP, user agent e, quando applicabile, i 7 giorni di validità.
 
 Prima dell'autenticazione, `POST /api/visits` crea una visita anonima identificata dal cookie casuale `noi_visit`. Nel database viene conservato soltanto l'hash del token, insieme a IP, user agent e contesto Cloudflare. Se successivamente avviene login, registrazione o sblocco, `visit_session_links` collega la visita a utente e sessione; in caso contrario il record anonimo resta comunque disponibile.
+
+## Aspetto del cruciverba
+
+Il cruciverba (`tavolo-da-gioco/cruciverba/`) usa la stessa intestazione (`.place-header`/`.place-userbar`, con saluto, link ai Suggerimenti e logout), lo stesso link "torna a..." in fondo alla pagina e lo stesso cielo stellato (`world-atmosphere.css`) di tutte le altre pagine del Mondo Bianco — normalizzato il 09/08/2026, prima aveva una sua intestazione e nessun cielo. I colori seguono il tema fisso `the-white-world` in `assets/css/themes.css`, calibrato sulla stessa palette (già hardcoded) usata dal resto del sito. Il cruciverba aveva un selettore con 4 temi (Ocean/Velvet/Red of You/Green of Me): è stato tolto per coerenza con le altre pagine, che non ne hanno uno, ma i 4 temi restano definiti nel codice per un'eventuale estensione futura a tutto il sito.
 
 ## Progresso persistente
 
@@ -123,15 +133,25 @@ La pagina `storie/` permette all'utente autenticato di lasciare una storia compl
 
 ## Suggerimenti liberi
 
-La pagina `suggerimenti/` permette all'utente autenticato di proporre qualunque idea per il Mondo Bianco (nuove pagine, ricordi, funzionalità), con un titolo facoltativo e un messaggio libero. È raggiungibile dal bottone "Suggerisci" nella pagina 404 interna.
+La pagina `suggerimenti/` permette all'utente autenticato di proporre qualunque idea per il Mondo Bianco, con una categoria obbligatoria (dove si vorrebbe applicare la modifica: Calendario, Mappa, Storie, Cuffiette, Bacheca, Ponti, Lettere, Tavolo da Gioco o Altro), un titolo facoltativo e un messaggio libero. È raggiungibile dal bottone "Suggerisci" nella pagina 404 interna.
 
-`POST /api/suggestions` ricava l'autore dalla sessione e conserva la proposta in `world_suggestions` con stato iniziale `pending`, sullo stesso modello delle proposte per Le Storie.
+`POST /api/suggestions` ricava l'autore dalla sessione, valida la categoria contro un elenco fisso (`CATEGORIES` in `functions/api/suggestions.js`) e conserva la proposta in `world_suggestions` con stato iniziale `pending`, sullo stesso modello delle proposte per Le Storie.
 
 ## Lettere
 
 La pagina `lettere/` sostituisce l'idea originale della Cassetta delle Lettere (un upload manuale su Drive, necessario quando non si poteva chattare normalmente): ora che la comunicazione quotidiana passa da WhatsApp, resta solo il bisogno di lasciarsi un messaggio più lungo e pensato. Chi scrive compone solo testo (nessun allegato per ora); la lettura avviene in una vista dedicata in stile foglio di carta, corsivo, firmata con il nickname dell'autore.
 
 Con soli due account non serve indicare un destinatario: `letters` in D1 conserva autore, testo, data e `read_at`; chi non ha scritto la lettera è per definizione chi la riceve. `GET /api/letters` elenca tutte le lettere con `isMine` calcolato lato server; `POST /api/letters` ne crea una nuova; `POST /api/letters/:id` la segna come letta, ma solo se chi la apre non ne è l'autore. Non è ancora raggiungibile dall'hub principale, per lo stesso motivo dei Suggerimenti: non è uno degli otto luoghi originali del Mondo Bianco.
+
+## Il Prezzo della Verità
+
+L'avventura del Gioco di Ruolo era finora un link esterno a un documento Google usato come "play-by-chat" manuale. Rory ha fornito l'export HTML dei 3 documenti originali (L'Avventura, La Tua Maga, I Tuoi Appunti) più le immagini dei personaggi; ora vivono dentro il sito, in `tavolo-da-gioco/gdr/il-prezzo-della-verita/`:
+
+- `avventura/` — l'incipit completo (mondo, scuola, backstory, i 5 NPC con ritratto) fino all'apertura di Atto I, seguito da un vero thread di gioco: chi legge e il master scrivono i turni in ordine cronologico, salvati in D1 (`gdr_turns`, uno per avventura, condiviso tra i due account) tramite `GET`/`POST /api/gdr/turns`. I ritratti sono immagini pubbliche statiche in `assets/images/gdr/il-prezzo-della-verita/` (arte decorativa generata, non media personale, quindi niente `/api/media/`).
+- `la-tua-maga/` — la scheda personaggio, compilabile: nome, gatta, descrizione, statistiche (Mente/Cuore/Corpo/Magia), Punti Stress, slot magia e inventario si salvano in D1 (`gdr_characters`, uno per utente per avventura) tramite `GET`/`POST /api/gdr/character`. Le parti fisse del regolamento (abilità speciali, elenco incantesimi, tabella "Effetti Selvaggi") restano testo di riferimento.
+- `i-tuoi-appunti/` — un blocco note reale, salvato in D1 (`gdr_notes`, uno per utente per avventura) tramite `GET`/`POST /api/gdr/notes`, non in localStorage.
+
+Le tre pagine sono collegate da una barra di pillole in cima (`.ipdv-nav`, stesso pattern dell'indice della Bacheca) invece che solo da link in mezzo al testo o da una sidebar fissa.
 
 ## Redirect legacy
 
@@ -184,9 +204,15 @@ I testi puliti delle pagine vengono salvati e versionati in `content/original/`,
 - `functions/api/stories/`: ricezione autenticata delle proposte per nuove storie.
 - `functions/api/suggestions.js`: ricezione autenticata dei suggerimenti liberi per il Mondo Bianco.
 - `functions/api/letters.js`, `functions/api/letters/[id].js`: elenco/scrittura delle lettere e conferma di lettura.
+- `functions/api/gdr/notes.js`: lettura/salvataggio del blocco appunti personale per le avventure del Gioco di Ruolo.
+- `functions/api/gdr/character.js`: lettura/salvataggio della scheda personaggio compilabile.
+- `functions/api/gdr/turns.js`: lettura/scrittura del thread di gioco condiviso (i turni del play-by-chat).
+- `tavolo-da-gioco/gdr/il-prezzo-della-verita/`: hub dell'avventura, con le sotto-pagine `avventura/`, `la-tua-maga/`, `i-tuoi-appunti/`.
+- `assets/js/gdr/`: logica delle pagine dell'avventura (scheda personaggio, thread di gioco).
 - `functions/api/media/[[path]].js`: accesso autenticato ai media privati conservati in R2.
 - `content/bacheca.json`: struttura della Bacheca dei Ricordi, con chiavi R2 di foto e miniature.
 - `scripts/build-bacheca-content.mjs`, `scripts/upload-bacheca-media.mjs`, `scripts/build-bacheca-thumbnails.mjs`: ricostruzione della struttura, import degli originali e generazione miniature per la Bacheca.
+- `scripts/optimize-world-images.mjs`: converte in WebP (qualità 82, tramite `sharp`) le immagini hero/decorative pubbliche (`assets/images/world/`, `assets/images/gdr/`), lasciando intatti gli originali PNG/JPG accanto al file ottimizzato. Idempotente: si può rilanciare in sicurezza dopo aver aggiunto nuove immagini in quelle cartelle.
 - `404.html`: pagina non trovata, servita automaticamente da Cloudflare Pages con percorsi assoluti.
 - `_redirects`: alias verso le nuove route per i vecchi short link controllabili.
 - `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>📓 I Tuoi Appunti | Il Prezzo della Verità</title>
+    <link rel="icon" href="../../../../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../../../assets/css/themes.css?v=1" />
+    <link rel="stylesheet" href="../../../../assets/css/components/shell.css?v=1" />
+    <link rel="stylesheet" href="../../../../assets/css/components/world-atmosphere.css?v=2" />
+    <link rel="stylesheet" href="../../../../assets/css/components/world-shell.css?v=2" />
+    <link rel="stylesheet" href="../../../../assets/css/pages/tavolo.css?v=4" />
+  </head>
+  <body class="world-atmosphere tavolo-page" data-logout-url="../../../../">
+    <div class="place-shell tavolo-shell">
+      <header class="place-header">
+        <a class="place-home-link" href="../" aria-label="Torna a Il Prezzo della Verità">
+          <span aria-hidden="true">←</span><span class="place-name-optional">Il Prezzo della Verità</span>
+        </a>
+        <div class="place-userbar">
+          <p id="user-greeting" class="user-greeting"></p>
+          <a href="../../../../suggerimenti/" class="suggest-link" aria-label="Manda un suggerimento" title="Suggerisci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-6 6c0 2.5 1.4 3.8 2.2 4.6.5.5.8 1.1.8 1.4h6c0-.3.3-.9.8-1.4.8-.8 2.2-2.1 2.2-4.6a6 6 0 0 0-6-6Z" /></svg>
+          </a>
+          <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <nav class="ipdv-nav" aria-label="Pagine dell'avventura">
+          <a href="../avventura/">L'Avventura</a>
+          <a href="../la-tua-maga/">La Tua Maga</a>
+          <a href="./" class="is-current" aria-current="page">I Tuoi Appunti</a>
+        </nav>
+
+        <section class="appunti-hero" aria-labelledby="appunti-title">
+          <p class="tavolo-eyebrow">Il Prezzo della Verità</p>
+          <h1 id="appunti-title"><span aria-hidden="true">📓</span> I Tuoi Appunti</h1>
+          <p>Qui puoi scrivere i tuoi appunti sull'avventura, magari cose che ti vuoi segnare, nomi, idee, intuizioni, un po' quello che vuoi.</p>
+        </section>
+
+        <div class="appunti-body">
+          <label for="appunti-textarea" class="sr-only">I tuoi appunti</label>
+          <textarea id="appunti-textarea" class="appunti-textarea" placeholder="Scrivi qui i tuoi appunti..."></textarea>
+          <p id="appunti-status" class="appunti-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <a class="tavolo-home-link" href="../"><span aria-hidden="true">←</span> Torna a Il Prezzo della Verità</a>
+      </main>
+    </div>
+
+    <script type="module" src="../../../../auth-guard.js?v=2" data-auth-gateway="../../../../"></script>
+    <script type="module" src="../../../../assets/js/world/main.js?v=1"></script>
+    <script type="module">
+      const ADVENTURE = "il-prezzo-della-verita";
+      const textarea = document.querySelector("#appunti-textarea");
+      const status = document.querySelector("#appunti-status");
+      let saveTimeout = null;
+
+      async function loadNotes() {
+        await window.mondoBiancoAuthReady;
+        // Il campo resta disabilitato finché il caricamento non finisce, altrimenti chi scrive
+        // in fretta rischia che la risposta del GET arrivi dopo e cancelli quello che ha scritto.
+        textarea.disabled = true;
+        status.textContent = "Sto caricando i tuoi appunti...";
+        try {
+          const response = await fetch(`../../../../api/gdr/notes?adventure=${ADVENTURE}`, { credentials: "same-origin" });
+          if (!response.ok) throw new Error(`Caricamento fallito: ${response.status}`);
+          const data = await response.json();
+          textarea.value = data.body || "";
+          status.textContent = "";
+        } catch (error) {
+          console.error("Errore nel caricamento degli appunti:", error);
+          status.textContent = "Non è stato possibile caricare gli appunti salvati.";
+        } finally {
+          textarea.disabled = false;
+        }
+
+        textarea.addEventListener("input", () => {
+          status.textContent = "Sto salvando...";
+          clearTimeout(saveTimeout);
+          saveTimeout = setTimeout(saveNotes, 800);
+        });
+      }
+
+      async function saveNotes() {
+        try {
+          const form = new FormData();
+          form.set("adventure", ADVENTURE);
+          form.set("body", textarea.value);
+          const response = await fetch("../../../../api/gdr/notes", { method: "POST", credentials: "same-origin", body: form });
+          if (!response.ok) throw new Error(`Salvataggio fallito: ${response.status}`);
+          status.textContent = "Salvato.";
+        } catch (error) {
+          console.error("Errore nel salvataggio degli appunti:", error);
+          status.textContent = "Non è stato possibile salvare, riprova.";
+        }
+      }
+
+      void loadNotes();
+    </script>
+  </body>
+</html>

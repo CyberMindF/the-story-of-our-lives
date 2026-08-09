@@ -123,6 +123,32 @@ body[data-theme="green-of-me"] {
   --shadow: 0 22px 48px rgba(7, 16, 10, 0.4);
 }
 
+/* Non selezionabile dallo switcher: è il tema fisso del cruciverba dopo la normalizzazione
+   stilistica del 09/08/2026, calibrato sugli stessi colori (già tutti hardcoded) delle altre
+   pagine del Mondo Bianco — non un quinto tema tra pari, ma l'aspetto unico della pagina. */
+body[data-theme="the-white-world"] {
+  --bg-color: #17243a;
+  --panel-color: rgba(255, 255, 255, 0.05);
+  --panel-border-color: rgba(255, 255, 255, 0.14);
+  --text-color: #f4f7fb;
+  --muted-color: #d1dde6;
+  --border-color: rgba(255, 255, 255, 0.18);
+  --selection-color: rgba(255, 255, 255, 0.12);
+  --active-color: rgba(255, 255, 255, 0.16);
+  --correct-color: rgba(167, 223, 189, 0.22);
+  --error-color: #5a3a3a;
+  --focus-color: #9fc6e0;
+  --complete-clue-bg: rgba(167, 223, 189, 0.14);
+  --complete-clue-border: rgba(167, 223, 189, 0.4);
+  --button-bg: rgba(255, 255, 255, 0.08);
+  --button-hover-bg: rgba(255, 255, 255, 0.16);
+  --grid-scroll-bg: linear-gradient(180deg, rgba(11, 17, 32, 0.2) 0%, rgba(11, 17, 32, 0.5) 100%);
+  --cell-bg: rgba(255, 255, 255, 0.07);
+  --clue-bg: rgba(255, 255, 255, 0.04);
+  --drawer-bg: rgba(8, 16, 30, 0.6);
+  --shadow: 0 24px 52px rgba(0, 0, 0, 0.4);
+}
+
 * {
   box-sizing: border-box;
 }

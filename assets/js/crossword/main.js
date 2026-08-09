@@ -1,12 +1,15 @@
 import { readApiResponse, sendAuthenticatedJson } from "../shared/api.js";
 import { clearAccessUnlock, revokeAuthSession } from "../shared/auth.js";
 import { clearRequestedDestination } from "../shared/navigation.js";
-import { createThemeController } from "../shared/theme.js";
+import { createWorldStars } from "../shared/world-atmosphere.js";
+
+// Il cruciverba usava 4 temi selezionabili; normalizzato il 09/08/2026 allo stesso aspetto
+// del resto del Mondo Bianco con un tema fisso, non più scelto dall'utente (vedi themes.css).
+const CROSSWORD_THEME = "the-white-world";
 
 const STORAGE_VERSION = "v15";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
 const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
-const THEME_STORAGE_KEY = `noi-crossword-theme-${STORAGE_VERSION}`;
 // Le credenziali sono gestite dal server; nel browser restano solo indicatori della sessione.
 const LEGACY_ACCESS_STORAGE_KEY = "noi-crossword-access";
 const ENABLE_DEVELOPER_TOOLS = false;
@@ -55,8 +58,6 @@ const elements = {
   checkButton: document.getElementById("check-button"),
   resetButton: document.getElementById("reset-button"),
   revealButton: document.getElementById("reveal-button"),
-  themeSwitcher: document.getElementById("theme-switcher"),
-  themeToast: document.getElementById("theme-toast"),
   mobileClueKicker: document.getElementById("mobile-clue-kicker"),
   mobileClueText: document.getElementById("mobile-clue-text"),
   mobileSheetToggle: document.getElementById("mobile-sheet-toggle"),
@@ -72,21 +73,13 @@ const elements = {
   confirmCheckButton: document.getElementById("confirm-check-button")
 };
 
-const themeController = createThemeController({
-  storageKey: THEME_STORAGE_KEY,
-  switcher: elements.themeSwitcher,
-  toast: elements.themeToast,
-  onThemeChanged(previousTheme, theme) {
-    void trackEvent("theme_changed", { previousTheme, theme });
-  }
-});
-
 document.addEventListener("DOMContentLoaded", init);
 
 // Prepara tema e accesso, controlla la sessione e avvia il cruciverba solo per un utente autorizzato.
 async function init() {
   ensureStorageVersion();
-  themeController.applySavedTheme();
+  document.body.dataset.theme = CROSSWORD_THEME;
+  createWorldStars();
   bindVisualViewport();
   const user = await window.mondoBiancoAuthReady;
   if (!user) {
@@ -110,7 +103,7 @@ async function logout() {
     }
     clearAccessUnlock();
     clearRequestedDestination();
-    window.location.replace("../../../");
+    window.location.replace(document.body.dataset.logoutUrl || "../../");
   } catch (error) {
     elements.logoutButton.disabled = false;
     elements.checkSummary.textContent = error.message;
@@ -119,7 +112,6 @@ async function logout() {
 
 async function initializeCrossword() {
   try {
-    themeController.applySavedTheme();
     document.body.dataset.mobileMode = "sheet";
     document.body.dataset.mobileSheet = "closed";
     const data = await loadData();
@@ -386,7 +378,6 @@ function bindControls() {
     elements.revealButton.hidden = false;
     elements.revealButton.addEventListener("click", revealCrossword);
   }
-  themeController.renderSwitcher();
   elements.mobileSheetToggle.addEventListener("click", toggleMobileClues);
   [elements.previousClueButton, elements.nextClueButton].forEach((button) => {
     button.addEventListener("pointerdown", preserveGridFocusDuringNavigation);
@@ -475,7 +466,6 @@ function handleCellClick(cellKey) {
   if (ENABLE_DEVELOPER_TOOLS) {
     const coordinates = `R${cell.row} C${cell.col}`;
     elements.checkSummary.textContent = coordinates;
-    themeController.showToast(coordinates);
   }
 
   if (state.currentCellKey === cellKey && cell.wordIds.length > 1) {

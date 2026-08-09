@@ -5,7 +5,11 @@ const CLIENT_EVENT_TYPES = new Set([
   "crossword_closed",
   "crossword_completed",
   "word_completed",
-  "theme_changed"
+  "theme_changed",
+  "world_page_opened",
+  "song_played",
+  "song_completed",
+  "playlist_link_clicked"
 ]);
 
 // Registra un evento significativo associandolo sempre all'utente e alla sessione autenticati.

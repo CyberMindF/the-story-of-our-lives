@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="../assets/css/themes.css?v=1" />
     <link rel="stylesheet" href="../assets/css/components/shell.css?v=1" />
     <link rel="stylesheet" href="../assets/css/components/world-atmosphere.css?v=2" />
-    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=1" />
-    <link rel="stylesheet" href="../assets/css/pages/suggerimenti.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/pages/suggerimenti.css?v=2" />
   </head>
   <body class="world-atmosphere suggerimenti-page" data-logout-url="../">
     <div class="place-shell suggerimenti-shell">
@@ -34,11 +34,26 @@
 
         <form id="suggestion-form" class="suggestion-form" aria-label="Invia un suggerimento">
           <label class="suggestion-field">
+            <span>Dove</span>
+            <select name="category" required>
+              <option value="" disabled selected>Scegli dove...</option>
+              <option value="calendario">📅 Il Calendario</option>
+              <option value="mappa">🗺️ La Mappa dei Sogni</option>
+              <option value="storie">📖 Le Storie</option>
+              <option value="cuffiette">🎧 Le Cuffiette</option>
+              <option value="bacheca">📌 La Bacheca dei Ricordi</option>
+              <option value="ponti">🌈 I Ponti</option>
+              <option value="lettere">💌 Le Lettere</option>
+              <option value="tavolo-da-gioco">🎲 Il Tavolo da Gioco</option>
+              <option value="altro">✨ Qualcos'altro / tutto il sito</option>
+            </select>
+          </label>
+          <label class="suggestion-field">
             <span>Titolo <small>(facoltativo)</small></span>
             <input type="text" name="title" maxlength="160" autocomplete="off" />
           </label>
           <label class="suggestion-field">
-            <span>Il tuo suggerimento</span>
+            <span>Cosa vorresti aggiungere o cambiare</span>
             <textarea name="message" required maxlength="8000" placeholder="Scrivi qui la tua idea..."></textarea>
           </label>
           <div class="suggestion-submit-row">
