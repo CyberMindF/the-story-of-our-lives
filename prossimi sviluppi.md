@@ -48,9 +48,17 @@ il resto.
 - [x] #1 — temi coerenti: i colori di testo hardcoded (`#f4f7fb`, `#d1dde6`, `#b8cad9`, ripetuti
   identici su tutte le pagine) sono ora `var(--text-color)`/`var(--muted-color)`, quindi
   cambiano davvero con il tema — verificato che il colore effettivo cambi passando a
-  "red-of-you". Restano fuori (intenzionalmente, come già annotato in `buttons.css`) l'oro di
-  `.btn-accent` e i bordi/sfondi `rgba(255,255,255,.XX)` sparsi: non variano per tema oggi, un
-  giro dedicato in un secondo momento se serve davvero.
+  "red-of-you".
+  - **Seguito (segnalato dall'utente dopo la prima passata)**: erano rimaste ~25 sfumature di
+    blu-grigio quasi identiche ma non esattamente uguali (`aebfcd`, `d8e2eb`, `c3d1dc`, ecc.),
+    scritte a mano leggermente diverse pagina per pagina nel tempo — stesso ruolo di testo
+    secondario, mai toccate dal cambio tema. Mappate anche queste su `var(--muted-color)`/
+    `var(--text-color)`. Lasciati fuori di proposito: oro degli accent (`.btn-accent` e affini,
+    già annotato come fuori perimetro in `buttons.css`), testo su carta chiara (card del
+    calendario, `card--paper` del mappamondo, la lettera finale del cruciverba — lì il
+    muted-color chiaro sarebbe illeggibile), e i verdi semantici di successo nei GDR.
+  - Restano fuori (intenzionalmente) anche i bordi/sfondi `rgba(255,255,255,.XX)` sparsi: non
+    variano per tema oggi, un giro dedicato in un secondo momento se serve davvero.
 - [x] #13 — stile unificato bottoni/card: già in buona parte fatto durante la componentizzazione
   (`.btn`, `.card`, `.card--*` condivisi, usati in 9 pagine su 16); non ho trovato duplicazioni
   vistose da normalizzare oltre a quello.
