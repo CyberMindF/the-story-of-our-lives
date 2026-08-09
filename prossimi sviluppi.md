@@ -1,3 +1,77 @@
+# Piano di lavoro
+
+Scaletta concordata il 09/08/2026, dopo il porting Angular e la componentizzazione. Ordine
+pensato per fare le cose una volta sola: prima le fondamenta visive (temi/stile), poi i
+redesign di pagina che le useranno, poi le feature nuove. Gli item bloccati su contenuti di
+Rory o troppo vaghi per partire senza uno scoping veloce restano in fondo, così non bloccano
+il resto.
+
+## Bug chiusi
+
+- [x] Scroll che restava fermo cambiando pagina — mancava `withInMemoryScrolling` nel router
+  (`web/src/app/app.config.ts`).
+- [x] Card del calendario senza colore mese — `--calendar-green`/`--calendar-red` erano su
+  `.calendar-page` (pensato per il `<body>`), ma il CSS di pagina è scoped al componente da
+  quando è uno `styleUrl`; spostate su `:host` (`web/src/styles/pages/calendar.css`).
+
+## Fase A — Quick win (COMPLETATA)
+
+- [x] #12 — bug bottone rosso poi verde al caricamento: il tema salvato veniva applicato solo
+  in `Portone.ngOnInit`, dopo il primo paint di Angular — su ogni altra pagina (o refresh
+  diretto) restava sempre il tema di default finché il JS non girava. Aggiunto uno script
+  inline in `web/src/index.html` che applica il tema da `localStorage` prima del primo paint,
+  e centralizzata la chiamata a `ThemeService.applySavedTheme()` in `App` (non più solo nel
+  Portone).
+- [x] #10 — lettera finale alla fine del cruciverba: non è più il dialog generico "Cruciverba
+  completato", ora è un vero fogliettino di carta (stessa superficie `.card--handwritten`
+  condivisa con Lettere) al posto del messaggio. Testo invariato (già esistente), solo la
+  presentazione è cambiata — vedi `crossword-modals.html`.
+- [x] #8 — selettore temi: ogni pallino ha ora un'icona (🌙🌊💜❤️💚) sempre visibile e il nome
+  del tema come piccola etichetta a comparsa su hover/focus (non più solo il `title` nativo,
+  lento/inconsistente e assente su touch).
+- [x] #29 — calendario: aggiunto il 20 maggio 2026, "La rinascita di Fuochetto"
+  (`web/public/content/calendar.json`, ora 28 date).
+
+## Fase B — Fondamenta visive
+
+- [ ] #1 — temi coerenti su tutte le pagine (oggi i colori pagina sono hardcoded, non usano
+  le variabili di `themes.css`)
+- [ ] #13 — stile unificato di bottoni/card/design in tutto il sito (stessa famiglia di
+  lavoro di #1, si fanno insieme)
+
+## Fase C — Redesign di pagina (dopo la Fase B, per non rifarle due volte)
+
+- [ ] #3 — bacheca dei ricordi
+- [ ] #6 — i ponti (alleggerire o spostare il focus sulle lettere)
+- [ ] #7 — cuffiette: traccia bonus
+- [ ] #9 — centralizzare di più le lettere
+- [ ] #11 + #17 — accorciare la navigazione dei GDR / navigazione responsive
+- [ ] #5 — capire se il mappamondo si può migliorare
+
+## Fase D — Feature nuova (tocca anche il backend)
+
+- [ ] #2 — pagina profilo (cambio nick/password, log della password precedente)
+
+## Fase E — Bloccati su contenuti di Rory (non bloccano il resto)
+
+- #16 — seconda avventura GDR: aspetta titolo/testo/regole
+- #25 — Mappa: Sicilia, aspetta i testi
+- #26 — Mappa: completare Roma, aspetta il testo vero
+- #27 — rendere più personali le scritte ancora generiche: aspetta l'elenco dei testi da
+  rivedere
+
+## Fase F — Troppo vaghi per partire, serve scoping veloce insieme
+
+- #21 — messaggio criptato nei giochi
+- #22 — linguaggio segreto
+- #23 — zona giochi/cose da fare insieme
+- #24 — ricerca globale protetta (già segnata come rimandata)
+- #20 — player audio proprio (dipende dallo spostare i 9 brani su R2)
+
+---
+
+## Backlog dettagliato
+
 1. Implementare i temi in modo coerente anche nel resto del mondo bianco (grande)
     1. Il selettore c'è già su tutte le 17 pagine (09/08/2026) e cambia `--focus-color` e il tint del cielo stellato, ma i colori di ogni pagina (`web/src/styles/pages/*.css`) restano perlopiù hardcoded invece di usare le variabili di `themes.css` — quindi cambiando tema oggi si vede poco. È il refactoring pagina per pagina di cui sopra.
 2. implementare una piccola pagina "profilo" dove poter cambiare il nick e password
@@ -24,7 +98,8 @@ Portati qui dalla vecchia `CHECKLIST_MIGRAZIONE_MONDO_BIANCO.md` (ora eliminata,
 25. La Mappa — aggiungere la Sicilia tra le mete (è la terra di Rory, tanti posti bellissimi). Posti già in mente: il fiume Amenano sotto l'ostello (a Catania), le Gole dell'Alcantara, i laghetti di Avola (probabilmente Cavagrande del Cassibile, le piscine naturali vicino Avola — da confermare). Isola Bella a Taormina. Da scrivere insieme quando Rory ha i testi pronti, stesso trattamento delle altre mete (non un posto "originale" preesistente, va segnato come aggiunta).
 26. La Mappa — completare Roma: nel contenuto attuale (`web/public/content/map.json`) è ancora un segnaposto quasi vuoto ("roma roma", nessuna immagine) — fedele all'originale Notion, che la lasciava incompleta apposta. Serve il testo vero da Rory prima di poterla scrivere.
 
-
 27. Rendere le scritte più personali/romantiche, alla fine il sito "sono io" mentre l'utilizzatrice è lei. Quidni il sito bene o male è tutto "parlato" come se parlassi a lei, mentre per alcuni testi è stato scelto di renderli generici. Individuali e renderli personali
 
 28. Una pagina per le mie domande, a cui vorrei che rispondesse, quindi deve essere tipo "domanda" e tipo text box dove lei potrebbe rispondere alle domande. Ovviamente richiede un salvataggio in DB
+
+29. Aggiungere al calendario 20 maggio, la rinascia di fuochetto
