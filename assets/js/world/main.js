@@ -6,18 +6,20 @@ import { sectionFromPath, trackEvent } from "../shared/telemetry.js";
 
 const elements = {
   greeting: document.getElementById("user-greeting"),
-  logoutButton: document.getElementById("logout-button")
+  logoutButton: document.getElementById("logout-button"),
+  themeSwitcher: document.getElementById("theme-switcher")
 };
 
 const themeController = createThemeController({
   storageKey: "noi-crossword-theme-v15",
-  switcher: null,
+  switcher: elements.themeSwitcher,
   toast: null
 });
 
 // Inizializza gli elementi comuni soltanto dopo la verifica dell'accesso alla pagina.
 async function init() {
   themeController.applySavedTheme();
+  themeController.renderSwitcher();
   createWorldStars();
   const user = await window.mondoBiancoAuthReady;
   if (!user) return;

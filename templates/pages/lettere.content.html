@@ -1,0 +1,28 @@
+        <section class="lettere-hero" aria-labelledby="lettere-title">
+          <p class="lettere-eyebrow">Il Mondo Bianco</p>
+          <h1 id="lettere-title"><span aria-hidden="true">💌</span> Lettere</h1>
+          <p class="lettere-intro">Scrivi qualcosa quando ti va, o leggi quello che ho lasciato io. Restano qui, una dopo l'altra, per quando vorrete tornarci.</p>
+        </section>
+
+        <form id="letter-form" class="letter-form" aria-label="Scrivi una lettera">
+          <label class="letter-field">
+            <span>La tua lettera</span>
+            <textarea name="body" required maxlength="20000" placeholder="Scrivi qui..."></textarea>
+          </label>
+          <div class="letter-submit-row">
+            <button id="letter-submit" type="submit">Invia lettera</button>
+          </div>
+          <p id="letter-status" class="letter-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <section class="lettere-archive" aria-labelledby="archive-title">
+          <div class="lettere-section-heading">
+            <p class="lettere-eyebrow">L'archivio</p>
+            <h2 id="archive-title">Le lettere</h2>
+          </div>
+          <div id="letters-list" class="letters-list"></div>
+          <p id="letters-empty" class="letters-empty" hidden>Non c'è ancora nessuna lettera. Scrivi la prima.</p>
+          <p id="letters-error" class="letters-error" role="alert" hidden>Non è stato possibile caricare le lettere.</p>
+        </section>
+
+        <a class="place-bottom-link" href="{{BASE}}mondo-bianco/"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>

@@ -55,9 +55,8 @@
 .tavolo-game-card.is-available { border-color: color-mix(in srgb, var(--focus-color) 55%, rgba(255,255,255,.2)); background: color-mix(in srgb, var(--focus-color) 18%, rgba(255,255,255,.08)); }
 .tavolo-game-card.is-available:hover { background-color: rgba(255,255,255,.13); }
 
-.tavolo-home-link { display: flex; align-items: center; gap: .6rem; width: fit-content; margin: clamp(2rem, 6vw, 4rem) auto 0; padding: .8rem 1.1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; background: rgba(255,255,255,.08); color: #f4f7fb; font-weight: 700; text-decoration: none; }
 
-.tavolo-link:focus-visible, .tavolo-home-link:focus-visible, .rules-toggle summary:focus-visible, .tavolo-game-card:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
+.tavolo-link:focus-visible, .rules-toggle summary:focus-visible, .tavolo-game-card:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
 
 /* Navigazione leggera tra le pagine di un'avventura (alternativa a una sidebar fissa):
    una fila di pillole in cima, come l'indice della Bacheca dei Ricordi. */

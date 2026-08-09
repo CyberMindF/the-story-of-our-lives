@@ -1,38 +1,6 @@
-<!DOCTYPE html>
-<html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>🌈 I Ponti | Mondo Bianco</title>
-    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../assets/css/themes.css?v=2" />
-    <link rel="stylesheet" href="../assets/css/components/shell.css?v=2" />
-    <link rel="stylesheet" href="../assets/css/components/world-atmosphere.css?v=2" />
-    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=3" />
-    <link rel="stylesheet" href="../assets/css/pages/ponti.css?v=1" />
-  </head>
-  <body class="world-atmosphere ponti-page" data-logout-url="../">
-    <div class="place-shell ponti-shell">
-      <header class="place-header">
-        <a class="place-home-link" href="../mondo-bianco/" aria-label="Torna al Mondo Bianco">
-          <span aria-hidden="true">←</span><span class="place-name-optional">Il Mondo Bianco</span>
-        </a>
-        <div class="place-userbar">
-          <p id="user-greeting" class="user-greeting"></p>
-          <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema"></div>
-          <a href="../suggerimenti/" class="suggest-link" aria-label="Manda un suggerimento" title="Suggerisci">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-6 6c0 2.5 1.4 3.8 2.2 4.6.5.5.8 1.1.8 1.4h6c0-.3.3-.9.8-1.4.8-.8 2.2-2.1 2.2-4.6a6 6 0 0 0-6-6Z" /></svg>
-          </a>
-          <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
-          </button>
-        </div>
-      </header>
-
-      <main>
         <section class="ponti-hero" aria-labelledby="ponti-title">
           <figure class="ponti-hero-figure">
-            <img src="../assets/images/world/ponti.webp" alt="Un ponte arcobaleno luminoso che sale verso un cielo stellato" />
+            <img src="{{BASE}}assets/images/world/ponti.webp" alt="Un ponte arcobaleno luminoso che sale verso un cielo stellato" />
           </figure>
           <h1 id="ponti-title"><span aria-hidden="true">🌈</span> I Ponti</h1>
         </section>
@@ -62,15 +30,8 @@
           <article class="ponti-card">
             <p class="ponti-card-title"><span aria-hidden="true">📫</span> La Cassetta delle Lettere</p>
             <p class="ponti-card-text">Non serve più caricare file su Drive per lasciarci qualcosa. Ora la Cassetta porta dritta alle lettere vere, scritte qui dentro.</p>
-            <a class="ponti-link" href="../lettere/">Entra <span aria-hidden="true">→</span></a>
+            <a class="ponti-link" href="{{BASE}}lettere/">Entra <span aria-hidden="true">→</span></a>
           </article>
         </section>
 
-        <a class="place-bottom-link" href="../mondo-bianco/"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
-      </main>
-    </div>
-
-    <script type="module" src="../auth-guard.js?v=2" data-auth-gateway="../"></script>
-    <script type="module" src="../assets/js/world/main.js?v=2"></script>
-  </body>
-</html>
+        <a class="place-bottom-link" href="{{BASE}}mondo-bianco/"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>

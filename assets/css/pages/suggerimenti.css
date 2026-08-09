@@ -30,10 +30,7 @@
 .suggestion-status.is-success { color: #a7dfbd; }
 .suggestion-status.is-error { color: #ffb4b4; }
 
-.suggerimenti-home-link { display: flex; align-items: center; gap: .6rem; width: fit-content; margin: 0 auto clamp(3rem, 7vw, 5rem); padding: .8rem 1.1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; background: rgba(255,255,255,.08); color: #f4f7fb; font-weight: 700; text-decoration: none; }
-
 .suggestion-field input:focus-visible,
 .suggestion-field select:focus-visible,
 .suggestion-field textarea:focus-visible,
-.suggestion-submit-row button:focus-visible,
-.suggerimenti-home-link:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+.suggestion-submit-row button:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }

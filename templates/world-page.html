@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>{{TITLE}}</title>
+    <link rel="icon" href="{{BASE}}favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="{{BASE}}assets/css/themes.css?v=2" />
+    <link rel="stylesheet" href="{{BASE}}assets/css/components/shell.css?v=2" />
+    <link rel="stylesheet" href="{{BASE}}assets/css/components/world-atmosphere.css?v=2" />
+    <link rel="stylesheet" href="{{BASE}}assets/css/components/world-shell.css?v=3" />
+{{EXTRA_HEAD}}
+  </head>
+  <body class="world-atmosphere {{BODY_CLASS}}" data-logout-url="{{LOGOUT_URL}}">
+    <div class="place-shell {{SHELL_CLASS}}">
+      <header class="place-header{{HEADER_EXTRA_CLASS}}">
+        <a class="place-home-link{{HOME_LINK_EXTRA_CLASS}}" href="{{HOME_HREF}}" aria-label="{{HOME_ARIA}}">
+          {{HOME_LINK_INNER}}
+        </a>
+        <div class="place-userbar{{USERBAR_EXTRA_CLASS}}">
+          <p id="user-greeting" class="user-greeting"></p>
+          <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema"></div>
+{{SUGGEST_LINK}}
+          <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+{{CONTENT}}
+      </main>
+    </div>
+
+{{EXTRA_BODY}}
+    <script type="module" src="{{BASE}}auth-guard.js?v=2" data-auth-gateway="{{BASE}}"></script>
+    <script type="module" src="{{BASE}}assets/js/world/main.js?v=2"></script>
+{{EXTRA_SCRIPTS}}
+  </body>
+</html>

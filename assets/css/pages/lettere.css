@@ -77,8 +77,6 @@
 .letters-empty, .letters-error { color: #aebfcd; font-size: .95rem; }
 .letters-error { color: var(--error-color); }
 
-.lettere-home-link { display: flex; align-items: center; gap: .6rem; width: fit-content; margin: 0 auto clamp(3rem, 7vw, 5rem); padding: .8rem 1.1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; background: rgba(255,255,255,.08); color: #f4f7fb; font-weight: 700; text-decoration: none; }
-
 /* La lettera aperta si legge su un foglio chiaro, come un momento a parte dal resto del sito.
    Angoli netti e una lieve rotazione, per sembrare un foglio vero appoggiato lì, non una card.
    La dimensione del foglio dipende dalla lunghezza del testo (vedi letterSizeCategory in main.js):
@@ -113,11 +111,9 @@
 .letter-dialog-close:hover { background: #253247; }
 .letter-dialog-close svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
-.letter-field textarea,
-.lettere-home-link { outline: none; }
+.letter-field textarea { outline: none; }
 
-.letter-field textarea:focus-visible,
-.lettere-home-link:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+.letter-field textarea:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }
 
 .letter-card,
 .letter-dialog-close { -webkit-tap-highlight-color: transparent; }

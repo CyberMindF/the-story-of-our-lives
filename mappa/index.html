@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>🗺️ La Mappa | Mondo Bianco</title>
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../assets/css/themes.css?v=1" />
-    <link rel="stylesheet" href="../assets/css/components/shell.css?v=1" />
+    <link rel="stylesheet" href="../assets/css/themes.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/shell.css?v=2" />
     <link rel="stylesheet" href="../assets/css/components/world-atmosphere.css?v=2" />
-    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/components/world-shell.css?v=3" />
     <link rel="stylesheet" href="../assets/css/pages/map.css?v=9" />
   </head>
   <body class="world-atmosphere map-page" data-logout-url="../">
     <div class="place-shell map-shell">
       <header class="place-header">
         <a class="place-home-link" href="../mondo-bianco/" aria-label="Torna al Mondo Bianco">
-          <span aria-hidden="true">←</span>
-          <span class="place-name-optional">Il Mondo Bianco</span>
+          <span aria-hidden="true">←</span><span class="place-name-optional">Il Mondo Bianco</span>
         </a>
         <div class="place-userbar">
           <p id="user-greeting" class="user-greeting"></p>
+          <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Scegli un tema"></div>
           <a href="../suggerimenti/" class="suggest-link" aria-label="Manda un suggerimento" title="Suggerisci">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-6 6c0 2.5 1.4 3.8 2.2 4.6.5.5.8 1.1.8 1.4h6c0-.3.3-.9.8-1.4.8-.8 2.2-2.1 2.2-4.6a6 6 0 0 0-6-6Z" /></svg>
           </a>
@@ -74,12 +74,12 @@
           <p id="map-error" class="map-error" role="alert" hidden>Non è stato possibile caricare la mappa.</p>
         </section>
 
-        <a class="map-home-link" href="../mondo-bianco/"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
+        <a class="place-bottom-link" href="../mondo-bianco/"><span aria-hidden="true">←</span> Torna al Mondo Bianco</a>
       </main>
     </div>
 
     <script type="module" src="../auth-guard.js?v=2" data-auth-gateway="../"></script>
-    <script type="module" src="../assets/js/world/main.js?v=1"></script>
+    <script type="module" src="../assets/js/world/main.js?v=2"></script>
     <script type="module" src="../assets/js/map/main.js?v=4"></script>
   </body>
 </html>

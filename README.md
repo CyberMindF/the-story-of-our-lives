@@ -114,7 +114,18 @@ Prima dell'autenticazione, `POST /api/visits` crea una visita anonima identifica
 
 ## Aspetto del cruciverba
 
-Il cruciverba (`tavolo-da-gioco/cruciverba/`) usa la stessa intestazione (`.place-header`/`.place-userbar`, con saluto, link ai Suggerimenti e logout), lo stesso link "torna a..." in fondo alla pagina e lo stesso cielo stellato (`world-atmosphere.css`) di tutte le altre pagine del Mondo Bianco — normalizzato il 09/08/2026, prima aveva una sua intestazione e nessun cielo. I colori seguono il tema fisso `the-white-world` in `assets/css/themes.css`, calibrato sulla stessa palette (già hardcoded) usata dal resto del sito. Il cruciverba aveva un selettore con 4 temi (Ocean/Velvet/Red of You/Green of Me): è stato tolto per coerenza con le altre pagine, che non ne hanno uno, ma i 4 temi restano definiti nel codice per un'eventuale estensione futura a tutto il sito.
+Il cruciverba (`tavolo-da-gioco/cruciverba/`) usa la stessa intestazione (`.place-header`/`.place-userbar`, con saluto, link ai Suggerimenti e logout), lo stesso link "torna a..." in fondo alla pagina e lo stesso cielo stellato (`world-atmosphere.css`) di tutte le altre pagine del Mondo Bianco — normalizzato il 09/08/2026, prima aveva una sua intestazione e nessun cielo. I colori seguono il tema fisso `the-white-world` in `assets/css/themes.css`. È l'unica pagina del sito senza selettore tema (vedi sotto) e l'unica non generata dal template condiviso: ha una shell diversa (`.app-shell`) ed è un caso singolo, non ripetuto, quindi non c'è duplicazione da eliminare lì.
+
+## Template delle pagine del Mondo Bianco
+
+Tutte le altre 16 pagine del Mondo Bianco (incluse le 4 del Gioco di Ruolo) sono generate da un template condiviso, invece di avere l'header/userbar/footer copiati a mano in ogni `index.html`:
+
+- `templates/world-page.html`: lo scheletro condiviso (head, `.place-header`/`.place-userbar` con saluto, selettore tema, link Suggerimenti, logout, `<main>`, script comuni).
+- `templates/pages/<slug>.content.html`: il contenuto specifico di ogni pagina (quello che va dentro `<main>`); `<slug>.extrabody.html` per markup extra fuori da `<main>` (es. i dialog di Bacheca e Lettere).
+- `scripts/world-pages.manifest.mjs`: l'elenco delle pagine con titolo, classi, link "home", CSS/script aggiuntivi.
+- `scripts/build-world-pages.mjs`: legge template + manifest + contenuti e riscrive gli `index.html` finali nel repo. Va rilanciato (`node scripts/build-world-pages.mjs`) ogni volta che si tocca il template o un frammento di contenuto; i file generati sono normali file statici, Cloudflare Pages non cambia modo di servirli.
+
+Il selettore tema (5 pallini colorati: Notte/Ocean/Velvet/Red of You/Green of Me, gestito da `assets/js/shared/theme.js`) compare ora nella userbar di tutte queste pagine, con lo stesso `localStorage` già condiviso da sempre tra loro. Cambia subito `--focus-color` e il tint del cielo stellato; i colori hardcoded di ogni pagina non seguono ancora il tema — è un refactoring più profondo, non ancora fatto.
 
 ## Progresso persistente
 

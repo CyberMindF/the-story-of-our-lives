@@ -16,9 +16,7 @@
 .ponti-link { display: inline-flex; gap: .55rem; align-items: center; width: fit-content; margin-top: auto; padding: .8rem 1.1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; background: rgba(255,255,255,.08); color: #f3dfb8; font-weight: 750; text-decoration: none; }
 .ponti-link:hover { background: rgba(255,255,255,.14); }
 
-.ponti-home-link { display: flex; align-items: center; gap: .6rem; width: fit-content; margin: clamp(2rem, 6vw, 4rem) auto 0; padding: .8rem 1.1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; background: rgba(255,255,255,.08); color: #f4f7fb; font-weight: 700; text-decoration: none; }
-
-.ponti-link:focus-visible, .ponti-home-link:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
+.ponti-link:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
 
 @media (max-width: 700px) {
   .ponti-destinations { grid-template-columns: 1fr; }

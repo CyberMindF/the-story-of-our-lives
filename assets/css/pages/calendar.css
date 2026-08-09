@@ -203,26 +203,6 @@
   line-height: 1.5;
 }
 
-.calendar-home-link {
-  display: flex;
-  gap: 0.6rem;
-  align-items: center;
-  width: fit-content;
-  margin: clamp(4rem, 10vw, 7rem) auto 0;
-  padding: 0.8rem 1.1rem;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #f4f7fb;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.calendar-home-link:focus-visible {
-  outline: 3px solid var(--focus-color);
-  outline-offset: 4px;
-}
-
 @media (max-width: 820px) {
   .calendar-year ol {
     grid-template-columns: repeat(2, minmax(0, 1fr));

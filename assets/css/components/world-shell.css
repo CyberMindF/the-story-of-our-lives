@@ -82,6 +82,62 @@
   outline-offset: 4px;
 }
 
+/* Selettore tema: un pallino per tema (colore rappresentativo), pensato per stare nella
+   barra utente di ogni pagina senza etichette o pannelli a parte. */
+.place-userbar .theme-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.15rem;
+}
+
+.place-userbar .theme-chip {
+  width: 1.15rem;
+  height: 1.15rem;
+  min-height: 0;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  background: var(--chip-color, #fff);
+  cursor: pointer;
+}
+
+.place-userbar .theme-chip.is-selected {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+.place-userbar .theme-chip:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+/* Link "torna a..." in fondo alla pagina: stessa forma a pillola ovunque, senza ripetere
+   la stessa regola CSS per ogni pagina con un nome diverso. */
+.place-bottom-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: fit-content;
+  margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;
+  padding: 0.8rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f7fb;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.place-bottom-link:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.place-bottom-link:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 4px;
+}
+
 @media (max-width: 680px) {
   .place-home-link .place-name-optional {
     display: none;
