@@ -114,11 +114,11 @@ Prima dell'autenticazione, `POST /api/visits` crea una visita anonima identifica
 
 ## Aspetto del cruciverba
 
-Il cruciverba (`tavolo-da-gioco/cruciverba/`) usa la stessa intestazione (`.place-header`/`.place-userbar`, con saluto, link ai Suggerimenti e logout), lo stesso link "torna a..." in fondo alla pagina e lo stesso cielo stellato (`world-atmosphere.css`) di tutte le altre pagine del Mondo Bianco — normalizzato il 09/08/2026, prima aveva una sua intestazione e nessun cielo. I colori seguono il tema fisso `the-white-world` in `assets/css/themes.css`. È l'unica pagina del sito senza selettore tema (vedi sotto) e l'unica non generata dal template condiviso: ha una shell diversa (`.app-shell`) ed è un caso singolo, non ripetuto, quindi non c'è duplicazione da eliminare lì.
+Il cruciverba (`tavolo-da-gioco/cruciverba/`) usa la stessa intestazione (`.place-header`/`.place-userbar`, con saluto, selettore tema, link ai Suggerimenti e logout), lo stesso link "torna a..." in fondo alla pagina e lo stesso cielo stellato (`world-atmosphere.css`) di tutte le altre pagine del Mondo Bianco — normalizzato il 09/08/2026, prima aveva una sua intestazione e nessun cielo. Il tema di default è `the-white-world` in `assets/css/themes.css`, ma come tutte le altre pagine è selezionabile (vedi sotto). È l'unica pagina non generata dal template condiviso: ha una shell diversa (`.app-shell`) ed è un caso singolo, non ripetuto, quindi non c'è duplicazione di markup da eliminare lì — l'header/userbar e il wiring del selettore tema restano scritti a mano in quella pagina, tenuti allineati manualmente a `templates/world-page.html`.
 
 ## Template delle pagine del Mondo Bianco
 
-Tutte le altre 16 pagine del Mondo Bianco (incluse le 4 del Gioco di Ruolo) sono generate da un template condiviso, invece di avere l'header/userbar/footer copiati a mano in ogni `index.html`:
+Le altre 16 pagine del Mondo Bianco (incluse le 4 del Gioco di Ruolo) sono generate da un template condiviso, invece di avere l'header/userbar/footer copiati a mano in ogni `index.html`:
 
 - `templates/world-page.html`: lo scheletro condiviso (head, `.place-header`/`.place-userbar` con saluto, selettore tema, link Suggerimenti, logout, `<main>`, script comuni).
 - `templates/pages/<slug>.content.html`: il contenuto specifico di ogni pagina (quello che va dentro `<main>`); `<slug>.extrabody.html` per markup extra fuori da `<main>` (es. i dialog di Bacheca e Lettere).

@@ -1,11 +1,8 @@
 import { readApiResponse, sendAuthenticatedJson } from "../shared/api.js";
 import { clearAccessUnlock, revokeAuthSession } from "../shared/auth.js";
 import { clearRequestedDestination } from "../shared/navigation.js";
+import { createThemeController } from "../shared/theme.js";
 import { createWorldStars } from "../shared/world-atmosphere.js";
-
-// Il cruciverba usava 4 temi selezionabili; normalizzato il 09/08/2026 allo stesso aspetto
-// del resto del Mondo Bianco con un tema fisso, non più scelto dall'utente (vedi themes.css).
-const CROSSWORD_THEME = "the-white-world";
 
 const STORAGE_VERSION = "v15";
 const STORAGE_VERSION_KEY = "noi-crossword-storage-version";
@@ -47,6 +44,7 @@ const state = {
 const elements = {
   appShell: document.getElementById("app-shell"),
   userGreeting: document.getElementById("user-greeting"),
+  themeSwitcher: document.getElementById("theme-switcher"),
   logoutButton: document.getElementById("logout-button"),
   title: document.getElementById("title"),
   subtitle: document.getElementById("subtitle"),
@@ -73,12 +71,21 @@ const elements = {
   confirmCheckButton: document.getElementById("confirm-check-button")
 };
 
+// Stesso controller e stessa localStorage key condivisi da tutte le altre pagine del Mondo
+// Bianco, così la scelta del tema resta coerente ovunque (vedi assets/js/world/main.js).
+const themeController = createThemeController({
+  storageKey: "noi-crossword-theme-v15",
+  switcher: elements.themeSwitcher,
+  toast: null
+});
+
 document.addEventListener("DOMContentLoaded", init);
 
 // Prepara tema e accesso, controlla la sessione e avvia il cruciverba solo per un utente autorizzato.
 async function init() {
   ensureStorageVersion();
-  document.body.dataset.theme = CROSSWORD_THEME;
+  themeController.applySavedTheme();
+  themeController.renderSwitcher();
   createWorldStars();
   bindVisualViewport();
   const user = await window.mondoBiancoAuthReady;
