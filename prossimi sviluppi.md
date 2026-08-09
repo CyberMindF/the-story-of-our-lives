@@ -32,12 +32,17 @@ il resto.
 - [x] #29 — calendario: aggiunto il 20 maggio 2026, "La rinascita di Fuochetto"
   (`web/public/content/calendar.json`, ora 28 date).
 
-## Fase B — Fondamenta visive
+## Fase B — Fondamenta visive (COMPLETATA)
 
-- [ ] #1 — temi coerenti su tutte le pagine (oggi i colori pagina sono hardcoded, non usano
-  le variabili di `themes.css`)
-- [ ] #13 — stile unificato di bottoni/card/design in tutto il sito (stessa famiglia di
-  lavoro di #1, si fanno insieme)
+- [x] #1 — temi coerenti: i colori di testo hardcoded (`#f4f7fb`, `#d1dde6`, `#b8cad9`, ripetuti
+  identici su tutte le pagine) sono ora `var(--text-color)`/`var(--muted-color)`, quindi
+  cambiano davvero con il tema — verificato che il colore effettivo cambi passando a
+  "red-of-you". Restano fuori (intenzionalmente, come già annotato in `buttons.css`) l'oro di
+  `.btn-accent` e i bordi/sfondi `rgba(255,255,255,.XX)` sparsi: non variano per tema oggi, un
+  giro dedicato in un secondo momento se serve davvero.
+- [x] #13 — stile unificato bottoni/card: già in buona parte fatto durante la componentizzazione
+  (`.btn`, `.card`, `.card--*` condivisi, usati in 9 pagine su 16); non ho trovato duplicazioni
+  vistose da normalizzare oltre a quello.
 
 ## Fase C — Redesign di pagina (dopo la Fase B, per non rifarle due volte)
 
