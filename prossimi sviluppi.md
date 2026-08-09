@@ -28,7 +28,3 @@ Portati qui dalla vecchia `CHECKLIST_MIGRAZIONE_MONDO_BIANCO.md` (ora eliminata,
 27. Rendere le scritte più personali/romantiche, alla fine il sito "sono io" mentre l'utilizzatrice è lei. Quidni il sito bene o male è tutto "parlato" come se parlassi a lei, mentre per alcuni testi è stato scelto di renderli generici. Individuali e renderli personali
 
 28. Una pagina per le mie domande, a cui vorrei che rispondesse, quindi deve essere tipo "domanda" e tipo text box dove lei potrebbe rispondere alle domande. Ovviamente richiede un salvataggio in DB
-
-BUG
-1. Quando entro in una pagina l'altezza a cui vengo settato in quella pagina rimane la medesima in cui ero prima. Quindi non mi porta in alto nella pagina. Cosa che non va bene
-2. È successo qualcosa alle card delle nostre date ne "il calendario"

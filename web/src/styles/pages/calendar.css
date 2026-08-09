@@ -1,10 +1,8 @@
-.calendar-page {
+:host {
   --calendar-red: #9f4057;
   --calendar-red-dark: #7f2e42;
   --calendar-green: #4f725b;
   --calendar-green-dark: #385542;
-  min-height: 100dvh;
-  color: #f4f7fb;
 }
 
 .calendar-shell {
