@@ -14,7 +14,7 @@ const DEFAULT_THEME_ID = 'the-white-world';
 // pagine vecchie e nuove finché la migrazione non è completa, per non perdere la scelta
 // dell'utente durante il passaggio.
 const THEMES: ThemeDefinition[] = [
-  { id: 'the-white-world', label: 'Notte', swatch: '#17243a', icon: '🌙' },
+  { id: 'the-white-world', label: 'Notte', swatch: '#141f32', icon: '🌙' },
   { id: 'sea', label: 'Ocean', swatch: '#467d77', icon: '🌊' },
   { id: 'velvet', label: 'Velvet', swatch: '#5d4452', icon: '💜' },
   { id: 'red-of-you', label: 'Red of You', swatch: '#bf3553', icon: '❤️' },

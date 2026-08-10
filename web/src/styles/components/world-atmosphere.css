@@ -5,9 +5,9 @@
  * applicati, vedi prossimi sviluppi.md #1).
  */
 body.world-atmosphere {
-  --world-sky-top: #0b1120;
-  --world-sky-middle: #17243a;
-  --world-sky-bottom: #263a50;
+  --world-sky-top: #0a0f1c;
+  --world-sky-middle: #141f32;
+  --world-sky-bottom: #213246;
   --world-glow: rgba(190, 218, 232, 0.16);
   --world-star: rgba(255, 255, 255, 0.72);
   min-height: 100dvh;
@@ -36,10 +36,30 @@ body.world-atmosphere {
   border-radius: 50%;
   background: var(--world-star);
   opacity: var(--star-opacity);
+  animation: star-twinkle var(--star-twinkle-duration) ease-in-out var(--star-twinkle-delay) infinite;
 }
 
 .world-star.is-bright {
   box-shadow: 0 0 5px 1px var(--world-star);
+}
+
+/* Ogni stella si affievolisce solo fino al 55% della propria opacità di base (mai a 0: una
+   stella non "sparisce", brilla di meno) — durata e ritardo sono randomizzati per stella in
+   world-stars.ts, altrimenti 150 stelle che pulsano tutte insieme sembrerebbero un effetto
+   finto invece di un cielo reale. */
+@keyframes star-twinkle {
+  0%, 100% {
+    opacity: var(--star-opacity);
+  }
+  50% {
+    opacity: calc(var(--star-opacity) * 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-star {
+    animation: none;
+  }
 }
 
 /* Ocean è un cielo chiaro (unico tema diurno): le stelle diventano piccoli riflessi scuri,

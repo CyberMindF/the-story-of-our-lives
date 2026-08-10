@@ -6,7 +6,7 @@
 :root {
   --cell-size: 2.6rem;
   --cell-font-size: 1.15rem;
-  --bg-color: #17243a;
+  --bg-color: #141f32;
   --panel-color: rgba(255, 255, 255, 0.05);
   --panel-border-color: rgba(255, 255, 255, 0.14);
   --text-color: #f4f7fb;
@@ -132,7 +132,7 @@ body[data-theme="green-of-me"] {
    stilistica del 09/08/2026, calibrato sugli stessi colori (già tutti hardcoded) delle altre
    pagine del Mondo Bianco — non un quinto tema tra pari, ma l'aspetto unico della pagina. */
 body[data-theme="the-white-world"] {
-  --bg-color: #17243a;
+  --bg-color: #141f32;
   --panel-color: rgba(255, 255, 255, 0.05);
   --panel-border-color: rgba(255, 255, 255, 0.14);
   --text-color: #f4f7fb;

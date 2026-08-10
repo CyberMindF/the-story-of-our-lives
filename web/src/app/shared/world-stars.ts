@@ -8,6 +8,8 @@ interface Star {
   size: number;
   opacity: number;
   bright: boolean;
+  twinkleDuration: number;
+  twinkleDelay: number;
 }
 
 // Porting di assets/js/shared/world-atmosphere.js: stesso numero di stelle, stesse custom
@@ -29,7 +31,11 @@ export class WorldStars {
       y: Number(this.randomBetween(0, 100).toFixed(3)),
       size: Number(size.toFixed(2)),
       opacity: Number(this.randomBetween(0.2, 0.82).toFixed(2)),
-      bright: size > 1.65 && this.randomBetween(0, 1) > 0.45
+      bright: size > 1.65 && this.randomBetween(0, 1) > 0.45,
+      // Durata/ritardo diversi per ogni stella (vedi world-atmosphere.css): senza questa
+      // variazione tutte le 150 stelle pulserebbero in sincrono, un effetto palesemente finto.
+      twinkleDuration: Number(this.randomBetween(3, 7).toFixed(2)),
+      twinkleDelay: Number(this.randomBetween(0, 8).toFixed(2))
     };
   }
 
