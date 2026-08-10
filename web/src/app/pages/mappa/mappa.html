@@ -55,7 +55,7 @@
             <p class="map-eyebrow">{{ preview.label }}</p>
             <h3>{{ preview.view.destination.name }}</h3>
             <p>{{ preview.firstParagraph }}</p>
-            <a [href]="'#destination-' + preview.view.destination.id">Leggi questo ricordo <span aria-hidden="true">↓</span></a>
+            <a [routerLink]="[]" [fragment]="'destination-' + preview.view.destination.id">Vai alla meta <span aria-hidden="true">↓</span></a>
           </div>
         </article>
       }

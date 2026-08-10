@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
@@ -56,7 +57,7 @@ interface PinView {
 @Component({
   selector: 'app-mappa',
   standalone: true,
-  imports: [AppShell, ContentMessage, NgTemplateOutlet],
+  imports: [AppShell, ContentMessage, NgTemplateOutlet, RouterLink],
   styleUrls: ['../../../styles/pages/map.css'],
   templateUrl: './mappa.html'
 })

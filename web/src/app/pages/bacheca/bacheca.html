@@ -15,7 +15,7 @@
         <p class="bacheca-index-month-title">{{ group.title }}</p>
         <div class="bacheca-index-chips">
           @for (chip of group.chips; track chip.id) {
-            <a [href]="'#' + chip.id">{{ chip.label }}</a>
+            <a [routerLink]="[]" [fragment]="chip.id">{{ chip.label }}</a>
           }
         </div>
       </div>
@@ -25,7 +25,7 @@
         <p class="bacheca-index-month-title">Extra</p>
         <div class="bacheca-index-chips">
           @for (group of extraGroups(); track group.title) {
-            <a [href]="'#' + group.chips[0].id">{{ group.title }}</a>
+            <a [routerLink]="[]" [fragment]="group.chips[0].id">{{ group.title }}</a>
           }
         </div>
       </div>

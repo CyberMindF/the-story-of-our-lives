@@ -28,7 +28,7 @@
       <div class="music-layout">
         <nav class="track-list" aria-label="Indice delle canzoni">
           @for (song of musicData.songs; track song.id; let i = $index) {
-            <a [href]="'#song-' + song.id"><span>{{ (i + 1).toString().padStart(2, '0') }}</span><strong>{{ song.title }}</strong></a>
+            <a [routerLink]="[]" [fragment]="'song-' + song.id"><span>{{ (i + 1).toString().padStart(2, '0') }}</span><strong>{{ song.title }}</strong></a>
           }
         </nav>
         <div class="songs-list">

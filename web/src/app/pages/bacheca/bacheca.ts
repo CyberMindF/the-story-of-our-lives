@@ -1,6 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
@@ -82,7 +83,7 @@ interface IndexGroup {
 @Component({
   selector: 'app-bacheca',
   standalone: true,
-  imports: [AppShell, NgTemplateOutlet, ContentMessage],
+  imports: [AppShell, NgTemplateOutlet, ContentMessage, RouterLink],
   styleUrls: ['../../../styles/pages/bacheca.css'],
   templateUrl: './bacheca.html'
 })

@@ -15,15 +15,56 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Aggiornata anche la validazione hardcoded in `mappa.ts` (si aspettava esattamente 6
   destinazioni, ora 7).
 - #26 — Mappa: completare Roma, aspetta il testo vero
-- #27 — rendere più personali le scritte ancora generiche: aspetta l'elenco dei testi da
-  rivedere
 - #23 — zona giochi/cose da fare insieme
 - #24 — ricerca globale protetta (già segnata come rimandata)
 - #20 — player audio proprio (dipende dallo spostare i 9 brani su R2)
+- #33 — Liste delle cose da fare insieme (la mia lista delle note)
+- #34 — Pagina delle nostre ricette?
+- #35 — implentare anche nu bottone "suggerimento" che in realtà le dice solo di venirmelo a chiedere e facendo "qualcosa" per me, anche se ancora non so cosa
+- #a1 - Modificare il colore del tema the-white-world, per renderlo leggermente più scuro "notturno", ma non troppo
+- #a2 - Rendere le stelle con delle leggere animazioni di "brilluccichio" realistico
+- #a3 - Creare un'animazione di lanterne che salgono. Per darti una rederenze come quando su terraria c'è festa degli npc di notte e si vedono le lanternine che salgono nel cielo. Come la notte delle lanterne in thailandia, da capire quando metterla, in che tema o se fare un tema diverso
+- #a4 - Creare una pagina "il cielo" dove è possibile vedere semplicemente la luna, la luna deve cambiare chiamando una API di qualche servizio esterno (se possibile) che da la fase lunare e noi la ricreiamo e la mostriamo. Qui è possibile godersi il cielo stellato, lunato, lanternato, ecc.
+- #a5 - creare sfondi animati anche per gli altri temi
 
 ---
 
 ## Fatto
+
+### Extra (fuori scaletta, chiesti il 10/08/2026 — secondo giro)
+
+- [x] #27 — rendere più personali le scritte ancora generiche: riletto tutto il testo del
+  sito (ogni pagina, i JSON di contenuto) — era già quasi ovunque scritto in prima persona
+  rivolto a lei, con ricordi specifici. Solo due testi risultavano davvero "scritti da
+  Claude" (Linguaggio Segreto, già segnalati nel codice); sostituiti col testo vero (vedi
+  #38-#41). Il resto (comprese le regole del GDR e le istruzioni di Messaggio Criptato,
+  valutate e lasciate intenzionalmente così) non richiedeva modifiche.
+- [x] #37 — "Leggi questo ricordo" nella card di anteprima della Mappa è diventato "Vai alla
+  meta".
+- [x] #38 — Linguaggio Segreto: aggiunta l'interazione dei cinque cuori nella tabella stessa
+  (`.....` → "Ti amo", con la spiegazione dei cinque cuori) invece di tenerla come sezione a
+  sé separata in alto (rimossa, era ridondante). Il significato di `0` è ora "Sono sul
+  documento / Ti ho scritto".
+- [x] #39 — Colonna del simbolo nella tabella troppo stretta (8rem): con simboli come
+  ">>> oppure <<<" il testo sforava e restava appiccicato al significato. Allargata a 11rem
+  con più padding.
+- [x] #40 — Aggiunta una spiegazione per (quasi) ogni simbolo della tabella, sotto il
+  significato in corsivo più piccolo — testo preso quasi parola per parola da quello scritto
+  da Rory. Lasciato senza spiegazione solo `0`, di cui lui stesso non ricorda l'origine.
+- [x] #41 — Aggiunta una sezione "Frasi vere, di quando lo abbiamo inventato" con le 12 frasi
+  reali (combinazioni di simboli) dal messaggio del 08/04/2026 sull'app ntfy — anche il testo
+  della nota "perché esiste questo linguaggio" in cima alla pagina è stato sostituito con
+  quello vero di Rory (non più l'abbozzo di Claude), stesso per la spiegazione generale dei
+  puntini incrementali.
+- [x] #36 — Card di anteprima della Mappa (quella con foto + titolo + estratto + link) tagliava
+  il fondo — verificato con misure reali (Playwright) che a schermi non larghissimi il
+  contenuto (immagine + testo) superava l'altezza reale del riquadro anche di 100+ px, e
+  `overflow: hidden` nascondeva in silenzio il link "Vai alla meta" senza che si notasse.
+  Passata da grid a flex: l'immagine si restringe fino a un minimo, il testo si prende lo
+  spazio restante e — solo nei casi estremi — scorre al suo interno invece di sparire.
+  Verificato che il link resti sempre raggiungibile su più larghezze (1440/1100/950/900px).
+
+
 
 ### Bug chiusi
 

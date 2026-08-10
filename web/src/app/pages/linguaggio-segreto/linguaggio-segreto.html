@@ -4,38 +4,64 @@
     <h1 id="linguaggio-title"><span aria-hidden="true">🔐</span> Il Nostro Linguaggio</h1>
   </section>
 
-  <!-- Testo abbozzato da Claude su richiesta di Rory, da riscrivere con le proprie parole
-       quando vuole: non è farina del sacco di chi ha vissuto la storia vera. -->
-  <section class="linguaggio-note card--handwritten" aria-label="Perché esiste questo linguaggio">
-    <p class="handwritten-text">Un giorno, tempo fa, ho pensato che ci servisse un modo tutto nostro per dirci le cose veloci, quelle che non hanno bisogno di troppe parole. Ho scritto questi simboli pensando a quante volte avrei voluto mandarti solo un punto, invece di scrivere una frase intera.</p>
-    <p class="handwritten-text">Poi, come succede spesso, non l’abbiamo mai usato davvero. È rimasto qui, fermo, ad aspettare. Magari da oggi possiamo iniziare, anche solo per gioco.</p>
+  <section class="linguaggio-note card" aria-label="Perché esiste questo linguaggio">
+    <p>Una volta in tempi decisamente peggiori ti avevo proposto di usare un linguaggio tutto nostro, per quando avevamo bisogno di parlarci, senza che nessuno potesse saperlo. Tu visto che sei pigra non hai mai voluto impararlo ahaha, però ho sempre pensato che sarebbe stato bello avere una cosa del genere solo nostra. Un modo di parlare che nessuno avrebbe mai potuto comprendere se non noi due. L’ho sempre trovato un po’ romantico e in qualche modo divertente.</p>
+    <p>Quindi beh anche se non lo usaremo mai, se un giorno avremo bisogno di dirci qualcosa in codice, qui possiamo ancora vedere cosa vogliono dire le cose. E se avrai bisogno di dirmi in segreto che sei felice e mi vuoi bene potrai sempre dire + &amp; .... no?</p>
   </section>
 
-  <section class="linguaggio-hearts" aria-label="Il significato dei cinque cuori">
-    <p class="linguaggio-hearts-emoji" aria-hidden="true">❤️❤️❤️❤️❤️</p>
-    <p class="linguaggio-hearts-caption">Tanto tempo fa, questi cinque cuori erano parte del nostro linguaggio segreto</p>
+  <!-- Rubrica/agenda con le linguette laterali: si clicca il nome della categoria come si
+       sfoglierebbe un indice alfabetico, il contenuto cambia nel pannello a fianco. Scelta
+       dopo aver confrontato 4 alternative dal vivo (griglia, colonna singola, fisarmonica,
+       sfoglia a pagine). -->
+  <section class="linguaggio-rubrica" aria-label="La tabella dei simboli">
+    <div class="linguaggio-rubrica-tabs" role="tablist" aria-label="Categorie">
+      @for (category of categories; track category.title; let i = $index) {
+        <button type="button" role="tab" [attr.aria-selected]="activeCategoryIndex() === i" [class.is-active]="activeCategoryIndex() === i" (click)="activeCategoryIndex.set(i)">
+          <span class="linguaggio-rubrica-icon" aria-hidden="true">{{ category.icon }}</span>
+          {{ category.title }}
+        </button>
+      }
+    </div>
+    <div class="linguaggio-rubrica-panel">
+      @if (categories[activeCategoryIndex()]; as category) {
+        <h2><span class="linguaggio-rubrica-icon" aria-hidden="true">{{ category.icon }}</span>{{ category.title }}</h2>
+        @if (category.note) {
+          <p class="linguaggio-category-note">{{ category.note }}</p>
+        }
+        <div class="linguaggio-entries">
+          @for (entry of category.entries; track entry.symbol) {
+            <div class="linguaggio-entry">
+              <span class="linguaggio-symbol">{{ entry.symbol }}</span>
+              <span class="linguaggio-meaning">
+                {{ entry.meaning }}
+                @if (entry.explanation) {
+                  <span class="linguaggio-explanation">{{ entry.explanation }}</span>
+                }
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </div>
   </section>
 
-  <section class="linguaggio-table-wrap" aria-label="La tabella dei simboli">
-    @for (category of categories; track category.title) {
-      <div class="linguaggio-category card">
-        <h2>{{ category.title }}</h2>
-        <table class="linguaggio-table">
-          <tbody>
-            @for (entry of category.entries; track entry.symbol) {
-              <tr>
-                <td class="linguaggio-symbol">{{ entry.symbol }}</td>
-                <td class="linguaggio-meaning">{{ entry.meaning }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
+  <details class="details-toggle linguaggio-instructions-toggle" aria-label="Istruzioni per l'app">
+    <summary>Istruizioni per entrare nella stanza segreta<span class="details-toggle-icon" aria-hidden="true">+</span></summary>
+    <div class="details-toggle-body">
+      <p>Avevo trovato un'app per mandarci notifiche veloci quando il documento era troppo lento, si chiama ntfy. Dopo che la scarichi, fare il "+" in basso a destra e come "nome dell'argomento" scrivere "update-daemon-v17x9" (senza virgolette). L'ho chiamato così perché sembra il nome di una notifica di sistema, e 17x9 è il nostro anniversario, così non entra gente a caso. Io comunque quell'app non l'ho mai disinstallata.</p>
+    </div>
+  </details>
+
+  <section class="linguaggio-examples card" aria-label="Qualche esempio di frase">
+    <h2>Esempi</h2>
+    <p class="linguaggio-examples-intro">Qui ci sono alcuni esempi per prendere confidenza con i codici, potrebbe essere praticamente una conversazione:</p>
+    <ul class="linguaggio-examples-list">
+      @for (example of examples; track example.code) {
+        <li><span class="linguaggio-example-code">{{ example.code }}</span><span class="linguaggio-example-arrow" aria-hidden="true">→</span><span class="linguaggio-example-meaning">{{ example.meaning }}</span></li>
+      }
+    </ul>
   </section>
 
-  <!-- Anche questo messaggio è un abbozzo di Claude — da sostituire quando Rory vuole
-       scriverne uno vero. -->
   <section class="linguaggio-message card--handwritten" aria-label="Un messaggio da decifrare">
     <p class="linguaggio-message-hint">Prova a decifrarlo, la chiave è qui sopra</p>
     <p class="linguaggio-message-code">. &amp; ... &lt;&gt;</p>

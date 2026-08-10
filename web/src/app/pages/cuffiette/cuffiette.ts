@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
 import { TelemetryService } from '../../core/telemetry.service';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
@@ -33,7 +34,7 @@ interface MusicData {
 @Component({
   selector: 'app-cuffiette',
   standalone: true,
-  imports: [AppShell, ContentMessage],
+  imports: [AppShell, ContentMessage, RouterLink],
   styleUrls: ['../../../styles/pages/music.css'],
   templateUrl: './cuffiette.html'
 })
