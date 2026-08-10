@@ -1,12 +1,31 @@
 # Piano di lavoro
 
-Scaletta concordata il 09/08/2026, dopo il porting Angular e la componentizzazione. Ordine
-pensato per fare le cose una volta sola: prima le fondamenta visive (temi/stile), poi i
-redesign di pagina che le useranno, poi le feature nuove. Gli item bloccati su contenuti di
-Rory o troppo vaghi per partire senza uno scoping veloce restano in fondo, così non bloccano
-il resto.
+Scaletta concordata il 09/08/2026, dopo il porting Angular e la componentizzazione. Le cose
+ancora aperte (da fare, in corso, o bloccate su contenuti di Rory) stanno in cima, così si
+vedono subito senza scorrere; tutto quello già completato è più sotto, in ordine di fase.
 
-## Bug chiusi
+## Da fare / in corso
+
+- #16 — seconda avventura GDR: aspetta titolo/testo/regole
+- [~] #25 — Mappa: Sicilia. Struttura pronta in `map.json` (destinazione tra Olanda e Roma,
+  coordinate su Catania) con le 4 foto vere già al loro posto (fiume Amenano/Catania, Gole
+  dell'Alcantara, laghetti di Cavagrande del Cassibile/Avola, Isola Bella a Taormina —
+  scaricate e convertite in webp, la foto di Avola croppata del 15% sopra/sotto su richiesta).
+  **Resta solo il testo**: i 4 paragrafi sono ancora segnaposto (`[... testo da scrivere]`).
+  Aggiornata anche la validazione hardcoded in `mappa.ts` (si aspettava esattamente 6
+  destinazioni, ora 7).
+- #26 — Mappa: completare Roma, aspetta il testo vero
+- #27 — rendere più personali le scritte ancora generiche: aspetta l'elenco dei testi da
+  rivedere
+- #23 — zona giochi/cose da fare insieme
+- #24 — ricerca globale protetta (già segnata come rimandata)
+- #20 — player audio proprio (dipende dallo spostare i 9 brani su R2)
+
+---
+
+## Fatto
+
+### Bug chiusi
 
 - [x] Scroll che restava fermo cambiando pagina — mancava `withInMemoryScrolling` nel router
   (`web/src/app/app.config.ts`).
@@ -35,7 +54,7 @@ il resto.
   click reale del browser in nessuna sessione precedente — solo tramite chiamate dirette
   all'API, che aggirano il problema.
 
-## Extra (fuori scaletta, chiesti durante la Fase B)
+### Extra (fuori scaletta, chiesti durante la Fase B)
 
 - [x] #31 — occhiolino "mostra password" nel Portone: un solo campo condiviso da login e
   registrazione, quindi un solo toggle copre entrambi. Icona rifatta con un design pulito
@@ -47,7 +66,7 @@ il resto.
   header e con "il cerchio" della canzone. Stesso file riusato anche come sigillo decorativo
   sulla card del Portone (`portone-seal`), verificato che stia bene anche lì.
 
-## Extra (fuori scaletta, chiesti il 10/08/2026)
+### Extra (fuori scaletta, chiesti il 10/08/2026)
 
 - [x] Icona del Pozzo dei Dubbi: il secchio 🪣 non piaceva. Sostituito con ⛲ (fontana) sia
   nella tile del Mondo Bianco sia nel titolo della pagina `/domande`.
@@ -89,7 +108,7 @@ il resto.
   Aggiunto `npm run dev` (`scripts/dev.sh`) per avviare backend+frontend con un solo comando;
   dettagli in `README.md`.
 
-## Fase A — Quick win (COMPLETATA)
+### Fase A — Quick win (COMPLETATA)
 
 - [x] #12 — bug bottone rosso poi verde al caricamento: il tema salvato veniva applicato solo
   in `Portone.ngOnInit`, dopo il primo paint di Angular — su ogni altra pagina (o refresh
@@ -107,7 +126,7 @@ il resto.
 - [x] #29 — calendario: aggiunto il 20 maggio 2026, "La rinascita di Fuochetto"
   (`web/public/content/calendar.json`, ora 28 date).
 
-## Fase B — Fondamenta visive (COMPLETATA)
+### Fase B — Fondamenta visive (COMPLETATA)
 
 - [x] #1 — temi coerenti: i colori di testo hardcoded (`#f4f7fb`, `#d1dde6`, `#b8cad9`, ripetuti
   identici su tutte le pagine) sono ora `var(--text-color)`/`var(--muted-color)`, quindi
@@ -137,7 +156,7 @@ il resto.
   "The-white-world" invariato (è il cielo storico del sito). Altri effetti (oltre al cielo)
   rimandati, come richiesto.
 
-## Fase C — Redesign di pagina (dopo la Fase B, per non rifarle due volte)
+### Fase C — Redesign di pagina (dopo la Fase B, per non rifarle due volte)
 
 - [x] #3 — bacheca dei ricordi: indice in cima impilato un blocco per mese/incontro
   (Settembre, poi Maggio, poi "Extra" con I video/Altre cose affiancate), ciascuno con una
@@ -183,7 +202,7 @@ il resto.
   riusati colori già presenti nel sito, non nuovi: verde = `--correct-color` di :root, rosso =
   `--active-color` del tema "red-of-you".
 
-## Fase D — Feature nuova (tocca anche il backend)
+### Fase D — Feature nuova (tocca anche il backend)
 
 - [x] #2 — pagina profilo: nuova `/profilo` (link dal saluto in userbar) con due form
   indipendenti, nickname e password. Cambio password richiede quella attuale come conferma
@@ -219,21 +238,7 @@ il resto.
   (fuori dagli otto luoghi ufficiali), non più da Ponti. Nessun cambio di route/tabelle,
   solo testo e collocazione visibili.
 
-## Fase E — Bloccati su contenuti di Rory (non bloccano il resto)
-
-- #16 — seconda avventura GDR: aspetta titolo/testo/regole
-- [~] #25 — Mappa: Sicilia. Struttura pronta in `map.json` (destinazione tra Olanda e Roma,
-  coordinate su Catania) con le 4 foto vere già al loro posto (fiume Amenano/Catania, Gole
-  dell'Alcantara, laghetti di Cavagrande del Cassibile/Avola, Isola Bella a Taormina —
-  scaricate e convertite in webp, la foto di Avola croppata del 15% sopra/sotto su richiesta).
-  **Resta solo il testo**: i 4 paragrafi sono ancora segnaposto (`[... testo da scrivere]`).
-  Aggiornata anche la validazione hardcoded in `mappa.ts` (si aspettava esattamente 6
-  destinazioni, ora 7).
-- #26 — Mappa: completare Roma, aspetta il testo vero
-- #27 — rendere più personali le scritte ancora generiche: aspetta l'elenco dei testi da
-  rivedere
-
-## Fase F — Troppo vaghi per partire, serve scoping veloce insieme
+### Fase F — Troppo vaghi per partire, serve scoping veloce insieme
 
 - [x] #22 — linguaggio segreto: scoping fatto in conversazione (contenuto vero fornito da
   Rory: tabella simboli a 6 categorie, i 5 cuori rossi = "ti amo"). Nuova pagina
@@ -254,10 +259,6 @@ il resto.
   verificato byte per byte (tutti i 10 blob AES unici e i 5 paragrafi cifrati coincidono
   esattamente) prima di scrivere la pagina definitiva. Nessuna verifica automatica nel
   sito: si decifra fuori, con lo strumento esterno indicato nel testo originale.
-- #22 — linguaggio segreto
-- #23 — zona giochi/cose da fare insieme
-- #24 — ricerca globale protetta (già segnata come rimandata)
-- #20 — player audio proprio (dipende dallo spostare i 9 brani su R2)
 
 ---
 
