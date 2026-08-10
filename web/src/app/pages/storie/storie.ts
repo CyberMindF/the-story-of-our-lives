@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
@@ -31,7 +32,7 @@ interface StoryView {
 @Component({
   selector: 'app-storie',
   standalone: true,
-  imports: [AppShell, FormStatus, ContentMessage],
+  imports: [AppShell, FormsModule, FormStatus, ContentMessage],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/stories.css'],
   templateUrl: './storie.html'

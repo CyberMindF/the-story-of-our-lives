@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
@@ -12,6 +13,7 @@ interface DestinationImage {
   src: string;
   alt: string;
   beforeParagraph?: number;
+  position?: 'before' | 'after';
 }
 
 interface Destination {
@@ -27,6 +29,7 @@ interface Passage {
   images: DestinationImage[];
   text: string;
   isLong: boolean;
+  imagePosition: 'before' | 'after';
 }
 
 interface DestinationView {
@@ -44,15 +47,16 @@ interface PinView {
 }
 
 // Porting fedele di assets/js/map/main.js: stessa proiezione Equal Earth (funzione pura,
-// portata carattere per carattere), stessa validazione (introduzione + 6 destinazioni),
-// stessa anteprima aggiornata al click su una puntina, stesso diario di viaggio completo
+// portata carattere per carattere), stessa validazione (introduzione + N destinazioni,
+// aggiornata a 7 con l'aggiunta della Sicilia), stessa anteprima aggiornata al click su una
+// puntina, stesso diario di viaggio completo
 // sotto. La costruzione DOM (createPin/createDestination/createGallery/createNarrative)
 // diventa binding dichiarativo nel template — la logica di raggruppamento immagini per
 // paragrafo resta identica, solo precalcolata una volta invece che ad ogni createElement.
 @Component({
   selector: 'app-mappa',
   standalone: true,
-  imports: [AppShell, ContentMessage],
+  imports: [AppShell, ContentMessage, NgTemplateOutlet],
   styleUrls: ['../../../styles/pages/map.css'],
   templateUrl: './mappa.html'
 })
@@ -88,8 +92,8 @@ export class Mappa implements OnInit {
   async ngOnInit(): Promise<void> {
     try {
       const data = await this.staticContent.load<{ introduction: string[]; destinations: Destination[] }>('/content/map.json');
-      if (!Array.isArray(data.introduction) || !Array.isArray(data.destinations) || data.destinations.length !== 6) {
-        throw new Error('La mappa deve contenere introduzione e sei destinazioni');
+      if (!Array.isArray(data.introduction) || !Array.isArray(data.destinations) || data.destinations.length !== 7) {
+        throw new Error('La mappa deve contenere introduzione e sette destinazioni');
       }
 
       this.introduction.set(data.introduction);
@@ -114,7 +118,8 @@ export class Mappa implements OnInit {
   private toDestinationView(destination: Destination, index: number): DestinationView {
     const passages = destination.paragraphs.map((text, paragraphIndex) => {
       const images = destination.images.filter((image) => image.beforeParagraph === paragraphIndex);
-      return { images, text, isLong: images.length > 0 && text.length > 900 };
+      const imagePosition = images[0]?.position ?? 'before';
+      return { images, text, isLong: images.length > 0 && text.length > 900, imagePosition };
     });
     return { destination, index, passages, hasImages: destination.images.length > 0 };
   }
@@ -122,7 +127,7 @@ export class Mappa implements OnInit {
   // Proietta coordinate reali sulla stessa Equal Earth usata dall'immagine cartografica.
   private projectCoordinates(coordinates?: Coordinates): { x: number; y: number } {
     if (!coordinates) {
-      return { x: 89, y: 87 };
+      return { x: 50, y: 50 };
     }
 
     const radians = Math.PI / 180;

@@ -26,6 +26,7 @@
                 type="button"
                 class="map-pin"
                 [class.is-open]="pin.destination.isOpen"
+                [class.label-opens-left]="pin.x >= 70"
                 [style.--pin-x]="pin.x + '%'"
                 [style.--pin-y]="pin.y + '%'"
                 [attr.aria-label]="'Mostra ' + pin.destination.name"
@@ -79,15 +80,26 @@
           </header>
           <div class="destination-narrative">
             @for (passage of view.passages; track $index) {
-              <section class="destination-passage" [class.is-long]="passage.isLong">
-                @if (passage.images.length) {
+              <section
+                class="destination-passage"
+                [class.is-long]="passage.isLong"
+                [class.no-image]="!passage.images.length"
+                [class.image-after]="passage.imagePosition === 'after'"
+              >
+                @if (passage.images.length && passage.imagePosition !== 'after') {
+                  <ng-container *ngTemplateOutlet="gallery; context: { $implicit: passage }" />
+                }
+                <p>{{ passage.text }}</p>
+                @if (passage.images.length && passage.imagePosition === 'after') {
+                  <ng-container *ngTemplateOutlet="gallery; context: { $implicit: passage }" />
+                }
+                <ng-template #gallery let-passage>
                   <div class="destination-gallery" [class]="'images-' + passage.images.length">
                     @for (image of passage.images; track $index) {
                       <figure><img [src]="image.src" [alt]="image.alt" loading="lazy" /></figure>
                     }
                   </div>
-                }
-                <p>{{ passage.text }}</p>
+                </ng-template>
               </section>
             }
           </div>

@@ -1,0 +1,15 @@
+.domande-page { min-height: 100dvh; color: var(--text-color); }
+.domande-eyebrow { margin: 0 0 .65rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+
+.domande-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+.domande-hero h1 { margin: 0; font-size: var(--hero-size-md); line-height: .95; letter-spacing: -.04em; }
+.domande-intro { margin: 1.25rem auto 0; max-width: 34rem; color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
+
+.domande-form { width: min(100%, 46rem); margin: 0 auto; display: grid; gap: 1.15rem; padding-bottom: clamp(2.5rem, 6vw, 4rem); }
+.domande-form .form-field textarea { min-height: 8rem; }
+
+.domande-archive { width: min(100%, 46rem); margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); border-top: 1px solid rgba(255,255,255,.16); padding-top: clamp(2.5rem, 6vw, 4rem); }
+.domande-section-heading { margin-bottom: 2rem; }
+.domande-section-heading h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 400; letter-spacing: -.03em; }
+
+.questions-list { display: grid; gap: 1.25rem; }

@@ -19,6 +19,21 @@ il resto.
   la Chiave non veniva più richiesta anche a distanza di giorni. Ora scade dopo un'ora di
   inattività reale, non da quando è stata data: si rinnova navigando (`authGuard`) e
   interagendo con la pagina (`App`), così non chiede mai la Chiave a metà di un uso attivo.
+- [x] **Bug grave, preesistente**: i form con `(ngSubmit)` in `Lettere`, `Suggerimenti`,
+  `Storie` e `Avventura` non hanno mai funzionato — nessuno dei loro componenti importava
+  `FormsModule`, quindi la direttiva `NgForm` di Angular non era mai attiva e `(ngSubmit)`
+  non si legava a niente. Il click su "invia" faceva submit nativo del browser (GET alla
+  pagina corrente con i campi in query string, tipo `?body=...`), niente arrivava
+  all'endpoint. Scoperto perché Rory ha segnalato che una domanda scritta nella nuova pagina
+  Domande non appariva da nessuna parte — il DB era davvero vuoto anche dopo l'invio.
+  Verificato con un click reale via browser automatizzato (non con `curl -F`, che bypassa il
+  form e quindi non l'avrebbe mai fatto emergere): prima del fix l'URL cambiava in
+  `/domande?questionText=...` e nessuna `POST` veniva mai inviata; dopo il fix `POST
+  /api/questions` parte correttamente e l'URL resta pulito. Aggiunto `FormsModule` a tutti e
+  cinque i componenti (incluso il nuovo `Domande`/`QuestionCard`, che avevano lo stesso
+  problema). Prima di questo non era mai stato verificato nessun invio di form tramite un
+  click reale del browser in nessuna sessione precedente — solo tramite chiamate dirette
+  all'API, che aggirano il problema.
 
 ## Extra (fuori scaletta, chiesti durante la Fase B)
 
@@ -31,6 +46,48 @@ il resto.
   Sostituito con un cerchio rosso infuocato su cielo notturno, coerente col ⭕ usato in ogni
   header e con "il cerchio" della canzone. Stesso file riusato anche come sigillo decorativo
   sulla card del Portone (`portone-seal`), verificato che stia bene anche lì.
+
+## Extra (fuori scaletta, chiesti il 10/08/2026)
+
+- [x] Icona del Pozzo dei Dubbi: il secchio 🪣 non piaceva. Sostituito con ⛲ (fontana) sia
+  nella tile del Mondo Bianco sia nel titolo della pagina `/domande`.
+- [x] Messaggio Criptato: la nota con le istruzioni usava `.card--handwritten` (la superficie
+  "lettera scritta a mano"), fuori posto per un testo che non è una lettera — passata alla
+  card normale, tolto il font serif corsivo. Aggiunto un nuovo blocco con il link originale
+  (cifrato con Cesare, `Messaggio criptato/Link originale.md` nella root del repo — non era
+  ancora arrivato sul sito) accanto al titolo cifrato.
+- [x] Lettere: il testo scritto a mano usava Georgia corsivo, un serif finto che "non sembra
+  per niente scritto a mano". Sostituito con Caveat, un vero font corsivo (SIL OFL,
+  self-hosted in `web/public/fonts/`, variable font — un solo file copre tutti i pesi), estratto
+  in una classe condivisa `.handwritten-text` (`cards.css`) e riusato anche dalla lettera
+  finale del cruciverba e dal Linguaggio Segreto, non solo da Lettere.
+  - Lettere lunghe non scorrono più in verticale dentro il foglio: il testo si dispone in
+    colonne CSS larghe quanto il riquadro (una colonna = una pagina) e si sfoglia con due
+    frecce e un'animazione di scorrimento, invece di un semplice `overflow-y: auto`. Il
+    numero di pagine si ricalcola da solo al resize e quando il font Caveat finisce di
+    caricare (le metriche del testo cambiano leggermente rispetto al fallback).
+- [x] Mappa — puntina "etichetta tagliata" al bordo: la Thailandia (coordinate reali, non
+  scelte apposta) proietta a x≈74% sulla mappa; l'etichetta al hover apriva sempre verso
+  destra e usciva dal contenitore scrollabile, restando tagliata a metà ("Thai…"). Prima
+  ancora, un bug distinto rendeva invisibile anche il fix già previsto per questo: il CSS
+  puntava a `.map-pin[data-destination-id="prossima-meta"]` ma il template non scriveva mai
+  quell'attributo (selettore morto, stesso tipo di bug delle cuffiette in Fase C). Risolto in
+  modo generale invece che per quel solo id: `mappa.ts` calcola per ogni puntina se aprire
+  l'etichetta a sinistra (`pin.x >= 70`), così qualunque destinazione futura vicina al bordo
+  ne beneficia. La puntina "prossima meta" (coordinate `null`) è stata anche ricentrata: prima
+  cadeva in basso a destra per un fallback hardcoded (`{x:89, y:87}`), rischiando di passare
+  inosservata; ora è al centro (`{x:50, y:50}`).
+- [x] Mappa — il diario di viaggio ora supporta la sequenza "paragrafo da solo, immagine+testo,
+  testo+immagine, ..." richiesta: un paragrafo senza foto agganciata occupa tutta la larghezza
+  invece di lasciare una colonna vuota, e una foto può avere `"position": "after"` in
+  `map.json` per comparire sotto il testo invece che sopra (di default resta sopra).
+- [x] Ambiente di sviluppo: il frontend (`ng serve`) partiva sulla porta di default 4200,
+  rischiando conflitti con altre istanze già aperte (successo più volte in questa sessione).
+  Fissata a `4201` in `web/angular.json`; una sessione Claude che deve avviare una propria
+  istanza per verifiche usa `4202` (mai 4201, per non toccare un server già aperto
+  dall'utente). Il backend resta condiviso su `8788` per entrambi, non ha senso duplicarlo.
+  Aggiunto `npm run dev` (`scripts/dev.sh`) per avviare backend+frontend con un solo comando;
+  dettagli in `README.md`.
 
 ## Fase A — Quick win (COMPLETATA)
 
@@ -82,7 +139,15 @@ il resto.
 
 ## Fase C — Redesign di pagina (dopo la Fase B, per non rifarle due volte)
 
-- [ ] #3 — bacheca dei ricordi
+- [x] #3 — bacheca dei ricordi: indice in cima impilato un blocco per mese/incontro
+  (Settembre, poi Maggio, poi "Extra" con I video/Altre cose affiancate), ciascuno con una
+  vera griglia di giorni sotto — i dati erano già organizzati così, mancava solo la
+  presentazione (prima una fila piatta di pillole centrate). Le foto con didascalia (poche,
+  scelte) diventano card grandi a piena larghezza con il testo subito sotto; quelle senza
+  descrizione restano un filmino compatto di 2-3 per riga. I due link YouTube della pagina
+  (prima bottoni "apri contenuto esterno", mescolati ai video Drive) sono ora incorporati
+  come player veri e piccoli (~24rem), stesso pattern privacy-enhanced di Storie/Mappamondo.
+  Tutto verificato con screenshot reali su un account di prova (poi ripulito dal DB).
 - [x] #6 — i ponti: la pagina era un elenco di vecchi Google Doc pre-lancio, resa obsoleta da
   Lettere. Non ho cancellato nulla di reale (i 3 link Drive funzionano ancora) — "La Cassetta
   delle Lettere" è ora la card in evidenza, i vecchi ponti sono raccolti in un pannello
@@ -109,23 +174,86 @@ il resto.
     che nello `styleUrl` del componente, quindi l'encapsulation di Angular non lo faceva mai
     arrivare a destinazione. Controllati anche gli altri componenti condivisi (dialog,
     form-status, header, userbar, back-link): usano tutti CSS già globale, nessun altro caso.
-- [ ] #5 — capire se il mappamondo si può migliorare
+- [x] #5 — mappamondo: le 7 card-scena e il box della canzone usavano `card--paper` (carta
+  bianca opaca), l'unica pagina a farlo insieme al calendario — stonava col resto del sito.
+  Passate alla `.card` condivisa (stessa di mondo-bianco/bacheca/ponti/ecc.), compresa la card
+  finale che aveva un bordo colorato dedicato, tolto per allinearla alle altre. Le etichette
+  R:/D: erano blu/mogano scuri pensati per leggersi su carta chiara: ora verde/rosso fissi
+  (non `var(--focus-color)`, il colore identifica chi parla e non deve cambiare con il tema) —
+  riusati colori già presenti nel sito, non nuovi: verde = `--correct-color` di :root, rosso =
+  `--active-color` del tema "red-of-you".
 
 ## Fase D — Feature nuova (tocca anche il backend)
 
-- [ ] #2 — pagina profilo (cambio nick/password, log della password precedente)
+- [x] #2 — pagina profilo: nuova `/profilo` (link dal saluto in userbar) con due form
+  indipendenti, nickname e password. Cambio password richiede quella attuale come conferma
+  (403 se sbagliata); la precedente viene loggata in `events` (`section: "auth"`,
+  `event_type: "password_changed"`, `metadata.previousPassword`) **prima** dell'update e
+  in modo atteso, non fire-and-forget come gli altri eventi — se il log fallisce il cambio
+  non avviene, così il ricordo non si perde mai in silenzio. Password restano in chiaro nel
+  DB come richiesto esplicitamente, nessun hashing aggiunto. L'occhiolino mostra/nascondi
+  password, prima solo dentro Portone, è stato estratto in un componente condiviso
+  (`app-password-field`) usato ora da entrambe le pagine invece di duplicarlo — Portone
+  aggiornato di conseguenza, stesso comportamento visivo (verificato con screenshot). Nessuna
+  nuova migrazione: riusata la tabella `events` già esistente.
+- [x] #28 — pagina domande: item rimasto orfano nel backlog dettagliato, mai smistato in
+  nessuna fase — trovato rileggendo tutto il file. Nuova `/domande` (nuova tabella
+  `questions`, migrazione `0021`), simmetrica: chiunque dei due può chiedere o rispondere,
+  non si può rispondere alla propria domanda. Domanda e risposta si possono modificare, ogni
+  modifica logga il testo precedente in `events` **prima** di scrivere l'update (stesso
+  schema del cambio password: se il log fallisce, la modifica non avviene) — verificato
+  davvero rinominando temporaneamente la tabella `events` per forzare il fallimento e
+  controllando che la riga in `questions` restasse intatta. Estratta `normalizeRequiredText`
+  (prima locale solo a `letters.js`) in un helper condiviso (`functions/api/_shared/text.js`)
+  invece di duplicarla. Ogni domanda in lista ha il proprio stato di invio indipendente
+  (componente `QuestionCard` con una `FormSubmission` propria via DI, non condivisa tra le
+  righe). Raggiungibile da Ponti e da una scorciatoia extra nel Mondo Bianco, come Lettere.
+  Verificato end-to-end con due account di prova (poi ripuliti dal DB): permessi, log
+  dell'evento precedente, e rendering reale della pagina.
+- [x] Riorganizzazione Lettere/Domande (richiesta di Rory): nel mondo devono starci solo
+  luoghi fisici, non "Lettere"/"Domande" come concetti astratti. Tolte le loro card da Ponti
+  (che ora è solo un elenco di metodi per comunicare, non un luogo). "Le Lettere" diventa
+  ovunque "La Cassetta delle Lettere" (📫); "Le Domande" diventa "Il Pozzo dei Dubbi" (🪣,
+  idea di Rory — un pozzo da cui pescare i dubbi), col testo della pagina adattato al tema
+  del pozzo. Restano raggiungibili come scorciatoie extra nella griglia del Mondo Bianco
+  (fuori dagli otto luoghi ufficiali), non più da Ponti. Nessun cambio di route/tabelle,
+  solo testo e collocazione visibili.
 
 ## Fase E — Bloccati su contenuti di Rory (non bloccano il resto)
 
 - #16 — seconda avventura GDR: aspetta titolo/testo/regole
-- #25 — Mappa: Sicilia, aspetta i testi
+- [~] #25 — Mappa: Sicilia. Struttura pronta in `map.json` (destinazione tra Olanda e Roma,
+  coordinate su Catania) con le 4 foto vere già al loro posto (fiume Amenano/Catania, Gole
+  dell'Alcantara, laghetti di Cavagrande del Cassibile/Avola, Isola Bella a Taormina —
+  scaricate e convertite in webp, la foto di Avola croppata del 15% sopra/sotto su richiesta).
+  **Resta solo il testo**: i 4 paragrafi sono ancora segnaposto (`[... testo da scrivere]`).
+  Aggiornata anche la validazione hardcoded in `mappa.ts` (si aspettava esattamente 6
+  destinazioni, ora 7).
 - #26 — Mappa: completare Roma, aspetta il testo vero
 - #27 — rendere più personali le scritte ancora generiche: aspetta l'elenco dei testi da
   rivedere
 
 ## Fase F — Troppo vaghi per partire, serve scoping veloce insieme
 
-- #21 — messaggio criptato nei giochi
+- [x] #22 — linguaggio segreto: scoping fatto in conversazione (contenuto vero fornito da
+  Rory: tabella simboli a 6 categorie, i 5 cuori rossi = "ti amo"). Nuova pagina
+  `/linguaggio-segreto`, raggiungibile da una quinta card nei Ponti ("un altro ponte per
+  comunicare in codice", idea di Rory) invece che nascosta dietro un easter egg — scartato
+  sia l'unlock segreto sia metterla dentro la Bacheca. Testo introduttivo e messaggio in
+  codice (`. & ... <>`) sono un abbozzo scritto da Claude su richiesta esplicita di Rory
+  ("scrivi lo tu per adesso"), segnalato con commento nel codice, da riscrivere quando vuole.
+  Verificato con screenshot: tabella e testo leggibili sia sul pannello scuro sia sulla carta
+  scritta a mano (due bug di contrasto/spaziatura trovati e corretti prima di consegnare).
+- [x] #21 — messaggio criptato: nuova pagina `/tavolo-da-gioco/messaggio-criptato`, sua
+  sezione a sé (non nascosto dentro un gioco esistente, come richiesto). Contenuto reale
+  fornito da Rory (cartella `Messaggio criptato/` alla radice del repo, export Notion): 5
+  blocchi B1-B5 in cifrario a sostituzione + più blob AES (titolo, "utili", un aiuto per
+  blocco) da decifrare con un tool esterno (browserling AES Decrypt) e una password unica.
+  Vista la fragilità di un cifrario (un carattere sbagliato lo rompe), il contenuto è stato
+  estratto in modo **programmatico** dall'HTML originale invece che ritrascritto a mano, e
+  verificato byte per byte (tutti i 10 blob AES unici e i 5 paragrafi cifrati coincidono
+  esattamente) prima di scrivere la pagina definitiva. Nessuna verifica automatica nel
+  sito: si decifra fuori, con lo strumento esterno indicato nel testo originale.
 - #22 — linguaggio segreto
 - #23 — zona giochi/cose da fare insieme
 - #24 — ricerca globale protetta (già segnata come rimandata)
@@ -172,6 +300,3 @@ Portati qui dalla vecchia `CHECKLIST_MIGRAZIONE_MONDO_BIANCO.md` (ora eliminata,
 31. Aggiungere un occhiolino "mostra password" nei campi password del Portone, sia nel login che nella registrazione.
 
 32. Aggiungere l'1 luglio, il giorno del suo esame di maturità, e il giorno che le ho mandato il mazzo di rosa con la lettera
-
-BUG
-1. Anche quando il token/la sessione risultano validi, non si arriva mai al passaggio "inserisci solo la Chiave" (modalità `key` del Portone, per chi ha già una sessione valida ma deve solo riconfermare la Chiave) — da investigare.

@@ -1,5 +1,9 @@
 <div class="place-userbar" [class]="extraClass">
-  <p class="user-greeting">{{ userName() ? 'Ciao, ' + userName() : '' }}</p>
+  @if (userName()) {
+    <a routerLink="/profilo" class="user-greeting" title="Vai al tuo profilo">Ciao, {{ userName() }}</a>
+  } @else {
+    <span class="user-greeting"></span>
+  }
   <app-theme-switcher />
   @if (showHomeShortcut) {
     <a routerLink="/mondo-bianco" class="home-shortcut-link" aria-label="Vai a Il Mondo Bianco" title="Il Mondo Bianco">

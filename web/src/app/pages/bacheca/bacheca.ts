@@ -1,8 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
+
+// Riconosce i link youtu.be/youtube.com tra i contenuti "external" (Bacheca li mischia a
+// link Drive) e li converte nello stesso embed privacy-enhanced già usato da Storie/
+// Mappamondo, invece del bottone "Apri il contenuto esterno" generico.
+const YOUTUBE_URL_PATTERN = /(?:youtu\.be\/|youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{6,})/;
 
 interface Photo {
   key: string;
@@ -34,11 +40,14 @@ interface BachecaData {
   periods: Period[];
 }
 
+// Le foto con didascalia diventano blocchi "in evidenza" (grandi, con testo accanto), le
+// altre restano un filmino compatto — richiesto dopo la prima versione a griglia uniforme,
+// dove le poche foto scelte si perdevano nel mucchio di quelle senza descrizione.
 type RenderBlock =
-  | { kind: 'unit'; leadingText: boolean; photos: Photo[]; text: string }
-  | { kind: 'photo-grid'; photos: Photo[] }
+  | { kind: 'photo-group'; leadingText: boolean; text: string; featured: Photo[]; plain: Photo[] }
   | { kind: 'text'; text: string }
-  | { kind: 'external'; href: string };
+  | { kind: 'external'; href: string }
+  | { kind: 'youtube'; src: SafeResourceUrl };
 
 interface DayView {
   id: string;
@@ -51,9 +60,18 @@ interface PeriodView {
   days: DayView[];
 }
 
-interface IndexLink {
+interface IndexChip {
   id: string;
   label: string;
+}
+
+// Un "incontro" con più giorni (Settembre, Maggio) diventa un gruppo con intestazione +
+// una pillola per giorno; un periodo a giorno unico senza titolo (Altre cose, I video) resta
+// una pillola singola — prima erano tutti appiattiti nella stessa fila indistinguibile.
+interface IndexGroup {
+  title: string;
+  standalone: boolean;
+  chips: IndexChip[];
 }
 
 // Porting fedele di assets/js/bacheca/main.js: stessa fonte dati (content/bacheca.json),
@@ -70,10 +88,12 @@ interface IndexLink {
 })
 export class Bacheca implements OnInit, AfterViewInit {
   private readonly staticContent = inject(StaticContentService);
+  private readonly sanitizer = inject(DomSanitizer);
   @ViewChild('lightbox') private lightboxRef?: ElementRef<HTMLDialogElement>;
 
   protected readonly introduction = signal<string[]>([]);
-  protected readonly indexLinks = signal<IndexLink[]>([]);
+  protected readonly monthGroups = signal<IndexGroup[]>([]);
+  protected readonly extraGroups = signal<IndexGroup[]>([]);
   protected readonly periodViews = signal<PeriodView[]>([]);
   protected readonly loadError = signal(false);
 
@@ -87,8 +107,10 @@ export class Bacheca implements OnInit, AfterViewInit {
     try {
       const data = await this.staticContent.load<BachecaData>('/content/bacheca.json');
 
+      const indexGroups = data.periods.map((period) => this.toIndexGroup(period));
       this.introduction.set(data.introduction);
-      this.indexLinks.set(this.buildIndexLinks(data.periods));
+      this.monthGroups.set(indexGroups.filter((group) => !group.standalone));
+      this.extraGroups.set(indexGroups.filter((group) => group.standalone));
       this.periodViews.set(data.periods.map((period) => this.toPeriodView(period)));
 
       const requestedSection = window.location.hash.slice(1);
@@ -171,13 +193,16 @@ export class Bacheca implements OnInit, AfterViewInit {
     return day.slug === 'generale' ? periodSlug : `${periodSlug}-${day.slug}`;
   }
 
-  private buildIndexLinks(periods: Period[]): IndexLink[] {
-    return periods.flatMap((period) =>
-      period.days.map((day) => ({
+  private toIndexGroup(period: Period): IndexGroup {
+    const standalone = period.days.length === 1 && !period.days[0].title;
+    return {
+      title: period.title,
+      standalone,
+      chips: period.days.map((day) => ({
         id: this.sectionId(period.slug, day),
-        label: day.title ? `${period.title} · ${day.title}` : period.title
+        label: day.title || period.title
       }))
-    );
+    };
   }
 
   private toPeriodView(period: Period): PeriodView {
@@ -191,7 +216,7 @@ export class Bacheca implements OnInit, AfterViewInit {
     };
   }
 
-  // Stessa logica di renderDayItems: foto+testo adiacenti diventano un'unica "unit" (in
+  // Stessa logica di renderDayItems: foto+testo adiacenti diventano un unico blocco (in
   // entrambi gli ordini), tutto il resto resta un blocco a sé.
   private buildDayBlocks(items: DayItem[]): RenderBlock[] {
     const blocks: RenderBlock[] = [];
@@ -201,20 +226,35 @@ export class Bacheca implements OnInit, AfterViewInit {
       const next = items[i + 1];
 
       if (item.type === 'photo-group' && next?.type === 'text') {
-        blocks.push({ kind: 'unit', leadingText: false, photos: item.photos ?? [], text: next.text ?? '' });
+        blocks.push(this.toPhotoGroupBlock(item.photos ?? [], false, next.text ?? ''));
         i += 1;
       } else if (item.type === 'text' && next?.type === 'photo-group') {
-        blocks.push({ kind: 'unit', leadingText: true, photos: next.photos ?? [], text: item.text ?? '' });
+        blocks.push(this.toPhotoGroupBlock(next.photos ?? [], true, item.text ?? ''));
         i += 1;
       } else if (item.type === 'photo-group') {
-        blocks.push({ kind: 'photo-grid', photos: item.photos ?? [] });
+        blocks.push(this.toPhotoGroupBlock(item.photos ?? [], false, ''));
       } else if (item.type === 'text') {
         blocks.push({ kind: 'text', text: item.text ?? '' });
       } else if (item.type === 'external' && item.href) {
-        blocks.push({ kind: 'external', href: item.href });
+        const videoId = item.href.match(YOUTUBE_URL_PATTERN)?.[1];
+        blocks.push(
+          videoId
+            ? { kind: 'youtube', src: this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube-nocookie.com/embed/${videoId}`) }
+            : { kind: 'external', href: item.href }
+        );
       }
     }
 
     return blocks;
+  }
+
+  private toPhotoGroupBlock(photos: Photo[], leadingText: boolean, text: string): RenderBlock {
+    return {
+      kind: 'photo-group',
+      leadingText,
+      text,
+      featured: photos.filter((photo) => photo.caption),
+      plain: photos.filter((photo) => !photo.caption)
+    };
   }
 }

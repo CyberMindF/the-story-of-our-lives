@@ -46,10 +46,6 @@
   align-items: center;
   margin-top: clamp(2rem, 5vw, 3.5rem);
   padding: clamp(1rem, 2.5vw, 1.5rem);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 1.25rem;
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(12px);
 }
 
 .globe-soundtrack > p {
@@ -97,22 +93,22 @@
   margin-bottom: 0;
 }
 
-.story-scene .scene-number {
-  color: #6c8193;
-}
-
 .speaker {
   font-family: system-ui, sans-serif;
   font-size: 0.82em;
   letter-spacing: 0.08em;
 }
 
+/* R = verde, D = rosso, fissi a prescindere dal tema attivo (non var(--focus-color): qui
+   il colore identifica chi parla, non deve cambiare cambiando tema). Non nuovi colori
+   inventati: il verde è lo stesso rgb(167,223,189) già usato come --correct-color di
+   :root/the-white-world; il rosso è lo stesso --active-color del tema "red-of-you". */
 .speaker-r {
-  color: #315f78;
+  color: #a7dfbd;
 }
 
 .speaker-d {
-  color: #8a526b;
+  color: #bf3553;
 }
 
 .globe-figure {
@@ -131,7 +127,6 @@
 
 .story-scene.story-finale {
   justify-self: center;
-  border-color: color-mix(in srgb, var(--focus-color) 45%, rgba(255, 255, 255, 0.4));
 }
 
 .globe-back:focus-visible {

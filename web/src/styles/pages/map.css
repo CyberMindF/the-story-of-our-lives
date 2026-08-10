@@ -192,8 +192,11 @@
   line-height: 1.05;
 }
 
-/* L'ultima etichetta si apre verso sinistra per non uscire dalla mappa. */
-.map-pin[data-destination-id="prossima-meta"] .pin-label {
+/* Le puntine vicine al bordo destro (coordinate reali, es. Thailandia) aprono l'etichetta
+   verso sinistra invece che verso destra, altrimenti uscirebbe dal contenitore scrollabile
+   della mappa e resterebbe tagliata a metà. Calcolato in mappa.ts da pin.x, non da un id
+   fisso: qualunque destinazione futura vicina al bordo ne beneficia automaticamente. */
+.map-pin.label-opens-left .pin-label {
   right: 1.5rem;
   left: auto;
   transform: translate(-0.35rem, -50%);
@@ -207,9 +210,9 @@
   transform: translate(0, -50%);
 }
 
-.map-pin[data-destination-id="prossima-meta"]:hover .pin-label,
-.map-pin[data-destination-id="prossima-meta"]:focus-visible .pin-label,
-.map-pin[data-destination-id="prossima-meta"][aria-pressed="true"] .pin-label {
+.map-pin.label-opens-left:hover .pin-label,
+.map-pin.label-opens-left:focus-visible .pin-label,
+.map-pin.label-opens-left[aria-pressed="true"] .pin-label {
   transform: translate(0, -50%);
 }
 
@@ -476,6 +479,18 @@
   border-color: rgba(240, 219, 179, 0.42);
 }
 
+/* Paragrafo "staccato": nessuna foto agganciata a questo passaggio, niente layout a due
+   colonne (altrimenti resterebbe una colonna vuota dove sarebbe stata la galleria). */
+.destination-passage.no-image {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+
+.destination-narrative .destination-passage.no-image > p {
+  grid-column: 1 / -1;
+  width: min(100%, 42rem);
+}
+
 .map-pin:focus-visible,
 .dream-map-scroll:focus-visible,
 .map-preview-copy a:focus-visible {
@@ -559,6 +574,19 @@
     grid-row: 2;
     margin-top: -0.65rem;
     border-radius: 0 0 0.9rem 0.9rem;
+  }
+
+  /* Passaggi con l'immagine impostata dopo il testo (image-after): stesso stack a due righe,
+     ordine invertito — il testo sta sopra, la foto sotto. */
+  .destination-passage.image-after .destination-gallery {
+    grid-row: 2;
+  }
+
+  .destination-passage.image-after > p {
+    grid-row: 1;
+    margin-top: 0;
+    margin-bottom: -0.65rem;
+    border-radius: 0.9rem 0.9rem 0 0;
   }
 
   .destination-gallery {

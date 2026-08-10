@@ -69,10 +69,16 @@
       <a class="world-place-card card is-available" routerLink="/cuffiette"><span class="world-place-emoji">🎧</span><strong>Le Cuffiette</strong><small>Entra</small></a>
       <a class="world-place-card card is-available" routerLink="/tavolo-da-gioco"><span class="world-place-emoji">🎲</span><strong>Il Tavolo da Gioco</strong><small>Entra</small></a>
       <a class="world-place-card card is-available" routerLink="/mappa"><span class="world-place-emoji">🗺️</span><strong>La Mappa</strong><small>Entra</small></a>
-      <!-- Non è uno degli otto luoghi originari, ma una scorciatoia aggiuntiva verso una
-           funzionalità interna ai Ponti. Condivide la griglia per mantenere l'allineamento. -->
+      <!-- Non è uno degli otto luoghi originari, ma un oggetto fisico del mondo comunque —
+           non più elencata dentro Ponti (che è un elenco di metodi per comunicare, non un
+           luogo), condivide solo la griglia per mantenere l'allineamento. -->
       <a class="world-place-card card is-available" routerLink="/lettere">
-        <span class="world-place-emoji">💌</span><strong>Le Lettere</strong><small>Entra</small>
+        <span class="world-place-emoji">📫</span><strong>La Cassetta delle Lettere</strong><small>Entra</small>
+      </a>
+      <!-- Stesso discorso della Cassetta qui sopra: un oggetto fisico del mondo, non uno
+           degli otto luoghi originari. -->
+      <a class="world-place-card card is-available" routerLink="/domande">
+        <span class="world-place-emoji">⛲</span><strong>Il Pozzo dei Dubbi</strong><small>Entra</small>
       </a>
     </div>
   </section>

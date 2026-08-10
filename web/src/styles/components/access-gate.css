@@ -122,55 +122,9 @@ body.access-locked .app-shell {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus-color) 22%, transparent);
 }
 
-/* Mantiene la password visivamente nascosta senza far classificare il campo come password al browser. */
-.access-card .masked-text-input {
-  -webkit-text-security: disc;
-}
-
-.access-password-wrapper {
-  display: grid;
-  min-width: 0;
-}
-
-.access-password-wrapper input,
-.access-password-toggle {
-  grid-area: 1 / 1;
-}
-
-.access-password-wrapper input {
-  padding-right: 2.6rem;
-}
-
-.access-password-toggle {
-  display: grid;
-  place-items: center;
-  align-self: center;
-  justify-self: end;
-  width: 2.1rem;
-  height: 2.1rem;
-  margin-right: 0.4rem;
-  padding: 0;
-  border: 0;
-  border-radius: 8px;
-  background: none;
-  color: var(--muted-color);
-  cursor: pointer;
-}
-
-.access-password-toggle:hover,
-.access-password-toggle[aria-pressed="true"] {
-  color: var(--text-color);
-}
-
-.access-password-toggle:focus-visible {
-  outline: 3px solid var(--focus-color);
-  outline-offset: 1px;
-}
-
-.access-password-toggle svg {
-  width: 1.2rem;
-  height: 1.2rem;
-}
+/* L'occhiolino mostra/nascondi password vive ora in app-password-field
+   (web/src/app/shared/password-field/), stile in components/password-field.css:
+   estratto da qui perché serve anche alla pagina Profilo, vedi CLAUDE.md. */
 
 .access-submit-button {
   width: 100%;

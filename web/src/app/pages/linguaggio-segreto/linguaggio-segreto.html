@@ -1,0 +1,43 @@
+<app-shell>
+  <section class="linguaggio-hero" aria-labelledby="linguaggio-title">
+    <p class="linguaggio-eyebrow">Un ponte per parlarsi in codice</p>
+    <h1 id="linguaggio-title"><span aria-hidden="true">🔐</span> Il Nostro Linguaggio</h1>
+  </section>
+
+  <!-- Testo abbozzato da Claude su richiesta di Rory, da riscrivere con le proprie parole
+       quando vuole: non è farina del sacco di chi ha vissuto la storia vera. -->
+  <section class="linguaggio-note card--handwritten" aria-label="Perché esiste questo linguaggio">
+    <p class="handwritten-text">Un giorno, tempo fa, ho pensato che ci servisse un modo tutto nostro per dirci le cose veloci, quelle che non hanno bisogno di troppe parole. Ho scritto questi simboli pensando a quante volte avrei voluto mandarti solo un punto, invece di scrivere una frase intera.</p>
+    <p class="handwritten-text">Poi, come succede spesso, non l’abbiamo mai usato davvero. È rimasto qui, fermo, ad aspettare. Magari da oggi possiamo iniziare, anche solo per gioco.</p>
+  </section>
+
+  <section class="linguaggio-hearts" aria-label="Il significato dei cinque cuori">
+    <p class="linguaggio-hearts-emoji" aria-hidden="true">❤️❤️❤️❤️❤️</p>
+    <p class="linguaggio-hearts-caption">Tanto tempo fa, questi cinque cuori erano parte del nostro linguaggio segreto</p>
+  </section>
+
+  <section class="linguaggio-table-wrap" aria-label="La tabella dei simboli">
+    @for (category of categories; track category.title) {
+      <div class="linguaggio-category card">
+        <h2>{{ category.title }}</h2>
+        <table class="linguaggio-table">
+          <tbody>
+            @for (entry of category.entries; track entry.symbol) {
+              <tr>
+                <td class="linguaggio-symbol">{{ entry.symbol }}</td>
+                <td class="linguaggio-meaning">{{ entry.meaning }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <!-- Anche questo messaggio è un abbozzo di Claude — da sostituire quando Rory vuole
+       scriverne uno vero. -->
+  <section class="linguaggio-message card--handwritten" aria-label="Un messaggio da decifrare">
+    <p class="linguaggio-message-hint">Prova a decifrarlo, la chiave è qui sopra</p>
+    <p class="linguaggio-message-code">. &amp; ... &lt;&gt;</p>
+  </section>
+</app-shell>

@@ -37,6 +37,23 @@
   box-shadow: 0 0.5rem 0 rgba(0, 0, 0, 0.06), 0 2rem 6rem rgba(0, 0, 0, 0.5);
 }
 
+/* Font corsivo vero (non serif+italic finto) per il testo scritto a mano sopra
+   .card--handwritten (Lettere, lettera finale del cruciverba, Linguaggio Segreto). Self-hosted
+   in public/fonts/ (licenza SIL OFL, vedi public/fonts/caveat-OFL.txt) perché il sito non usa
+   font esterni. Variable font: un solo file copre tutti i pesi da 400 a 700. */
+@font-face {
+  font-family: 'Caveat';
+  src: url('/fonts/caveat-variable.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.handwritten-text {
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+}
+
 /* Variante per finestre modali/dialog centrate (Portone, cruciverba). */
 .card--dialog {
   border: 1px solid var(--panel-border-color);

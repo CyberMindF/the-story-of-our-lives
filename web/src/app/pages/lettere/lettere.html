@@ -1,7 +1,7 @@
 <app-shell>
   <section class="lettere-hero" aria-labelledby="lettere-title">
     <p class="lettere-eyebrow">Il Mondo Bianco</p>
-    <h1 id="lettere-title"><span aria-hidden="true">💌</span> Lettere</h1>
+    <h1 id="lettere-title"><span aria-hidden="true">📫</span> La Cassetta delle Lettere</h1>
     <p class="lettere-intro">Scrivi qualcosa quando ti va, o leggi quello che ho lasciato io. Restano qui, una dopo l'altra, per quando vorrete tornarci.</p>
   </section>
 
@@ -56,8 +56,23 @@
   <div #dialogPaper class="letter-paper card--handwritten" [style.--letter-rotation]="dialogRotation() + 'deg'">
     @if (dialogLetter(); as letter) {
       <p class="letter-paper-date">{{ formatDate(letter.createdAt) }}</p>
-      <p class="letter-paper-body">{{ letter.body }}</p>
-      <p class="letter-paper-signature">~ {{ letter.author }}</p>
+      <div class="letter-pager">
+        <div #pagerViewport class="letter-pager-viewport">
+          <div #pagerContent class="letter-pager-content handwritten-text" [style.transform]="pagerTransform()">
+            <p class="letter-paper-body">{{ letter.body }}</p>
+          </div>
+        </div>
+        @if (letterPageCount() > 1) {
+          <button type="button" class="letter-pager-arrow letter-pager-prev" [disabled]="letterPage() === 0" (click)="prevPage()" aria-label="Pagina precedente">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+          </button>
+          <button type="button" class="letter-pager-arrow letter-pager-next" [disabled]="letterPage() === letterPageCount() - 1" (click)="nextPage()" aria-label="Pagina successiva">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+          </button>
+          <p class="letter-pager-indicator">{{ letterPage() + 1 }} / {{ letterPageCount() }}</p>
+        }
+      </div>
+      <p class="letter-paper-signature handwritten-text">~ {{ letter.author }}</p>
     }
   </div>
 </dialog>

@@ -16,6 +16,16 @@ export interface AuthSessionResponse {
 
 export type AccessMode = 'login' | 'register' | 'key';
 
+export interface ProfileNicknameResponse {
+  user?: AuthUser;
+  error?: string;
+}
+
+export interface ProfilePasswordResponse {
+  success?: boolean;
+  error?: string;
+}
+
 const ACCESS_SESSION_KEY = 'noi-crossword-access-session-v1';
 const ACCESS_SESSION_TOUCHED_AT_KEY = 'noi-crossword-access-session-touched-at-v1';
 const KNOWN_ACCOUNT_STORAGE_KEY = 'noi-crossword-known-account-v1';
@@ -64,6 +74,30 @@ export class AuthService {
     });
 
     return { response, result: (await this.api.readApiResponse<AuthSessionResponse>(response)) as AuthSessionResponse };
+  }
+
+  // Aggiorna il nickname dell'utente autenticato.
+  async updateNickname(nickname: string): Promise<{ response: Response; result: ProfileNicknameResponse }> {
+    const response = await fetch('/api/auth/profile/nickname', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nickname })
+    });
+
+    return { response, result: (await this.api.readApiResponse<ProfileNicknameResponse>(response)) as ProfileNicknameResponse };
+  }
+
+  // Cambia la password dell'utente autenticato, confermando quella attuale.
+  async updatePassword(currentPassword: string, newPassword: string): Promise<{ response: Response; result: ProfilePasswordResponse }> {
+    const response = await fetch('/api/auth/profile/password', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+
+    return { response, result: (await this.api.readApiResponse<ProfilePasswordResponse>(response)) as ProfilePasswordResponse };
   }
 
   // Revoca la sessione corrente sul backend.

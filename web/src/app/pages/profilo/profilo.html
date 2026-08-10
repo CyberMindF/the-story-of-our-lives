@@ -1,0 +1,39 @@
+<app-shell [showSuggestLink]="false">
+  <section class="profilo-hero" aria-labelledby="profilo-title">
+    <p class="profilo-eyebrow">Il Mondo Bianco</p>
+    <h1 id="profilo-title"><span aria-hidden="true">🪪</span> Il tuo profilo</h1>
+    <p class="profilo-intro">Da qui puoi cambiare come ti chiami e la tua password.</p>
+  </section>
+
+  <form class="profilo-form card" aria-label="Cambia nome" (ngSubmit)="submitNickname()">
+    <h2>Nome</h2>
+    <label class="form-field">
+      <span>Come vuoi farti chiamare</span>
+      <input type="text" name="nickname" maxlength="40" autocomplete="off" required [(ngModel)]="nickname" />
+    </label>
+    <div class="form-submit-row">
+      <button type="submit" class="btn btn-submit" [disabled]="nicknameLoading()">Salva nome</button>
+    </div>
+    <app-form-status [message]="nicknameMessage()" [status]="nicknameStatus()" />
+  </form>
+
+  <form class="profilo-form card" aria-label="Cambia password" (ngSubmit)="submitPassword()">
+    <h2>Password</h2>
+    <label class="form-field">
+      <span>Password attuale</span>
+      <app-password-field name="currentPassword" autocomplete="current-password" [value]="currentPassword" (valueChange)="currentPassword = $event" />
+    </label>
+    <label class="form-field">
+      <span>Nuova password</span>
+      <app-password-field name="newPassword" autocomplete="new-password" [value]="newPassword" (valueChange)="newPassword = $event" />
+    </label>
+    <label class="form-field">
+      <span>Conferma nuova password</span>
+      <app-password-field name="confirmNewPassword" autocomplete="new-password" [value]="confirmNewPassword" (valueChange)="confirmNewPassword = $event" />
+    </label>
+    <div class="form-submit-row">
+      <button type="submit" class="btn btn-submit" [disabled]="passwordLoading()">Cambia password</button>
+    </div>
+    <app-form-status [message]="passwordMessage()" [status]="passwordStatus()" />
+  </form>
+</app-shell>

@@ -314,10 +314,8 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
 
 .completion-letter-body {
   margin: 0 0 1.75rem;
-  font-family: Georgia, "Times New Roman", serif;
-  font-style: italic;
-  font-size: clamp(1.1rem, 2.4vw, 1.3rem);
-  line-height: 1.85;
+  font-size: clamp(1.3rem, 2.8vw, 1.55rem);
+  line-height: 1.6;
   white-space: pre-line;
 }
 

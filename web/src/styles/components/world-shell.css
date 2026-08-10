@@ -44,6 +44,11 @@
   font-size: 0.92rem;
   font-weight: 650;
   line-height: 1;
+  text-decoration: none;
+}
+
+.place-userbar a.user-greeting:hover {
+  color: var(--text-color);
 }
 
 .place-userbar .logout-button,
@@ -79,6 +84,7 @@
 }
 
 .place-home-link:focus-visible,
+.place-userbar .user-greeting:focus-visible,
 .place-userbar .logout-button:focus-visible,
 .place-userbar .suggest-link:focus-visible,
 .place-userbar .home-shortcut-link:focus-visible {

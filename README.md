@@ -13,20 +13,39 @@ cp .dev.vars.example .dev.vars
 npx wrangler d1 migrations apply DB --local
 ```
 
-Modifica `WORLD_KEY` dentro `.dev.vars`, genera la dist Angular e avvia il backend nel primo terminale:
+Modifica `WORLD_KEY` dentro `.dev.vars`.
+
+**Un solo comando** (consigliato): avvia backend e frontend insieme, build compresa:
+
+```bash
+npm run dev
+```
+
+**Oppure, due terminali separati** (utile per vedere i log dei due processi divisi): nel primo il backend —
 
 ```bash
 npm run build
 npm run dev:api
 ```
 
-Nel secondo terminale avvia Angular:
+— nel secondo Angular:
 
 ```bash
 npm start
 ```
 
-Apri `http://localhost:4200`. Angular inoltra `/api/**` al backend locale su `http://localhost:8788` tramite `web/proxy.conf.json`; la porta 8788 non è il frontend di sviluppo.
+Apri `http://localhost:4201`. Angular inoltra `/api/**` al backend locale su `http://localhost:8788` tramite `web/proxy.conf.json`; la porta 8788 non è il frontend di sviluppo.
+
+### Porte fisse, per non ritrovarsi processi in conflitto
+
+`4201` (frontend) e `8788` (backend) sono fissate in `web/angular.json` e negli script sopra:
+non usare mai `ng serve` senza `--port`, altrimenti si torna alla porta di default (`4200`) e
+si rischia di avviare una seconda istanza in conflitto con quella già aperta in un altro
+terminale. Il backend resta uno solo condiviso su `8788` (non ha senso duplicarlo, è la stessa
+app/DB). Una sessione di Claude Code che ha bisogno di una propria istanza del frontend per
+verificare qualcosa (screenshot, test end-to-end) usa invece `4202`
+(`ng serve --port 4202`, stesso `proxy.conf.json`, punta comunque a `8788`) — mai `4201`, per
+non interferire con un server che l'utente potrebbe avere già aperto.
 
 ## Autenticazione
 

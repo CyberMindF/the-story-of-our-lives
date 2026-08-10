@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
 import { ContentMessage } from '../../shared/content-message/content-message';
@@ -27,7 +28,7 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
 @Component({
   selector: 'app-avventura',
   standalone: true,
-  imports: [AppShell, IpdvNavigation, ContentMessage],
+  imports: [AppShell, FormsModule, IpdvNavigation, ContentMessage],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './avventura.html'

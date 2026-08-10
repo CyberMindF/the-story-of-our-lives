@@ -38,6 +38,11 @@ export function isValidPassword(value) {
   return typeof value === "string" && value.length >= 8;
 }
 
+// Uniforma il nickname eliminando gli spazi esterni e limitandone la lunghezza.
+export function normalizeNickname(value) {
+  return typeof value === "string" ? value.trim().slice(0, 40) : "";
+}
+
 // La chiave non distingue maiuscole e minuscole, come nella precedente schermata di accesso.
 export function isWorldKeyValid(value, expectedValue) {
   if (typeof value !== "string" || typeof expectedValue !== "string") {

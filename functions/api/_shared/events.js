@@ -20,7 +20,12 @@ const ALLOWED_EVENTS = new Set([
   "letter_sent",
   "gdr_turn_submitted",
   "gdr_character_saved",
-  "suggestion_sent"
+  "suggestion_sent",
+  "password_changed",
+  "question_asked",
+  "answer_given",
+  "question_edited",
+  "answer_edited"
 ]);
 const MAX_METADATA_LENGTH = 4096;
 

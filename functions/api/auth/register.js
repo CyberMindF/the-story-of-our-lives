@@ -8,6 +8,7 @@ import {
   isWorldKeyValid,
   json,
   normalizeEmail,
+  normalizeNickname,
   readJson
 } from "./_shared.js";
 
@@ -47,7 +48,7 @@ export async function onRequestPost(context) {
     }
 
     // Chi si registra può scegliere come farsi chiamare; senza scelta, si usa l'email come prima.
-    const requestedNickname = typeof body.nickname === "string" ? body.nickname.trim().slice(0, 40) : "";
+    const requestedNickname = normalizeNickname(body.nickname);
     const nickname = requestedNickname || email.split("@")[0];
     const notifyEmailUpdates = body.notifyEmailUpdates === true ? 1 : 0;
     const result = await env.DB

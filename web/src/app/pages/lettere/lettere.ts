@@ -1,4 +1,5 @@
-import { Component, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
@@ -23,15 +24,17 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 
 @Component({
   selector: 'app-lettere',
   standalone: true,
-  imports: [AppShell, FormStatus, ContentMessage],
+  imports: [AppShell, FormsModule, FormStatus, ContentMessage],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/lettere.css'],
   templateUrl: './lettere.html'
 })
-export class Lettere implements OnInit {
+export class Lettere implements OnInit, OnDestroy {
   protected readonly submission = inject(FormSubmission);
   @ViewChild('letterDialog') private dialogRef?: ElementRef<HTMLDialogElement>;
   @ViewChild('dialogPaper') private dialogPaperRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('pagerViewport') private pagerViewportRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('pagerContent') private pagerContentRef?: ElementRef<HTMLDivElement>;
 
   protected readonly letters = signal<Letter[]>([]);
   protected readonly loadError = signal(false);
@@ -40,10 +43,26 @@ export class Lettere implements OnInit {
   protected readonly dialogRotation = signal(0);
   protected readonly dialogSizeCategory = signal<'bigliettino' | 'media' | 'foglio-a4'>('media');
 
+  // Sfogliare invece di scorrere: il testo scorre in colonne CSS larghe quanto il viewport
+  // (una colonna = una pagina), e qui si tiene solo l'indice pagina + le metriche lette dal
+  // DOM per calcolare quante pagine ci sono e di quanto traslare la striscia di colonne.
+  protected readonly letterPage = signal(0);
+  protected readonly letterPageCount = signal(1);
+  private pageStridePx = 0;
+
   private activeCardEl: HTMLElement | null = null;
+  private readonly onWindowResize = () => this.recomputePages();
+  private readonly onFontsLoaded = () => this.recomputePages();
 
   async ngOnInit(): Promise<void> {
     await this.loadLetters();
+    window.addEventListener('resize', this.onWindowResize);
+    document.fonts?.addEventListener?.('loadingdone', this.onFontsLoaded);
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.onWindowResize);
+    document.fonts?.removeEventListener?.('loadingdone', this.onFontsLoaded);
   }
 
   protected formatDate(isoDate: string): string {
@@ -93,8 +112,15 @@ export class Lettere implements OnInit {
     this.dialogLetter.set(letter);
     this.dialogRotation.set(this.letterRotation(letter.id));
     this.dialogSizeCategory.set(this.letterSizeCategory(letter.body.length));
+    this.letterPage.set(0);
 
     dialog.showModal();
+
+    // Doppio rAF: il primo lascia ad Angular il tempo di aggiornare il DOM con la nuova
+    // lettera, il secondo lascia al browser il tempo di calcolare il layout delle colonne
+    // prima che si legga scrollWidth. Il listener sui font (ngOnInit) ricalcola di nuovo se
+    // Caveat finisce di caricare dopo, cambiando le metriche del testo.
+    requestAnimationFrame(() => requestAnimationFrame(() => this.recomputePages()));
 
     if (fromRect) {
       const toRect = paper.getBoundingClientRect();
@@ -147,6 +173,42 @@ export class Lettere implements OnInit {
       paper.style.opacity = '';
     };
     paper.addEventListener('transitionend', onEnd);
+  }
+
+  // Il column-width della pagina è il testo stesso a "chiederlo": si legge quanto è largo il
+  // viewport e lo si impone come larghezza di colonna, poi si conta quante colonne il browser
+  // ha effettivamente creato dallo scrollWidth risultante. Nessun testo viene spezzato a mano.
+  private recomputePages(): void {
+    if (!this.dialogRef?.nativeElement.open) {
+      return;
+    }
+    const viewport = this.pagerViewportRef?.nativeElement;
+    const content = this.pagerContentRef?.nativeElement;
+    if (!viewport || !content) {
+      return;
+    }
+    const columnWidth = viewport.clientWidth;
+    if (columnWidth <= 0) {
+      return;
+    }
+    content.style.columnWidth = `${columnWidth}px`;
+    const gap = parseFloat(getComputedStyle(content).columnGap) || 0;
+    this.pageStridePx = columnWidth + gap;
+    const pages = Math.max(1, Math.round((content.scrollWidth + gap) / this.pageStridePx));
+    this.letterPageCount.set(pages);
+    this.letterPage.update((page) => Math.min(page, pages - 1));
+  }
+
+  protected pagerTransform(): string {
+    return `translateX(${-(this.letterPage() * this.pageStridePx)}px)`;
+  }
+
+  protected nextPage(): void {
+    this.letterPage.update((page) => Math.min(page + 1, this.letterPageCount() - 1));
+  }
+
+  protected prevPage(): void {
+    this.letterPage.update((page) => Math.max(page - 1, 0));
   }
 
   protected onDialogClick(event: MouseEvent): void {

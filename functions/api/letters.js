@@ -1,5 +1,6 @@
 import { getAuthenticatedSession, json } from "./auth/_shared.js";
 import { recordEvent } from "./_shared/events.js";
+import { normalizeRequiredText } from "./_shared/text.js";
 
 const MAX_BODY_LENGTH = 20000;
 
@@ -67,10 +68,4 @@ export async function onRequestPost(context) {
     console.error(JSON.stringify({ event: "letters_post_error", message: error.message }));
     return json({ error: "Non è stato possibile salvare la lettera." }, 500);
   }
-}
-
-function normalizeRequiredText(value, maxLength) {
-  if (typeof value !== "string") return "";
-  const normalized = value.trim();
-  return normalized.length <= maxLength ? normalized : "";
 }

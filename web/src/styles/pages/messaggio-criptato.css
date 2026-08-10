@@ -1,0 +1,25 @@
+.tavolo-page { min-height: 100dvh; color: var(--text-color); }
+
+.cifrato-eyebrow { margin: 0 0 .65rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; text-align: center; }
+
+.cifrato-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+.cifrato-hero h1 { margin: 0; font-size: var(--hero-size-md); line-height: .95; letter-spacing: -.04em; }
+
+.cifrato-note { width: min(100%, 42rem); margin: 0 auto clamp(2.5rem, 6vw, 3.5rem); padding: clamp(1.4rem, 4vw, 2.2rem); }
+.cifrato-note p { margin: 0; font-size: 1rem; line-height: 1.7; }
+.cifrato-note a { color: inherit; }
+
+.cifrato-title-block,
+.cifrato-utili { width: min(100%, 46rem); margin: 0 auto clamp(1.5rem, 4vw, 2rem); padding: clamp(1.2rem, 3vw, 1.75rem); }
+.cifrato-label { margin: 0 0 .75rem; color: var(--muted-color); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.cifrato-blob { margin: 0; font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: .85rem; line-height: 1.7; word-break: break-all; }
+.cifrato-blob-multi { line-height: 2; }
+
+.cifrato-sections { width: min(100%, 46rem); margin: 0 auto clamp(3rem, 7vw, 5rem); display: grid; gap: 1.5rem; }
+.cifrato-block { padding: clamp(1.4rem, 4vw, 2rem); }
+.cifrato-block h2 { margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; font-weight: 400; color: #f3dfb8; }
+.cifrato-cipher { margin: 0; font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: .92rem; line-height: 1.9; }
+.cifrato-hint { margin: 1.25rem 0 0; padding-top: 1rem; border-top: 1px solid var(--panel-border-color); font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: .8rem; line-height: 1.7; color: var(--muted-color); word-break: break-all; }
+
+.cifrato-cipher mark.highlight-teal { background: none; color: #7ec9a8; font-weight: 700; }
+.cifrato-cipher mark.highlight-red { background: none; color: #e08a8a; font-weight: 700; }

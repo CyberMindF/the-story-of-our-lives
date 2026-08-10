@@ -45,6 +45,16 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/suggerimenti/suggerimenti').then((m) => m.Suggerimenti)
       },
       {
+        path: 'profilo',
+        data: { bodyClasses: ['profilo-page'] },
+        loadComponent: () => import('./pages/profilo/profilo').then((m) => m.Profilo)
+      },
+      {
+        path: 'linguaggio-segreto',
+        data: { bodyClasses: ['linguaggio-page'] },
+        loadComponent: () => import('./pages/linguaggio-segreto/linguaggio-segreto').then((m) => m.LinguaggioSegreto)
+      },
+      {
         path: 'storie',
         data: { bodyClasses: ['stories-page'] },
         loadComponent: () => import('./pages/storie/storie').then((m) => m.Storie)
@@ -68,6 +78,11 @@ export const routes: Routes = [
         path: 'lettere',
         data: { bodyClasses: ['lettere-page'] },
         loadComponent: () => import('./pages/lettere/lettere').then((m) => m.Lettere)
+      },
+      {
+        path: 'domande',
+        data: { bodyClasses: ['domande-page'] },
+        loadComponent: () => import('./pages/domande/domande').then((m) => m.Domande)
       },
       {
         path: 'tavolo-da-gioco',
@@ -103,6 +118,11 @@ export const routes: Routes = [
       {
         path: 'tavolo-da-gioco/cruciverba',
         loadComponent: () => import('./pages/cruciverba/cruciverba').then((m) => m.Cruciverba)
+      },
+      {
+        path: 'tavolo-da-gioco/messaggio-criptato',
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () => import('./pages/messaggio-criptato/messaggio-criptato').then((m) => m.MessaggioCriptato)
       }
     ]
   },

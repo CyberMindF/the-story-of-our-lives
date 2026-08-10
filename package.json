@@ -5,6 +5,7 @@
   "scripts": {
     "start": "npm --prefix web start",
     "build": "npm --prefix web run build",
+    "dev": "bash scripts/dev.sh",
     "dev:api": "wrangler pages dev web/dist/web/browser --port 8788",
     "audit:angular": "node scripts/audit-angular-routes.mjs",
     "analyze:export": "node scripts/analyze-notion-export.mjs",

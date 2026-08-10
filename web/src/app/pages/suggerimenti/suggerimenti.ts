@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
@@ -8,7 +9,7 @@ import { FormSubmission } from '../../shared/form-submission/form-submission';
 @Component({
   selector: 'app-suggerimenti',
   standalone: true,
-  imports: [AppShell, FormStatus],
+  imports: [AppShell, FormsModule, FormStatus],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/suggerimenti.css'],
   templateUrl: './suggerimenti.html'

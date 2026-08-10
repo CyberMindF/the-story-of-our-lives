@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AccessMode, AuthService, AuthUser } from '../core/auth.service';
 import { NavigationService } from '../core/navigation.service';
+import { PasswordField } from '../shared/password-field/password-field';
 import { VisitsService } from '../core/visits.service';
 
 // Porting di assets/js/shared/access-gate.js (createAccessGate) + assets/js/portone/main.js.
@@ -12,7 +13,7 @@ import { VisitsService } from '../core/visits.service';
 @Component({
   selector: 'app-portone',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, PasswordField],
   styleUrls: [
     '../../styles/components/access-gate.css',
     '../../styles/pages/portone.css'
@@ -29,7 +30,6 @@ export class Portone implements OnInit {
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly unlocked = signal(false);
-  protected readonly showPassword = signal(false);
 
   protected email = '';
   protected password = '';
@@ -100,10 +100,6 @@ export class Portone implements OnInit {
   protected setMode(mode: AccessMode): void {
     this.mode.set(mode);
     this.errorMessage.set('');
-  }
-
-  protected toggleShowPassword(): void {
-    this.showPassword.update((value) => !value);
   }
 
   // Invia i dati richiesti dalla modalità corrente e completa l'accesso quando sono validi.

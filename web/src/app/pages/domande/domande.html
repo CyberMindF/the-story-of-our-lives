@@ -1,0 +1,36 @@
+<app-shell>
+  <section class="domande-hero" aria-labelledby="domande-title">
+    <p class="domande-eyebrow">Il Mondo Bianco</p>
+    <h1 id="domande-title"><span aria-hidden="true">⛲</span> Il Pozzo dei Dubbi</h1>
+    <p class="domande-intro">Butta giù un dubbio quando ti va, o pescane uno da qui e rispondi. Restano tutti, uno dopo l'altro, per quando vorrete tornarci.</p>
+  </section>
+
+  <form class="domande-form" aria-label="Butta giù un dubbio" #questionForm (ngSubmit)="submitQuestion(questionForm)">
+    <label class="form-field">
+      <span>Il tuo dubbio</span>
+      <textarea name="questionText" required maxlength="1500" placeholder="Scrivi qui..."></textarea>
+    </label>
+    <div class="form-submit-row">
+      <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Butta nel pozzo</button>
+    </div>
+    <app-form-status [message]="submission.message()" [status]="submission.status()" />
+  </form>
+
+  <section class="domande-archive" aria-labelledby="archive-title">
+    <div class="domande-section-heading">
+      <p class="domande-eyebrow">Nel pozzo</p>
+      <h2 id="archive-title">I dubbi</h2>
+    </div>
+    <div class="questions-list">
+      @for (question of questions(); track question.id) {
+        <app-question-card [question]="question" (changed)="onQuestionChanged($event)" />
+      }
+    </div>
+    @if (questions().length === 0 && !loadError()) {
+      <app-content-message message="Il pozzo è ancora vuoto. Butta giù il primo dubbio." />
+    }
+    @if (loadError()) {
+      <app-content-message message="Non è stato possibile pescare dal pozzo." tone="error" />
+    }
+  </section>
+</app-shell>

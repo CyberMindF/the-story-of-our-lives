@@ -83,13 +83,57 @@
   border-radius: 2px;
   transform: rotate(var(--letter-rotation, -2.4deg));
   transition: transform .45s cubic-bezier(.22,.9,.28,1), opacity .3s ease;
-  overflow-y: auto;
+  overflow: hidden;
 }
 .letter-dialog[data-letter-size="foglio-a4"] .letter-paper { max-height: min(92dvh, 48rem); }
 .letter-dialog[data-letter-size="bigliettino"] .letter-paper { padding: clamp(1.5rem, 5vw, 2.2rem); }
 .letter-paper-date { margin: 0 0 1.25rem; color: #7a7061; font-size: .8rem; letter-spacing: .04em; text-transform: uppercase; }
-.letter-paper-body { margin: 0; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: clamp(1.15rem, 2.2vw, 1.35rem); line-height: 1.85; white-space: pre-wrap; }
-.letter-paper-signature { margin: 1.5rem 0 0; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 1.3rem; color: #7a5c3a; text-align: right; }
+
+/* Una lettera lunga non scorre: si sfoglia. .letter-pager-content è posizionato in absolute
+   con solo `left` (non `right`), quindi il suo width diventa shrink-to-fit: le colonne CSS
+   (una per pagina, larghe quanto il viewport) si affiancano oltre il bordo invece di comprimersi,
+   e .letter-pager-viewport le ritaglia con overflow:hidden. Zero JS per spezzare il testo: è il
+   column layout del browser a decidere dove va a capo ogni pagina. */
+.letter-pager { position: relative; }
+.letter-pager-viewport { position: relative; overflow: hidden; height: 15rem; }
+.letter-dialog[data-letter-size="bigliettino"] .letter-pager-viewport { height: 9rem; }
+.letter-dialog[data-letter-size="foglio-a4"] .letter-pager-viewport { height: 25rem; }
+.letter-pager-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  column-fill: auto;
+  column-gap: 2.5rem;
+  transition: transform .5s cubic-bezier(.22,.9,.28,1);
+  will-change: transform;
+}
+.letter-paper-body { margin: 0; font-size: clamp(1.35rem, 2.6vw, 1.6rem); line-height: 1.6; white-space: pre-wrap; }
+.letter-paper-signature { margin: 1.5rem 0 0; font-size: 1.6rem; color: #7a5c3a; text-align: right; }
+
+.letter-pager-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  border: 1px solid rgba(43, 38, 32, .22);
+  border-radius: 999px;
+  background: rgba(246, 241, 231, .92);
+  color: #4a4033;
+  cursor: pointer;
+  transition: background .2s ease, opacity .2s ease;
+}
+.letter-pager-arrow:hover:not(:disabled) { background: rgba(43, 38, 32, .12); }
+.letter-pager-arrow:disabled { opacity: 0; pointer-events: none; }
+.letter-pager-arrow svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.letter-pager-prev { left: -1rem; }
+.letter-pager-next { right: -1rem; }
+.letter-pager-indicator { margin: .6rem 0 0; text-align: center; font-size: .75rem; letter-spacing: .05em; color: #7a7061; }
 
 .letter-dialog-close { position: absolute; z-index: 2; top: -3.25rem; right: -1.25rem; display: inline-flex; align-items: center; justify-content: center; width: 2.6rem; height: 2.6rem; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; background: #1a2333; color: var(--text-color); cursor: pointer; }
 .letter-dialog-close:hover { background: #253247; }

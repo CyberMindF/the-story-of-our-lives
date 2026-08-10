@@ -1,0 +1,55 @@
+<article class="question-card card" [class.needs-answer]="question.needsMyAnswer">
+  <p class="question-card-status">{{ question.needsMyAnswer ? 'Da rispondere' : '' }}</p>
+
+  <p class="question-card-author">
+    {{ question.isMyQuestion ? 'Tu' : question.questionAuthor }} · {{ formatDate(question.createdAt) }}{{ question.questionEditedAt ? ' (modificata)' : '' }}
+  </p>
+
+  @if (editingQuestion()) {
+    <form class="question-edit-form" #qEditForm (ngSubmit)="submitQuestionEdit(qEditForm)">
+      <div class="form-field">
+        <textarea name="questionText" required maxlength="1500">{{ question.question }}</textarea>
+      </div>
+      <div class="question-form-row">
+        <button type="button" class="question-edit-link" (click)="editingQuestion.set(false)">Annulla</button>
+        <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Salva</button>
+      </div>
+    </form>
+  } @else {
+    <p class="question-card-text">{{ question.question }}</p>
+    @if (question.isMyQuestion) {
+      <button type="button" class="question-edit-link" (click)="editingQuestion.set(true)">Modifica</button>
+    }
+  }
+
+  @if (question.isAnswered) {
+    @if (editingAnswer()) {
+      <form class="question-edit-form" #aEditForm (ngSubmit)="submitAnswerEdit(aEditForm)">
+        <div class="form-field">
+          <textarea name="answerText" required maxlength="1500">{{ question.answer }}</textarea>
+        </div>
+        <div class="question-form-row">
+          <button type="button" class="question-edit-link" (click)="editingAnswer.set(false)">Annulla</button>
+          <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Salva</button>
+        </div>
+      </form>
+    } @else {
+      <p class="question-card-answer">
+        {{ question.answer }}
+        <small> — {{ question.isMyAnswer ? 'Tu' : question.answerAuthor }}{{ question.answerEditedAt ? ' (modificata)' : '' }}</small>
+      </p>
+      @if (question.isMyAnswer) {
+        <button type="button" class="question-edit-link" (click)="editingAnswer.set(true)">Modifica risposta</button>
+      }
+    }
+  } @else if (question.needsMyAnswer) {
+    <form class="question-answer-form" #answerForm (ngSubmit)="submitAnswer(answerForm)">
+      <div class="form-field">
+        <textarea name="answerText" required maxlength="1500" placeholder="Rispondi qui..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Rispondi</button>
+    </form>
+  }
+
+  <app-form-status [message]="submission.message()" [status]="submission.status()" />
+</article>
