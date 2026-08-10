@@ -20,8 +20,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #33 — Liste delle cose da fare insieme (la mia lista delle note)
 - #34 — Pagina delle nostre ricette?
 - #35 — implentare anche nu bottone "suggerimento" che in realtà le dice solo di venirmelo a chiedere e facendo "qualcosa" per me, anche se ancora non so cosa
-- #a1 - Modificare il colore del tema the-white-world, per renderlo leggermente più scuro "notturno", ma non troppo
-- #a2 - Rendere le stelle con delle leggere animazioni di "brilluccichio" realistico
 - #a3 - Creare un'animazione di lanterne che salgono. Per darti una rederenze come quando su terraria c'è festa degli npc di notte e si vedono le lanternine che salgono nel cielo. Come la notte delle lanterne in thailandia, da capire quando metterla, in che tema o se fare un tema diverso
 - #a4 - Creare una pagina "il cielo" dove è possibile vedere semplicemente la luna, la luna deve cambiare chiamando una API di qualche servizio esterno (se possibile) che da la fase lunare e noi la ricreiamo e la mostriamo. Qui è possibile godersi il cielo stellato, lunato, lanternato, ecc.
 - #a5 - creare sfondi animati anche per gli altri temi
@@ -83,6 +81,18 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `thumbKey` aggiunto a ognuna in `bacheca.json` (il supporto in `bacheca.ts`/`.html` era già
   presente da una sessione precedente, mancava solo l'esecuzione dello script). Verificato che
   un oggetto thumb esista davvero su R2 scaricandolo con `wrangler r2 object get`.
+- [x] #a1 — colore del tema Notte (the-white-world) scurito di circa il 13% (`#17243a` →
+  `#141f32`), leggermente più notturno senza perdere leggibilità — aggiornato in tre punti che
+  devono restare identici (`:root`, l'override del tema in `themes.css`, il cielo in
+  `world-atmosphere.css`, e lo swatch del selettore in `theme.service.ts`), altrimenti torna il
+  lampo di colore sbagliato al primo paint (bug #12).
+- [x] #a2 — le 150 stelle ora si affievoliscono e riaccendono (mai fino a sparire) invece di
+  restare fisse — durata e ritardo dell'animazione randomizzati per stella in
+  `world-stars.ts`, altrimenti pulserebbero tutte in sincrono (effetto palesemente finto).
+  Rispettato `prefers-reduced-motion`. Solo il colore delle stelle cambia per tema come prima
+  (es. Ocean, l'unico cielo diurno); opacità e animazione restano uguali ovunque.
+  Non verificato visivamente in questa sessione (nessun tool browser disponibile): confermato
+  solo che il CSS compilato servito dal dev server contiene la nuova keyframe e il nuovo colore.
 
 ### Bug chiusi
 
