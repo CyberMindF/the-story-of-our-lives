@@ -15,16 +15,23 @@
     <p class="world-eyebrow">La nostra casa</p>
     <h1 id="world-title"><span aria-hidden="true">⭕</span> Il Mondo Bianco</h1>
     <div class="world-music">
-      <div class="world-player">
+      <div class="world-player card">
         <p>
           <svg class="world-music-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M9 18V5l10-2v13M9 9l10-2M6.5 21C4.57 21 3 19.88 3 18.5S4.57 16 6.5 16 10 17.12 10 18.5 8.43 21 6.5 21ZM16.5 19c-1.93 0-3.5-1.12-3.5-2.5s1.57-2.5 3.5-2.5 3.5 1.12 3.5 2.5-1.57 2.5-3.5 2.5Z" />
           </svg>
           <span>La nostra canzone, spero ti piaccia ancora</span>
         </p>
-        <app-audio-player [src]="songUrl" label="Il Cerchio" [autoplay]="true" [initialVolume]="0.2" />
+        <app-audio-player
+          [src]="songUrl"
+          label="Il Cerchio"
+          [autoplay]="true"
+          [initialVolume]="0.2"
+          [layout]="'line'"
+          [showWaveform]="true"
+        />
       </div>
-      <blockquote>
+      <blockquote class="card">
         <p>Non so da dove partirò<br />Ma ovunque sarò<br />Siamo un cerchio, che non ha inizio, né una fine<br />Perché da te io sempre tornerò</p>
       </blockquote>
     </div>

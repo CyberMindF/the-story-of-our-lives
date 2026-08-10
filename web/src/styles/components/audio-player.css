@@ -1,12 +1,50 @@
 /* Player audio condiviso (AudioPlayer). Solo var(--*) di tema, niente colori hardcoded —
-   deve restare leggibile anche sul tema Ocean (l'unico chiaro), vedi CLAUDE.md. */
+   deve restare leggibile anche sul tema Ocean (l'unico chiaro), vedi CLAUDE.md.
+   Le dimensioni passano da custom property (--ap-*) invece di essere ripetute in ogni
+   regola: le varianti .audio-player-compact/.audio-player-large sotto si limitano a
+   ridefinirle, senza duplicare il resto. */
 .audio-player {
+  --ap-toggle-size: 2.6rem;
+  --ap-icon-size: 1.1rem;
+  --ap-cover-size: 2.2rem;
+  --ap-title-size: 0.92rem;
+  --ap-padding: 0.85rem 1rem;
+
   display: grid;
   gap: 0.5rem;
-  padding: 0.85rem 1rem;
+  padding: var(--ap-padding);
   border: 1px solid var(--border-color);
   border-radius: 1.1rem;
   background: var(--button-bg);
+}
+
+.audio-player-compact {
+  --ap-toggle-size: 2rem;
+  --ap-icon-size: 0.85rem;
+  --ap-cover-size: 1.6rem;
+  --ap-title-size: 0.8rem;
+  --ap-padding: 0.55rem 0.75rem;
+}
+
+.audio-player-large {
+  --ap-toggle-size: 3.6rem;
+  --ap-icon-size: 1.5rem;
+  --ap-cover-size: 3.2rem;
+  --ap-title-size: 1.1rem;
+  --ap-padding: 1.15rem 1.35rem;
+}
+
+/* Il layout "card" ha proporzioni proprie, fisse — "size" (compact/default/large) è pensato
+   per la pillola orizzontale "line" e qui non si applica: un solo player in risalto (non un
+   elenco) ha bisogno di una sola taglia ben calibrata, non di tre varianti. */
+.audio-player-layout-card {
+  --ap-toggle-size: 3.4rem;
+  --ap-icon-size: 1.4rem;
+  --ap-title-size: 1.05rem;
+  --ap-padding: 1.1rem 1.25rem;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
 }
 
 .audio-player-row {
@@ -23,14 +61,27 @@
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  width: 2.6rem;
-  height: 2.6rem;
+  width: var(--ap-toggle-size);
+  height: var(--ap-toggle-size);
   padding: 0;
   border: 1px solid var(--border-color);
   border-radius: 50%;
   background: var(--panel-color);
   color: var(--text-color);
   cursor: pointer;
+}
+
+.audio-player-toggle svg {
+  width: var(--ap-icon-size);
+  height: var(--ap-icon-size);
+}
+
+/* Il triangolo di play ha il bordo piatto a sinistra e la punta a destra: il suo baricentro
+   visivo non coincide col centro geometrico del riquadro (quello è corretto, il bottone lo
+   centra bene) — è la forma stessa a "pesare" di più a sinistra. Un pelo di spostamento a
+   destra è la correzione standard per questo tipo di icona. */
+.audio-player-play-icon {
+  margin-left: 1px;
 }
 
 .audio-player-toggle:hover {
@@ -40,6 +91,21 @@
 .audio-player-toggle:focus-visible {
   outline: 3px solid var(--focus-color);
   outline-offset: 2px;
+}
+
+/* Feedback visivo tra il click e il "play" reale (buffering, vedi audio-player.ts): il
+   bottone pulsa piano invece di restare immobile e sembrare rotto. */
+.audio-player.is-loading .audio-player-toggle {
+  animation: audio-player-pulse 1s ease-in-out infinite;
+}
+
+@keyframes audio-player-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
 }
 
 .audio-player-info {
@@ -61,13 +127,39 @@
   stroke-linejoin: round;
 }
 
+.audio-player-cover {
+  flex: 0 0 auto;
+  width: var(--ap-cover-size);
+  height: var(--ap-cover-size);
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
 .audio-player-title {
   overflow: hidden;
   color: var(--text-color);
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: var(--ap-title-size);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Onda sonora reale (Web Audio API): il colore delle barre è "currentColor" letto dal
+   componente via getComputedStyle, quindi basta questa riga per restare coerente col tema. */
+/* Solo il colore è comune alle due varianti: le dimensioni cambiano molto tra la pillola
+   compatta (line, sotto) e la fascia sopra la copertina (card, più sotto), quindi vivono in
+   due classi modificatrici separate invece che in override sparsi. */
+.audio-player-wave {
+  color: var(--focus-color);
+}
+
+/* Riga propria a piena larghezza sotto la pillola, non più incastrata tra copertina, titolo
+   e volume nella riga info: lì risultava piccola e "appiccicata" — qui ha lo spazio per
+   leggersi come una vera onda sonora. */
+.audio-player-wave-line {
+  display: block;
+  width: 100%;
+  height: 3rem;
 }
 
 /* Come su YouTube: solo l'altoparlante è sempre visibile, lo slider resta a larghezza zero
@@ -209,10 +301,18 @@
   position: absolute;
   left: 0;
   transform: translateX(-50%);
-  font-size: 0.85rem;
+  font-size: 1.2rem;
   line-height: 1;
   pointer-events: none;
   transition: left 120ms linear;
+}
+
+/* Durante un trascinamento reale la transizione va tolta: altrimenti l'emoji insegue il
+   mouse sempre con 120ms di ritardo invece di seguirlo 1:1, e sembra che il trascinamento
+   "non funzioni" — bug segnalato il 10/08/2026. La transizione serve solo per ammorbidire i
+   piccoli scatti di timeupdate durante la riproduzione normale (nessun drag in corso). */
+.audio-player-seek-thumb.is-seeking {
+  transition: none;
 }
 
 .audio-player-time {
@@ -221,4 +321,85 @@
   color: var(--muted-color);
   font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
+}
+
+/* --- Layout "card": copertina grande in cima, onda sonora in evidenza sopra di essa, corpo
+   con titolo/volume/barra/bottone sotto. Pensata per un player singolo messo in risalto
+   (es. l'apertura del Mondo Bianco), non per un elenco. --- */
+
+.audio-player-card-cover {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--panel-color);
+  overflow: hidden;
+}
+
+.audio-player-card-cover-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.audio-player-card-cover-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(155deg, color-mix(in srgb, var(--focus-color) 30%, var(--panel-color)), var(--panel-color));
+}
+
+.audio-player-card-cover-fallback .audio-player-icon {
+  width: 3rem;
+  height: 3rem;
+  stroke-width: 1.1;
+}
+
+/* Velo scuro sempre presente in fondo alla copertina: è chrome sopra una foto qualunque, non
+   contenuto di pagina, quindi resta scuro a prescindere dal tema — stesso principio dei
+   controlli di un video player. Serve a rendere leggibili le barre sopra foto chiare. Basso
+   e non invasivo: la fascia deve restare una rifinitura, non coprire mezza copertina. */
+.audio-player-card-cover::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 26%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+  pointer-events: none;
+}
+
+.audio-player-wave-card {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.7rem;
+  left: 0.9rem;
+  z-index: 1;
+  width: calc(100% - 1.8rem);
+  height: 1.6rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.audio-player-card-body {
+  display: grid;
+  gap: 0.75rem;
+  padding: var(--ap-padding);
+}
+
+.audio-player-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.audio-player-card-heading .audio-player-title {
+  flex: 1 1 auto;
+  white-space: normal;
+}
+
+.audio-player-layout-card .audio-player-toggle {
+  justify-self: center;
+  margin-top: 0.15rem;
 }

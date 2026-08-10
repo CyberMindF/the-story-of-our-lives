@@ -1,76 +1,179 @@
-<div class="audio-player" [class.is-playing]="playing()">
-  <div class="audio-player-row">
-    <button
-      type="button"
-      class="audio-player-toggle"
-      (click)="toggle()"
-      [attr.aria-label]="(playing() ? 'Pausa: ' : 'Riproduci: ') + label"
-      [attr.aria-pressed]="playing()"
-    >
-      @if (playing()) {
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <rect x="6" y="4" width="4" height="16" rx="1" />
-          <rect x="14" y="4" width="4" height="16" rx="1" />
-        </svg>
+<div
+  class="audio-player"
+  [class]="'audio-player-' + size + ' audio-player-layout-' + layout"
+  [class.is-playing]="playing()"
+  [class.is-loading]="loading()"
+>
+  @if (layout === 'card') {
+    <div class="audio-player-card-cover">
+      @if (cover) {
+        <img class="audio-player-card-cover-img" [src]="cover" alt="" />
       } @else {
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <polygon points="5 3 19 12 5 21 5 3" />
-        </svg>
+        <div class="audio-player-card-cover-fallback">
+          <svg class="audio-player-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 18V5l10-2v13M9 9l10-2M6.5 21C4.57 21 3 19.88 3 18.5S4.57 16 6.5 16 10 17.12 10 18.5 8.43 21 6.5 21ZM16.5 19c-1.93 0-3.5-1.12-3.5-2.5s1.57-2.5 3.5-2.5 3.5 1.12 3.5 2.5-1.57 2.5-3.5 2.5Z" />
+          </svg>
+        </div>
       }
-    </button>
-
-    <div class="audio-player-info">
-      <svg class="audio-player-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M9 18V5l10-2v13M9 9l10-2M6.5 21C4.57 21 3 19.88 3 18.5S4.57 16 6.5 16 10 17.12 10 18.5 8.43 21 6.5 21ZM16.5 19c-1.93 0-3.5-1.12-3.5-2.5s1.57-2.5 3.5-2.5 3.5 1.12 3.5 2.5-1.57 2.5-3.5 2.5Z" />
-      </svg>
-      <span class="audio-player-title">{{ label }}</span>
+      @if (showWaveform) {
+        <canvas #waveCanvas class="audio-player-wave audio-player-wave-card" aria-hidden="true"></canvas>
+      }
     </div>
 
-    <div class="audio-player-volume">
-      <button type="button" class="audio-player-mute" (click)="toggleMute()" [attr.aria-label]="muted() ? 'Riattiva audio' : 'Silenzia'" [attr.aria-pressed]="muted()">
-        @if (muted() || volume() === 0) {
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-            <line x1="23" y1="9" x2="17" y2="15" />
-            <line x1="17" y1="9" x2="23" y2="15" />
+    <div class="audio-player-card-body">
+      <div class="audio-player-card-heading">
+        <span class="audio-player-title">{{ label }}</span>
+        <div class="audio-player-volume">
+          <button type="button" class="audio-player-mute" (click)="toggleMute()" [attr.aria-label]="muted() ? 'Riattiva audio' : 'Silenzia'" [attr.aria-pressed]="muted()">
+            @if (muted() || volume() === 0) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <line x1="23" y1="9" x2="17" y2="15" />
+                <line x1="17" y1="9" x2="23" y2="15" />
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+              </svg>
+            }
+          </button>
+          <input
+            type="range"
+            class="audio-player-volume-slider"
+            min="0"
+            max="1"
+            step="0.01"
+            [value]="muted() ? 0 : volume()"
+            (input)="onVolumeChange($event)"
+            [attr.aria-label]="'Volume di ' + label"
+          />
+        </div>
+      </div>
+
+      <div class="audio-player-seek-wrap">
+        <input
+          type="range"
+          class="audio-player-seek"
+          min="0"
+          [max]="duration() || 0"
+          [value]="currentTime()"
+          (input)="onSeek($event)"
+          (pointerdown)="onSeekPointerDown()"
+          [attr.aria-label]="'Posizione in ' + label"
+        />
+        <span class="audio-player-seek-thumb" [class.is-seeking]="seeking()" aria-hidden="true" [style.left.%]="seekPercent()">{{ seekThumb }}</span>
+      </div>
+      <div class="audio-player-time">
+        <span>{{ formatTime(currentTime()) }}</span>
+        <span>{{ formatTime(duration()) }}</span>
+      </div>
+
+      <button
+        type="button"
+        class="audio-player-toggle"
+        (click)="toggle()"
+        [attr.aria-label]="(playing() ? 'Pausa: ' : 'Riproduci: ') + label"
+        [attr.aria-pressed]="playing()"
+        [attr.aria-busy]="loading()"
+      >
+        @if (playing()) {
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="6" y="4" width="4" height="16" rx="1" />
+            <rect x="14" y="4" width="4" height="16" rx="1" />
           </svg>
         } @else {
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          <svg class="audio-player-play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <polygon points="5 3 19 12 5 21 5 3" />
           </svg>
         }
       </button>
+    </div>
+  } @else {
+    <div class="audio-player-row">
+      <button
+        type="button"
+        class="audio-player-toggle"
+        (click)="toggle()"
+        [attr.aria-label]="(playing() ? 'Pausa: ' : 'Riproduci: ') + label"
+        [attr.aria-pressed]="playing()"
+        [attr.aria-busy]="loading()"
+      >
+        @if (playing()) {
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="6" y="4" width="4" height="16" rx="1" />
+            <rect x="14" y="4" width="4" height="16" rx="1" />
+          </svg>
+        } @else {
+          <svg class="audio-player-play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+        }
+      </button>
+
+      <div class="audio-player-info">
+        @if (cover) {
+          <img class="audio-player-cover" [src]="cover" alt="" />
+        } @else {
+          <svg class="audio-player-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 18V5l10-2v13M9 9l10-2M6.5 21C4.57 21 3 19.88 3 18.5S4.57 16 6.5 16 10 17.12 10 18.5 8.43 21 6.5 21ZM16.5 19c-1.93 0-3.5-1.12-3.5-2.5s1.57-2.5 3.5-2.5 3.5 1.12 3.5 2.5-1.57 2.5-3.5 2.5Z" />
+          </svg>
+        }
+        <span class="audio-player-title">{{ label }}</span>
+      </div>
+
+      <div class="audio-player-volume">
+        <button type="button" class="audio-player-mute" (click)="toggleMute()" [attr.aria-label]="muted() ? 'Riattiva audio' : 'Silenzia'" [attr.aria-pressed]="muted()">
+          @if (muted() || volume() === 0) {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <line x1="23" y1="9" x2="17" y2="15" />
+              <line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+          } @else {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+            </svg>
+          }
+        </button>
+        <input
+          type="range"
+          class="audio-player-volume-slider"
+          min="0"
+          max="1"
+          step="0.01"
+          [value]="muted() ? 0 : volume()"
+          (input)="onVolumeChange($event)"
+          [attr.aria-label]="'Volume di ' + label"
+        />
+      </div>
+    </div>
+
+    @if (showWaveform) {
+      <canvas #waveCanvas class="audio-player-wave audio-player-wave-line" aria-hidden="true"></canvas>
+    }
+
+    <div class="audio-player-seek-wrap">
       <input
         type="range"
-        class="audio-player-volume-slider"
+        class="audio-player-seek"
         min="0"
-        max="1"
-        step="0.01"
-        [value]="muted() ? 0 : volume()"
-        (input)="onVolumeChange($event)"
-        [attr.aria-label]="'Volume di ' + label"
+        [max]="duration() || 0"
+        [value]="currentTime()"
+        (input)="onSeek($event)"
+        (pointerdown)="onSeekPointerDown()"
+        [attr.aria-label]="'Posizione in ' + label"
       />
+      <span class="audio-player-seek-thumb" [class.is-seeking]="seeking()" aria-hidden="true" [style.left.%]="seekPercent()">{{ seekThumb }}</span>
     </div>
-  </div>
-
-  <div class="audio-player-seek-wrap">
-    <input
-      type="range"
-      class="audio-player-seek"
-      min="0"
-      [max]="duration() || 0"
-      [value]="currentTime()"
-      (input)="onSeek($event)"
-      [attr.aria-label]="'Posizione in ' + label"
-    />
-    <span class="audio-player-seek-thumb" aria-hidden="true" [style.left.%]="seekPercent()">{{ seekThumb }}</span>
-  </div>
-  <div class="audio-player-time">
-    <span>{{ formatTime(currentTime()) }}</span>
-    <span>{{ formatTime(duration()) }}</span>
-  </div>
+    <div class="audio-player-time">
+      <span>{{ formatTime(currentTime()) }}</span>
+      <span>{{ formatTime(duration()) }}</span>
+    </div>
+  }
 
   <audio
     #audioEl

@@ -14,8 +14,31 @@
 .songs-heading { width: min(100%, 46rem); margin: 0 auto; }
 .songs-heading h2, .bonus-section h2, .stolen-section h2 { max-width: 58rem; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.7rem, 6vw, 5.5rem); font-weight: 400; line-height: .95; letter-spacing: -.04em; }
 .songs-heading > p:last-child, .bonus-section > p:last-child, .stolen-section > p { max-width: 58rem; color: var(--muted-color); line-height: 1.8; }
-.music-inline-mark { color: #e9cf9d; font-weight: 750; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-.music-inline-mark:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+/* Era testo dorato sottolineato in mezzo al paragrafo, un colore fisso mai pensato per il
+   tema Ocean (illeggibile lì) e visivamente un'interruzione brusca del discorso — ora è un
+   piccolo chip come i badge già in uso altrove nel sito, non più testo che spezza la frase. */
+.music-inline-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.6rem 0.15rem 0.4rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--button-bg);
+  color: var(--text-color);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.music-inline-mark:hover {
+  background: var(--button-hover-bg);
+}
+
+.music-inline-mark:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 3px;
+}
 .music-layout { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); margin-top: clamp(3rem, 7vw, 6rem); }
 .track-list { position: sticky; top: 2rem; display: grid; align-self: start; max-height: calc(100dvh - 4rem); overflow-y: auto; }
 .track-list a { display: grid; grid-template-columns: 2rem 1fr; gap: .7rem; padding: .75rem 0; border-bottom: 1px solid rgba(255,255,255,.1); color: var(--muted-color); font-size: .85rem; text-decoration: none; }
