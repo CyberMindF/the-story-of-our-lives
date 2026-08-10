@@ -17,7 +17,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #26 — Mappa: completare Roma, aspetta il testo vero
 - #23 — zona giochi/cose da fare insieme
 - #24 — ricerca globale protetta (già segnata come rimandata)
-- #20 — player audio proprio (dipende dallo spostare i 9 brani su R2)
 - #33 — Liste delle cose da fare insieme (la mia lista delle note)
 - #34 — Pagina delle nostre ricette?
 - #35 — implentare anche nu bottone "suggerimento" che in realtà le dice solo di venirmelo a chiedere e facendo "qualcosa" per me, anche se ancora non so cosa
@@ -64,7 +63,26 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   spazio restante e — solo nei casi estremi — scorre al suo interno invece di sparire.
   Verificato che il link resti sempre raggiungibile su più larghezze (1440/1100/950/900px).
 
+### Extra (fuori scaletta, chiesti il 10/08/2026 — terzo giro)
 
+- [x] #20 — player audio proprio: completato (SoundCloud/YouTube già sostituiti ovunque nel
+  sito in una sessione precedente). Redesign ulteriore del player condiviso
+  (`web/src/app/shared/audio-player/`): nuovo layout "card" verticale con copertina grande
+  (usato in apertura del Mondo Bianco) accanto alla pillola "line" di prima (liste come le
+  Cuffiette); waveform reale via Web Audio API, generata solo al primo play effettivo per non
+  aprire `AudioContext` inutili sulle pagine con più tracce; stato di caricamento che ignora un
+  secondo click mentre il buffering è in corso (prima sembrava "non partire"); fix al
+  trascinamento della barra di ricerca (il rilascio del puntatore si intercetta su tutta la
+  finestra, non solo sull'input, che è troppo stretto per non uscirne durante un drag reale).
+  Copertina di default condivisa (`audio-default-cover.webp`) per le tracce senza immagine
+  propria. Non verificato visivamente in questa sessione (nessun tool browser disponibile):
+  compilazione TypeScript pulita, asset e copertina confermati serviti via `curl`, resta da
+  dare un'occhiata a occhio su `localhost:4201`.
+- Miniature per la Bacheca dei Ricordi: generate (480px, script già esistente
+  `scripts/build-bacheca-thumbnails.mjs`) e caricate su R2 per tutte le 130 foto, con
+  `thumbKey` aggiunto a ognuna in `bacheca.json` (il supporto in `bacheca.ts`/`.html` era già
+  presente da una sessione precedente, mancava solo l'esecuzione dello script). Verificato che
+  un oggetto thumb esista davvero su R2 scaricandolo con `wrangler r2 object get`.
 
 ### Bug chiusi
 
