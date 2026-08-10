@@ -93,6 +93,14 @@
                     ></iframe>
                   </div>
                 }
+                @case ('video') {
+                  <div class="bacheca-video">
+                    <video [src]="mediaUrl(block.key)" controls preload="metadata"></video>
+                  </div>
+                }
+                @case ('audio') {
+                  <app-audio-player class="bacheca-audio" [src]="mediaUrl(block.key)" [label]="block.label" />
+                }
               }
             }
           </article>

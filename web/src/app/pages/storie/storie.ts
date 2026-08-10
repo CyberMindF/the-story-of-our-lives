@@ -6,6 +6,7 @@ import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { ContentMessage } from '../../shared/content-message/content-message';
+import { AudioPlayer } from '../../shared/audio-player/audio-player';
 
 interface Story {
   id: string;
@@ -13,6 +14,8 @@ interface Story {
   date: string;
   body: string;
   videoUrl?: string;
+  audioKey?: string;
+  audioLabel?: string;
   image?: string;
   imageAlt?: string;
 }
@@ -32,7 +35,7 @@ interface StoryView {
 @Component({
   selector: 'app-storie',
   standalone: true,
-  imports: [AppShell, FormsModule, FormStatus, ContentMessage],
+  imports: [AppShell, FormsModule, FormStatus, ContentMessage, AudioPlayer],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/stories.css'],
   templateUrl: './storie.html'
@@ -92,6 +95,10 @@ export class Storie implements OnInit {
     story.open = true;
     story.scrollIntoView({ behavior: 'smooth', block: 'start' });
     story.querySelector('summary')?.focus({ preventScroll: true });
+  }
+
+  protected audioUrl(key: string): string {
+    return `/api/media/${key}`;
   }
 
   protected async submitSuggestion(form: HTMLFormElement): Promise<void> {

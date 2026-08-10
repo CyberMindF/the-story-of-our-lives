@@ -23,7 +23,9 @@
             <span class="story-toggle" aria-hidden="true">+</span>
           </summary>
           <div class="story-content">
-            @if (view.videoSrc) {
+            @if (view.story.audioKey) {
+              <app-audio-player class="story-audio" [src]="audioUrl(view.story.audioKey)" [label]="view.story.audioLabel || ('Accompagnamento per ' + view.story.title)" />
+            } @else if (view.videoSrc) {
               <iframe
                 class="story-player"
                 [title]="'Accompagnamento per ' + view.story.title"

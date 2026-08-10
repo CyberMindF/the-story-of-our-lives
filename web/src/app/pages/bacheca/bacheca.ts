@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
+import { AudioPlayer } from '../../shared/audio-player/audio-player';
 
 // Riconosce i link youtu.be/youtube.com tra i contenuti "external" (Bacheca li mischia a
 // link Drive) e li converte nello stesso embed privacy-enhanced già usato da Storie/
@@ -18,10 +19,12 @@ interface Photo {
 }
 
 interface DayItem {
-  type: 'photo-group' | 'text' | 'external';
+  type: 'photo-group' | 'text' | 'external' | 'video' | 'audio';
   photos?: Photo[];
   text?: string;
   href?: string;
+  key?: string;
+  label?: string;
 }
 
 interface Day {
@@ -48,7 +51,9 @@ type RenderBlock =
   | { kind: 'photo-group'; leadingText: boolean; text: string; featured: Photo[]; plain: Photo[] }
   | { kind: 'text'; text: string }
   | { kind: 'external'; href: string }
-  | { kind: 'youtube'; src: SafeResourceUrl };
+  | { kind: 'youtube'; src: SafeResourceUrl }
+  | { kind: 'video'; key: string }
+  | { kind: 'audio'; key: string; label: string };
 
 interface DayView {
   id: string;
@@ -83,7 +88,7 @@ interface IndexGroup {
 @Component({
   selector: 'app-bacheca',
   standalone: true,
-  imports: [AppShell, NgTemplateOutlet, ContentMessage, RouterLink],
+  imports: [AppShell, NgTemplateOutlet, ContentMessage, RouterLink, AudioPlayer],
   styleUrls: ['../../../styles/pages/bacheca.css'],
   templateUrl: './bacheca.html'
 })
@@ -243,6 +248,10 @@ export class Bacheca implements OnInit, AfterViewInit {
             ? { kind: 'youtube', src: this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube-nocookie.com/embed/${videoId}`) }
             : { kind: 'external', href: item.href }
         );
+      } else if (item.type === 'video' && item.key) {
+        blocks.push({ kind: 'video', key: item.key });
+      } else if (item.type === 'audio' && item.key) {
+        blocks.push({ kind: 'audio', key: item.key, label: item.label || 'traccia audio' });
       }
     }
 

@@ -22,15 +22,7 @@
           </svg>
           <span>La nostra canzone, spero ti piaccia ancora</span>
         </p>
-        <iframe
-          title="Il Cerchio su SoundCloud"
-          width="100%"
-          height="166"
-          scrolling="no"
-          frameborder="no"
-          allow="autoplay"
-          src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fflatline-22173025%2Fil-cerchio&color=%23467d77&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"
-        ></iframe>
+        <app-audio-player [src]="songUrl" label="Il Cerchio" [autoplay]="true" [initialVolume]="0.2" />
       </div>
       <blockquote>
         <p>Non so da dove partirò<br />Ma ovunque sarò<br />Siamo un cerchio, che non ha inizio, né una fine<br />Perché da te io sempre tornerò</p>

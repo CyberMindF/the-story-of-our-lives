@@ -1,0 +1,224 @@
+/* Player audio condiviso (AudioPlayer). Solo var(--*) di tema, niente colori hardcoded —
+   deve restare leggibile anche sul tema Ocean (l'unico chiaro), vedi CLAUDE.md. */
+.audio-player {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 1.1rem;
+  background: var(--button-bg);
+}
+
+.audio-player-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* padding:0 non è decorativo: c'è un reset globale su "button" (shell.css) con padding
+   0.65rem 1rem — asimmetrico tra i due assi — che altrimenti sballa il centraggio
+   dell'icona dentro questi bottoni rotondi, il vero motivo per cui triangolo e altoparlante
+   sembravano decentrati (non serviva nessun margine manuale a compensare). */
+.audio-player-toggle {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: var(--panel-color);
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.audio-player-toggle:hover {
+  background: var(--button-hover-bg);
+}
+
+.audio-player-toggle:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+.audio-player-info {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.audio-player-icon {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: var(--focus-color);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.audio-player-title {
+  overflow: hidden;
+  color: var(--text-color);
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Come su YouTube: solo l'altoparlante è sempre visibile, lo slider resta a larghezza zero
+   finché non ci passi sopra il mouse o non lo raggiungi da tastiera (:focus-within scatta
+   già quando il bottone muto prende il focus, utile anche per chi non può usare l'hover). */
+.audio-player-volume {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+.audio-player-mute {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted-color);
+  cursor: pointer;
+}
+
+.audio-player-mute:hover {
+  color: var(--text-color);
+}
+
+.audio-player-mute:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+.audio-player-volume-slider {
+  width: 0;
+  margin-left: 0;
+  opacity: 0;
+  transition: width 160ms ease, opacity 160ms ease, margin-left 160ms ease;
+}
+
+.audio-player-volume:hover .audio-player-volume-slider,
+.audio-player-volume:focus-within .audio-player-volume-slider {
+  width: 4.5rem;
+  margin-left: 0.4rem;
+  opacity: 1;
+}
+
+.audio-player-seek,
+.audio-player-volume-slider {
+  height: 1rem;
+  margin-top: 0;
+  margin-bottom: 0;
+  background: transparent;
+  accent-color: var(--focus-color);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.audio-player-seek::-webkit-slider-runnable-track,
+.audio-player-volume-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border-color);
+}
+
+.audio-player-seek::-moz-range-track,
+.audio-player-volume-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border-color);
+}
+
+/* Il cursore nativo della barra di scorrimento è reso invisibile (non "display:none": deve
+   restare trascinabile e cliccabile) — al suo posto, sopra, c'è l'emoji ⭕ vera in
+   .audio-player-seek-thumb, posizionata via JS sulla stessa percentuale. */
+.audio-player-seek::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.audio-player-seek::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Il volume resta un pallino semplice, piccolo, in stile YouTube: non è "il cerchio" del
+   sito, è solo un controllo secondario, non deve competere visivamente con la barra sopra. */
+.audio-player-volume-slider::-webkit-slider-thumb {
+  width: 10px;
+  height: 10px;
+  margin-top: -3px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--focus-color);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.audio-player-volume-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--focus-color);
+  cursor: pointer;
+}
+
+.audio-player-seek:focus-visible,
+.audio-player-volume-slider:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 3px;
+}
+
+.audio-player-seek-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.audio-player-seek-wrap .audio-player-seek {
+  width: 100%;
+}
+
+.audio-player-seek-thumb {
+  position: absolute;
+  left: 0;
+  transform: translateX(-50%);
+  font-size: 0.85rem;
+  line-height: 1;
+  pointer-events: none;
+  transition: left 120ms linear;
+}
+
+.audio-player-time {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted-color);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}

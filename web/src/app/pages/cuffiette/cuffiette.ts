@@ -1,17 +1,18 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { TelemetryService } from '../../core/telemetry.service';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
+import { AudioPlayer } from '../../shared/audio-player/audio-player';
 
 interface Song {
   id: string;
   title: string;
   introduction: string;
   lyrics: string;
-  soundcloudUrl: string;
+  key: string;
 }
 
 interface StolenWordItem {
@@ -27,14 +28,14 @@ interface MusicData {
   stolenWords: { introduction: string; items: StolenWordItem[] };
 }
 
-// Porting fedele di assets/js/music/main.js: stessa fonte dati (content/music.json), stessa
-// validazione (9 canzoni), stesso player SoundCloud caricato solo al click (mai autoplay,
-// mai player attivi finché l'utente non li richiede esplicitamente), stesso audio bonus
-// servito sempre dall'endpoint autenticato /api/media/<key>, mai da un percorso statico.
+// Porting di assets/js/music/main.js: stessa fonte dati (content/music.json), stessa
+// validazione (9 canzoni). Il player SoundCloud è stato sostituito da AudioPlayer (mp3
+// propri su R2, via /api/media/<key>): stesso principio "mai autoplay, niente scarica finché
+// l'utente non preme play" ma senza più dipendere da un servizio esterno.
 @Component({
   selector: 'app-cuffiette',
   standalone: true,
-  imports: [AppShell, ContentMessage, RouterLink],
+  imports: [AppShell, ContentMessage, RouterLink, AudioPlayer],
   styleUrls: ['../../../styles/pages/music.css'],
   templateUrl: './cuffiette.html'
 })
@@ -45,8 +46,6 @@ export class Cuffiette implements OnInit {
 
   protected readonly data = signal<MusicData | null>(null);
   protected readonly loadError = signal(false);
-  protected readonly playingSongIds = signal<ReadonlySet<string>>(new Set());
-  protected readonly bonusRevealed = signal(false);
   protected readonly bonusUrl = computed(() => {
     const bonus = this.data()?.bonus;
     return bonus?.available && bonus.key ? `/api/media/${bonus.key}` : null;
@@ -70,45 +69,27 @@ export class Cuffiette implements OnInit {
     }
   }
 
-  // Crea il player SoundCloud soltanto dopo il click esplicito dell'utente (mai autoplay).
-  protected loadPlayer(song: Song): void {
-    this.playingSongIds.update((current) => new Set(current).add(song.id));
-    void this.telemetryService.trackEvent('music', 'song_played', { songId: song.id });
-  }
-
-  protected isPlaying(songId: string): boolean {
-    return this.playingSongIds().has(songId);
-  }
-
-  // Stesso pattern delle canzoni: il player compare solo dopo un click esplicito, mai da solo.
-  protected revealBonusPlayer(): void {
-    this.bonusRevealed.set(true);
-  }
-
-  // iframe[src] è in RESOURCE_URL context per Angular: senza bypassSecurityTrustResourceUrl
-  // il binding verrebbe bloccato del tutto (errore di sicurezza), non solo "ripulito" come
-  // per un normale attributo url. L'URL resta comunque costruito da noi, non da input utente.
-  protected soundcloudSrc(song: Song): SafeResourceUrl {
-    const url = `https://w.soundcloud.com/player/?url=${encodeURIComponent(song.soundcloudUrl)}&color=%23d8c8a8&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false`;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  protected songUrl(song: Song): string {
+    return `/api/media/${song.key}`;
   }
 
   protected onPlaylistLinkClick(): void {
     void this.telemetryService.trackEvent('music', 'playlist_link_clicked', {});
   }
 
-  // { once: true } nell'originale: si traccia solo il primo play, non ogni ripresa dopo pausa.
-  private bonusPlayTracked = false;
+  protected onSongPlayed(songId: string): void {
+    void this.telemetryService.trackEvent('music', 'song_played', { songId });
+  }
 
-  protected onBonusPlay(): void {
-    if (this.bonusPlayTracked) {
-      return;
-    }
-    this.bonusPlayTracked = true;
+  protected onSongCompleted(songId: string): void {
+    void this.telemetryService.trackEvent('music', 'song_completed', { songId });
+  }
+
+  protected onBonusPlayed(): void {
     void this.telemetryService.trackEvent('music', 'song_played', { bonus: true });
   }
 
-  protected onBonusEnded(): void {
+  protected onBonusCompleted(): void {
     void this.telemetryService.trackEvent('music', 'song_completed', { bonus: true });
   }
 

@@ -37,11 +37,12 @@
               <header><span>{{ (i + 1).toString().padStart(2, '0') }}</span><h3>{{ song.title }}</h3></header>
               <p class="song-introduction">{{ song.introduction }}</p>
               <div class="song-player">
-                @if (isPlaying(song.id)) {
-                  <iframe [title]="'Player di ' + song.title" allow="autoplay" loading="lazy" [src]="soundcloudSrc(song)"></iframe>
-                } @else {
-                  <button type="button" class="btn btn-accent" (click)="loadPlayer(song)">Ascolta su SoundCloud <span aria-hidden="true">▶</span></button>
-                }
+                <app-audio-player
+                  [src]="songUrl(song)"
+                  [label]="song.title"
+                  (played)="onSongPlayed(song.id)"
+                  (completed)="onSongCompleted(song.id)"
+                />
               </div>
               <details class="lyrics">
                 <summary>Leggi il testo completo <span aria-hidden="true">＋</span></summary>
@@ -61,11 +62,7 @@
       <section class="bonus-section" aria-labelledby="bonus-title">
         <p class="music-eyebrow">Una traccia in più</p>
         <h2 id="bonus-title">Bonus</h2>
-        @if (bonusRevealed()) {
-          <audio class="bonus-audio" controls preload="none" [src]="src" (play)="onBonusPlay()" (ended)="onBonusEnded()"></audio>
-        } @else {
-          <button type="button" class="btn btn-accent" (click)="revealBonusPlayer()">Ascolta il bonus <span aria-hidden="true">▶</span></button>
-        }
+        <app-audio-player [src]="src" label="traccia bonus" (played)="onBonusPlayed()" (completed)="onBonusCompleted()" />
       </section>
     }
 

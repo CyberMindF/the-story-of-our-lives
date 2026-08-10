@@ -51,14 +51,24 @@ body.world-atmosphere[data-theme="sea"] {
     radial-gradient(circle at 82% 14%, rgba(205, 232, 227, 0.42), transparent 18%),
     radial-gradient(circle at 68% 72%, rgba(196, 226, 220, 0.3), transparent 20%),
     linear-gradient(180deg, #f1faf8 0%, var(--bg-color) 52%, #c4dbd6 100%);
+  background-attachment: fixed;
 }
 
 /* Velvet aggiunge una luce lunare rosata e un cielo scuro proprio. */
+/* "background-attachment: fixed" ripetuto in ognuno dei 4 temi qui sotto (bug segnalato
+   10/08/2026): la shorthand "background" nella regola base più in alto lo imposta, ma ogni
+   override per tema usa di nuovo la shorthand "background" — che azzera tutte le sue
+   sotto-proprietà non riscritte esplicitamente, "background-attachment" compreso, tornando
+   al default "scroll". "the-white-world" non ha un override qui sotto (resta sulla regola
+   base) ed è l'unico a non avere mai avuto il bug: il cielo scorreva con la pagina invece di
+   restare fisso rispetto allo schermo, quindi su pagine lunghe si arrivava al colore più
+   scuro del gradiente ben prima della fine reale della pagina. */
 body.world-atmosphere[data-theme="velvet"] {
   --world-star: rgba(250, 224, 235, 0.72);
   background:
     radial-gradient(circle at top left, rgba(240, 199, 212, 0.08), transparent 22%),
     linear-gradient(180deg, #1f1620 0%, var(--bg-color) 56%, #0d090f 100%);
+  background-attachment: fixed;
 }
 
 body.world-atmosphere[data-theme="red-of-you"] {
@@ -67,6 +77,7 @@ body.world-atmosphere[data-theme="red-of-you"] {
     radial-gradient(circle at 16% 18%, rgba(255, 213, 223, 0.16), transparent 18%),
     radial-gradient(circle at 76% 16%, rgba(255, 219, 227, 0.12), transparent 16%),
     linear-gradient(180deg, #7a1126 0%, var(--bg-color) 58%, #2f0610 100%);
+  background-attachment: fixed;
 }
 
 body.world-atmosphere[data-theme="green-of-me"] {
@@ -74,4 +85,5 @@ body.world-atmosphere[data-theme="green-of-me"] {
   background:
     radial-gradient(circle at 14% 14%, rgba(224, 236, 224, 0.08), transparent 22%),
     linear-gradient(180deg, #304a37 0%, var(--bg-color) 54%, #152118 100%);
+  background-attachment: fixed;
 }

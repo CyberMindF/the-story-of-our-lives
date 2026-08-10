@@ -18,8 +18,9 @@
               "text": "Se ti va puoi ascoltare la canzone mentre guardi e leggi"
             },
             {
-              "type": "external",
-              "href": "https://youtu.be/tpSifiOnql8?si=YkLs7G46HfvGpFmH"
+              "type": "audio",
+              "key": "bacheca/settembre/giorno-1/audio/oslo.mp3",
+              "label": "Oslo (Skioffi)"
             },
             {
               "type": "photo-group",
@@ -260,8 +261,9 @@
               "text": "Questa è più adatta qui che sei una principessa ahaha"
             },
             {
-              "type": "external",
-              "href": "https://youtu.be/cNGjD0VG4R8?si=RbsM4ba0ef8ETXSi"
+              "type": "audio",
+              "key": "bacheca/settembre/giorno-3/audio/perfect.mp3",
+              "label": "Perfect (Ed Sheeran)"
             },
             {
               "type": "photo-group",
@@ -729,12 +731,12 @@
               ]
             },
             {
-              "type": "external",
-              "href": "https://drive.google.com/file/d/1HexZWQCdlM6XBmNG3PYbVjZeKl4LmU_I/view?usp=drive_link"
+              "type": "video",
+              "key": "bacheca/settembre/giorno-6/web/altalena-1.mp4"
             },
             {
-              "type": "external",
-              "href": "https://drive.google.com/file/d/1fBFodJvE0sougquvywg5hlK2Nm3QBUAU/view?usp=drive_link"
+              "type": "video",
+              "key": "bacheca/settembre/giorno-6/web/altalena-2.mp4"
             },
             {
               "type": "text",
@@ -1113,12 +1115,20 @@
           "slug": "generale",
           "items": [
             {
-              "type": "external",
-              "href": "https://drive.google.com/file/d/10el25RvGS0cEjfx1B2B4FqIRt-m25xm1/view?usp=drive_link"
+              "type": "video",
+              "key": "bacheca/i-video/generale/web/4-anni.mp4"
             },
             {
-              "type": "external",
-              "href": "https://drive.google.com/file/d/1ASDQ85ygVw43io5zMDGDWHIyozkcQ12U/view?usp=drive_link"
+              "type": "text",
+              "text": "Il video per i 4 anni"
+            },
+            {
+              "type": "video",
+              "key": "bacheca/i-video/generale/web/natale.mp4"
+            },
+            {
+              "type": "text",
+              "text": "Gli auguri di natale"
             }
           ]
         }
@@ -1179,8 +1189,8 @@
               ]
             },
             {
-              "type": "external",
-              "href": "https://drive.google.com/file/d/1PdOnPObHoWqi54CbtuDOjAVUui5s3gVw/view?usp=sharing"
+              "type": "video",
+              "key": "bacheca/altre-cose/generale/web/quadro-casa.mp4"
             },
             {
               "type": "photo-group",
@@ -1252,6 +1262,10 @@
                   "key": "bacheca/altre-cose/generale/original/09.png"
                 }
               ]
+            },
+            {
+              "type": "video",
+              "key": "bacheca/altre-cose/generale/web/un-pezzo-della-nostra-storia.mp4"
             }
           ]
         }

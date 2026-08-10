@@ -28,7 +28,12 @@
 .bacheca-external { margin: 1rem 0; font-size: .88rem; }
 
 .bacheca-video { width: min(100%, 30rem); margin: 1.5rem auto; }
+.bacheca-audio { display: block; width: min(100%, 30rem); margin: 1.5rem auto; }
 .bacheca-video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: .8rem; }
+/* Niente aspect-ratio fisso: a differenza degli embed YouTube (sempre 16:9), questi video
+   sono un misto di verticali (girati a mano) e orizzontali — l'altezza naturale con un
+   tetto evita sia lo schiacciamento dei verticali sia un video orizzontale minuscolo. */
+.bacheca-video video { display: block; width: 100%; max-height: 34rem; border-radius: .8rem; background: #000; }
 
 /* Filmino compatto per le foto senza didascalia — "di contorno", non il punto centrale
    del ricordo: piccole e in fila, non è successo niente se se ne vede una fila intera. */
