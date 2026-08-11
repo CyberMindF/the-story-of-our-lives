@@ -58,7 +58,9 @@
 .card--dialog {
   border: 1px solid var(--panel-border-color);
   border-radius: 20px;
-  background: var(--panel-color);
+  /* Le modali devono staccarsi nettamente dal contenuto sotto: --panel-color è volutamente
+     trasparente nel tema Notte e qui faceva confondere testo e griglia del cruciverba. */
+  background: color-mix(in srgb, var(--bg-color) 88%, var(--text-color) 12%);
   backdrop-filter: none;
-  box-shadow: var(--shadow);
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.58);
 }

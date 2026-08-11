@@ -47,7 +47,8 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ### Extra (fuori scaletta, chiesto l'11/08/2026)
 
 - [x] #35 — Cruciverba: aggiunto il bottone “Suggerimento”. Non rivela lettere o soluzioni:
-  propone casualmente uno di quattro piccoli pegni affettuosi da fare in chat e invita poi a
+  propone casualmente uno dei piccoli pegni affettuosi definiti in
+  `web/public/content/crossword-hints.json` da fare in chat e invita poi a
   chiedere il suggerimento direttamente a Rory. La stessa richiesta non viene proposta due
   volte di seguito.
 

@@ -35,6 +35,7 @@ const WORD_ATTEMPT_DEBOUNCE_MS = 1000;
 const RESETTABLE_STORAGE_PREFIXES = ['noi-crossword-progress-', 'noi-crossword-theme-'];
 // data.json è servito direttamente dagli asset pubblici della SPA.
 const CROSSWORD_DATA_URL = '/data.json';
+const CROSSWORD_HINTS_URL = '/content/crossword-hints.json';
 
 type ProgressSource = 'local' | 'remote';
 
@@ -82,7 +83,14 @@ export class CrosswordService implements OnDestroy {
   readonly completionModalOpen = signal(false);
   readonly resetModalOpen = signal(false);
   readonly checkModalOpen = signal(false);
+  readonly hintModalOpen = signal(false);
+  readonly hintRequest = signal('');
+  readonly hintsAvailable = signal(false);
   readonly mobileSheetOpen = signal(false);
+
+  readonly hintDescription = computed(
+    () => `Per meritarti un aiutino, prima fai questo piccolo pegno in chat:\n\n${this.hintRequest()}\n\nPoi chiedimi direttamente il suggerimento.`
+  );
 
   readonly activeCellKeys = computed<ReadonlySet<string>>(() => {
     const entry = this.currentEntry();
@@ -105,6 +113,7 @@ export class CrosswordService implements OnDestroy {
 
   // ==================== Stato interno (non letto dai template) ====================
   private entriesById = new Map<string, WordEntry>();
+  private hintRequests: string[] = [];
   private cells = new Map<string, CellState>();
   private telemetryReady = false;
   private reportedCompletedWordIds = new Set<string>();
@@ -154,6 +163,7 @@ export class CrosswordService implements OnDestroy {
       this.bindScrollInterruptions();
 
       const data = await this.loadData();
+      await this.loadHintRequests();
       const validation = this.validateData(data);
       if (!validation.ok) {
         this.checkSummary.set('Sono presenti errori nei dati. Controlla la console.');
@@ -219,6 +229,32 @@ export class CrosswordService implements OnDestroy {
       throw new Error(`HTTP ${response.status}`);
     }
     return response.json();
+  }
+
+  private async loadHintRequests(): Promise<void> {
+    try {
+      const response = await fetch(CROSSWORD_HINTS_URL, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = (await response.json()) as { requests?: unknown };
+      if (!Array.isArray(data.requests)) {
+        throw new Error('La proprietà "requests" deve essere un array.');
+      }
+
+      this.hintRequests = data.requests.filter(
+        (request): request is string => typeof request === 'string' && request.trim().length > 0
+      );
+      if (this.hintRequests.length === 0) {
+        throw new Error('Non è presente nessuna richiesta valida.');
+      }
+      this.hintsAvailable.set(true);
+    } catch (error) {
+      console.error('Impossibile caricare i suggerimenti del cruciverba:', error);
+      this.hintRequests = [];
+      this.hintsAvailable.set(false);
+    }
   }
 
   private validateData(data: CrosswordData): { ok: boolean; words: ValidatedWordData[]; dimensions: CrosswordDimensions } {
@@ -810,6 +846,22 @@ export class CrosswordService implements OnDestroy {
 
   closeCheckModal(): void {
     this.checkModalOpen.set(false);
+  }
+
+  openHintModal(): void {
+    if (this.hintRequests.length === 0) {
+      return;
+    }
+
+    const currentRequest = this.hintRequest();
+    const availableRequests = this.hintRequests.filter((request) => request !== currentRequest);
+    const requests = availableRequests.length > 0 ? availableRequests : this.hintRequests;
+    this.hintRequest.set(requests[Math.floor(Math.random() * requests.length)]);
+    this.hintModalOpen.set(true);
+  }
+
+  closeHintModal(): void {
+    this.hintModalOpen.set(false);
   }
 
   confirmCheck(): void {

@@ -274,7 +274,8 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
   display: grid;
   place-items: center;
   padding: 1rem;
-  background: rgba(20, 16, 10, 0.45);
+  background: rgba(5, 10, 19, 0.72);
+  backdrop-filter: blur(3px);
   z-index: 200;
 }
 
