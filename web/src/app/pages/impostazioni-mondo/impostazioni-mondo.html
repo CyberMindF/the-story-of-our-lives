@@ -1,0 +1,27 @@
+<app-shell [showSuggestLink]="false">
+  <section class="settings-hero" aria-labelledby="settings-title">
+    <p class="settings-eyebrow">Il Mondo Bianco</p>
+    <h1 id="settings-title"><span aria-hidden="true">🕯️</span> Le impostazioni del mondo</h1>
+    <p class="settings-intro">
+      Effetti condivisi: quello che accendi o spegni qui lo vediamo entrambi, non è una
+      preferenza solo tua.
+    </p>
+  </section>
+
+  <div class="settings-list">
+    <label class="settings-toggle card">
+      <span class="settings-toggle-info">
+        <span class="settings-toggle-title"><span aria-hidden="true">🏮</span> Lanterne che salgono</span>
+        <span class="settings-toggle-description">Lanterne calde che salgono lente nel cielo del mondo.</span>
+      </span>
+      <input
+        type="checkbox"
+        class="settings-toggle-input"
+        [checked]="worldSettingsService.settings().lanterns"
+        (change)="toggleLanterns($event)"
+        aria-label="Lanterne che salgono"
+      />
+      <span class="settings-toggle-switch" aria-hidden="true"></span>
+    </label>
+  </div>
+</app-shell>

@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/ro
 import { filter } from 'rxjs';
 import { AuthService } from './core/auth.service';
 import { ThemeService } from './core/theme.service';
+import { WorldSettingsService } from './core/world-settings.service';
 import { WorldLanterns } from './shared/world-lanterns';
 import { WorldStars } from './shared/world-stars';
 
@@ -28,6 +29,7 @@ const ROUTE_BODY_CLASSES = [
   'ponti-page',
   'stories-page',
   'suggerimenti-page',
+  'impostazioni-mondo-page',
   'tavolo-page',
   'not-found-page'
 ];
@@ -43,12 +45,14 @@ export class App {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly themeService = inject(ThemeService);
+  private readonly worldSettingsService = inject(WorldSettingsService);
   private readonly authService = inject(AuthService);
   private lastActivityTouchAt = 0;
 
   constructor() {
     document.body.classList.add('world-atmosphere');
     this.themeService.applySavedTheme();
+    void this.worldSettingsService.load();
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),

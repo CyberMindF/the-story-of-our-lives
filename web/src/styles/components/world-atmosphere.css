@@ -78,9 +78,10 @@ body.world-atmosphere {
   }
 }
 
-/* Lanterne che salgono, solo nel tema Notte (vedi world-lanterns.ts) — stesso riferimento
-   visivo della festa notturna con le lanterne (Terraria/notte delle lanterne in Thailandia).
-   Poche (8) e molto distanziate nel tempo: deve sembrare un'occasione, non un via vai. */
+/* Lanterne che salgono (vedi world-lanterns.ts), interruttore indipendente dal tema —
+   riferimento visivo alla festa notturna con le lanterne (Terraria/notte delle lanterne in
+   Thailandia). Riferimento fotografico dato da Rory: cielo denso di lanterne calde, non
+   qualche puntino sporadico — da qui il numero alto (36) e il bagliore marcato qui sotto. */
 .world-lanterns {
   position: fixed;
   z-index: 0;
@@ -95,7 +96,12 @@ body.world-atmosphere {
   left: var(--lantern-x);
   font-size: var(--lantern-size);
   opacity: 0;
-  filter: drop-shadow(0 0 6px rgba(255, 176, 89, 0.55));
+  /* Tre aloni sovrapposti (stretto e intenso, medio, largo e diffuso) invece di uno solo:
+     un bagliore vero è fatto di più strati, un unico drop-shadow sembra sempre un po' finto. */
+  filter:
+    drop-shadow(0 0 5px rgba(255, 200, 120, 0.95))
+    drop-shadow(0 0 16px rgba(255, 160, 70, 0.75))
+    drop-shadow(0 0 32px rgba(255, 130, 40, 0.5));
   animation: lantern-rise var(--lantern-duration) linear var(--lantern-delay) infinite;
 }
 

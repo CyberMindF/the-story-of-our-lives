@@ -1,4 +1,4 @@
-@if (themeService.activeThemeId() === lanternThemeId) {
+@if (worldSettingsService.settings().lanterns) {
   <div class="world-lanterns" aria-hidden="true">
     @for (lantern of lanterns; track $index) {
       <span

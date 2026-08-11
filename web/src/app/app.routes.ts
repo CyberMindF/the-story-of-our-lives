@@ -50,6 +50,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/profilo/profilo').then((m) => m.Profilo)
       },
       {
+        path: 'impostazioni-mondo',
+        data: { bodyClasses: ['impostazioni-mondo-page'] },
+        loadComponent: () =>
+          import('./pages/impostazioni-mondo/impostazioni-mondo').then((m) => m.ImpostazioniMondo)
+      },
+      {
         path: 'linguaggio-segreto',
         data: { bodyClasses: ['linguaggio-page'] },
         loadComponent: () => import('./pages/linguaggio-segreto/linguaggio-segreto').then((m) => m.LinguaggioSegreto)

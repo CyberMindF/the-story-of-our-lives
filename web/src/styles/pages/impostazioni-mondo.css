@@ -1,0 +1,74 @@
+/* :host, non un selettore su <body>: il CSS di pagina è scoped al componente da quando è uno
+   styleUrl (stesso motivo già annotato in profilo.css/calendar.css). */
+:host { display: block; min-height: 100dvh; color: var(--text-color); }
+
+.settings-eyebrow { margin: 0 0 .65rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+
+.settings-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+.settings-hero h1 { margin: 0; font-size: var(--hero-size-md); line-height: .95; letter-spacing: -.04em; }
+.settings-intro { margin: 1.25rem auto 0; max-width: 34rem; color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
+
+.settings-list { width: min(100%, 34rem); margin: 0 auto clamp(3rem, 7vw, 5rem); display: grid; gap: 1rem; }
+
+.settings-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  cursor: pointer;
+}
+
+.settings-toggle-info { display: grid; gap: .35rem; flex: 1 1 auto; min-width: 0; }
+.settings-toggle-title { font-weight: 700; font-size: 1.05rem; }
+.settings-toggle-description { color: var(--muted-color); font-size: .88rem; line-height: 1.5; }
+
+/* L'input reale resta nel DOM (accessibile da tastiera/screen reader) ma invisibile: lo
+   "switch" è tutto disegnato dallo span accanto, che legge lo stato con :checked + selettore
+   di fratello — nessun JS in più per sincronizzare un elemento decorativo separato. */
+.settings-toggle-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.settings-toggle-switch {
+  flex: 0 0 auto;
+  position: relative;
+  width: 3.1rem;
+  height: 1.7rem;
+  border-radius: 999px;
+  background: var(--button-bg);
+  border: 1px solid var(--border-color);
+  transition: background-color .18s ease;
+}
+
+.settings-toggle-switch::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  background: var(--text-color);
+  transition: transform .18s ease;
+}
+
+.settings-toggle-input:checked + .settings-toggle-switch {
+  background: var(--focus-color);
+  border-color: var(--focus-color);
+}
+
+.settings-toggle-input:checked + .settings-toggle-switch::before {
+  transform: translateX(1.4rem);
+}
+
+.settings-toggle-input:focus-visible + .settings-toggle-switch {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 3px;
+}
