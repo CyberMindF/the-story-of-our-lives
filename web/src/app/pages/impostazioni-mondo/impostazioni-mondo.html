@@ -75,12 +75,12 @@
 
         <div class="settings-phase-picker">
           <label for="moon-phase-select">Fase</label>
-          <select id="moon-phase-select" [value]="worldSettingsService.values().moon || 'auto'" (change)="setMoonPhase($event)">
-            <option value="auto">Fase reale di oggi (automatica)</option>
-            @for (phase of moonPhaseOptions; track phase.index) {
-              <option [value]="phase.index">{{ phase.label }}</option>
-            }
-          </select>
+          <app-select
+            [options]="moonPhaseOptions"
+            [value]="worldSettingsService.values().moon || 'auto'"
+            ariaLabel="Fase della luna"
+            (valueChange)="setMoonPhase($event)"
+          />
         </div>
       </div>
     </div>
@@ -159,12 +159,12 @@
 
         <div class="settings-phase-picker">
           <label for="petal-kind-select">Forma</label>
-          <select id="petal-kind-select" [value]="worldSettingsService.values().petals || 'mix'" (change)="setPetalKind($event)">
-            <option value="mix">Mix di tutte</option>
-            @for (kind of petalKindOptions; track kind[0]) {
-              <option [value]="kind[0]">{{ kind[1] }}</option>
-            }
-          </select>
+          <app-select
+            [options]="petalKindOptions"
+            [value]="worldSettingsService.values().petals || 'mix'"
+            ariaLabel="Forma dei fiori"
+            (valueChange)="setPetalKind($event)"
+          />
         </div>
       </div>
     </div>

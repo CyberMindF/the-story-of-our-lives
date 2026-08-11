@@ -12,8 +12,9 @@ export async function onRequestGet(context) {
     const statuses = new Map(result.results.map((row) => [row.activity_id, row.status]));
 
     return json({
-      activities: TOGETHER_ACTIVITIES.map((activity) => ({
+      activities: TOGETHER_ACTIVITIES.map((activity, index) => ({
         ...publicActivity(activity),
+        number: index + 1,
         status: statuses.get(activity.id) || "todo"
       }))
     });
@@ -22,4 +23,3 @@ export async function onRequestGet(context) {
     return json({ error: "Non è stato possibile caricare la lista." }, 500);
   }
 }
-

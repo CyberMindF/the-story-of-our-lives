@@ -100,23 +100,6 @@
   font-weight: 600;
 }
 
-.settings-phase-picker select {
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 2.8rem;
-  padding: .5rem .75rem;
-  border: 1px solid var(--border-color);
-  border-radius: .65rem;
-  background: var(--button-bg);
-  color: var(--text-color);
-  font: inherit;
-}
-
-.settings-phase-picker select:focus-visible {
-  outline: 3px solid var(--focus-color);
-  outline-offset: 2px;
-}
-
 /* Il selettore ha un proprio foglio nel componente condiviso; qui restano soltanto ritmo e
    gerarchia della pagina. È intenzionalmente la prima sezione: il cielo viene scelto prima
    degli elementi che lo abitano. */

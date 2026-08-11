@@ -7,9 +7,13 @@ voci intime sono ancora da definire.
 
 - La pagina mantiene una lista unica nell'ordine originale; ogni voce può mostrare una data
   approssimativa, per esempio “Aggiunta circa a ottobre”.
-- Ogni attività può essere nello stato “Da fare”, “Fatto” oppure “Da rifare”.
-- Le attività esclusivamente NSFW sono censurate; nelle attività miste resta visibile la
-  versione normale mentre la variante NSFW è censurata.
+- Ogni attività può essere nello stato “Da fare”, “Fatto”, “Da rifare” oppure “Non più
+  possibile”; quest'ultimo stato viene mostrato barrando orizzontalmente la voce.
+- Le attività esclusivamente NSFW restano come righe sfocate con l'etichetta “🔒 NSFW”;
+  nelle attività miste resta visibile la versione normale mentre la variante NSFW è
+  censurata. “Toglierle l'eyeliner” e “Scriverci addosso con l'UniPosca” sono interamente
+  NSFW.
+- Le categorie sono filtri selezionabili, non semplici etichette decorative.
 - I contenuti NSFW tornano bloccati aggiornando la pagina o navigando altrove: lo sblocco non
   viene persistito.
 - Per sbloccarli viene posta una domanda personale. La risposta è confrontata con una serie
@@ -66,7 +70,6 @@ voci intime sono ancora da definire.
 45. Fare delle foto di coppia
 46. Fare una foto a un cuore fatto con le nostre mani
 47. Whisper challenge
-48. [Reel Instagram](https://www.instagram.com/reel/DPO6EAdDX3G)
 49. Provare a giocare a Little Nightmares
 50. [Jam heart toast](https://www.instagram.com/reel/DPgGK_UjaIw)
 51. Andare su Uhmegle insieme (più o meno il posto dove ci siamo conosciuti)
@@ -96,3 +99,4 @@ voci intime sono ancora da definire.
 75. Provare Party In
 76. Mettere il profumo sugli elastici
 77. [Patatine in griglia 3×3 con tre punti “bomba”](https://vm.tiktok.com/ZN8Jghmud/)
+78. Giocare con la plastilina insieme

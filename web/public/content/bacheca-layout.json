@@ -3373,6 +3373,22 @@
                   ]
                 }
               ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/altre-cose/generale/web/un-pezzo-della-nostra-storia.mp4",
+                      "label": "Un pezzo della nostra storia",
+                      "vertical": true,
+                      "devId": 24
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -3593,22 +3609,6 @@
                       "key": "bacheca/altre-cose/generale/original/09.png",
                       "thumbKey": "bacheca/altre-cose/generale/thumb/09.png",
                       "devId": 227
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "columns": [
-                {
-                  "width": 1,
-                  "blocks": [
-                    {
-                      "type": "video",
-                      "key": "bacheca/altre-cose/generale/web/un-pezzo-della-nostra-storia.mp4",
-                      "label": "Un pezzo della nostra storia",
-                      "vertical": true,
-                      "devId": 24
                     }
                   ]
                 }

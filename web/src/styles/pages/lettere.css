@@ -8,7 +8,7 @@
 .letter-form { width: min(100%, 46rem); margin: 0 auto; display: grid; gap: 1.15rem; padding-bottom: clamp(2.5rem, 6vw, 4rem); }
 .letter-field { display: grid; gap: .5rem; }
 .letter-field > span { color: var(--muted-color); font-size: .9rem; font-weight: 700; }
-.letter-field textarea { width: 100%; box-sizing: border-box; min-height: 10rem; padding: .9rem; border: 1px solid rgba(255,255,255,.17); border-radius: .85rem; background: rgba(4,12,25,.46); color: var(--text-color); font: inherit; line-height: 1.6; resize: vertical; }
+.letter-field textarea { width: 100%; box-sizing: border-box; min-height: 10rem; padding: .9rem; border: 1px solid var(--border-color); border-radius: .85rem; background: var(--input-bg); color: var(--text-color); font: inherit; line-height: 1.6; resize: vertical; }
 .letter-field textarea::placeholder { color: var(--muted-color); opacity: 1; }
 
 .letter-submit-row { display: flex; justify-content: flex-end; }

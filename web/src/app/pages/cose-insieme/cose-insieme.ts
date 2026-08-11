@@ -1,15 +1,18 @@
 import { Component, computed, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { AppSelect, AppSelectOption } from '../../shared/app-select/app-select';
 
-type ActivityStatus = 'todo' | 'done' | 'repeat';
+type ActivityStatus = 'todo' | 'done' | 'repeat' | 'unavailable';
 type ActivityFilter = 'all' | ActivityStatus;
 
 interface TogetherActivity {
   id: number;
+  number: number;
   text: string | null;
   category: string;
   link: string | null;
-  approximateMonth: string | null;
+  approximateDate: string | null;
   hasPrivatePart: boolean;
   privateOnly: boolean;
   status: ActivityStatus;
@@ -23,7 +26,8 @@ interface PrivatePart {
 const STATUS_LABEL: Record<ActivityStatus, string> = {
   todo: 'Da fare',
   done: 'Fatto',
-  repeat: 'Da rifare'
+  repeat: 'Da rifare',
+  unavailable: 'Non più possibile'
 };
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -41,13 +45,14 @@ const CATEGORY_LABEL: Record<string, string> = {
 @Component({
   selector: 'app-cose-insieme',
   standalone: true,
-  imports: [AppShell],
+  imports: [AppShell, AppSelect, RouterLink],
   styleUrls: ['../../../styles/pages/cose-insieme.css'],
   templateUrl: './cose-insieme.html'
 })
 export class CoseInsieme {
   protected readonly activities = signal<TogetherActivity[]>([]);
   protected readonly filter = signal<ActivityFilter>('all');
+  protected readonly categoryFilter = signal('all');
   protected readonly loading = signal(true);
   protected readonly error = signal('');
   protected readonly savingId = signal<number | null>(null);
@@ -57,11 +62,24 @@ export class CoseInsieme {
   protected readonly privateParts = signal(new Map<number, string>());
   protected readonly unlocked = computed(() => this.privateParts().size > 0);
   protected readonly visibleActivities = computed(() => {
-    const selected = this.filter();
-    return selected === 'all' ? this.activities() : this.activities().filter((item) => item.status === selected);
+    const status = this.filter();
+    const category = this.categoryFilter();
+    return this.activities().filter((item) =>
+      (status === 'all' || item.status === status) &&
+      (category === 'all' || item.category === category)
+    );
   });
+  protected readonly categories = computed(() =>
+    [...new Set(this.activities().map((item) => item.category))]
+  );
   protected readonly statusLabel = STATUS_LABEL;
   protected readonly categoryLabel = CATEGORY_LABEL;
+  protected readonly statusOptions: readonly AppSelectOption[] = [
+    { value: 'todo', label: '○ Da fare' },
+    { value: 'done', label: '✓ Fatto' },
+    { value: 'repeat', label: '↻ Da rifare' },
+    { value: 'unavailable', label: '— Non più possibile' }
+  ];
 
   constructor() {
     void this.load();
@@ -71,9 +89,8 @@ export class CoseInsieme {
     this.filter.set(filter);
   }
 
-  protected async advanceStatus(activity: TogetherActivity): Promise<void> {
-    if (this.savingId() !== null) return;
-    const next: ActivityStatus = activity.status === 'todo' ? 'done' : activity.status === 'done' ? 'repeat' : 'todo';
+  protected async setStatus(activity: TogetherActivity, next: ActivityStatus): Promise<void> {
+    if (this.savingId() !== null || next === activity.status || !STATUS_LABEL[next]) return;
     const previous = activity.status;
     this.updateLocalStatus(activity.id, next);
     this.savingId.set(activity.id);
@@ -140,4 +157,3 @@ export class CoseInsieme {
     this.activities.update((items) => items.map((item) => item.id === id ? { ...item, status } : item));
   }
 }
-

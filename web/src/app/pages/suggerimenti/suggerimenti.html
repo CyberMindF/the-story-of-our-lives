@@ -8,19 +8,14 @@
   <form class="suggestion-form" aria-label="Invia un suggerimento" #suggestionForm (ngSubmit)="submit(suggestionForm)">
     <label class="form-field">
       <span>Dove</span>
-      <select name="category" required>
-        <option value="" disabled selected>Scegli dove...</option>
-        <option value="calendario">📅 Il Calendario</option>
-        <option value="mappa">🗺️ La Mappa dei Sogni</option>
-        <option value="storie">📖 Le Storie</option>
-        <option value="cuffiette">🎧 Le Cuffiette</option>
-        <option value="bacheca">📌 La Bacheca dei Ricordi</option>
-        <option value="ponti">🌈 I Ponti</option>
-        <option value="lettere">💌 Le Lettere</option>
-        <option value="tavolo-da-gioco">🎲 Il Tavolo da Gioco</option>
-        <option value="cose-da-fare-insieme">📝 Cose da fare insieme</option>
-        <option value="altro">✨ Qualcos'altro / tutto il sito</option>
-      </select>
+      <app-select
+        name="category"
+        [options]="categoryOptions"
+        [value]="initialCategory"
+        placeholder="Scegli dove…"
+        ariaLabel="Dove applicare il suggerimento"
+        [required]="true"
+      />
     </label>
     <label class="form-field">
       <span>Titolo <small>(facoltativo)</small></span>

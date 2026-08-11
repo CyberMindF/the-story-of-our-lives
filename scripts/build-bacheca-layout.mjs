@@ -34,8 +34,8 @@ for (const el of document.querySelector('.page-body').children) {
   if(!day){day={title:null,slug:'generale',rows:[]};period.days.push(day);}
   const row=parseRow(el);if(row)day.rows.push(row);
 }
-const other=periods.find(x=>x.title==='Altre cose')?.days[0];
-if(other)other.rows.push({columns:[{width:1,blocks:[{type:'video',key:'bacheca/altre-cose/generale/web/un-pezzo-della-nostra-storia.mp4',label:'Un pezzo della nostra storia',vertical:true}]}]});
+const videos=periods.find(x=>x.title==='I video')?.days[0];
+if(videos)videos.rows.push({columns:[{width:1,blocks:[{type:'video',key:'bacheca/altre-cose/generale/web/un-pezzo-della-nostra-storia.mp4',label:'Un pezzo della nostra storia',vertical:true}]}]});
 const newManifest=[];
 append('maggio','Ultimo giorno','giorno-3',undefined,'Il terzo giorno');
 append('luglio','primo giorno','primo-giorno');append('luglio','secondo giorno','secondo-giorno');append('luglio','terzo giorno','terzo-giorno');append('luglio','quarto giorno - ultimo','quarto-giorno-ultimo',undefined,undefined,'Quarto giorno');

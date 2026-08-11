@@ -38,15 +38,12 @@
   vertical-align: 0.18em;
 }
 
-/* Due card indipendenti, non un unico pannello condiviso: con "stretch" e uno sfondo solo,
-   la colonna più corta (spesso il player, a volte la citazione) si ritrovava con un pannello
-   vuoto sotto fino a raggiungere l'altezza dell'altra — la lamentela ricorrente sullo "spazio
-   vuoto". "align-items: start" fa sì che ogni card si fermi dove finisce il suo contenuto. */
+/* Due card indipendenti, centrate verticalmente tra loro senza forzarle alla stessa altezza. */
 .world-music {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(17rem, 0.75fr);
   gap: clamp(1.25rem, 4vw, 3rem);
-  align-items: start;
+  align-items: center;
   margin-top: clamp(2rem, 5vw, 3.5rem);
 }
 

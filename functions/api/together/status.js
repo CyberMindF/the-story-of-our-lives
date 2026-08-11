@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
 
-const ALLOWED_STATUS = new Set(["todo", "done", "repeat"]);
+const ALLOWED_STATUS = new Set(["todo", "done", "repeat", "unavailable"]);
 
 export async function onRequestPost(context) {
   try {
@@ -11,7 +11,7 @@ export async function onRequestPost(context) {
     const body = await context.request.json();
     const activityId = Number(body.activityId);
     const status = typeof body.status === "string" ? body.status : "";
-    if (!Number.isInteger(activityId) || activityId < 1 || activityId > 77 || !ALLOWED_STATUS.has(status)) {
+    if (!Number.isInteger(activityId) || activityId < 1 || activityId > 78 || !ALLOWED_STATUS.has(status)) {
       return json({ error: "Stato non valido." }, 400);
     }
 
@@ -36,4 +36,3 @@ export async function onRequestPost(context) {
     return json({ error: "Non è stato possibile aggiornare l'attività." }, 500);
   }
 }
-

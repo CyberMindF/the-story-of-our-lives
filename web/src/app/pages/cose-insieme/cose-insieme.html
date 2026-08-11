@@ -11,7 +11,10 @@
     <header class="together-hero">
       <p class="together-eyebrow">Una lista che continua a crescere</p>
       <h1>📝 Cose da fare insieme</h1>
-      <p>Idee piccole, viaggi, giochi e momenti da vivere. Nello stesso ordine in cui sono arrivati.</p>
+      <p class="together-intro">Finalmente puoi vedere anche tu la mia lista delle cose da fare insieme. Ho sempre lasciato tutto quello che ho scritto dall'inizio alla fine senza mai togliere niente, quindi ho deciso di portarla qui così com'era. Per questo si, ci sono cose che non si possono più "dire" e ci sono cose che non si possono più fare, ma in qualche modo hanno fatto parte della nostra storia di noi. Se vogliamo aggiungere cose, questa sarà la nostra lista e non più la mia</p>
+      <a class="suggest-activity-link" routerLink="/suggerimenti" [queryParams]="{ category: 'cose-da-fare-insieme' }">
+        <span aria-hidden="true">＋</span> Proponi una cosa nuova
+      </a>
     </header>
 
     <section class="together-tools card" aria-label="Filtri e contenuti riservati">
@@ -20,6 +23,7 @@
         <button type="button" [class.is-active]="filter() === 'todo'" (click)="setFilter('todo')">Da fare</button>
         <button type="button" [class.is-active]="filter() === 'done'" (click)="setFilter('done')">Fatte</button>
         <button type="button" [class.is-active]="filter() === 'repeat'" (click)="setFilter('repeat')">Da rifare</button>
+        <button type="button" [class.is-active]="filter() === 'unavailable'" (click)="setFilter('unavailable')">Non più possibili</button>
       </div>
 
       @if (!unlocked()) {
@@ -31,10 +35,19 @@
       }
     </section>
 
+    <nav class="category-filters" aria-label="Filtra per categoria">
+      <button type="button" [class.is-active]="categoryFilter() === 'all'" (click)="categoryFilter.set('all')">Tutte le categorie</button>
+      @for (category of categories(); track category) {
+        <button type="button" [class.is-active]="categoryFilter() === category" (click)="categoryFilter.set(category)">
+          {{ categoryLabel[category] || category }}
+        </button>
+      }
+    </nav>
+
     @if (unlockOpen() && !unlocked()) {
       <form class="unlock-panel card" (submit)="$event.preventDefault(); unlock(unlockAnswer)">
+        <p class="unlock-kicker"><span aria-hidden="true">🔐</span> Se vuoi davvero conoscere queste idee, la chiave dovresti già conoscerla.</p>
         <label for="unlock-answer">Qual era la cosa che ti piaceva di più quando lo facevamo?</label>
-        <p>La risposta verrà conservata nei nostri eventi insieme all’esito del tentativo.</p>
         <div>
           <input #unlockAnswer id="unlock-answer" type="text" maxlength="240" autocomplete="off" required />
           <button type="submit" [disabled]="unlocking()">{{ unlocking() ? 'Controllo…' : 'Prova a sbloccare' }}</button>
@@ -49,18 +62,25 @@
     } @else {
       <ol class="together-list">
         @for (activity of visibleActivities(); track activity.id) {
-          <li class="activity-card card" [class.is-complete]="activity.status === 'done'" [class.is-repeat]="activity.status === 'repeat'">
-            <span class="activity-number" aria-label="Numero {{ activity.id }}">{{ activity.id }}</span>
+          <li
+            class="activity-card card"
+            [class.is-complete]="activity.status === 'done'"
+            [class.is-repeat]="activity.status === 'repeat'"
+            [class.is-unavailable]="activity.status === 'unavailable'"
+            [class.is-private-locked]="activity.privateOnly && !unlocked()"
+            [class.has-long-text]="(activity.text?.length || 0) > 105"
+          >
+            <span class="activity-number" aria-label="Numero {{ activity.number }}">{{ activity.number }}</span>
             <div class="activity-content">
               <div class="activity-meta">
                 <span>{{ categoryLabel[activity.category] || activity.category }}</span>
-                @if (activity.approximateMonth) { <span>Aggiunta circa a {{ activity.approximateMonth }}</span> }
+                @if (activity.approximateDate) { <span>Aggiunta: {{ activity.approximateDate }}</span> }
               </div>
 
               @if (activity.text) {
                 <h2>{{ activity.text }}</h2>
               } @else if (!unlocked()) {
-                <h2 class="private-placeholder"><span aria-hidden="true">🔒</span> Idea NSFW</h2>
+                <h2>Idea privata da fare insieme</h2>
               }
 
               @if (activity.hasPrivatePart) {
@@ -75,17 +95,20 @@
                 <a [href]="activity.link" target="_blank" rel="noopener noreferrer">Apri il riferimento ↗</a>
               }
             </div>
-            <button
-              class="status-button"
-              type="button"
-              [class]="'status-button is-' + activity.status"
-              [disabled]="savingId() === activity.id"
-              (click)="advanceStatus(activity)"
-              [attr.aria-label]="'Stato: ' + statusLabel[activity.status] + '. Cambia stato'"
-            >
-              <span aria-hidden="true">{{ activity.status === 'todo' ? '○' : activity.status === 'done' ? '✓' : '↻' }}</span>
-              {{ statusLabel[activity.status] }}
-            </button>
+            <app-select
+              class="status-control"
+              variant="pill"
+              [options]="statusOptions"
+              [value]="activity.status"
+              [disabled]="savingId() !== null"
+              [ariaLabel]="'Stato dell’attività ' + activity.id"
+              (valueChange)="setStatus(activity, $any($event))"
+            />
+            @if (activity.privateOnly && !unlocked()) {
+              <div class="private-lock-overlay" aria-label="Idea NSFW bloccata">
+                <strong><span aria-hidden="true">🔒</span> Idea NSFW <span aria-hidden="true">🔞</span></strong>
+              </div>
+            }
           </li>
         } @empty {
           <li class="empty-state card">Non ci sono attività con questo stato.</li>
@@ -94,4 +117,3 @@
     }
   </main>
 </app-shell>
-
