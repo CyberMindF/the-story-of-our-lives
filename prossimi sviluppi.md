@@ -21,19 +21,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   esistente.
 - #34 — Pagina delle nostre ricette?
 - #a4 - Creare una pagina "il cielo" dove è possibile vedere semplicemente la luna, la luna deve cambiare chiamando una API di qualche servizio esterno (se possibile) che da la fase lunare e noi la ricreiamo e la mostriamo. Qui è possibile godersi il cielo stellato, lunato, lanternato, ecc.
-- #a8 - Domanda aperta di Rory (11/08/2026): avrebbe senso rendere anche la scelta del tema
-  globale/condivisa da Impostazioni del Mondo invece che locale per dispositivo come oggi
-  (`ThemeService`, localStorage)? Parere di Claude quando gli è stato chiesto: probabilmente
-  sì — è concettualmente coerente con l'idea di "cambiare il mondo insieme" appena costruita
-  per lanterne/stelle/luna, e tecnicamente lo stesso meccanismo (`world_settings`) lo
-  reggerebbe senza problemi. L'unico compromesso reale: si perde la possibilità che i due
-  abbiano temi diversi nello stesso momento (oggi già possibile, per quanto probabilmente mai
-  usata di proposito). C'è anche un dettaglio tecnico da risolvere se si procede: oggi il tema
-  si applica prima del primo paint leggendo solo `localStorage` (fix per il bug #12, lampo di
-  colore sbagliato) — con un tema condiviso da un server, il primissimo paint dovrebbe comunque
-  partire dall'ultimo valore noto in locale (come cache, non più come fonte di verità) e poi
-  eventualmente correggersi appena arriva la risposta di rete, per non reintrodurre lo stesso
-  lampo in un'altra forma. Non implementato, in attesa di conferma.
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
 
 ---
@@ -205,6 +192,25 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   end-to-end con un account di prova (poi ripulito): value preservato quando si cambia solo
   enabled, rifiuto di valori sconosciuti (400). Anche questa migrazione resta da applicare sul
   D1 di produzione.
+  **Terzo seguito**: bagliore reso leggermente più luminoso (opacità e raggio dei due strati
+  di drop-shadow alzati un po').
+- [x] #a8 — tema condiviso tra i due account, non più una preferenza per dispositivo: quarto
+  "interruttore" nella stanza (anche se qui `enabled` non ha senso ed è sempre `true`, conta
+  solo `value` — stesso schema generico già usato per la fase della luna). Selettore spostato
+  dalla barra utente (dove viveva in ogni pagina) alla pagina Impostazioni del Mondo, come
+  card più grandi con il nome sempre visibile invece che a comparsa su hover — stesso
+  componente `ThemeSwitcher` di prima, solo con un CSS diverso per il nuovo contesto (zero
+  duplicazione, non un secondo componente). Le vecchie regole CSS compatte per la barra utente
+  sono state rimosse (morte, nessuno le usa più). `ThemeService.applyTheme` distingue ora due
+  tipi di persistenza (`persistLocal`/`persistRemote`): la scelta dell'utente aggiorna
+  entrambe, la sincronizzazione dal server all'avvio (`applySharedTheme`, chiamata dopo
+  `WorldSettingsService.load()`) aggiorna solo la cache locale senza rimandarla al server da
+  cui è appena arrivata. `localStorage` resta com'era pensato: solo la cache che lo script
+  inline in `index.html` legge prima del primo paint, non più la fonte di verità — quindi il
+  fix del bug #12 (lampo di colore sbagliato) resta intatto. Nessun polling/WebSocket, come
+  specificato: l'altro account vede il cambio al prossimo caricamento/navigazione. Verificato
+  end-to-end con un account di prova (poi ripulito) e con una build di produzione pulita.
+  Anche questa migrazione (0026) resta da applicare sul D1 di produzione.
 
 ### Bug chiusi
 

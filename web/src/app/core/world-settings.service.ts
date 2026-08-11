@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiService } from './api.service';
 
-export type WorldSettingKey = 'lanterns' | 'stars' | 'moon';
+export type WorldSettingKey = 'lanterns' | 'stars' | 'moon' | 'theme';
 
 interface WorldSettingsResponse {
   settings?: Record<string, boolean>;
@@ -19,7 +19,7 @@ export class WorldSettingsService {
 
   // true finché non si dimostra il contrario: gli effetti restano visibili durante il primo
   // caricamento invece di lampeggiare "spenti" mentre la richiesta è in volo.
-  readonly settings = signal<Record<WorldSettingKey, boolean>>({ lanterns: true, stars: true, moon: true });
+  readonly settings = signal<Record<WorldSettingKey, boolean>>({ lanterns: true, stars: true, moon: true, theme: true });
   // Solo alcune chiavi hanno un value (es. la fase della luna, "auto" di default finché non
   // arriva la risposta del server).
   readonly values = signal<Partial<Record<WorldSettingKey, string>>>({ moon: 'auto' });

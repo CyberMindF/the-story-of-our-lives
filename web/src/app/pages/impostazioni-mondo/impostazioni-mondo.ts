@@ -2,13 +2,15 @@ import { Component, inject } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
 import { WorldSettingKey, WorldSettingsService } from '../../core/world-settings.service';
 import { MOON_PHASE_LABEL } from '../../shared/moon-phase';
+import { ThemeSwitcher } from '../../shared/theme-switcher';
 
-// Interruttori condivisi degli effetti del Mondo Bianco (backlog #a3/#a5): chi li accende o
-// spegne li vede cambiare anche l'altro, non è una preferenza per dispositivo come il tema.
+// Tutto ciò che si vede nel Mondo Bianco e che prima o poi è diventato condivisibile: gli
+// effetti del cielo (#a3/#a5/#a6) e, da #a8, anche il tema stesso — chi li cambia qui li
+// cambia per tutti e due, non è una preferenza per dispositivo.
 @Component({
   selector: 'app-impostazioni-mondo',
   standalone: true,
-  imports: [AppShell],
+  imports: [AppShell, ThemeSwitcher],
   styleUrls: ['../../../styles/pages/impostazioni-mondo.css'],
   templateUrl: './impostazioni-mondo.html'
 })

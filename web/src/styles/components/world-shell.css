@@ -92,68 +92,10 @@
   outline-offset: 4px;
 }
 
-/* Selettore tema: un pallino per tema (colore rappresentativo + icona), pensato per stare
-   nella barra utente di ogni pagina senza pannelli a parte. Il nome resta un'etichetta a
-   comparsa (hover/focus), per non allargare la barra su ogni pagina. */
-.place-userbar .theme-switcher {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0 0.15rem;
-}
-
-.place-userbar .theme-chip {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  min-height: 0;
-  padding: 0;
-  border: 2px solid rgba(255, 255, 255, 0.28);
-  border-radius: 50%;
-  background: var(--chip-color, #fff);
-  cursor: pointer;
-}
-
-.place-userbar .theme-chip.is-selected {
-  border-color: #fff;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
-}
-
-.place-userbar .theme-chip:focus-visible {
-  outline: 3px solid var(--focus-color);
-  outline-offset: 2px;
-}
-
-.place-userbar .theme-chip-icon {
-  font-size: 0.72rem;
-  line-height: 1;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
-}
-
-.place-userbar .theme-chip-caption {
-  position: absolute;
-  bottom: calc(100% + 0.5rem);
-  left: 50%;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.4rem;
-  background: rgba(10, 16, 28, 0.92);
-  color: #f4f7fb;
-  font-size: 0.72rem;
-  font-weight: 600;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, 0.25rem);
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-.place-userbar .theme-chip:hover .theme-chip-caption,
-.place-userbar .theme-chip:focus-visible .theme-chip-caption {
-  opacity: 1;
-  transform: translate(-50%, 0);
-}
+/* Il selettore tema (.theme-switcher/.theme-chip) non vive più qui: spostato dalla barra
+   utente alla pagina Impostazioni del Mondo (#a8, 11/08/2026), condiviso tra i due account
+   come stelle/luna/lanterne invece che una preferenza per dispositivo. Stile "con più spazio"
+   in styles/pages/impostazioni-mondo.css. */
 
 /* Link "torna a..." in fondo alla pagina: stessa pillola di .btn (styles/components/
    buttons.css), con solo il posizionamento in fondo pagina come delta specifico. */

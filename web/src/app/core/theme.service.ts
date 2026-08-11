@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { WorldSettingsService } from './world-settings.service';
 
 export interface ThemeDefinition {
   id: string;
@@ -21,22 +22,44 @@ const THEMES: ThemeDefinition[] = [
   { id: 'green-of-me', label: 'Green of Me', swatch: '#486a53', icon: '💚' }
 ];
 
-// Porting di assets/js/shared/theme.js: stessa persistenza (localStorage) e stessa
-// applicazione (document.body.dataset.theme, letto dalle custom properties in themes.css),
-// ma stato esposto come signal invece che tramite manipolazione diretta del DOM dei bottoni.
+// Porting di assets/js/shared/theme.js: stessa applicazione (document.body.dataset.theme,
+// letto dalle custom properties in themes.css), stato esposto come signal.
+//
+// Il tema è condiviso tra i due account (#a8, 11/08/2026): world_settings è la fonte di
+// verità, localStorage resta solo come cache dell'ultimo tema noto per applicarlo prima del
+// primo paint (script inline in index.html, prima ancora che Angular carichi) — senza quella
+// cache tornerebbe il lampo di colore sbagliato del bug #12. Nessun push in tempo reale:
+// l'altro account vede il cambio al prossimo caricamento/navigazione (stesso schema di
+// WorldSettingsService).
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
+  private readonly worldSettingsService = inject(WorldSettingsService);
+
   readonly themes: readonly ThemeDefinition[] = THEMES;
   readonly activeThemeId = signal<string>(DEFAULT_THEME_ID);
 
-  // Applica il tema salvato senza riscrivere localStorage durante il caricamento.
+  // Applica il tema in cache locale, senza toccare localStorage né il server — chiamato
+  // all'avvio, prima ancora di sapere se world_settings ha un valore più recente.
   applySavedTheme(): void {
     const savedTheme = localStorage.getItem(STORAGE_KEY) || DEFAULT_THEME_ID;
-    this.applyTheme(savedTheme, { persist: false });
+    this.applyTheme(savedTheme, { persistLocal: false, persistRemote: false });
   }
 
-  // Applica un tema noto, usando il tema di default come fallback e persistendo la scelta quando richiesto.
-  applyTheme(themeId: string, options: { persist?: boolean } = {}): void {
+  // Da chiamare dopo WorldSettingsService.load(): se il server ha un tema diverso da quello
+  // appena applicato dalla cache locale (es. l'altro account l'ha cambiato dall'ultima
+  // visita), lo applica e aggiorna la cache — senza rimandarlo al server, verrebbe da lì.
+  applySharedTheme(): void {
+    const shared = this.worldSettingsService.values()['theme'];
+    if (shared && shared !== this.activeThemeId()) {
+      this.applyTheme(shared, { persistRemote: false });
+    }
+  }
+
+  // Applica un tema noto, usando il tema di default come fallback. Di default aggiorna sia la
+  // cache locale sia il valore condiviso sul server — è quello che deve succedere quando è la
+  // persona a scegliere un tema dal selettore, non le chiamate interne di sincronizzazione qui
+  // sopra (che passano opzioni più strette apposta).
+  applyTheme(themeId: string, options: { persistLocal?: boolean; persistRemote?: boolean } = {}): void {
     const theme =
       THEMES.find((entry) => entry.id === themeId) ??
       THEMES.find((entry) => entry.id === DEFAULT_THEME_ID) ??
@@ -45,8 +68,11 @@ export class ThemeService {
     document.body.dataset['theme'] = theme.id;
     this.activeThemeId.set(theme.id);
 
-    if (options.persist !== false) {
+    if (options.persistLocal !== false) {
       localStorage.setItem(STORAGE_KEY, theme.id);
+    }
+    if (options.persistRemote !== false) {
+      void this.worldSettingsService.setValue('theme', theme.id);
     }
   }
 }

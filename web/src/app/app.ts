@@ -53,7 +53,7 @@ export class App {
   constructor() {
     document.body.classList.add('world-atmosphere');
     this.themeService.applySavedTheme();
-    void this.worldSettingsService.load();
+    void this.worldSettingsService.load().then(() => this.themeService.applySharedTheme());
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),

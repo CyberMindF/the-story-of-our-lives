@@ -2,12 +2,11 @@ import { Component, Input, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { NavigationService } from '../../core/navigation.service';
-import { ThemeSwitcher } from '../../shared/theme-switcher';
 
 @Component({
   selector: 'app-world-user-bar',
   standalone: true,
-  imports: [RouterLink, ThemeSwitcher],
+  imports: [RouterLink],
   templateUrl: './world-user-bar.html'
 })
 export class WorldUserBar {
