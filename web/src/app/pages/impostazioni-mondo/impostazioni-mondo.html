@@ -78,6 +78,21 @@
           </select>
         </div>
       </div>
+
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">💫</span> Brillantini</span>
+          <span class="settings-toggle-description">Solo sul tema Red of You: piccoli lampi di luce nel cielo.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().sparkles"
+          (change)="toggleSetting('sparkles', $event)"
+          aria-label="Brillantini"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
     </div>
   </section>
 </app-shell>

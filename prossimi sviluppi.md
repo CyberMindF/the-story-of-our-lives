@@ -21,8 +21,13 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   esistente.
 - #34 — Pagina delle nostre ricette?
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
-- #b3-a - Creare animazioni anche per il resto dei temi. Per esempio "brillantini" nello sfondo per "red of you", ombre di foglia che cadono per "green of me". "effetto acqua" in sfondo o conchiglie arancioni che passano per "ocean", dubbio che deve essere risolto dalla AI: che si fa per velvet?
-- #b3-b - Suddividere gli effetti nella pagina delle impostazioni per tema, quindi quegli effetti che non stanno bene sul alcuni temi "segnalarli" in qualche modo, tipo la luna e le stelle sono inutili su ocean
+- [~] #b3-a - Creare animazioni anche per il resto dei temi. Per esempio "brillantini" nello
+  sfondo per "red of you" — **fatto**, vedi Fatto qui sotto. Restano: ombre di foglia che
+  cadono per "green of me"; "effetto acqua" in sfondo o conchiglie arancioni che passano per
+  "ocean"; per "velvet" proposta di Claude — petali di rosa che cadono lenti, riprende il
+  motivo delle rose già nel sito (il mazzo di rose nel calendario), non ancora costruito né
+  confermato da Rory.
+- #b3-b - Suddividere gli effetti nella pagina delle impostazioni per tema, quindi quegli effetti che non stanno bene sul alcuni temi "segnalarli" in qualche modo, tipo la luna e le stelle sono inutili su ocean. Possiamo anche fare in modo che comunque attivare un determinato tema, attiva anche determinati selettori, che poi possono essere cambiati liberamente, però attiva le "sue cose di default"
 
 ---
 
@@ -250,6 +255,21 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   (`body.sky-view-page .world-moon{display:none}`): con quella grande al centro sarebbero
   state due lune insieme. Verificato a schermo (desktop e mobile) prima di consegnare, non solo
   con build/curl come nel resto della sessione.
+- [x] #b3-a (primo dei quattro) — brillantini per il tema Red of You: componente nuovo
+  `world-sparkles.ts`, puntini che lampeggiano rapidi e vanno a zero (a differenza del brillio
+  delle stelle, che scende senza mai sparire) — un vero luccichio intermittente, non le stelle
+  ricolorate. Visibile solo col tema Red of You attivo. Verificato a schermo con Playwright a
+  ogni giro, non solo build/curl.
+  **Due giri di feedback dopo averli visti dal vivo**: colore scaldato da rosa tenue a
+  oro/rosa (troppo simile alle stelle in uno screenshot fermo) — poi corretto di nuovo a
+  bianco puro su richiesta di Rory (l'oro non andava bene), quantità alzata da 70 a 100.
+  Aggiunto anche l'interruttore condiviso in Impostazioni del Mondo, mancante nella prima
+  versione (gated solo sul tema, ragionamento sbagliato): Rory ha chiarito che **ogni** nuovo
+  effetto deve avere il proprio interruttore, non solo quelli "neutri" come stelle/lanterne/
+  luna — regola da applicare anche ai prossimi tre temi. Stesso schema di sempre: chiave
+  "sparkles" in `world_settings` (migrazione 0027), allowlist, toggle nella pagina — le due
+  condizioni (tema attivo + interruttore acceso) si sommano nel componente.
+  Restano da fare gli altri tre temi (vedi sopra in "Da fare").
 
 ### Bug chiusi
 

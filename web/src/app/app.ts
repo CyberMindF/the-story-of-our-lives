@@ -7,6 +7,7 @@ import { ThemeService } from './core/theme.service';
 import { WorldSettingsService } from './core/world-settings.service';
 import { WorldLanterns } from './shared/world-lanterns';
 import { WorldMoon } from './shared/world-moon';
+import { WorldSparkles } from './shared/world-sparkles';
 import { WorldStars } from './shared/world-stars';
 
 // Eventi usati come "prova di attività" per rinnovare lo sblocco della Chiave (vedi
@@ -38,7 +39,7 @@ const ROUTE_BODY_CLASSES = [
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, WorldStars, WorldLanterns, WorldMoon],
+  imports: [RouterOutlet, WorldStars, WorldLanterns, WorldMoon, WorldSparkles],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

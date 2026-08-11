@@ -1,0 +1,14 @@
+@if (themeService.activeThemeId() === sparkleThemeId && worldSettingsService.settings().sparkles) {
+  <div class="world-sparkles" aria-hidden="true">
+    @for (sparkle of sparkles; track $index) {
+      <span
+        class="world-sparkle"
+        [style.--sparkle-x]="sparkle.x + '%'"
+        [style.--sparkle-y]="sparkle.y + '%'"
+        [style.--sparkle-size]="sparkle.size + 'px'"
+        [style.--sparkle-flash-duration]="sparkle.flashDuration + 's'"
+        [style.--sparkle-flash-delay]="sparkle.flashDelay + 's'"
+      ></span>
+    }
+  </div>
+}
