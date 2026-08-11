@@ -21,7 +21,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   esistente.
 - #34 — Pagina delle nostre ricette?
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
-- #b2 - Restyle selettore dei temi, pensare a un design più accattivante e ripristinare le vecchie icone, cambiare il nome del tema "default" in "cielo notturno" o "Night" non so "notte", non mi piace. Sostare in alto questo selettore.
 - #b3-a - Creare animazioni anche per il resto dei temi. Per esempio "brillantini" nello sfondo per "red of you", ombre di foglia che cadono per "green of me". "effetto acqua" in sfondo o conchiglie arancioni che passano per "ocean", dubbio che deve essere risolto dalla AI: che si fa per velvet?
 - #b3-b - Suddividere gli effetti nella pagina delle impostazioni per tema, quindi quegli effetti che non stanno bene sul alcuni temi "segnalarli" in qualche modo, tipo la luna e le stelle sono inutili su ocean
 
@@ -39,6 +38,13 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ## Fatto
 
 ### Extra (fuori scaletta, chiesto l'11/08/2026)
+
+- [x] #b2 — Restyle del selettore temi: spostato come prima sezione di Impostazioni del
+  Mondo e trasformato in una griglia responsive di card con vere anteprime del cielo, nome,
+  breve descrizione e stato attivo. “Notte” rinominato “Night Sky”. Ripreso il linguaggio
+  visivo delle icone legacy senza emoji: luna e stelle per Night Sky, onda per Ocean, drappo
+  per Velvet e le lettere storiche D/R per Red of You e Green of Me. Gli stili ora vivono nel
+  componente `theme-switcher`, non nel CSS scoped della pagina padre.
 
 - [x] #35 — Cruciverba: aggiunto il bottone “Suggerimento”. Non rivela lettere o soluzioni:
   propone casualmente uno dei piccoli pegni affettuosi definiti in
@@ -225,9 +231,25 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   fissa in un angolo, su ogni pagina) e la nuova pagina (grande, centrata) sono ora due
   contesti diversi che riusano lo stesso identico componente invece di duplicare la geometria
   del terminatore lunare una seconda volta. Aggiunta anche una scorciatoia extra dal Mondo
-  Bianco (🌌), come le altre non ufficiali. Verificato con build di produzione pulita (il
-  chunk della nuova pagina contiene `app-moon-disc`) e che la rotta risponda 200 dal dev
-  server; non verificato a schermo in questa sessione.
+  Bianco (🌌), come le altre non ufficiali.
+  **Seguito, dopo feedback di Rory sulla prima versione**: la pagina rispettava ancora la fase
+  scelta a mano — corretto, qui la fase è sempre quella reale di oggi, la personalizzazione è
+  un'altra pagina (Impostazioni del Mondo). Layout rifatto da zero, "molto più minimale":
+  niente hero, niente link, niente etichetta di fase — solo un piccolo titolo e la luna. Trovati
+  (stavolta con uno screenshot vero via Playwright, non solo build/curl — installato al volo,
+  autenticazione simulata con un cookie di sessione + le chiavi sessionStorage della Chiave)
+  due bug reali che senza vederli sarebbero rimasti: il titolo era in `position:absolute` e si
+  agganciava al contenitore dell'header della shell invece che al proprio, sovrapponendosi
+  illeggibile; e `:host{display:flex}` restringeva l'intera `<app-shell>` (un fratello nel
+  flusso, non contenuto interno) alla larghezza del solo contenuto invece di restare piena.
+  Corretto tornando a `:host{display:block}` (come ogni altra pagina) e a un titolo in flusso
+  normale, mai assoluto. Altri due giri di rifinitura dopo aver visto lo screenshot: la luna
+  centrata a metà pagina spostata più in alto, con vuoto sotto ("è una luna, sta in cielo"); il
+  titolo, prima una piccola etichetta maiuscola smunta, passato al font serif dei titoli
+  poetici del sito. Nascosta anche la luna piccola di sfondo su questa pagina
+  (`body.sky-view-page .world-moon{display:none}`): con quella grande al centro sarebbero
+  state due lune insieme. Verificato a schermo (desktop e mobile) prima di consegnare, non solo
+  con build/curl come nel resto della sessione.
 
 ### Bug chiusi
 

@@ -1,25 +1,19 @@
-import { Component, computed, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
-import { WorldSettingsService } from '../../core/world-settings.service';
 import { MoonDisc } from '../../shared/moon-disc';
-import { moonPhaseLabel, resolveMoonPhaseFraction } from '../../shared/moon-phase';
+import { moonPhaseFraction } from '../../shared/moon-phase';
 
-// Pagina minimale (#a4): solo fermarsi a guardare il cielo del Mondo Bianco. Stelle e
-// lanterne di sfondo sono già globali (app.html, sempre presenti); qui c'è solo la luna,
-// grande, al centro — stessa fase condivisa di Impostazioni del Mondo (world-moon.ts usa la
-// stessa identica regola, resolveMoonPhaseFraction).
+// Pagina minimale (#a4): solo fermarsi a guardare il cielo, "solo noi e la luna". Qui la fase
+// è sempre quella reale di oggi, non quella scelta a mano in Impostazioni del Mondo — questa
+// pagina guarda il cielo vero, non una luna personalizzabile (quella è la piccola di sfondo,
+// nascosta qui apposta, vedi world-atmosphere.css `body.sky-view-page .world-moon`).
 @Component({
   selector: 'app-il-cielo',
   standalone: true,
-  imports: [AppShell, RouterLink, MoonDisc],
+  imports: [AppShell, MoonDisc],
   styleUrls: ['../../../styles/pages/il-cielo.css'],
   templateUrl: './il-cielo.html'
 })
 export class IlCielo {
-  private readonly worldSettingsService = inject(WorldSettingsService);
-
-  protected readonly phaseFraction = computed(() => resolveMoonPhaseFraction(this.worldSettingsService.values().moon));
-  protected readonly label = computed(() => moonPhaseLabel(this.phaseFraction()));
-  protected readonly isAuto = computed(() => (this.worldSettingsService.values().moon ?? 'auto') === 'auto');
+  protected readonly phaseFraction = moonPhaseFraction(new Date());
 }

@@ -99,6 +99,12 @@ body.world-atmosphere {
     drop-shadow(0 0 34px rgba(210, 228, 245, 0.6));
 }
 
+/* Su "Il Cielo" la luna piccola non si vede: quella pagina ha già la sua, grande e al
+   centro — due lune in una volta sarebbero confuse, non un secondo elemento decorativo. */
+body.sky-view-page .world-moon {
+  display: none;
+}
+
 @media (max-width: 720px) {
   .world-moon {
     top: 3%;

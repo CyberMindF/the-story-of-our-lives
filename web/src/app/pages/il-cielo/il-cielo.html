@@ -1,20 +1,10 @@
-<app-shell [showSuggestLink]="false">
-  <section class="sky-hero" aria-labelledby="sky-title">
-    <p class="sky-eyebrow">Il Mondo Bianco</p>
-    <h1 id="sky-title"><span aria-hidden="true">🌌</span> Il Cielo</h1>
-    <p class="sky-intro">Fermati un momento a guardarlo.</p>
-  </section>
+<app-shell [showSuggestLink]="false" [showBackLink]="false">
+  <p class="sky-title"><span aria-hidden="true">🌌</span> Il Cielo</p>
 
-  <div class="sky-moon-frame">
-    <app-moon-disc [phaseFraction]="phaseFraction()" />
+  <div class="sky-content">
+    <div class="sky-moon-frame">
+      <app-moon-disc [phaseFraction]="phaseFraction" />
+    </div>
+    <p class="sky-quote">Sotto lo stesso cielo.</p>
   </div>
-
-  <p class="sky-phase-label">
-    {{ label() }}
-    @if (isAuto()) {
-      <span class="sky-phase-note">, oggi</span>
-    }
-  </p>
-
-  <a class="sky-settings-link" routerLink="/impostazioni-mondo">Cambia fase o spegni la luna in Impostazioni del Mondo</a>
 </app-shell>
