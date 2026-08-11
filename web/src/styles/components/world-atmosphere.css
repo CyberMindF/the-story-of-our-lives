@@ -392,6 +392,136 @@ body.world-atmosphere[data-theme="green-of-me"] {
   }
 }
 
+/* Pesci per Ocean (#c2): a differenza degli altri effetti, che cadono o scendono nel cielo,
+   questi nuotano in orizzontale — metà verso destra, metà verso sinistra (.world-fish-reverse
+   sceglie l'animazione opposta e ribalta lo sprite con scaleX, così il muso punta sempre nella
+   direzione di marcia) — in una fascia bassa dello schermo, sopra il livello delle onde. Un
+   lieve dondolio verticale (--fish-bob) durante la traversata, non una linea retta. Due forme,
+   entrambe disegnate in SVG: il polpo con una cupola piena e cinque tentacoli in stroke, il
+   pesce rosso con un corpo pieno e due pinne triangolari. */
+.world-fish {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.world-fish-item {
+  position: absolute;
+  top: var(--fish-y);
+  left: 0;
+  opacity: 0;
+  animation: fish-swim-rightward var(--fish-swim-duration) linear var(--fish-swim-delay) infinite;
+}
+
+.world-fish-item.world-fish-reverse {
+  animation-name: fish-swim-leftward;
+}
+
+.world-octopus-svg,
+.world-goldfish-svg {
+  display: block;
+  width: var(--fish-size);
+  filter: drop-shadow(0 0 0.2em rgba(0, 0, 0, 0.25));
+}
+
+.world-octopus-svg {
+  height: var(--fish-size);
+}
+
+.world-goldfish-svg {
+  height: calc(var(--fish-size) * 0.67);
+}
+
+.world-fish-reverse .world-octopus-svg,
+.world-fish-reverse .world-goldfish-svg {
+  transform: scaleX(-1);
+}
+
+.world-octopus-head {
+  fill: #a15b9e;
+}
+
+.world-octopus-tentacle {
+  fill: none;
+  stroke: #a15b9e;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.world-octopus-eye,
+.world-goldfish-eye {
+  fill: #241429;
+}
+
+.world-goldfish-body {
+  fill: #ff8a3d;
+}
+
+.world-goldfish-fin {
+  fill: #ff6f1f;
+}
+
+@keyframes fish-swim-rightward {
+  0% {
+    transform: translate(-15vw, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--fish-opacity);
+  }
+  25% {
+    transform: translate(25vw, calc(var(--fish-bob) * -1));
+  }
+  50% {
+    transform: translate(55vw, 0);
+  }
+  75% {
+    transform: translate(85vw, var(--fish-bob));
+  }
+  94% {
+    opacity: var(--fish-opacity);
+  }
+  100% {
+    transform: translate(115vw, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes fish-swim-leftward {
+  0% {
+    transform: translate(115vw, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--fish-opacity);
+  }
+  25% {
+    transform: translate(75vw, var(--fish-bob));
+  }
+  50% {
+    transform: translate(45vw, 0);
+  }
+  75% {
+    transform: translate(15vw, calc(var(--fish-bob) * -1));
+  }
+  94% {
+    opacity: var(--fish-opacity);
+  }
+  100% {
+    transform: translate(-15vw, 0);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-fish-item {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 /* Fiori che cadono (#b3-b, tre forme selezionabili — o "mix" — su richiesta di Rory): stessa
    meccanica di caduta delle foglie ma più lenta e morbida — un petalo scende leggero, non
    tumultuoso. .world-petal-item porta posizione/animazione comuni a tutte e tre le forme;

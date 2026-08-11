@@ -3,6 +3,7 @@ import { AppShell } from '../../shell/app-shell';
 import { WorldSettingKey, WorldSettingsService } from '../../core/world-settings.service';
 import { MOON_PHASE_LABEL } from '../../shared/moon-phase';
 import { PETAL_KIND_LABEL, PetalKind } from '../../shared/world-petals';
+import { FISH_KIND_LABEL, FishKind } from '../../shared/world-fish';
 import { ThemeSwitcher } from '../../shared/theme-switcher';
 import { AppSelect, AppSelectOption } from '../../shared/app-select/app-select';
 
@@ -25,6 +26,8 @@ export class ImpostazioniMondo {
   ];
   protected readonly petalKindOptions: readonly AppSelectOption[] = Object.entries(PETAL_KIND_LABEL)
     .map(([value, label]) => ({ value: value as PetalKind, label }));
+  protected readonly fishKindOptions: readonly AppSelectOption[] = Object.entries(FISH_KIND_LABEL)
+    .map(([value, label]) => ({ value: value as FishKind, label }));
 
   protected toggleSetting(key: WorldSettingKey, event: Event): void {
     const enabled = (event.target as HTMLInputElement).checked;
@@ -37,5 +40,9 @@ export class ImpostazioniMondo {
 
   protected setPetalKind(value: string): void {
     void this.worldSettingsService.setValue('petals', value);
+  }
+
+  protected setFishKind(value: string): void {
+    void this.worldSettingsService.setValue('fish', value);
   }
 }

@@ -18,12 +18,12 @@ const DEFAULT_THEME_ID = 'the-white-world';
 // altri, luna/stelle/lanterne comprese — non solo "riaccende il proprio lasciando il resto
 // invariato" come nella prima versione. Restano comunque liberi da riaccendere a mano dopo,
 // il preset decide solo lo stato iniziale al momento della scelta.
-const ALL_EFFECT_KEYS: WorldSettingKey[] = ['lanterns', 'stars', 'moon', 'sparkles', 'leaves', 'waves', 'petals'];
+const ALL_EFFECT_KEYS: WorldSettingKey[] = ['lanterns', 'stars', 'moon', 'sparkles', 'leaves', 'waves', 'petals', 'fish'];
 const THEME_PRESET: Record<string, WorldSettingKey[]> = {
   'the-white-world': ['lanterns', 'stars', 'moon'],
   'red-of-you': ['sparkles'],
   'green-of-me': ['leaves'],
-  sea: ['waves'],
+  sea: ['waves', 'fish'],
   velvet: ['petals']
 };
 

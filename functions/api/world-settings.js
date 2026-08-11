@@ -2,18 +2,19 @@ import { getAuthenticatedSession, json, readJson } from "./auth/_shared.js";
 
 // Chiavi note: allowlist esplicita invece di accettare qualunque stringa dal client, per non
 // lasciare che "world_settings" accumuli righe arbitrarie mai lette da nessuna UI.
-const KNOWN_KEYS = new Set(["lanterns", "stars", "moon", "theme", "sparkles", "leaves", "waves", "petals"]);
+const KNOWN_KEYS = new Set(["lanterns", "stars", "moon", "theme", "sparkles", "leaves", "waves", "petals", "fish"]);
 
 // Solo alcune chiavi accettano anche un "value" oltre a enabled (es. la luna: la fase scelta,
 // "auto" o un indice 0-7; il tema: quale dei 5; i fiori: quale forma o "mix") — allowlist dei
 // valori validi per non lasciare che il client scriva testo arbitrario nella colonna.
 // Stessi 5 id di THEMES in web/src/app/core/theme.service.ts — non importabile da qui (mondi
 // diversi, Angular vs Functions), va tenuto sincronizzato a mano se cambiano i temi. Stessi 3
-// PetalKind di world-petals.ts, stesso discorso.
+// PetalKind di world-petals.ts e stessi 2 FishKind di world-fish.ts, stesso discorso.
 const VALID_VALUES = {
   moon: new Set(["auto", "0", "1", "2", "3", "4", "5", "6", "7"]),
   theme: new Set(["the-white-world", "sea", "velvet", "red-of-you", "green-of-me"]),
-  petals: new Set(["mix", "daisy", "pink", "rose"])
+  petals: new Set(["mix", "daisy", "pink", "rose"]),
+  fish: new Set(["mix", "octopus", "goldfish"])
 };
 
 // Interruttori condivisi degli effetti del Mondo Bianco (vedi migrations/0022): non uno per

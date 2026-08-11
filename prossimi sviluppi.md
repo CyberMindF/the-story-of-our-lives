@@ -25,7 +25,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #34 — Pagina delle nostre ricette?
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
 - #c1 - Verifica generale che tutti gli eventi siano presenti
-- #c2 - Aggiungere anche un effetto di tema ocean, ovviamente attivabile o meno come tutti con "pesci" che nuotano, principalmente polpi, ma anche pesci rossi, e misti
 ---
 
 ## Da non fare
@@ -343,6 +342,20 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   un solo cambio di direzione a metà caduta, non l'oscillazione ripetuta scartata in un giro
   precedente perché sembrava vento. Verificato tracciando la posizione orizzontale di una
   foglia nel tempo (sale e poi scende, confermando l'inversione) e con uno screenshot dal vivo.
+
+- [x] #c2 — pesci per Ocean: nuovo effetto `world-fish.ts`, a differenza degli altri non cade
+  né sale nel cielo ma nuota in orizzontale — metà degli esemplari verso destra, metà verso
+  sinistra, con un lieve dondolio verticale durante la traversata, in una fascia bassa dello
+  schermo sopra il livello delle onde. Due forme disegnate in SVG (nessuna emoji era
+  abbastanza chiara): polpo (cupola piena + cinque tentacoli in stroke) e pesce rosso (corpo
+  pieno + due pinne triangolari), selezionabili — o "mix" — come per i fiori di Velvet. Stesso
+  schema di sempre: chiave "fish" in `world_settings` (migrazione 0031, applicata solo in
+  locale), allowlist, toggle + selettore forma in Impostazioni, aggiunto al preset di Ocean
+  insieme alle onde. Verificato compilazione e build puliti, nessuna collisione di nomi CSS, e
+  la meccanica di nuoto/direzione/dondolio in una pagina isolata (non nell'app vera: mentre
+  lavoravo `world_settings` mostrava segni di uso reale in corso — cambio tema e alcuni
+  interruttori spenti negli ultimi minuti — quindi ho evitato di toccare l'account condiviso
+  per non interferire). **Da vedere dal vivo appena possibile** per confermare a schermo vero.
 
 ### Bug chiusi
 

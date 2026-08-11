@@ -1,0 +1,39 @@
+@if (worldSettingsService.settings().fish) {
+  <div class="world-fish" aria-hidden="true">
+    @for (fish of fishes(); track $index) {
+      <span
+        class="world-fish-item"
+        [class.world-fish-reverse]="fish.reverse"
+        [style.--fish-y]="fish.y + '%'"
+        [style.--fish-size]="fish.size + 'rem'"
+        [style.--fish-opacity]="fish.opacity"
+        [style.--fish-bob]="fish.bob + 'px'"
+        [style.--fish-swim-duration]="fish.swimDuration + 's'"
+        [style.--fish-swim-delay]="fish.swimDelay + 's'"
+      >
+        @if (fish.kind === 'octopus') {
+          <svg class="world-octopus-svg" viewBox="0 0 100 100">
+            <path class="world-octopus-tentacle" d="M28,58 C22,72 32,82 24,96" />
+            <path class="world-octopus-tentacle" d="M38,62 C35,76 44,86 38,98" />
+            <path class="world-octopus-tentacle" d="M50,64 C50,80 50,88 50,100" />
+            <path class="world-octopus-tentacle" d="M62,62 C65,76 56,86 62,98" />
+            <path class="world-octopus-tentacle" d="M72,58 C78,72 68,82 76,96" />
+            <path
+              class="world-octopus-head"
+              d="M50,10 C72,10 84,28 84,46 C84,62 68,60 50,60 C32,60 16,62 16,46 C16,28 28,10 50,10 Z"
+            />
+            <circle class="world-octopus-eye" cx="38" cy="36" r="5" />
+            <circle class="world-octopus-eye" cx="62" cy="36" r="5" />
+          </svg>
+        } @else {
+          <svg class="world-goldfish-svg" viewBox="0 0 120 80">
+            <path class="world-goldfish-fin" d="M28,40 L4,18 L14,40 L4,62 Z" />
+            <path class="world-goldfish-fin" d="M58,20 L48,4 L68,20 Z" />
+            <ellipse class="world-goldfish-body" cx="62" cy="40" rx="34" ry="20" />
+            <circle class="world-goldfish-eye" cx="86" cy="35" r="4" />
+          </svg>
+        }
+      </span>
+    }
+  </div>
+}

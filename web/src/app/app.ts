@@ -5,6 +5,7 @@ import { filter } from 'rxjs';
 import { AuthService } from './core/auth.service';
 import { ThemeService } from './core/theme.service';
 import { WorldSettingsService } from './core/world-settings.service';
+import { WorldFish } from './shared/world-fish';
 import { WorldLanterns } from './shared/world-lanterns';
 import { WorldLeaves } from './shared/world-leaves';
 import { WorldMoon } from './shared/world-moon';
@@ -42,7 +43,7 @@ const ROUTE_BODY_CLASSES = [
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, WorldStars, WorldLanterns, WorldMoon, WorldSparkles, WorldLeaves, WorldWaves, WorldPetals],
+  imports: [RouterOutlet, WorldStars, WorldLanterns, WorldMoon, WorldSparkles, WorldLeaves, WorldWaves, WorldFish, WorldPetals],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
