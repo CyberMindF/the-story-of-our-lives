@@ -19,12 +19,18 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #24 — ricerca globale protetta (già segnata come rimandata)
 - #33 — Liste delle cose da fare insieme (la mia lista delle note)
 - #34 — Pagina delle nostre ricette?
-- #35 — implentare anche nu bottone "suggerimento" che in realtà le dice solo di venirmelo a chiedere e facendo "qualcosa" per me, anche se ancora non so cosa
 - #a4 - Creare una pagina "il cielo" dove è possibile vedere semplicemente la luna, la luna deve cambiare chiamando una API di qualche servizio esterno (se possibile) che da la fase lunare e noi la ricreiamo e la mostriamo. Qui è possibile godersi il cielo stellato, lunato, lanternato, ecc.
 
 ---
 
 ## Fatto
+
+### Extra (fuori scaletta, chiesto l'11/08/2026)
+
+- [x] #35 — Cruciverba: aggiunto il bottone “Suggerimento”. Non rivela lettere o soluzioni:
+  propone casualmente uno di quattro piccoli pegni affettuosi da fare in chat e invita poi a
+  chiedere il suggerimento direttamente a Rory. La stessa richiesta non viene proposta due
+  volte di seguito.
 
 ### Extra (fuori scaletta, chiesti il 10/08/2026 — secondo giro)
 
@@ -101,24 +107,37 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   (11px/3px → 14px/3.6px); ancora troppo veloce → durata raddoppiata di nuovo, 3.6-7.6s
   (ritardo scalato di conseguenza a 0-10s in entrambi i giri, per restare proporzionato al
   ciclo più lungo). Questa volta verificato a schermo da Rory, non solo dal CSS compilato.
-- [x] #a3 — lanterne che salgono, solo nel tema Notte (the-white-world): è quello a cui
-  appartiene il riferimento (festa notturna di Terraria / la notte delle lanterne in
-  Thailandia), nessuna decisione presa per gli altri temi. 8 lanterne (emoji 🏮, nessun asset
-  da creare), poche e molto distanziate nel tempo — ritardo fino a 50s su un ciclo di 24-40s
-  ciascuna, deve sembrare un'occasione e non un via vai. Salgono con un leggero zig-zag
-  laterale ("il vento") e dissolvenza in entrata/uscita. Componente nuovo (`world-lanterns`)
-  gated sul tema attivo via `ThemeService`, non solo nascosto via CSS: sulle altre 4
-  combinazioni tema non c'è nessun nodo DOM/animazione da pagare. Estratto anche il generatore
-  di numeri casuali (prima duplicato identico in `world-stars.ts`) in un helper condiviso
-  `shared/random.ts`. Non verificato a schermo in questa sessione: solo confermato che il
-  componente è nel bundle JS e l'animazione nel CSS compilato serviti dal dev server.
-- #a5 — sfondi animati per gli altri temi: scoperto per caso lavorando su #a2 che è già
-  praticamente soddisfatto. Le regole del brillio/alone delle stelle (`world-stars`,
-  `world-atmosphere.css`) non sono mai state scoped al tema Notte — si applicano sempre a
-  `body.world-atmosphere`, quindi le stelle animate girano già su tutti e 5 i temi, ognuna
-  colorata secondo la variabile `--world-star` già definita per tema. Non spuntato come `[x]`
-  a sé: da confermare con Rory se questo basta o se intendeva qualcosa di più specifico per
-  ogni tema (es. un effetto diverso da Notte, non solo lo stesso brillio ricolorato).
+- [x] #a3 — lanterne che salgono. Prima versione: solo nel tema Notte, 8 lanterne poche e
+  distanziate nel tempo. Componente nuovo (`world-lanterns`), estratto anche il generatore di
+  numeri casuali (prima duplicato identico in `world-stars.ts`) in un helper condiviso
+  `shared/random.ts`.
+  **Seguito, dopo aver visto una foto di riferimento (festa delle lanterne in Thailandia,
+  cielo denso di lanterne calde)**: 8 erano troppo poche e troppo deboli. Salite a 36, più
+  grandi (1.6-3.4rem), bagliore a tre strati (drop-shadow stretto+intenso, medio, largo e
+  diffuso — uno solo sembrava finto). Rivista anche la scelta "solo tema Notte": Rory ha fatto
+  notare che non ha senso legarle a un tema specifico, meglio un interruttore a sé. Vedi #a5
+  qui sotto per l'infrastruttura condivisa che ne è nata. Non verificato a schermo in un
+  browser reale in questa sessione: confermato via build di produzione (chunk/CSS compilati)
+  e un test end-to-end con due account di prova sull'endpoint delle impostazioni.
+- [x] #a5 — sfondi animati per gli altri temi, in parte: durante #a2 era emerso per caso che il
+  brillio/alone delle stelle non è mai stato scoped al tema Notte — gira già su tutti e 5 i
+  temi. Discutendo di #a3 (le lanterne "non possono stare sempre nel tema Notte"), invece di
+  creare temi dedicati o proliferare varianti per tema, è nata un'idea più grande di Rory:
+  una "stanza" del mondo dove attivare/disattivare gli effetti, **condivisa tra i due
+  account** (non una preferenza per dispositivo come il tema) — chi accende/spegne qualcosa lo
+  vede cambiare anche l'altro. Costruita l'infrastruttura: tabella `world_settings`
+  (chiave/valore + chi l'ha toccata per ultimo), endpoint `/api/world-settings` (GET/POST
+  autenticati, allowlist esplicita delle chiavi note), `WorldSettingsService` letto al
+  bootstrap dell'app, nuova pagina `/impostazioni-mondo` con un toggle vero (checkbox nascosta
+  + switch in CSS, accessibile da tastiera), raggiungibile come scorciatoia extra dal Mondo
+  Bianco. Per ora l'unico interruttore è "lanterne" (non più legate a nessun tema); aggiungerne
+  altri in futuro (es. per gli altri temi) è solo una riga in più nell'allowlist e nella
+  pagina, non una nuova migrazione. **Non ancora fatto**: nessun effetto dedicato per i 4 temi
+  diversi da Notte, solo l'infrastruttura per poterli aggiungere e renderli togglabili.
+  Verificato end-to-end con due account di prova (poi ripuliti dal DB, sessioni/eventi
+  compresi): il valore è davvero condiviso tra account diversi, non solo persistito per uno.
+  **Migrazione applicata solo in locale** (`--local`): quella sul D1 di produzione
+  (`--remote`) resta da fare a mano, non l'ha applicata Claude.
 
 ### Bug chiusi
 
