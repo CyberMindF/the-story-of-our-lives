@@ -261,3 +261,160 @@ body.world-atmosphere[data-theme="green-of-me"] {
     opacity: 0;
   }
 }
+
+/* Ombre di foglia per Green of Me (#b3-a, secondo dei quattro): sagome scure e semitrasparenti
+   che cadono ruotando, non foglie colorate — filter:brightness(0) toglie il colore dell'emoji,
+   lasciando solo la sagoma, coerente con "ombra" più che con "foglia" vera e propria. */
+.world-leaves {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.world-leaf {
+  position: absolute;
+  top: -10%;
+  left: var(--leaf-x);
+  font-size: var(--leaf-size);
+  opacity: 0;
+  filter: brightness(0);
+  animation: leaf-fall var(--leaf-fall-duration) linear var(--leaf-fall-delay) infinite;
+}
+
+@keyframes leaf-fall {
+  0% {
+    transform: translate(0, 0) rotate(var(--leaf-rotate-start));
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--leaf-opacity);
+  }
+  30% {
+    transform: translate(var(--leaf-sway), 35vh) rotate(calc((var(--leaf-rotate-start) + var(--leaf-rotate-end)) / 2));
+  }
+  60% {
+    transform: translate(calc(var(--leaf-sway) * -1), 70vh) rotate(var(--leaf-rotate-end));
+  }
+  94% {
+    opacity: var(--leaf-opacity);
+  }
+  100% {
+    transform: translate(0, 115vh) rotate(var(--leaf-rotate-end));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-leaf {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Conchiglie per Ocean (#b3-a, terzo dei quattro): a differenza di lanterne/foglie
+   (movimento verticale), qui attraversano lo schermo in orizzontale con un dondolio, come
+   trasportate da una corrente. Il filtro le scalda verso l'arancione: l'emoji di base è
+   sui toni rosa/crema, non arancione. */
+.world-shells {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.world-shell {
+  position: absolute;
+  left: -8%;
+  top: var(--shell-y);
+  font-size: var(--shell-size);
+  opacity: 0;
+  filter: sepia(1) saturate(4.5) hue-rotate(-22deg) brightness(1.05);
+  animation: shell-drift var(--shell-drift-duration) linear var(--shell-drift-delay) infinite;
+}
+
+@keyframes shell-drift {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--shell-opacity);
+  }
+  25% {
+    transform: translate(28vw, calc(var(--shell-bob) * -1));
+  }
+  50% {
+    transform: translate(56vw, 0);
+  }
+  75% {
+    transform: translate(84vw, var(--shell-bob));
+  }
+  94% {
+    opacity: var(--shell-opacity);
+  }
+  100% {
+    transform: translate(116vw, 0);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-shell {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Petali per Velvet (#b3-a, quarto e ultimo): stessa meccanica delle foglie di Green of Me
+   (cadono ruotando, dondolando ai lati) ma più lenti e morbidi — un petalo scende leggero,
+   non tumultuoso come una foglia nel vento — e a piena opacità/colore, non ombre scure: qui
+   sono davvero petali di rosa, non la loro ombra. */
+.world-petals {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.world-petal {
+  position: absolute;
+  top: -10%;
+  left: var(--petal-x);
+  font-size: var(--petal-size);
+  opacity: 0;
+  animation: petal-fall var(--petal-fall-duration) linear var(--petal-fall-delay) infinite;
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translate(0, 0) rotate(var(--petal-rotate-start));
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--petal-opacity);
+  }
+  35% {
+    transform: translate(var(--petal-sway), 40vh) rotate(calc((var(--petal-rotate-start) + var(--petal-rotate-end)) / 2));
+  }
+  65% {
+    transform: translate(calc(var(--petal-sway) * -1), 75vh) rotate(var(--petal-rotate-end));
+  }
+  94% {
+    opacity: var(--petal-opacity);
+  }
+  100% {
+    transform: translate(0, 115vh) rotate(var(--petal-rotate-end));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-petal {
+    animation: none;
+    opacity: 0;
+  }
+}

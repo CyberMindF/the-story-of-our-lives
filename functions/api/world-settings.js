@@ -2,7 +2,7 @@ import { getAuthenticatedSession, json, readJson } from "./auth/_shared.js";
 
 // Chiavi note: allowlist esplicita invece di accettare qualunque stringa dal client, per non
 // lasciare che "world_settings" accumuli righe arbitrarie mai lette da nessuna UI.
-const KNOWN_KEYS = new Set(["lanterns", "stars", "moon", "theme", "sparkles"]);
+const KNOWN_KEYS = new Set(["lanterns", "stars", "moon", "theme", "sparkles", "leaves", "shells", "petals"]);
 
 // Solo alcune chiavi accettano anche un "value" oltre a enabled (es. la luna: la fase scelta,
 // "auto" o un indice 0-7; il tema: quale dei 5) — allowlist dei valori validi per non lasciare

@@ -1,0 +1,17 @@
+@if (themeService.activeThemeId() === leafThemeId && worldSettingsService.settings().leaves) {
+  <div class="world-leaves" aria-hidden="true">
+    @for (leaf of leaves; track $index) {
+      <span
+        class="world-leaf"
+        [style.--leaf-x]="leaf.x + '%'"
+        [style.--leaf-size]="leaf.size + 'rem'"
+        [style.--leaf-opacity]="leaf.opacity"
+        [style.--leaf-sway]="leaf.sway + 'px'"
+        [style.--leaf-rotate-start]="leaf.rotateStart + 'deg'"
+        [style.--leaf-rotate-end]="leaf.rotateEnd + 'deg'"
+        [style.--leaf-fall-duration]="leaf.fallDuration + 's'"
+        [style.--leaf-fall-delay]="leaf.fallDelay + 's'"
+      >🍃</span>
+    }
+  </div>
+}

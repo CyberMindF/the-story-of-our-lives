@@ -21,12 +21,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   esistente.
 - #34 — Pagina delle nostre ricette?
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
-- [~] #b3-a - Creare animazioni anche per il resto dei temi. Per esempio "brillantini" nello
-  sfondo per "red of you" — **fatto**, vedi Fatto qui sotto. Restano: ombre di foglia che
-  cadono per "green of me"; "effetto acqua" in sfondo o conchiglie arancioni che passano per
-  "ocean"; per "velvet" proposta di Claude — petali di rosa che cadono lenti, riprende il
-  motivo delle rose già nel sito (il mazzo di rose nel calendario), non ancora costruito né
-  confermato da Rory.
 - #b3-b - Suddividere gli effetti nella pagina delle impostazioni per tema, quindi quegli effetti che non stanno bene sul alcuni temi "segnalarli" in qualche modo, tipo la luna e le stelle sono inutili su ocean. Possiamo anche fare in modo che comunque attivare un determinato tema, attiva anche determinati selettori, che poi possono essere cambiati liberamente, però attiva le "sue cose di default"
 
 ---
@@ -269,7 +263,21 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   luna — regola da applicare anche ai prossimi tre temi. Stesso schema di sempre: chiave
   "sparkles" in `world_settings` (migrazione 0027), allowlist, toggle nella pagina — le due
   condizioni (tema attivo + interruttore acceso) si sommano nel componente.
-  Restano da fare gli altri tre temi (vedi sopra in "Da fare").
+  **Completati anche gli altri tre**, stesso schema (componente + toggle condiviso, migrazione
+  0028 per tutte e tre le chiavi insieme): `world-leaves.ts` per Green of Me, sagome scure e
+  semitrasparenti (`filter: brightness(0)` sull'emoji 🍃, non foglie colorate — l'idea è
+  l'ombra, non la foglia) che cadono ruotando nel vento; `world-shells.ts` per Ocean, uniche a
+  muoversi in orizzontale (attraversano lo schermo, non cadono/salgono come gli altri tre),
+  emoji 🐚 scaldata verso l'arancione con un filtro CSS (il colore base è rosa/crema);
+  `world-petals.ts` per Velvet, stessa meccanica delle foglie ma più lenta e morbida, colore
+  pieno (non ombre — qui sono davvero petali, emoji 🌸), idea di Claude non ancora confermata
+  da Rory ma già costruita. #b3-a è così completo: un effetto per ognuno dei 4 temi non-Notte,
+  ognuno col proprio interruttore. Verifica a schermo di questo giro interrotta a metà: mentre
+  testavo con Playwright, Rory stava già usando il sito dal vivo in parallelo (stessi dati
+  locali condivisi) e ha lui stesso cambiato tema e spento/riacceso gli effetti mentre ero a
+  metà controllo — smesso di far girare i test automatici per non interferire con l'uso reale,
+  che in quel momento vale più di uno screenshot. Anche questa migrazione (0028) resta da
+  applicare sul D1 di produzione.
 
 ### Bug chiusi
 

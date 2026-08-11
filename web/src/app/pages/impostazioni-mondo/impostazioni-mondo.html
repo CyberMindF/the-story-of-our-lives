@@ -93,6 +93,51 @@
         />
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </label>
+
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🍃</span> Ombre di foglie</span>
+          <span class="settings-toggle-description">Solo sul tema Green of Me: foglie che cadono lente nel vento.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().leaves"
+          (change)="toggleSetting('leaves', $event)"
+          aria-label="Ombre di foglie"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🐚</span> Conchiglie</span>
+          <span class="settings-toggle-description">Solo sul tema Ocean: conchiglie che attraversano il cielo.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().shells"
+          (change)="toggleSetting('shells', $event)"
+          aria-label="Conchiglie"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🌸</span> Petali di rosa</span>
+          <span class="settings-toggle-description">Solo sul tema Velvet: petali che cadono lenti nel cielo.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().petals"
+          (change)="toggleSetting('petals', $event)"
+          aria-label="Petali di rosa"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
     </div>
   </section>
 </app-shell>
