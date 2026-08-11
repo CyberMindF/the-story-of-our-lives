@@ -20,9 +20,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #33 — Liste delle cose da fare insieme (la mia lista delle note)
 - #34 — Pagina delle nostre ricette?
 - #35 — implentare anche nu bottone "suggerimento" che in realtà le dice solo di venirmelo a chiedere e facendo "qualcosa" per me, anche se ancora non so cosa
-- #a3 - Creare un'animazione di lanterne che salgono. Per darti una rederenze come quando su terraria c'è festa degli npc di notte e si vedono le lanternine che salgono nel cielo. Come la notte delle lanterne in thailandia, da capire quando metterla, in che tema o se fare un tema diverso
 - #a4 - Creare una pagina "il cielo" dove è possibile vedere semplicemente la luna, la luna deve cambiare chiamando una API di qualche servizio esterno (se possibile) che da la fase lunare e noi la ricreiamo e la mostriamo. Qui è possibile godersi il cielo stellato, lunato, lanternato, ecc.
-- #a5 - creare sfondi animati anche per gli altri temi
 
 ---
 
@@ -103,6 +101,24 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   (11px/3px → 14px/3.6px); ancora troppo veloce → durata raddoppiata di nuovo, 3.6-7.6s
   (ritardo scalato di conseguenza a 0-10s in entrambi i giri, per restare proporzionato al
   ciclo più lungo). Questa volta verificato a schermo da Rory, non solo dal CSS compilato.
+- [x] #a3 — lanterne che salgono, solo nel tema Notte (the-white-world): è quello a cui
+  appartiene il riferimento (festa notturna di Terraria / la notte delle lanterne in
+  Thailandia), nessuna decisione presa per gli altri temi. 8 lanterne (emoji 🏮, nessun asset
+  da creare), poche e molto distanziate nel tempo — ritardo fino a 50s su un ciclo di 24-40s
+  ciascuna, deve sembrare un'occasione e non un via vai. Salgono con un leggero zig-zag
+  laterale ("il vento") e dissolvenza in entrata/uscita. Componente nuovo (`world-lanterns`)
+  gated sul tema attivo via `ThemeService`, non solo nascosto via CSS: sulle altre 4
+  combinazioni tema non c'è nessun nodo DOM/animazione da pagare. Estratto anche il generatore
+  di numeri casuali (prima duplicato identico in `world-stars.ts`) in un helper condiviso
+  `shared/random.ts`. Non verificato a schermo in questa sessione: solo confermato che il
+  componente è nel bundle JS e l'animazione nel CSS compilato serviti dal dev server.
+- #a5 — sfondi animati per gli altri temi: scoperto per caso lavorando su #a2 che è già
+  praticamente soddisfatto. Le regole del brillio/alone delle stelle (`world-stars`,
+  `world-atmosphere.css`) non sono mai state scoped al tema Notte — si applicano sempre a
+  `body.world-atmosphere`, quindi le stelle animate girano già su tutti e 5 i temi, ognuna
+  colorata secondo la variabile `--world-star` già definita per tema. Non spuntato come `[x]`
+  a sé: da confermare con Rory se questo basta o se intendeva qualcosa di più specifico per
+  ogni tema (es. un effetto diverso da Notte, non solo lo stesso brillio ricolorato).
 
 ### Bug chiusi
 
