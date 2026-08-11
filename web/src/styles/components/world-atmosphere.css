@@ -302,9 +302,10 @@ body.world-atmosphere[data-theme="green-of-me"] {
   stroke-linecap: round;
 }
 
-/* Una sola deriva morbida verso un lato, non uno zig-zag: la prima versione cambiava
-   direzione due volte ed era proprio quella a sembrare "il vento" in modo brusco. Qui la
-   foglia scende con una curva continua, come trasportata da una brezza leggera e costante. */
+/* Un mezzo zig-zag, non una deriva a senso unico né un vero e proprio vento: la foglia scende
+   verso un lato per la prima metà della caduta, poi inverte e scende verso l'altro — un solo
+   cambio di direzione, non l'oscillazione ripetuta che a Rory sembrava "il vento" in modo
+   brusco nella primissima versione. */
 @keyframes leaf-fall {
   0% {
     transform: translate(0, 0) rotate(var(--leaf-rotate-start));
@@ -313,14 +314,14 @@ body.world-atmosphere[data-theme="green-of-me"] {
   6% {
     opacity: var(--leaf-opacity);
   }
-  55% {
-    transform: translate(var(--leaf-sway), 58vh) rotate(calc((var(--leaf-rotate-start) + var(--leaf-rotate-end)) / 2));
+  45% {
+    transform: translate(var(--leaf-sway), 50vh) rotate(calc((var(--leaf-rotate-start) + var(--leaf-rotate-end)) / 2));
   }
   94% {
     opacity: var(--leaf-opacity);
   }
   100% {
-    transform: translate(calc(var(--leaf-sway) * 1.5), 115vh) rotate(var(--leaf-rotate-end));
+    transform: translate(calc(var(--leaf-sway) * -1.1), 115vh) rotate(var(--leaf-rotate-end));
     opacity: 0;
   }
 }
@@ -397,8 +398,9 @@ body.world-atmosphere[data-theme="green-of-me"] {
    .world-daisy-svg (margherita, 8 petali disegnati in SVG), .world-pink-flower (emoji 🌸) e
    .world-rose-svg (petalo di rosa, anche lui in SVG) aggiungono solo l'aspetto. La margherita
    era prima l'emoji 🌼 sbiancata con un filtro grayscale — a Rory non piaceva l'effetto "in
-   bianco e nero", ora è disegnata in SVG con petali davvero bianchi e un centro avorio
-   tenue, nessun filtro necessario. Il petalo di rosa era prima un div con border-radius
+   bianco e nero", ora è disegnata in SVG con petali davvero bianchi e un centro giallo
+   acceso (il primo centro, avorio tenue, era troppo spento secondo Rory), nessun filtro
+   necessario. Il petalo di rosa era prima un div con border-radius
    asimmetrico; a Rory la forma non convinceva — ora è un path SVG con un lieve avvallamento
    in cima (la punta "a cuore" tipica di un vero petalo di rosa) più una seconda linea più
    chiara che suggerisce la curvatura interna. */

@@ -22,6 +22,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #34 — Pagina delle nostre ricette?
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
 - #c1 - Verifica generale che tutti gli eventi siano presenti
+- #c2 - Aggiungere anche un effetto di tema ocean, ovviamente attivabile o meno come tutti con "pesci" che nuotano, principalmente polpi, ma anche pesci rossi, e misti
 ---
 
 ## Da non fare
@@ -333,6 +334,12 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   a mano) per controllare l'esclusività del preset, più un rendering isolato dei tre SVG
   (foglia, petalo, margherita) a dimensione grande per controllare le sole forme senza
   l'animazione. Nessun errore in console, nessuna nuova migrazione necessaria.
+
+  **Due ritocchi finali**: centro della margherita passato da avorio tenue (troppo spento) a
+  giallo acceso. Caduta delle foglie passata da una deriva a senso unico a un mezzo zig-zag —
+  un solo cambio di direzione a metà caduta, non l'oscillazione ripetuta scartata in un giro
+  precedente perché sembrava vento. Verificato tracciando la posizione orizzontale di una
+  foglia nel tempo (sale e poi scende, confermando l'inversione) e con uno screenshot dal vivo.
 
 ### Bug chiusi
 
