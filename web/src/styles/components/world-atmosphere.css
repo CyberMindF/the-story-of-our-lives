@@ -83,11 +83,9 @@ body.world-atmosphere {
    fonti di luce diverse nello stesso cielo. Ferma in un angolo (non fissa al centro, dove
    interferirebbe con il titolo di pagina su schermi piccoli).
 
-   La forma della fase non è un'emoji ma tre livelli disegnati in CSS: il disco (sfumatura per
-   dare volume), una metà sempre scura ("fixed", sinistra se crescente/destra se calante) e
-   un'ellisse larga quanto serve che si somma o si sottrae a quella metà — geometria verificata
-   numericamente prima di scriverla (world-moon.ts/moon-phase.ts), non "a occhio": i 4 punti
-   cardinali (nuova/quarto/piena/quarto) tornano esatti, le fasi intermedie sono lisce. */
+   La resa della sfera (disco/ombra a falce/gibbosa) vive in styles/components/moon-disc.css,
+   condivisa con la versione grande della pagina "Il Cielo" (#a4) — qui c'è solo il
+   posizionamento fisso in un angolo, la dimensione piccola e il bagliore. */
 .world-moon {
   position: fixed;
   z-index: 0;
@@ -99,48 +97,6 @@ body.world-atmosphere {
   filter:
     drop-shadow(0 0 12px rgba(235, 242, 248, 0.9))
     drop-shadow(0 0 34px rgba(210, 228, 245, 0.6));
-}
-
-.world-moon-disc {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  overflow: hidden;
-  /* Un radiale spostato dal centro invece che concentrico: dà l'idea di una sfera illuminata
-     di lato, non di un cerchio piatto con un cerchio più chiaro sopra. */
-  background: radial-gradient(circle at 38% 32%, #fdfdf8 0%, #e7e9ea 45%, #b9bfc4 78%, #8d949c 100%);
-}
-
-.world-moon-fixed {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 50%;
-  height: 100%;
-  background: #1b2230;
-}
-
-.world-moon-fixed.is-right {
-  left: auto;
-  right: 0;
-}
-
-.world-moon-ellipse {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  height: 100%;
-  transform: translateX(-50%);
-  border-radius: 50%;
-}
-
-.world-moon-ellipse.is-shadow {
-  background: #1b2230;
-}
-
-.world-moon-ellipse:not(.is-shadow) {
-  background: #e7e9ea;
 }
 
 @media (max-width: 720px) {

@@ -1,0 +1,8 @@
+<div class="moon-disc">
+  <div class="moon-disc-fixed" [class.is-right]="render().fixedSide === 'right'"></div>
+  <div
+    class="moon-disc-ellipse"
+    [class.is-shadow]="render().ellipseIsShadow"
+    [style.width.%]="render().ellipseWidthFraction * 100"
+  ></div>
+</div>

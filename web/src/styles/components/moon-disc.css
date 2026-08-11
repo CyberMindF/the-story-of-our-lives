@@ -1,0 +1,50 @@
+/* La forma della fase non è un'emoji ma tre livelli: il disco (sfumatura per dare volume),
+   una metà sempre scura ("fixed", sinistra se crescente/destra se calante) e un'ellisse larga
+   quanto serve che si somma o si sottrae a quella metà — geometria verificata numericamente
+   prima di scriverla (moon-phase.ts), non "a occhio": i 4 punti cardinali (nuova/quarto/
+   piena/quarto) tornano esatti, le fasi intermedie sono lisce.
+
+   Riempie sempre il 100% del proprio contenitore: dimensione e posizione le decide chi usa
+   <app-moon-disc/> (world-atmosphere.css per lo sfondo, styles/pages/il-cielo.css per la
+   versione grande). */
+.moon-disc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  /* Un radiale spostato dal centro invece che concentrico: dà l'idea di una sfera illuminata
+     di lato, non di un cerchio piatto con un cerchio più chiaro sopra. */
+  background: radial-gradient(circle at 38% 32%, #fdfdf8 0%, #e7e9ea 45%, #b9bfc4 78%, #8d949c 100%);
+}
+
+.moon-disc-fixed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: #1b2230;
+}
+
+.moon-disc-fixed.is-right {
+  left: auto;
+  right: 0;
+}
+
+.moon-disc-ellipse {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+}
+
+.moon-disc-ellipse.is-shadow {
+  background: #1b2230;
+}
+
+.moon-disc-ellipse:not(.is-shadow) {
+  background: #e7e9ea;
+}

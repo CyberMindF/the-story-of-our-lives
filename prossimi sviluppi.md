@@ -20,8 +20,10 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   fare insieme; per proporre aggiunte entrambi useranno il sistema di suggerimenti già
   esistente.
 - #34 — Pagina delle nostre ricette?
-- #a4 - Creare una pagina "il cielo" dove è possibile vedere semplicemente la luna, la luna deve cambiare chiamando una API di qualche servizio esterno (se possibile) che da la fase lunare e noi la ricreiamo e la mostriamo. Qui è possibile godersi il cielo stellato, lunato, lanternato, ecc.
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
+- #b2 - Restyle selettore dei temi, pensare a un design più accattivante e ripristinare le vecchie icone, cambiare il nome del tema "default" in "cielo notturno" o "Night" non so "notte", non mi piace. Sostare in alto questo selettore.
+- #b3-a - Creare animazioni anche per il resto dei temi. Per esempio "brillantini" nello sfondo per "red of you", ombre di foglia che cadono per "green of me". "effetto acqua" in sfondo o conchiglie arancioni che passano per "ocean", dubbio che deve essere risolto dalla AI: che si fa per velvet?
+- #b3-b - Suddividere gli effetti nella pagina delle impostazioni per tema, quindi quegli effetti che non stanno bene sul alcuni temi "segnalarli" in qualche modo, tipo la luna e le stelle sono inutili su ocean
 
 ---
 
@@ -211,6 +213,21 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   specificato: l'altro account vede il cambio al prossimo caricamento/navigazione. Verificato
   end-to-end con un account di prova (poi ripulito) e con una build di produzione pulita.
   Anche questa migrazione (0026) resta da applicare sul D1 di produzione.
+- [x] #a4 — pagina minimale "Il Cielo" (`/il-cielo`): solo la luna, grande e centrata, con la
+  stessa fase condivisa scelta in Impostazioni del Mondo (auto o manuale — stessa regola,
+  `resolveMoonPhaseFraction`, non due implementazioni). Stelle e lanterne di sfondo non
+  richiedevano nulla di nuovo: sono già globali (`app.html`), presenti su ogni pagina compresa
+  questa. Nessuna API esterna, come specificato — riusa il calcolo locale già esistente.
+  Lavoro principale: estratta la sfera della luna (disco + ombra a falce/gibbosa) dal
+  componente di sfondo `world-moon.ts` in un componente a sé, `MoonDisc`
+  (`shared/moon-disc.ts` + `styles/components/moon-disc.css`), senza posizionamento né
+  dimensione propri — riempie sempre il contenitore di chi la usa. `world-moon.ts` (piccola,
+  fissa in un angolo, su ogni pagina) e la nuova pagina (grande, centrata) sono ora due
+  contesti diversi che riusano lo stesso identico componente invece di duplicare la geometria
+  del terminatore lunare una seconda volta. Aggiunta anche una scorciatoia extra dal Mondo
+  Bianco (🌌), come le altre non ufficiali. Verificato con build di produzione pulita (il
+  chunk della nuova pagina contiene `app-moon-disc`) e che la rotta risponda 200 dal dev
+  server; non verificato a schermo in questa sessione.
 
 ### Bug chiusi
 

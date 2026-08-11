@@ -1,7 +1,7 @@
-// Fase lunare calcolata, non chiamata a un servizio esterno (diverso da #a4, la pagina "il
-// cielo" dedicata, che invece userà un'API vera) — per un elemento di sfondo sempre presente
-// su ogni pagina non ha senso dipendere dalla rete: qui basta un riferimento noto (l'ultima
-// luna nuova nota) e la durata media del mese sinodico.
+// Fase lunare calcolata, non chiamata a un servizio esterno: un elemento di sfondo sempre
+// presente su ogni pagina (e la pagina dedicata "Il Cielo", #a4) non hanno bisogno di
+// dipendere dalla rete — basta un riferimento noto (l'ultima luna nuova nota) e la durata
+// media del mese sinodico.
 const KNOWN_NEW_MOON_UTC_MS = Date.UTC(2000, 0, 6, 18, 14, 0);
 const SYNODIC_MONTH_MS = 29.53058867 * 24 * 60 * 60 * 1000;
 
@@ -37,6 +37,17 @@ export function moonPhaseFraction(date: Date): number {
 
 export function moonPhaseLabel(fraction: number): string {
   return MOON_PHASE_LABEL[Math.round(fraction * 8) % 8];
+}
+
+// Risolve il "value" salvato in world_settings per la chiave "moon" (vedi
+// WorldSettingsService) nella fase effettiva da mostrare: "auto" (o assente, prima che la
+// risposta del server arrivi) segue la fase reale di oggi, un indice 0-7 la fase scelta a
+// mano. Condivisa da world-moon.ts (sfondo) e dalla pagina "Il Cielo" (#a4), stessa regola.
+export function resolveMoonPhaseFraction(selectedValue: string | undefined, today: Date = new Date()): number {
+  if (selectedValue && selectedValue !== 'auto') {
+    return Number(selectedValue) / 8;
+  }
+  return moonPhaseFraction(today);
 }
 
 // Geometria del terminatore lunare: per un angolo di fase theta (0 = nuova, PI = piena, 2*PI

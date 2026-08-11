@@ -50,6 +50,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/profilo/profilo').then((m) => m.Profilo)
       },
       {
+        path: 'il-cielo',
+        data: { bodyClasses: ['sky-view-page'] },
+        loadComponent: () => import('./pages/il-cielo/il-cielo').then((m) => m.IlCielo)
+      },
+      {
         path: 'impostazioni-mondo',
         data: { bodyClasses: ['impostazioni-mondo-page'] },
         loadComponent: () =>

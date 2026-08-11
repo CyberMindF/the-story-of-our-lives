@@ -1,0 +1,60 @@
+/* :host, non un selettore su <body>: il CSS di pagina è scoped al componente da quando è uno
+   styleUrl (stesso motivo già annotato in profilo.css/calendar.css). */
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100dvh;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.sky-eyebrow { margin: 0 0 .65rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+
+.sky-hero { width: min(100%, 40rem); margin: 0 auto; padding: clamp(3rem, 8vw, 5rem) 0 clamp(1.5rem, 4vw, 2rem); }
+.sky-hero h1 { margin: 0; font-size: var(--hero-size-md); line-height: .95; letter-spacing: -.04em; }
+.sky-intro { margin: 1.1rem auto 0; max-width: 30rem; color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
+
+/* La luna di sfondo (world-moon.ts) è piccola e fissa in un angolo, sempre presente su ogni
+   pagina; questa è la stessa sfera (<app-moon-disc/>, nessuna duplicazione) ma grande e
+   centrata — è lei il contenuto della pagina, non solo un elemento decorativo. */
+.sky-moon-frame {
+  position: relative;
+  z-index: 1;
+  width: clamp(11rem, 34vw, 19rem);
+  aspect-ratio: 1;
+  margin: clamp(1.5rem, 5vw, 3rem) auto;
+  filter:
+    drop-shadow(0 0 20px rgba(235, 242, 248, 0.85))
+    drop-shadow(0 0 56px rgba(210, 228, 245, 0.55));
+}
+
+.sky-phase-label {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+}
+
+.sky-phase-note { color: var(--muted-color); font-family: inherit; font-size: inherit; }
+
+.sky-settings-link {
+  position: relative;
+  z-index: 1;
+  margin: clamp(2rem, 6vw, 4rem) 0 clamp(3rem, 7vw, 5rem);
+  color: var(--muted-color);
+  font-size: .88rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sky-settings-link:hover,
+.sky-settings-link:focus-visible {
+  color: var(--text-color);
+}
+
+.sky-settings-link:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 3px;
+}

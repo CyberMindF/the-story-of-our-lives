@@ -1,12 +1,5 @@
 @if (worldSettingsService.settings().moon) {
   <div class="world-moon" [attr.aria-label]="label()" role="img">
-    <div class="world-moon-disc">
-      <div class="world-moon-fixed" [class.is-right]="render().fixedSide === 'right'"></div>
-      <div
-        class="world-moon-ellipse"
-        [class.is-shadow]="render().ellipseIsShadow"
-        [style.width.%]="render().ellipseWidthFraction * 100"
-      ></div>
-    </div>
+    <app-moon-disc [phaseFraction]="phaseFraction()" />
   </div>
 }

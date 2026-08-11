@@ -31,6 +31,7 @@ const ROUTE_BODY_CLASSES = [
   'stories-page',
   'suggerimenti-page',
   'impostazioni-mondo-page',
+  'sky-view-page',
   'tavolo-page',
   'not-found-page'
 ];
