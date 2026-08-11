@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { WorldSettingsService } from '../core/world-settings.service';
 import { randomBetween } from './random';
 
 const STAR_COUNT = 150;
@@ -23,6 +24,7 @@ interface Star {
   templateUrl: './world-stars.html'
 })
 export class WorldStars {
+  protected readonly worldSettingsService = inject(WorldSettingsService);
   protected readonly stars: Star[] = Array.from({ length: STAR_COUNT }, () => this.createStar());
 
   private createStar(): Star {

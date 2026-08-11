@@ -2,7 +2,7 @@ import { getAuthenticatedSession, json, readJson } from "./auth/_shared.js";
 
 // Chiavi note: allowlist esplicita invece di accettare qualunque stringa dal client, per non
 // lasciare che "world_settings" accumuli righe arbitrarie mai lette da nessuna UI.
-const KNOWN_KEYS = new Set(["lanterns"]);
+const KNOWN_KEYS = new Set(["lanterns", "stars"]);
 
 // Interruttori condivisi degli effetti del Mondo Bianco (vedi migrations/0022): non uno per
 // utente come il tema, uno solo per tutti e due — chi lo accende lo vede anche l'altro.

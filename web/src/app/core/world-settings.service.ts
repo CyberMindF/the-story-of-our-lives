@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiService } from './api.service';
 
-export type WorldSettingKey = 'lanterns';
+export type WorldSettingKey = 'lanterns' | 'stars';
 
 interface WorldSettingsResponse {
   settings?: Record<string, boolean>;
@@ -18,7 +18,7 @@ export class WorldSettingsService {
 
   // true finché non si dimostra il contrario: gli effetti restano visibili durante il primo
   // caricamento invece di lampeggiare "spenti" mentre la richiesta è in volo.
-  readonly settings = signal<Record<WorldSettingKey, boolean>>({ lanterns: true });
+  readonly settings = signal<Record<WorldSettingKey, boolean>>({ lanterns: true, stars: true });
 
   async load(): Promise<void> {
     try {

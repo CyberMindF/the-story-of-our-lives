@@ -18,8 +18,23 @@
         type="checkbox"
         class="settings-toggle-input"
         [checked]="worldSettingsService.settings().lanterns"
-        (change)="toggleLanterns($event)"
+        (change)="toggleSetting('lanterns', $event)"
         aria-label="Lanterne che salgono"
+      />
+      <span class="settings-toggle-switch" aria-hidden="true"></span>
+    </label>
+
+    <label class="settings-toggle card">
+      <span class="settings-toggle-info">
+        <span class="settings-toggle-title"><span aria-hidden="true">✨</span> Stelle nel cielo</span>
+        <span class="settings-toggle-description">Le stelle che brillano nel cielo del mondo, su ogni tema.</span>
+      </span>
+      <input
+        type="checkbox"
+        class="settings-toggle-input"
+        [checked]="worldSettingsService.settings().stars"
+        (change)="toggleSetting('stars', $event)"
+        aria-label="Stelle nel cielo"
       />
       <span class="settings-toggle-switch" aria-hidden="true"></span>
     </label>

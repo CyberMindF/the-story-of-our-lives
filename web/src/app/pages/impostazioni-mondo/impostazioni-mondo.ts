@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
-import { WorldSettingsService } from '../../core/world-settings.service';
+import { WorldSettingKey, WorldSettingsService } from '../../core/world-settings.service';
 
 // Interruttori condivisi degli effetti del Mondo Bianco (backlog #a3/#a5): chi li accende o
 // spegne li vede cambiare anche l'altro, non è una preferenza per dispositivo come il tema.
@@ -14,8 +14,8 @@ import { WorldSettingsService } from '../../core/world-settings.service';
 export class ImpostazioniMondo {
   protected readonly worldSettingsService = inject(WorldSettingsService);
 
-  protected toggleLanterns(event: Event): void {
+  protected toggleSetting(key: WorldSettingKey, event: Event): void {
     const enabled = (event.target as HTMLInputElement).checked;
-    void this.worldSettingsService.set('lanterns', enabled);
+    void this.worldSettingsService.set(key, enabled);
   }
 }

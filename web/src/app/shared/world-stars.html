@@ -1,14 +1,16 @@
-<div class="world-stars" aria-hidden="true">
-  @for (star of stars; track $index) {
-    <span
-      class="world-star"
-      [class.is-bright]="star.bright"
-      [style.--star-x]="star.x + '%'"
-      [style.--star-y]="star.y + '%'"
-      [style.--star-size]="star.size + 'px'"
-      [style.--star-opacity]="star.opacity"
-      [style.--star-twinkle-duration]="star.twinkleDuration + 's'"
-      [style.--star-twinkle-delay]="star.twinkleDelay + 's'"
-    ></span>
-  }
-</div>
+@if (worldSettingsService.settings().stars) {
+  <div class="world-stars" aria-hidden="true">
+    @for (star of stars; track $index) {
+      <span
+        class="world-star"
+        [class.is-bright]="star.bright"
+        [style.--star-x]="star.x + '%'"
+        [style.--star-y]="star.y + '%'"
+        [style.--star-size]="star.size + 'px'"
+        [style.--star-opacity]="star.opacity"
+        [style.--star-twinkle-duration]="star.twinkleDuration + 's'"
+        [style.--star-twinkle-delay]="star.twinkleDelay + 's'"
+      ></span>
+    }
+  </div>
+}
