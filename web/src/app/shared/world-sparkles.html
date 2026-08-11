@@ -1,4 +1,4 @@
-@if (themeService.activeThemeId() === sparkleThemeId && worldSettingsService.settings().sparkles) {
+@if (worldSettingsService.settings().sparkles) {
   <div class="world-sparkles" aria-hidden="true">
     @for (sparkle of sparkles; track $index) {
       <span

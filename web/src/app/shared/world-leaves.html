@@ -1,4 +1,4 @@
-@if (themeService.activeThemeId() === leafThemeId && worldSettingsService.settings().leaves) {
+@if (worldSettingsService.settings().leaves) {
   <div class="world-leaves" aria-hidden="true">
     @for (leaf of leaves; track $index) {
       <span
@@ -11,7 +11,7 @@
         [style.--leaf-rotate-end]="leaf.rotateEnd + 'deg'"
         [style.--leaf-fall-duration]="leaf.fallDuration + 's'"
         [style.--leaf-fall-delay]="leaf.fallDelay + 's'"
-      >🍃</span>
+      >🍂</span>
     }
   </div>
 }

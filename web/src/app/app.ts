@@ -9,9 +9,9 @@ import { WorldLanterns } from './shared/world-lanterns';
 import { WorldLeaves } from './shared/world-leaves';
 import { WorldMoon } from './shared/world-moon';
 import { WorldPetals } from './shared/world-petals';
-import { WorldShells } from './shared/world-shells';
 import { WorldSparkles } from './shared/world-sparkles';
 import { WorldStars } from './shared/world-stars';
+import { WorldWaves } from './shared/world-waves';
 
 // Eventi usati come "prova di attività" per rinnovare lo sblocco della Chiave (vedi
 // AuthService.touchAccessUnlock) — non serve seguire ogni movimento del mouse, basta sapere
@@ -42,7 +42,7 @@ const ROUTE_BODY_CLASSES = [
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, WorldStars, WorldLanterns, WorldMoon, WorldSparkles, WorldLeaves, WorldShells, WorldPetals],
+  imports: [RouterOutlet, WorldStars, WorldLanterns, WorldMoon, WorldSparkles, WorldLeaves, WorldWaves, WorldPetals],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

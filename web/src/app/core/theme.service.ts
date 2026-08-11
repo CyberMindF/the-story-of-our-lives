@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { WorldSettingsService } from './world-settings.service';
+import { WorldSettingKey, WorldSettingsService } from './world-settings.service';
 
 export interface ThemeDefinition {
   id: string;
@@ -12,6 +12,16 @@ export interface ThemeDefinition {
 
 const STORAGE_KEY = 'noi-crossword-theme-v15';
 const DEFAULT_THEME_ID = 'the-white-world';
+
+// Effetto "di casa" di ogni tema (#b3-b): scegliere un tema riaccende il suo, senza toccare
+// gli altri — restano comunque disattivabili liberamente dopo. the-white-world non è in lista:
+// non ha un effetto dedicato, solo gli elementi neutri (luna/stelle/lanterne).
+const THEME_DEFAULT_EFFECT: Partial<Record<string, WorldSettingKey>> = {
+  'red-of-you': 'sparkles',
+  'green-of-me': 'leaves',
+  sea: 'waves',
+  velvet: 'petals'
+};
 
 // Stessi 5 temi, stessa storageKey di assets/js/shared/theme.js — condivisa con tutte le
 // pagine vecchie e nuove finché la migrazione non è completa, per non perdere la scelta
@@ -107,6 +117,13 @@ export class ThemeService {
     }
     if (options.persistRemote !== false) {
       void this.worldSettingsService.setValue('theme', theme.id);
+      // Solo quando è davvero una scelta della persona (non la sincronizzazione dal server né
+      // l'applicazione della cache locale all'avvio, che passano persistRemote:false apposta):
+      // riaccende l'effetto di questo tema, senza spegnere quelli degli altri temi.
+      const defaultEffect = THEME_DEFAULT_EFFECT[theme.id];
+      if (defaultEffect) {
+        void this.worldSettingsService.set(defaultEffect, true);
+      }
     }
   }
 }

@@ -143,3 +143,36 @@
 .settings-effects {
   width: min(100%, 34rem);
 }
+
+/* Gruppi per tema (#b3-b): ogni titolo introduce la .settings-list che lo segue, tranne il
+   primo (subito dopo l'intro della sezione, non serve altro spazio sopra). */
+.settings-group-title {
+  margin: clamp(1.75rem, 4vw, 2.25rem) 0 .75rem;
+  color: var(--muted-color);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.settings-group-title:first-of-type {
+  margin-top: 0;
+}
+
+/* Avviso "poco adatto a questo tema" (es. luna/stelle su Ocean, l'unico cielo diurno): un
+   accenno visivo, non un blocco allarmante — l'effetto resta comunque attivabile, è solo
+   un suggerimento. */
+.settings-toggle-warning {
+  color: #e0b34a;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+/* Nota che spiega "consigliato" non "esclusivo" (#b3-b): comparsa una sola volta, sopra il
+   primo dei quattro gruppi per-tema, non ripetuta su ognuno. */
+.settings-group-note {
+  margin: 0 0 .9rem;
+  color: var(--muted-color);
+  font-size: .85rem;
+  line-height: 1.5;
+}

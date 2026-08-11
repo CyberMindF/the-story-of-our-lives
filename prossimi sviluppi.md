@@ -21,7 +21,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   esistente.
 - #34 — Pagina delle nostre ricette?
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
-- #b3-b - Suddividere gli effetti nella pagina delle impostazioni per tema, quindi quegli effetti che non stanno bene sul alcuni temi "segnalarli" in qualche modo, tipo la luna e le stelle sono inutili su ocean. Possiamo anche fare in modo che comunque attivare un determinato tema, attiva anche determinati selettori, che poi possono essere cambiati liberamente, però attiva le "sue cose di default"
 
 ---
 
@@ -272,12 +271,41 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `world-petals.ts` per Velvet, stessa meccanica delle foglie ma più lenta e morbida, colore
   pieno (non ombre — qui sono davvero petali, emoji 🌸), idea di Claude non ancora confermata
   da Rory ma già costruita. #b3-a è così completo: un effetto per ognuno dei 4 temi non-Notte,
-  ognuno col proprio interruttore. Verifica a schermo di questo giro interrotta a metà: mentre
-  testavo con Playwright, Rory stava già usando il sito dal vivo in parallelo (stessi dati
-  locali condivisi) e ha lui stesso cambiato tema e spento/riacceso gli effetti mentre ero a
-  metà controllo — smesso di far girare i test automatici per non interferire con l'uso reale,
-  che in quel momento vale più di uno screenshot. Anche questa migrazione (0028) resta da
-  applicare sul D1 di produzione.
+  ognuno col proprio interruttore.
+
+  **Bug grave trovato dopo, con #b3-b**: la home del Mondo Bianco è risultata completamente
+  vuota — collisione di nomi CSS. La singola conchiglia si chiamava `.world-shell`, ma quel
+  nome era già preso: `mondo-bianco.html` passa `shellClass="world-shell"` ad `AppShell` per
+  il proprio contenitore principale ("shell" nel senso di involucro, non conchiglia). Le
+  regole delle conchiglie (`opacity:0` di partenza, un filtro colore pesante) si applicavano
+  per errore all'intera pagina. Trovato solo grazie a uno screenshot vero (build/curl non lo
+  avrebbero mai mostrato: DOM e stili computati sembravano corretti, il problema era solo nel
+  risultato visivo finale) — rinominata in `.world-seashell`, e ricontrollati tutti gli altri
+  nomi introdotti in questa sessione per lo stesso rischio.
+
+  **#b3-b, fatto insieme al resto**: rimosso il vincolo "solo su quel tema" da tutti e quattro
+  gli effetti (Rory: i temi sono preset che consigliano/accendono un effetto di default —
+  `THEME_DEFAULT_EFFECT` in `theme.service.ts`, si attiva solo quando è davvero una scelta
+  della persona, non nella sincronizzazione — ma restano comunque disponibili su qualunque
+  tema). Pagina Impostazioni riorganizzata in gruppi per tema ("Su ogni tema", "Consigliato
+  per X"); avviso ⚠️ su luna/stelle quando il tema attivo è diurno (oggi solo Ocean).
+
+  **Altro giro di feedback dal vivo**: le conchiglie non piacevano — sostituite da onde del
+  mare vere (`world-waves.ts`), tre livelli SVG sovrapposti con un loop orizzontale perfetto
+  (pattern ripetuto due volte, `translateX` da 0 a -50%, il punto di ricongiungimento non si
+  vede mai) invece di un elemento decorativo sparso. Le foglie non piacevano (l'emoji 🍃 mostra
+  due foglioline insieme, e lo zig-zag laterale sembrava un vento brusco): passate a 🍂 (una
+  sola foglia) con una deriva morbida in un'unica direzione invece di cambiare verso due volte.
+  I fiori di Velvet sono diventati selezionabili (come la fase della luna: value in
+  `world_settings`, non solo enabled) tra tre forme — fiori rosa (🌸), margherite (🌼, sbiancate
+  con `filter: grayscale + brightness`, di serie hanno il centro giallo) e petali di rosa veri
+  disegnati in CSS puro (border-radius asimmetrico, nessuna emoji di petalo esiste in Unicode)
+  — o "mix" di tutte e tre. Velvet stesso schiarito un po' (bg-color e cielo, ~40% più chiari):
+  aveva perso il bagliore ambientale tolto in un giro precedente e si leggeva quasi nero piatto
+  invece che "viola scuro". Verificato tutto a schermo con Playwright su tutti e 5 i temi
+  insieme (stelle/luna/lanterne/brillantini/foglie/onde/fiori tutti accesi contemporaneamente)
+  prima di consegnare, non solo build/curl. Migrazione 0029 (sostituisce "shells" con "waves",
+  mai arrivata in produzione) applicata solo in locale.
 
 ### Bug chiusi
 

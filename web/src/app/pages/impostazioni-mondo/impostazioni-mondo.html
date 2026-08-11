@@ -21,6 +21,8 @@
   <section class="settings-effects" aria-labelledby="settings-effects-title">
     <h2 id="settings-effects-title">Cosa vive nel cielo</h2>
     <p class="settings-effects-intro">Accendi o spegni gli elementi che abitano il mondo.</p>
+
+    <h3 class="settings-group-title">Su ogni tema</h3>
     <div class="settings-list">
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
@@ -41,6 +43,9 @@
         <span class="settings-toggle-info">
           <span class="settings-toggle-title"><span aria-hidden="true">✨</span> Stelle nel cielo</span>
           <span class="settings-toggle-description">Le stelle che brillano nel cielo del mondo, su ogni tema.</span>
+          @if (isDaytimeTheme()) {
+            <span class="settings-toggle-warning">⚠️ Poco senso su un cielo diurno come questo</span>
+          }
         </span>
         <input
           type="checkbox"
@@ -57,6 +62,9 @@
           <span class="settings-toggle-info">
             <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
             <span class="settings-toggle-description">La luna nel cielo del mondo, con la fase che scegli qui sotto.</span>
+            @if (isDaytimeTheme()) {
+              <span class="settings-toggle-warning">⚠️ Poco senso su un cielo diurno come questo</span>
+            }
           </span>
           <input
             type="checkbox"
@@ -78,11 +86,15 @@
           </select>
         </div>
       </div>
+    </div>
 
+    <h3 class="settings-group-title">Consigliato per Red of You</h3>
+    <p class="settings-group-note">Come tutti gli effetti qui sotto, disponibile su qualunque tema — cambiare tema lo riaccende di default, ma resta libero da spegnere o accendere quando vuoi.</p>
+    <div class="settings-list">
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
           <span class="settings-toggle-title"><span aria-hidden="true">💫</span> Brillantini</span>
-          <span class="settings-toggle-description">Solo sul tema Red of You: piccoli lampi di luce nel cielo.</span>
+          <span class="settings-toggle-description">Piccoli lampi di luce nel cielo.</span>
         </span>
         <input
           type="checkbox"
@@ -93,11 +105,14 @@
         />
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </label>
+    </div>
 
+    <h3 class="settings-group-title">Consigliato per Green of Me</h3>
+    <div class="settings-list">
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
-          <span class="settings-toggle-title"><span aria-hidden="true">🍃</span> Ombre di foglie</span>
-          <span class="settings-toggle-description">Solo sul tema Green of Me: foglie che cadono lente nel vento.</span>
+          <span class="settings-toggle-title"><span aria-hidden="true">🍂</span> Ombre di foglie</span>
+          <span class="settings-toggle-description">Foglie che cadono lente, portate da una brezza leggera.</span>
         </span>
         <input
           type="checkbox"
@@ -108,36 +123,54 @@
         />
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </label>
+    </div>
 
+    <h3 class="settings-group-title">Consigliato per Ocean</h3>
+    <div class="settings-list">
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
-          <span class="settings-toggle-title"><span aria-hidden="true">🐚</span> Conchiglie</span>
-          <span class="settings-toggle-description">Solo sul tema Ocean: conchiglie che attraversano il cielo.</span>
+          <span class="settings-toggle-title"><span aria-hidden="true">🌊</span> Onde del mare</span>
+          <span class="settings-toggle-description">Onde che scorrono in fondo al cielo.</span>
         </span>
         <input
           type="checkbox"
           class="settings-toggle-input"
-          [checked]="worldSettingsService.settings().shells"
-          (change)="toggleSetting('shells', $event)"
-          aria-label="Conchiglie"
+          [checked]="worldSettingsService.settings().waves"
+          (change)="toggleSetting('waves', $event)"
+          aria-label="Onde del mare"
         />
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </label>
+    </div>
 
-      <label class="settings-toggle card">
-        <span class="settings-toggle-info">
-          <span class="settings-toggle-title"><span aria-hidden="true">🌸</span> Petali di rosa</span>
-          <span class="settings-toggle-description">Solo sul tema Velvet: petali che cadono lenti nel cielo.</span>
-        </span>
-        <input
-          type="checkbox"
-          class="settings-toggle-input"
-          [checked]="worldSettingsService.settings().petals"
-          (change)="toggleSetting('petals', $event)"
-          aria-label="Petali di rosa"
-        />
-        <span class="settings-toggle-switch" aria-hidden="true"></span>
-      </label>
+    <h3 class="settings-group-title">Consigliato per Velvet</h3>
+    <div class="settings-list">
+      <div class="settings-toggle-card card">
+        <label class="settings-toggle">
+          <span class="settings-toggle-info">
+            <span class="settings-toggle-title"><span aria-hidden="true">🌸</span> Fiori che cadono</span>
+            <span class="settings-toggle-description">Fiori che scendono lenti nel cielo, con la forma che scegli qui sotto.</span>
+          </span>
+          <input
+            type="checkbox"
+            class="settings-toggle-input"
+            [checked]="worldSettingsService.settings().petals"
+            (change)="toggleSetting('petals', $event)"
+            aria-label="Fiori che cadono"
+          />
+          <span class="settings-toggle-switch" aria-hidden="true"></span>
+        </label>
+
+        <div class="settings-phase-picker">
+          <label for="petal-kind-select">Forma</label>
+          <select id="petal-kind-select" [value]="worldSettingsService.values().petals || 'mix'" (change)="setPetalKind($event)">
+            <option value="mix">Mix di tutte</option>
+            @for (kind of petalKindOptions; track kind[0]) {
+              <option [value]="kind[0]">{{ kind[1] }}</option>
+            }
+          </select>
+        </div>
+      </div>
     </div>
   </section>
 </app-shell>

@@ -1,8 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
+import { ThemeService } from '../../core/theme.service';
 import { WorldSettingKey, WorldSettingsService } from '../../core/world-settings.service';
 import { MOON_PHASE_LABEL } from '../../shared/moon-phase';
+import { PETAL_KIND_LABEL, PetalKind } from '../../shared/world-petals';
 import { ThemeSwitcher } from '../../shared/theme-switcher';
+
+// Temi diurni: per questi gli elementi "sempre nel cielo" pensati per la notte (luna, stelle)
+// stonano davvero (#b3-b) — oggi solo Ocean, ma tenuto come lista invece di un singolo id per
+// non dover ricordarsi di questo confronto se in futuro arriva un altro tema diurno.
+const DAYTIME_THEME_IDS = new Set(['sea']);
 
 // Tutto ciò che si vede nel Mondo Bianco e che prima o poi è diventato condivisibile: gli
 // effetti del cielo (#a3/#a5/#a6) e, da #a8, anche il tema stesso — chi li cambia qui li
@@ -16,9 +23,15 @@ import { ThemeSwitcher } from '../../shared/theme-switcher';
 })
 export class ImpostazioniMondo {
   protected readonly worldSettingsService = inject(WorldSettingsService);
+  protected readonly themeService = inject(ThemeService);
   // Indice + etichetta, per il <select> del selettore di fase — riusabile anche da #a4 in
   // futuro, stessa lista di MOON_PHASE_LABEL.
   protected readonly moonPhaseOptions = MOON_PHASE_LABEL.map((label, index) => ({ index, label }));
+  protected readonly petalKindOptions = Object.entries(PETAL_KIND_LABEL) as [PetalKind, string][];
+
+  protected isDaytimeTheme(): boolean {
+    return DAYTIME_THEME_IDS.has(this.themeService.activeThemeId());
+  }
 
   protected toggleSetting(key: WorldSettingKey, event: Event): void {
     const enabled = (event.target as HTMLInputElement).checked;
@@ -28,5 +41,10 @@ export class ImpostazioniMondo {
   protected setMoonPhase(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     void this.worldSettingsService.setValue('moon', value);
+  }
+
+  protected setPetalKind(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    void this.worldSettingsService.setValue('petals', value);
   }
 }

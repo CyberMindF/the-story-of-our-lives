@@ -202,9 +202,12 @@ body.world-atmosphere[data-theme="sea"] {
    lì sono riflessi luminosi veri, parte del suo essere l'unico cielo diurno) erano
    praticamente invisibili e non aggiungevano nulla alla pagina: tolti su richiesta di Rory
    l'11/08/2026, stessa richiesta già fatta per the-white-world qui sopra. */
+/* Schiarito un po' (#b3-b, Rory: "non è diventato troppo scuro?") — aveva perso il bagliore
+   ambientale rimosso in precedenza insieme a quello degli altri temi, e senza si leggeva più
+   come un viola quasi nero piatto che come "viola scuro, morbido". */
 body.world-atmosphere[data-theme="velvet"] {
   --world-star: rgba(250, 224, 235, 0.72);
-  background: linear-gradient(180deg, #1f1620 0%, var(--bg-color) 56%, #0d090f 100%);
+  background: linear-gradient(180deg, #2b1f2d 0%, var(--bg-color) 56%, #120d15 100%);
   background-attachment: fixed;
 }
 
@@ -283,6 +286,9 @@ body.world-atmosphere[data-theme="green-of-me"] {
   animation: leaf-fall var(--leaf-fall-duration) linear var(--leaf-fall-delay) infinite;
 }
 
+/* Una sola deriva morbida verso un lato, non uno zig-zag: la prima versione cambiava
+   direzione due volte ed era proprio quella a sembrare "il vento" in modo brusco. Qui la
+   foglia scende con una curva continua, come trasportata da una brezza leggera e costante. */
 @keyframes leaf-fall {
   0% {
     transform: translate(0, 0) rotate(var(--leaf-rotate-start));
@@ -291,17 +297,14 @@ body.world-atmosphere[data-theme="green-of-me"] {
   6% {
     opacity: var(--leaf-opacity);
   }
-  30% {
-    transform: translate(var(--leaf-sway), 35vh) rotate(calc((var(--leaf-rotate-start) + var(--leaf-rotate-end)) / 2));
-  }
-  60% {
-    transform: translate(calc(var(--leaf-sway) * -1), 70vh) rotate(var(--leaf-rotate-end));
+  55% {
+    transform: translate(var(--leaf-sway), 58vh) rotate(calc((var(--leaf-rotate-start) + var(--leaf-rotate-end)) / 2));
   }
   94% {
     opacity: var(--leaf-opacity);
   }
   100% {
-    transform: translate(0, 115vh) rotate(var(--leaf-rotate-end));
+    transform: translate(calc(var(--leaf-sway) * 1.5), 115vh) rotate(var(--leaf-rotate-end));
     opacity: 0;
   }
 }
@@ -313,11 +316,13 @@ body.world-atmosphere[data-theme="green-of-me"] {
   }
 }
 
-/* Conchiglie per Ocean (#b3-a, terzo dei quattro): a differenza di lanterne/foglie
-   (movimento verticale), qui attraversano lo schermo in orizzontale con un dondolio, come
-   trasportate da una corrente. Il filtro le scalda verso l'arancione: l'emoji di base è
-   sui toni rosa/crema, non arancione. */
-.world-shells {
+/* Onde del mare per Ocean (#b3-b, sostituiscono le conchiglie — a Rory non piacevano né la
+   forma né l'idea): tre livelli sovrapposti, ognuno un'unica forma SVG ripetuta due volte
+   affiancata (viewBox largo il doppio del pattern) e fatta scorrere con translateX da 0% a
+   -50% — esattamente la larghezza di una ripetizione, quindi il loop è perfettamente
+   invisibile, non si vede mai il punto di ricongiungimento. Ancorate in fondo allo schermo
+   (non un elemento decorativo sparso come gli altri effetti): un mare vero sta in basso. */
+.world-waves {
   position: fixed;
   z-index: 0;
   inset: 0;
@@ -325,53 +330,56 @@ body.world-atmosphere[data-theme="green-of-me"] {
   pointer-events: none;
 }
 
-.world-shell {
+.world-wave {
   position: absolute;
-  left: -8%;
-  top: var(--shell-y);
-  font-size: var(--shell-size);
-  opacity: 0;
-  filter: sepia(1) saturate(4.5) hue-rotate(-22deg) brightness(1.05);
-  animation: shell-drift var(--shell-drift-duration) linear var(--shell-drift-delay) infinite;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 22vh;
+  min-height: 9rem;
 }
 
-@keyframes shell-drift {
-  0% {
-    transform: translate(0, 0);
-    opacity: 0;
+.world-wave-back {
+  animation: wave-scroll 26s linear infinite;
+  opacity: 0.35;
+}
+
+.world-wave-mid {
+  animation: wave-scroll 19s linear infinite reverse;
+  opacity: 0.5;
+  height: 18vh;
+  min-height: 7rem;
+}
+
+.world-wave-front {
+  animation: wave-scroll 14s linear infinite;
+  opacity: 0.7;
+  height: 14vh;
+  min-height: 5.5rem;
+}
+
+@keyframes wave-scroll {
+  from {
+    transform: translateX(0);
   }
-  6% {
-    opacity: var(--shell-opacity);
-  }
-  25% {
-    transform: translate(28vw, calc(var(--shell-bob) * -1));
-  }
-  50% {
-    transform: translate(56vw, 0);
-  }
-  75% {
-    transform: translate(84vw, var(--shell-bob));
-  }
-  94% {
-    opacity: var(--shell-opacity);
-  }
-  100% {
-    transform: translate(116vw, 0);
-    opacity: 0;
+  to {
+    transform: translateX(-50%);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .world-shell {
+  .world-wave-back,
+  .world-wave-mid,
+  .world-wave-front {
     animation: none;
-    opacity: 0;
   }
 }
 
-/* Petali per Velvet (#b3-a, quarto e ultimo): stessa meccanica delle foglie di Green of Me
-   (cadono ruotando, dondolando ai lati) ma più lenti e morbidi — un petalo scende leggero,
-   non tumultuoso come una foglia nel vento — e a piena opacità/colore, non ombre scure: qui
-   sono davvero petali di rosa, non la loro ombra. */
+/* Fiori che cadono (#b3-b, tre forme selezionabili — o "mix" — su richiesta di Rory): stessa
+   meccanica di caduta delle foglie ma più lenta e morbida — un petalo scende leggero, non
+   tumultuoso. .world-petal-item porta posizione/animazione comuni a tutte e tre le forme;
+   .world-daisy (🌼), .world-pink-flower (🌸) e .world-rose-petal (un div sagomato in CSS
+   puro — nessuna emoji di petalo esiste in Unicode) aggiungono solo l'aspetto. */
 .world-petals {
   position: fixed;
   z-index: 0;
@@ -380,13 +388,35 @@ body.world-atmosphere[data-theme="green-of-me"] {
   pointer-events: none;
 }
 
-.world-petal {
+.world-petal-item {
   position: absolute;
   top: -10%;
   left: var(--petal-x);
-  font-size: var(--petal-size);
   opacity: 0;
   animation: petal-fall var(--petal-fall-duration) linear var(--petal-fall-delay) infinite;
+}
+
+.world-daisy {
+  font-size: var(--petal-size);
+  /* L'emoji ha il centro giallo di serie — Rory la voleva bianca: grayscale toglie il
+     colore (compreso il giallo), brightness la schiarisce verso il bianco invece che un
+     grigio spento. */
+  filter: grayscale(1) brightness(1.35);
+}
+
+.world-pink-flower {
+  font-size: var(--petal-size);
+}
+
+/* Border-radius asimmetrico invece che un ovale: un angolo resta quasi a punta, gli altri tre
+   arrotondati — la sagoma tipica di un petalo singolo. Sfumatura radiale per un minimo di
+   volume invece di una macchia di colore piatta. */
+.world-rose-petal {
+  width: var(--petal-size);
+  height: calc(var(--petal-size) * 1.3);
+  border-radius: 0% 65% 65% 65%;
+  background: radial-gradient(ellipse at 32% 28%, #ffc2d4 0%, #d6547f 55%, #8f2850 100%);
+  box-shadow: inset 0 0 0.3em rgba(60, 10, 30, 0.25);
 }
 
 @keyframes petal-fall {
@@ -397,23 +427,20 @@ body.world-atmosphere[data-theme="green-of-me"] {
   6% {
     opacity: var(--petal-opacity);
   }
-  35% {
-    transform: translate(var(--petal-sway), 40vh) rotate(calc((var(--petal-rotate-start) + var(--petal-rotate-end)) / 2));
-  }
-  65% {
-    transform: translate(calc(var(--petal-sway) * -1), 75vh) rotate(var(--petal-rotate-end));
+  55% {
+    transform: translate(var(--petal-sway), 60vh) rotate(calc((var(--petal-rotate-start) + var(--petal-rotate-end)) / 2));
   }
   94% {
     opacity: var(--petal-opacity);
   }
   100% {
-    transform: translate(0, 115vh) rotate(var(--petal-rotate-end));
+    transform: translate(calc(var(--petal-sway) * 1.4), 115vh) rotate(var(--petal-rotate-end));
     opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .world-petal {
+  .world-petal-item {
     animation: none;
     opacity: 0;
   }

@@ -1,8 +1,11 @@
-@if (themeService.activeThemeId() === petalThemeId && worldSettingsService.settings().petals) {
+@if (worldSettingsService.settings().petals) {
   <div class="world-petals" aria-hidden="true">
-    @for (petal of petals; track $index) {
+    @for (petal of petals(); track $index) {
       <span
-        class="world-petal"
+        class="world-petal-item"
+        [class.world-daisy]="petal.kind === 'daisy'"
+        [class.world-pink-flower]="petal.kind === 'pink'"
+        [class.world-rose-petal]="petal.kind === 'rose'"
         [style.--petal-x]="petal.x + '%'"
         [style.--petal-size]="petal.size + 'rem'"
         [style.--petal-opacity]="petal.opacity"
@@ -11,7 +14,7 @@
         [style.--petal-rotate-end]="petal.rotateEnd + 'deg'"
         [style.--petal-fall-duration]="petal.fallDuration + 's'"
         [style.--petal-fall-delay]="petal.fallDelay + 's'"
-      >🌸</span>
+      >{{ petal.kind === 'daisy' ? '🌼' : petal.kind === 'pink' ? '🌸' : '' }}</span>
     }
   </div>
 }

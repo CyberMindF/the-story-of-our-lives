@@ -29,8 +29,8 @@
 }
 
 body[data-theme="velvet"] {
-  --bg-color: #140f16;
-  --panel-color: #211821;
+  --bg-color: #1c151f;
+  --panel-color: #2e222e;
   --panel-border-color: rgba(240, 199, 212, 0.14);
   --text-color: #f7f1f3;
   --muted-color: #ccb8c0;
