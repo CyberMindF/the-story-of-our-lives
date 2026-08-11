@@ -98,8 +98,11 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   brillio invece di restare una macchia fissa — corretto di conseguenza anche
   `prefers-reduced-motion`, che senza un selettore esplicito su `.is-bright` non disattivava
   questa nuova animazione (specificità più alta della sola regola `.world-star`).
-  Non verificato visivamente in questa sessione (nessun tool browser disponibile): confermato
-  solo che il CSS compilato servito dal dev server contiene le nuove keyframe e i nuovi valori.
+  **Altri due giri di feedback dopo aver visto il risultato a schermo**: troppo veloce →
+  rallentato (durata raddoppiata 0.9-1.9s → 1.8-3.8s) e alone un po' più grande al picco
+  (11px/3px → 14px/3.6px); ancora troppo veloce → durata raddoppiata di nuovo, 3.6-7.6s
+  (ritardo scalato di conseguenza a 0-10s in entrambi i giri, per restare proporzionato al
+  ciclo più lungo). Questa volta verificato a schermo da Rory, non solo dal CSS compilato.
 
 ### Bug chiusi
 
