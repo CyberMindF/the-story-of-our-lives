@@ -1,0 +1,3788 @@
+{
+  "periods": [
+    {
+      "title": "Settembre",
+      "slug": "settembre",
+      "days": [
+        {
+          "title": "Il primo giorno",
+          "slug": "il-primo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Se ti va puoi ascoltare la canzone mentre guardi e leggi"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "audio",
+                      "key": "bacheca/settembre/giorno-1/audio/oslo.mp3",
+                      "label": "Oslo (Skioffi)"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-1/original/01.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-1/thumb/01.jpg",
+                      "caption": "Non puoi capire come mi sentivo emozionato a essere finalmente davanti quel portone che avevo visto solo su maps",
+                      "devId": 1
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-1/original/02.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-1/thumb/02.jpg",
+                      "caption": "Qui ancora non sapevo nemmeno quale fosse di preciso il tuo balcone. Ma una cosa divertente è che non volevo stare troppo sotto perché non volevo che mi vedessi ahaha spero che ci vedessimo nello stesso momento sotto",
+                      "devId": 2
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-1/original/03.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-1/thumb/03.jpg",
+                      "devId": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-1/original/04.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-1/thumb/04.jpg",
+                      "caption": "Inutile dire come mi batteva il cuore quando mi hai mandato questa foto. Sono rimasto a fissare il numero dell’ascensore e poi appena è diventato 1 sono scappato via ahaha. Quando sei uscita sembravi un sogno",
+                      "devId": 4
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-1/original/05.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-1/thumb/05.jpg",
+                      "devId": 5
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-1/original/06.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-1/thumb/06.jpg",
+                      "caption": "Purtroppo questo gattino è l’unica cosa che racconta quella sera, ma quella sera c’è stato anche il nostro primo appuntamento, i polpi, il cameriere, i regali, la letterina, la piazza ancora con l’imbarazzo senza sapere che dire. Non ricordo nemmeno com’eri vestita ahaha, ricordo la gonna nera di jeans tipo. Però eri stupenda, questo lo ricordo. E che avevi il lucidalabbra",
+                      "devId": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Abbiamo pochissime foto di quel giorno 🥲"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Il secondo giorno",
+          "slug": "il-secondo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.49999999999999994,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Credo che questa sia letteralmente l’unica foto del nostro secondo giorno, a meno che non mi sto confondendo. È una ed è semplice, però alla fine questa foto quanti ricordi racchiude? Il mc, la musica in macchina, le chiacchierate, tu che ti lamentavi perché non mi sbrigavo a cambiare canzone ahaha. Mi ricordo che quel giorno comunque abbiamo riso tanto. È stato bello scegliere la canzone del tuo compleanno insieme. Che poi se ti ricordi, abbiamo scelto pure la torta insieme, e in qualche modo avevamo parlato insieme pure del vestito mesi prima ahaha. Comunque ricordo che avevo voglia di prenderti e ballare con qualche canzone quel lento, e te l’ho anche chiesto, però ho fatto finta che stessi scherzando ahaha mi imbarazzava, ma allo stesso tempo avevo voglia di farlo. Eri molto bella con il sole tutto il tempo in faccia, ti illuminava gli occhi come nelle foto che mi mandavi ogni tanto. Non mi ricordo poi che abbiamo fatto per tutto il resto della giornata, credo che quella sera siamo andati mangiare quella pizza e abbiamo parlato. So che siamo stati anche a casa, ma non so se è stato prima o dopo la pizza"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.49999999999999994,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-2/original/01.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-2/thumb/01.jpg",
+                      "devId": 7
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Il terzo giorno",
+          "slug": "il-terzo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.49999999999999994,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/01.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/01.jpg",
+                      "caption": "Non ha senso che mi metta a commentare ogni foto, però posso solo dire un po’ per tutte che comunque eravamo bellissimi",
+                      "devId": 8
+                    }
+                  ]
+                },
+                {
+                  "width": 0.49999999999999994,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/02.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/02.jpg",
+                      "devId": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/03.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/03.jpg",
+                      "devId": 10
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/04.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/04.jpg",
+                      "devId": 11
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/05.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/05.jpg",
+                      "devId": 12
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/06.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/06.jpg",
+                      "devId": 13
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/07.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/07.jpg",
+                      "caption": "Vorrei abbracciarti così",
+                      "devId": 14
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/08.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/08.jpg",
+                      "caption": "Guarda quanto erano grandi i tuoi occhi in quel momento ahaha",
+                      "devId": 15
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/09.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/09.jpg",
+                      "devId": 16
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/10.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/10.jpg",
+                      "devId": 17
+                    },
+                    {
+                      "type": "text",
+                      "text": "Come vorrei dormire sempre e per sempre ahaha"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/11.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/11.jpg",
+                      "devId": 18
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/12.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/12.jpg",
+                      "devId": 19
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/13.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/13.jpg",
+                      "devId": 20
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/14.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/14.jpg",
+                      "devId": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/15.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/15.jpg",
+                      "devId": 22
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/16.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/16.jpg",
+                      "devId": 23
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/17.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/17.jpg",
+                      "caption": "Hey.Comunque eri carina quando ti nascondevi, mi ricordo che pure quello è stato un bel momento divertente",
+                      "devId": 24
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/18.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/18.jpg",
+                      "devId": 25
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/19.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/19.jpg",
+                      "devId": 26
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/20.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/20.jpg",
+                      "devId": 27
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/21.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/21.jpg",
+                      "devId": 28
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/22.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/22.jpg",
+                      "devId": 29
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/23.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/23.jpg",
+                      "devId": 30
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Questa è più adatta qui che sei una principessa ahaha"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "audio",
+                      "key": "bacheca/settembre/giorno-3/audio/perfect.mp3",
+                      "label": "Perfect (Ed Sheeran)"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/24.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/24.jpg",
+                      "devId": 31
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/25.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/25.jpg",
+                      "caption": "Qui sembrava quasi che mi stessi guardando ahaha",
+                      "devId": 32
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/26.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/26.jpg",
+                      "devId": 33
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5000000000000001,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Beh che dire di queste 4 foto? Te le ho fatte a sgamo, sperando che nessuno mi vedesse e facendomi forte del fatto che tutte le tue amiche te le stessero facendo. Allora ho pensato che forse mi potevo “mimetizzare” ahaha e fartene qualcuna pure io. Poi si vabbé mi sono imbarazzato e ho pensato che forse qualcuno potesse pensare male e mi sono fermato. Mi ricordo che quella sera eri perfetta, avrei voluto farti foto tutto il tempo. Però amo questa foto qui accanto. Ne ho fatte solo 4, ma puoi dire quello che vuoi, che non ti piace, che fa schifo, non lo so. Ma per me vederti sorridere in quel modo non ha prezzo. Eri bella. Con la tua coroncina e la tua fascia “birthday queen” ahaha e quel vestito rosso che hai aspettato così tanto per mettere e che sono felice di averti visto addosso. Quando ci ripenso, penso che quella serata per me è stata un po’ magica. Ho tanti ricordi belli. Tipo te che balli felice, gli sguardi, il video che ti hanno fatto che mi ha fatto commuovere ahaha, te che ti butti su di me ahaha, vedere le tue amiche per la prima volta, anche se non mi sono nemmeno presentato ahaha. E vedere pure come ti prendevano in giro per come mangi 😌"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-3/original/27.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-3/thumb/27.jpg",
+                      "devId": 34
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Quello è stato proprio il giorno delle corse ahaha, per prepararmi, per andare alla tua festa, per prendere la macchina. Ma anche il giorno del parrucchiere, mi ricordo che una volta mi avevi detto qualcosa che ti aveva colpita di me quel giorno, ma non ricordo cosa. Però ricordo che ti ho detto che fumavo, e ti ho dato il kinder bueno ahaha. La sera mi avevi chiesto se mi ero portato la sigaretta e ricordo che non lo avevo fatto proprio perché non volevo che la tua famiglia pensasse male ahaha"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Il quarto giorno",
+          "slug": "il-quarto-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/01.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/01.jpg",
+                      "devId": 35
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/02.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/02.jpg",
+                      "devId": 36
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/03.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/03.jpg",
+                      "caption": "Non so perché anche se ti vedi appena, mi piaceva un sacco guardare questa foto, hai quello sguardo che sembrava proprio innamorato",
+                      "devId": 37
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/04.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/04.jpg",
+                      "devId": 38
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/05.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/05.jpg",
+                      "devId": 39
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/06.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/06.jpg",
+                      "devId": 40
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/07.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/07.jpg",
+                      "devId": 41
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/08.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/08.jpg",
+                      "devId": 42
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/09.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/09.jpg",
+                      "devId": 43
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/10.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/10.jpg",
+                      "devId": 44
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-4/original/11.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-4/thumb/11.jpg",
+                      "devId": 45
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Beh che dire, anche di questa giornata non abbiamo molte foto, ma sono contento che abbiamo almeno queste, perché boh per me sono tra le più belle. Mi piace guardare che occhioni che avevi, erano enormi anche se avevi la luce puntata in faccia ahaha. Amo le ultime due, ovviamente mi piacciono anche quelle prima, però boh, le ultime due, hanno qualcosa, quell’abbraccio, il bacio sulla fronte. Beh ovviamente le nostre cheesecake ahaha quella giornata la ricordiamo bene, anche se non si vede quella maglietta era già sporca. Quella sera ti ho dato quel bracciale, abbiamo giocato a monopoly per la prima volta e avevi quel vestito che sai quanto mi piaceva vedertelo addosso. Secondo me in queste 8 foto è racchiuso tanto amore"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Il quinto giorno",
+          "slug": "il-quinto-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/01.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/01.jpg",
+                      "devId": 46
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/02.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/02.jpg",
+                      "devId": 47
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/03.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/03.jpg",
+                      "devId": 48
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/04.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/04.jpg",
+                      "caption": "Mi ricordo che quel giorno avevo voglia di farti foto a caso, eri bella. E poi volevo darti un po’ di fastidio forse ahaha guarda quanto mi stavi odiando",
+                      "devId": 49
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5000000000000001,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/05.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/05.jpg",
+                      "caption": "Di quelle giornate mi ricordo tanto il fatto che non avevamo mai fame e volevamo semplicemente stare insieme, anche senza mangiare ahaha. Però un po’ mi sentivo in colpa che non ti facessi mangiare e quindi qui ero contento perché avevi fame e ti avevo comprato tutto quello che volevi ahaha. Mi ricordo che avevo preso il kebab ed è caduto tutto l’olio e mi ricordo che questa cosa ci aveva fatto ridere. Poi vabbé le nuggest. E ti sblocco un ricordo, che si è appena sbloccato a me. Ti ricordi che ci conoscevano tipo TUTTI? Perché la sera prima mentre andavamo in bagno avevamo conosciuto tipo tutti quelli del B&B, e quel giorno abbiamo scoperto che erano praticamente tutti quelli che lavoravano lì ahaha. Però ci hanno tratto bene",
+                      "devId": 50
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/06.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/06.jpg",
+                      "devId": 51
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/07.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/07.jpg",
+                      "devId": 52
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/08.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/08.jpg",
+                      "devId": 53
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/09.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/09.jpg",
+                      "caption": "30 euro di caramelle 👀. Però in questa foto si vedono sia le giuggiole che gli ovetti. E se ci fai caso anche un cuoricino",
+                      "devId": 54
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/10.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/10.jpg",
+                      "caption": "Io mi ricordo perché ridevi. Ahaha eri stronza e io ti baciavo e tu stavi ferma e io mi lamentavo e a te veniva da ridere. Però è venuta una bella foto lo ammetto",
+                      "devId": 55
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/11.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/11.jpg",
+                      "devId": 56
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5000000000000002,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/12.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/12.jpg",
+                      "devId": 57
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/13.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/13.jpg",
+                      "devId": 58
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/14.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/14.jpg",
+                      "devId": 59
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/15.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/15.jpg",
+                      "devId": 60
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5000000000000001,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/16.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/16.jpg",
+                      "devId": 61
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/17.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/17.jpg",
+                      "devId": 62
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/18.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/18.jpg",
+                      "caption": "Non sai quanto mi manca a volte vedere quel faccino",
+                      "devId": 63
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Tutte queste foto mi piacciono perché tante sono stupide ahaha e boh mi fanno ridere, era bella perché stavamo “giocando” a farci le foto, era bello. E poi vabbé c’è quella faccia che hai fatto che è alla fine è diventata uno sticker ahaha. Comunque guarda le ultime quattro in sequenza, fanno riderissimo ahaha, chissà che ti avevo detto"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/19.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/19.jpg",
+                      "devId": 64
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/20.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/20.jpg",
+                      "devId": 65
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/21.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/21.jpg",
+                      "devId": 66
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/22.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/22.jpg",
+                      "devId": 67
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/23.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/23.jpg",
+                      "devId": 68
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/24.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/24.jpg",
+                      "devId": 69
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/25.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/25.jpg",
+                      "caption": "Il nostro sfondo",
+                      "devId": 70
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/26.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/26.jpg",
+                      "devId": 71
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/27.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/27.jpg",
+                      "devId": 72
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Queste due foto sono belle, eravamo super abbracciati. Ma ti giuro che non capisco com’eravamo messi, come avevamo le mani? Ahaha c’è una mia mano dietro di me e una tua mano che spunta da giù. Non lo so, mi confondono ahaha"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/28.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/28.jpg",
+                      "devId": 73
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-5/original/29.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-5/thumb/29.jpg",
+                      "caption": "Lo sai, questa è una delle mie preferite, perché tu ridi, lo so, non ti stai ammazzando dalle risate ahaha, ma quel sorriso mi piace",
+                      "devId": 74
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Quello è un giorno speciale secondo me, forse perché era il primo giorno intero che passavamo insieme dalla mattina alla sera. Ricordo il giro che ci siamo fatti alla fiera, abbiamo guardato tipo tutto quello che si poteva. Ci siamo girati tutti gli stand delle caramelle per trovare quello perfetto in cui comprarle ahaha e alla fine siamo tornati tipo al secondo. Beh poi ricordo come sei scoppiata a ridere quando ti ho detto il prezzo delle caramelle ahaha e che mi hai detto che eri scappata più lontano per fare finta di non sentire ahaha. Però io te ne avrei comprate pure di più. Alla fine chi se ne se frega? I soldi si spendono per le persone che ami. Poi appunto il pranzo fuori e non so che abbiamo fatto il pomeriggio sinceramente ahaha. Ricordo che poi siamo andati in stanza, quel giorno ti ho letto quella letterina che ti ha fatta piangere, spero perché fosse bella ahaha. Poi abbiamo mangiato finalmente le patatine che tipo aspettavano lì dal giorno 1 mentre guardavamo quella piccolissima tv, ricordo che ti avevo comprato l’acqua frizzante, ma era troppo frizzante ahaha poi quel giorno abbiamo ascoltato la playlist dicevi che ti piaceva tanto. Ricordo che in quei giorni volevi sempre ascoltare un po’ di musica con me. E poi vabbé la sera non abbiamo nemmeno cenato, tra le patatine e le caramelle eravamo pieni ahaha, poi siamo andati a prendere il pigiama da te e alla fine abbiamo dormito insieme abbracciati. Quindi direi che tutto sommato è stata una bella giornata"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "L’ultimo giorno",
+          "slug": "l-ultimo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/01.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/01.jpg",
+                      "devId": 75
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/02.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/02.jpg",
+                      "devId": 76
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/03.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/03.jpg",
+                      "devId": 77
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "L’ultima di queste 3 foto secondo te è venuta benissimo. Ceh è proprio stupenda. Sarebbe una di quelle foto perfette da usare come sfondo del telefono. Ti posso dire anche che avevi delle unghie bellissime? Ahaha comunque qui ci eravamo svegliati da poco più o meno, e mi ricordo che mentre stavamo preparando le cose per lasciare la camera mi sono ricordato che avevo pensato di comprare apposta quei due cuori per mangiarli insieme. Non avevo pensato che sarebbero uscite pure delle foto belle ahaha. O forse almeno a queste ci avevo pensato? Onestamente non ricordo bene ahaha. Comunque vuoi sapere una cosa carina per cui adesso mi sento un po’ uno stupido? Mi ricordo che in quei giorni io volevo fare tante altre cose, non mi ricordo cosa, però pensavo sempre “faccio questo! ..No dai è troppo”. Avevo sempre paura che tutto quello che potessi fare per te era “troppo”, come se in qualche modo stessi forzando la mano nel fare succedere delle cose romantiche a tutti i costi no?"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Me lo sono ricordato perché questa cosa delle caramelle a forma di cuore era una di quelle. Infatti ne ho prese solo 2, per qualche motivo non volevo che pensassi che facevo delle cose solo per farti vedere che sono dolce ahaha. E quindi anche qui “le caramelle a forma di cuore ok, ma solo 2 giusto per il simbolo”. Non lo so, non volevo “esagerare”. Come se darti troppo amore o fare troppe cose belle potesse sembrare “troppo”. Però tante cose avrei voluto farle. Un po’ come la cosa di ballare se ci pensi no? Entrambi eravamo tipo “ma no dai che cavolata 😅”. Però in realtà avremmo voluto tutti e due"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/04.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/04.jpg",
+                      "devId": 78
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/05.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/05.jpg",
+                      "caption": "Quel giorno ti avrei comprato pure tutto il bar ahaha ero troppo triste che stava per finire tutto",
+                      "devId": 79
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/06.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/06.jpg",
+                      "devId": 80
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/07.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/07.jpg",
+                      "devId": 81
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/08.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/08.jpg",
+                      "devId": 82
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/09.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/09.jpg",
+                      "devId": 83
+                    }
+                  ]
+                },
+                {
+                  "width": 0.33333333333333337,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/10.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/10.jpg",
+                      "devId": 84
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/11.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/11.jpg",
+                      "devId": 85
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/12.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/12.jpg",
+                      "caption": "Chi lo avrebbe detto che quel gesto piccolo, poi sarebbe diventato così importante?",
+                      "devId": 86
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5000000000000001,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/13.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/13.jpg",
+                      "devId": 87
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/14.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/14.jpg",
+                      "caption": "Questa foto è troppo tenera ahaha",
+                      "devId": 88
+                    },
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/15.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/15.jpg",
+                      "devId": 89
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/16.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/16.jpg",
+                      "devId": 90
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/giorno-6/original/17.jpg",
+                      "thumbKey": "bacheca/settembre/giorno-6/thumb/17.jpg",
+                      "devId": 91
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/settembre/giorno-6/web/altalena-1.mp4",
+                      "devId": 1
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/settembre/giorno-6/web/altalena-2.mp4",
+                      "devId": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Vederti lì sull’altalena in video, con le cose che ci diciamo, mi ha sempre fatto uno strano effetto sai? Questo video ha davvero il sapore di quei video musicali, di quei ricordi che sono tipo tutti in sequenza no? Sembra uno di quei momenti stra belli e felici, che ora appunto sono nostalgici. Non so come spiegarlo ahaha. Però mi è sempre piaciuto avere questi due video, e mi sento stupido, perché abbiamo solo questi due, e oltre la mia voce, io nemmeno ci sono ahaha"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "E con questi 2 video si chiude il nostro ultimo giorno e i nostri ultimi ricordi insieme. Ricordo che quel giorno ero tanto triste, ma non sapevo ancora quanto sarei stato triste nei giorni subito dopo ahaha. Ricordo che mi mancavi da morire e che ancora era tutto vivo nella mia mente. Avrei dovuto scrivere di più, in modo che un giorno avrei potuto ricordare ogni singolo attimo alla perfezione. Qualcosa sono sicuro di averla scritta, ma sai, non è lì tipo “racconto” no? Ahaha peccato. Ricordo come nelle settimane successive continuavo a mettere il tuo elastico sotto il naso, per sentire ancora il tuo odore e il tuo profumo, perché si riuscivo a distinguerli ahaha. Facevo i salti mortali per non bagnarlo o “sporcarlo” con altri odori. Fino a che pian piano quello che sentivo è diventato solo una puntina lontana e alla fine non lo sentivo più. Ricordare un odore è difficile purtroppo. In ogni caso comunque è stato bello rivivere un po’ quei ricordi, inizialmente ha fatto male, ma man mano che li vedevo, sorridevo sempre di più. E mi rendo conto, anche se lo sapevo già che ogni attimo di quei giorni per me è stato unico, spero che sia stato bello anche per te riviverli con me"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Due fotine bonus",
+          "slug": "due-fotine-bonus",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/bonus/original/01.jpg",
+                      "thumbKey": "bacheca/settembre/bonus/thumb/01.jpg",
+                      "caption": "La maglietta sporca del tuo trucco",
+                      "devId": 92
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5000000000000001,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/settembre/bonus/original/02.jpg",
+                      "thumbKey": "bacheca/settembre/bonus/thumb/02.jpg",
+                      "caption": "Lo scontrino del nostro primo appuntamento che porto ancora nel mio portafogli",
+                      "devId": 93
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Maggio",
+      "slug": "maggio",
+      "days": [
+        {
+          "title": "Il primo giorno",
+          "slug": "il-primo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-1/original/01.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-1/thumb/01.jpg",
+                      "devId": 94
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Inizia tutto di nuovo davanti a questo portone. Tu forse non puoi capire l’emozione di esserci davanti, perché tu giustamente ci vivi. Ma per me è stupendo ogni volta, racchiude un po’ quella magia. È come se sapessi che dietro quel portone si trova la felicità e tutto quello che voglio. E questo portone è così difficile da raggiungere che ogni volta che ci sono stato davanti, mi ha fatto battere il cuore. Per me è speciale, non perché è un posto che non avevo mai visto, anzi, l’ho visto molte volte, ma poterlo vedere con i miei occhi è qualcosa di unico ogni singola volta"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-1/original/02.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-1/thumb/02.jpg",
+                      "devId": 95
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-1/original/03.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-1/thumb/03.jpg",
+                      "devId": 96
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Beh in qualche modo queste due foto sono speciali forse no? Abbiamo potuto vedere davvero il nostro filo rosso. Quella lettere che ti avevo scritto con il disegno mi piaceva così tanto che volevo renderla ancora più speciale con questo momento qui. E ora sono quali incredulo che sia diventato realtà. Spero che queste foto e questo filo, siano un augurio. E spero che davvero, per quanto sia tutto complicato, io e te abbiamo conosciuto il nostro filo rosso"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-1/original/04.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-1/thumb/04.jpg",
+                      "devId": 97
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Sono contento che ci sia questa foto, la nostra prima cosa cucinata insieme"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-1/original/05.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-1/thumb/05.jpg",
+                      "devId": 98
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-1/original/06.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-1/thumb/06.jpg",
+                      "devId": 99
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-1/original/07.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-1/thumb/07.jpg",
+                      "devId": 100
+                    },
+                    {
+                      "type": "text",
+                      "text": "Di questo momento ricordo due cose, io che sniffo continuamente il tuo profumo, e il battito del tuo cuore. Avevo la testa poggiata lì e lo sentivo perfettamente e non lo sentivo da troppo tempo, mi mancava. Ora grazie al tuo regalo, lo potrò portare sempre con me. Vorrei poter fare lo stesso con il tuo profumo"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-1/original/08.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-1/thumb/08.jpg",
+                      "devId": 101
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Il secondo giorno",
+          "slug": "il-secondo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-2/original/01.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-2/thumb/01.jpg",
+                      "devId": 102
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Non so perché ma questa foto mi piace, sei bella. E il nostro secondo giorno inizia così, con un piatto di pasta al pesto davanti, che nessuno dei due ama, ma che entrambi non mangiavamo da tanto ahaha"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-2/original/02.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-2/thumb/02.jpg",
+                      "devId": 103
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Comunque ti devo dire, hai fatto una foto stupenda, ceh mi piace proprio com’è venuta la luce e tutto. Mi dispiace che quelle candeline non potessero essere accese, sarebbe stato ancora più carino. Però sono felice che ti abbiamo fatto ridere così tanto che mi sono accorto dopo del rilevatore di fumo ahaha. Spero che questa sorpresa ti sia piaciuta tanto, pensavo da tanto a una cosa del genere e non volevo andare via senza essere riuscito a farla. Prima avevo pensato a una cosa diversa, da fare in un altro momento a gennaio. Ma mi sono dovuto adattare, spero che sia stato un bell’adattamento"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-2/original/03.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-2/thumb/03.jpg",
+                      "devId": 104
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-2/original/04.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-2/thumb/04.jpg",
+                      "devId": 105
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-2/original/05.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-2/thumb/05.jpg",
+                      "devId": 106
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Ed eccoti qua, una bellissima sirena, con suo regalo ahaha. Sono felice di avere queste foto, e devo dire che in particolare questa mi piace tanto, perché sembri davvero felice. Comunque devo dire che anche se purtroppo non ho il video, sono fiero della faccia che hai fatto. Hai aperto la bocca a hai iniziato a sorridere, parlavi, non so se lo facevi per smascherare o meno, però non riuscivi a smettere di sorridere ahaha e sinceramente era esattamente quello che speravo di ottenere, volevo che fossi felice e che avessi anche tu il tuo momento magico e perfetto. Mi dispiace che le kinder cards non ti piacciono. Pensavo di si. Uffa"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-2/original/06.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-2/thumb/06.jpg",
+                      "devId": 107
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "È stato bello vedere il film insieme, sapeva di quella cosa che abbiamo aspettato per tanto tanto, troppo tempo e che alla fine finalmente è arrivata. Siamo stati abbracciati, ci siamo dati la mano, ed è stato bello. È stato bello commentarlo insieme, ridere per le cose stupide insieme e stringerti e darti un bacio sui capelli quando saltavi in aria ahaha. Dopo il film ci siamo abbracciati, forse anche qualcosa di più, e siamo rimasti così per boh? Tipo 1 ora? Non lo so onestamente, ho perso il senso del tempo. Ma è stato bello sentirti di nuovo così vicina"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Purtroppo il secondo giorno finisce così, però devo ammettere che dopo c’è comunque stato qualcosa di bello no? Lo so, forse non si può definire “bello” un momento in cui si piange, però alla fine quando c’è una conferma, una rivelazione, o anche solo un bel discorso fatto con le lacrime agli occhi, sai che in quel momento viene dal cuore, che ci sono meno filtri, meno muri o armature no? E comunque sono quelle cose che ti fanno sorridere"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-2/original/07.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-2/thumb/07.jpg",
+                      "devId": 108
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Il terzo giorno",
+          "slug": "il-terzo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/01.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-3/thumb/01.jpg",
+                      "devId": 109
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Non pensare male ahaha ho fatto la foto alle tue chiavi perché sono bellissime, mi piacciono un sacco i colori, è super armonioso. Mi piace che sia tutto argento bianco e questo rosa confetto bellissimo. Mi piace pensare che tu curi tantissimo anche questi piccoli particolari. E amo tanto questa cosa di te"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Questa invece serve a ricordaci un giorno che la stanza 7 è bellissima, se mai dovesse servirci, chiederò proprio quella ahaha"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/02.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-3/thumb/02.jpg",
+                      "devId": 110
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/03.jpg",
+                      "thumbKey": "bacheca/maggio/giorno-3/thumb/03.jpg",
+                      "devId": 111
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "E queste beh, mi piaceva l’idea di vedere le nostre chiavi di casa insieme, vicine. Mentre scrivevo guardando questa foto mi sono reso conto di una cosa GIURO che non l’ho fatto apposta ahaha. Le nostre chiavi vicine sembra che fanno il numero “17”. Le tue messe unite, sembra che siano l’1, mentre vabbé le mie hanno proprio un 7 enorme ahaha. Che cosa bellissima"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/018-photo.jpg",
+                      "devId": 112
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/019-photo.jpg",
+                      "devId": 113
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/020-photo.jpg",
+                      "devId": 114
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/021-photo.jpg",
+                      "devId": 115
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/022-photo.jpg",
+                      "devId": 116
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/023-photo.jpg",
+                      "devId": 117
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/024-photo.jpg",
+                      "devId": 118
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/025-photo.jpg",
+                      "devId": 119
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/026-photo.jpg",
+                      "devId": 120
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/027-photo.jpg",
+                      "devId": 121
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/028-photo.jpg",
+                      "devId": 122
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/029-photo.jpg",
+                      "devId": 123
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/030-photo.jpg",
+                      "devId": 124
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/031-photo.jpg",
+                      "devId": 125
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/032-photo.jpg",
+                      "devId": 126
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/033-photo.jpg",
+                      "devId": 127
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/maggio/giorno-3/web/001-video.mp4",
+                      "devId": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/034-photo.jpg",
+                      "devId": 128
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/035-photo.jpg",
+                      "devId": 129
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/giorno-3/original/036-photo.jpg",
+                      "devId": 130
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Screenshots",
+          "slug": "screenshots",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/01.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/01.jpg",
+                      "devId": 131
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/02.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/02.jpg",
+                      "devId": 132
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/03.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/03.jpg",
+                      "devId": 133
+                    },
+                    {
+                      "type": "text",
+                      "text": "Beh che dire? Si è bello essere così vicini, ma non ci voleva un genio per dirlo no? Amo davvero il fatto che mi dici “vieni” e in 2 secondi sono da te. Vorrei che potesse essere così per sempre. Vorrei che vivessimo nella stessa città, non per vederci tutti i giorni, ma quanto meno per vederci più facilmente, anche fosse una volta al mese. Però non so. Qualcosa mi dice che se fossimo nella stessa città staremmo già vivendo insieme da un pezzo ahaha"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/04.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/04.jpg",
+                      "devId": 134
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Ho messo quel messaggio che volevi nel documento, metto qui il link. Messaggio.Ma anche io volevo salvare la tua risposta, perché comunque è bella, ci sono cose importanti, e si anche se potrei prenderla in qualsiasi momento da ig, così sarà più facile recuperarla",
+                      "link": {
+                        "href": "https://docs.google.com/document/d/10hqyWqgTlwno_3-9z2qafS1zLgWAsaAAYwNOpOaOzvY/edit?tab=t.0#heading=h.3qqgeqjm35uu",
+                        "label": "Messaggio"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/05.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/05.jpg",
+                      "devId": 135
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/06.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/06.jpg",
+                      "devId": 136
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/07.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/07.jpg",
+                      "devId": 137
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/08.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/08.jpg",
+                      "devId": 138
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/09.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/09.jpg",
+                      "devId": 139
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/maggio/screenshots/original/10.jpg",
+                      "thumbKey": "bacheca/maggio/screenshots/thumb/10.jpg",
+                      "devId": 140
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Vorrei che potesse essere tutto come ci dici tu. Magari un giorno a Roma ci andremo. Comunque si, io lo sento che non è la fine, anche se non lo posso sapere, io non sento che è la fine. Sento solo che come sempre è il momento sbagliato. E spero che sarà come dice l’immagine che mi hai condiviso, dici che alla fine siamo sempre noi, lo so. Siamo noi. Vorrei poterlo essere sempre fino in fondo. Vorrei vedere i tuoi outfit tutti giorni, anche se non stiamo insieme, vorrei poterti baciare anche se non stiamo insieme, stringerti anche se non stiamo insieme, vorrei tutto, pure se non stiamo insieme. Perché siamo noi. E perché se alla fine siamo sempre io e te, allora che senso ha aspettare?"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Luglio",
+      "slug": "luglio",
+      "days": [
+        {
+          "title": "Primo giorno",
+          "slug": "primo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/061-photo.jpg",
+                      "devId": 141
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/062-photo.jpg",
+                      "devId": 142
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/063-photo.jpg",
+                      "devId": 143
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/064-photo.jpg",
+                      "devId": 144
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/065-photo.jpg",
+                      "devId": 145
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/066-photo.jpg",
+                      "devId": 146
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/067-photo.jpg",
+                      "devId": 147
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/068-photo.jpg",
+                      "devId": 148
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/primo-giorno/web/005-video.mp4",
+                      "devId": 4
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/primo-giorno/web/006-video.mp4",
+                      "devId": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/069-photo.jpg",
+                      "devId": 149
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/071-photo.jpg",
+                      "devId": 150
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/130-photo.jpg",
+                      "devId": 151
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/primo-giorno/original/131-photo.jpg",
+                      "devId": 152
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Secondo giorno",
+          "slug": "secondo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/070-photo.jpg",
+                      "devId": 153
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/072-photo.jpg",
+                      "devId": 154
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/073-photo.jpg",
+                      "devId": 155
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/074-photo.jpg",
+                      "devId": 156
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/075-photo.jpg",
+                      "devId": 157
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/076-photo.jpg",
+                      "devId": 158
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/077-photo.jpg",
+                      "devId": 159
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/078-photo.jpg",
+                      "devId": 160
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/134-photo.jpg",
+                      "devId": 161
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/135-photo.jpg",
+                      "devId": 162
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/079-photo.jpg",
+                      "devId": 163
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/080-photo.jpg",
+                      "devId": 164
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/133-photo.jpg",
+                      "devId": 165
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/081-photo.jpg",
+                      "devId": 166
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/082-photo.jpg",
+                      "devId": 167
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/083-photo.jpg",
+                      "devId": 168
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/084-photo.jpg",
+                      "devId": 169
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/085-photo.jpg",
+                      "devId": 170
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/086-photo.jpg",
+                      "devId": 171
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/087-photo.jpg",
+                      "devId": 172
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/088-photo.jpg",
+                      "devId": 173
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/089-photo.jpg",
+                      "devId": 174
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/090-photo.jpg",
+                      "devId": 175
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/091-photo.jpg",
+                      "devId": 176
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/092-photo.jpg",
+                      "devId": 177
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/093-photo.jpg",
+                      "devId": 178
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/094-photo.jpg",
+                      "devId": 179
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/095-photo.jpg",
+                      "devId": 180
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/096-photo.jpg",
+                      "devId": 181
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/097-photo.jpg",
+                      "devId": 182
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/098-photo.jpg",
+                      "devId": 183
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/099-photo.jpg",
+                      "devId": 184
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/100-photo.jpg",
+                      "devId": 185
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/101-photo.jpg",
+                      "devId": 186
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/106-photo.jpg",
+                      "devId": 187
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/107-photo.jpg",
+                      "devId": 188
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/108-photo.jpg",
+                      "devId": 189
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/109-photo.jpg",
+                      "devId": 190
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/110-photo.jpg",
+                      "devId": 191
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/113-photo.jpg",
+                      "devId": 192
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/111-photo.jpg",
+                      "devId": 193
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/112-photo.jpg",
+                      "devId": 194
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/114-photo.jpg",
+                      "devId": 195
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/secondo-giorno/web/010-video.mp4",
+                      "devId": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/136-photo.jpg",
+                      "devId": 196
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/secondo-giorno/web/007-video.mp4",
+                      "devId": 7
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/secondo-giorno/web/008-video.mp4",
+                      "devId": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/137-photo.jpg",
+                      "devId": 197
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/secondo-giorno/original/138-photo.jpg",
+                      "devId": 198
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/secondo-giorno/web/009-video.mp4",
+                      "devId": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/secondo-giorno/web/020-video.mp4",
+                      "devId": 10
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/secondo-giorno/web/021-video.mp4",
+                      "devId": 11
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Terzo giorno",
+          "slug": "terzo-giorno",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/terzo-giorno/original/102-photo.jpg",
+                      "devId": 199
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/terzo-giorno/original/103-photo.jpg",
+                      "devId": 200
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/terzo-giorno/original/104-photo.jpg",
+                      "devId": 201
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/terzo-giorno/original/105-photo.jpg",
+                      "devId": 202
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/terzo-giorno/original/115-photo.jpg",
+                      "devId": 203
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/terzo-giorno/web/011-video.mp4",
+                      "devId": 12
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Quarto giorno",
+          "slug": "quarto-giorno-ultimo",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/116-photo.jpg",
+                      "devId": 204
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/117-photo.jpg",
+                      "devId": 205
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/118-photo.jpg",
+                      "devId": 206
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/119-photo.jpg",
+                      "devId": 207
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/120-photo.jpg",
+                      "devId": 208
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/121-photo.jpg",
+                      "devId": 209
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/122-photo.jpg",
+                      "devId": 210
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/123-photo.jpg",
+                      "devId": 211
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/124-photo.jpg",
+                      "devId": 212
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/125-photo.jpg",
+                      "devId": 213
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/126-photo.jpg",
+                      "devId": 214
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/127-photo.jpg",
+                      "devId": 215
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/128-photo.jpg",
+                      "devId": 216
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/129-photo.jpg",
+                      "devId": 217
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/web/013-video.mp4",
+                      "devId": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/original/139-photo.jpg",
+                      "devId": 218
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/web/014-video.mp4",
+                      "devId": 14
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/web/015-video.mp4",
+                      "devId": 15
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/web/016-video.mp4",
+                      "devId": 16
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/web/017-video.mp4",
+                      "devId": 17
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/web/018-video.mp4",
+                      "devId": 18
+                    }
+                  ]
+                },
+                {
+                  "width": 0.3333333333333333,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/web/019-video.mp4",
+                      "devId": 19
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/luglio/quarto-giorno-ultimo/web/012-video.mp4",
+                      "devId": 20
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "I video",
+      "slug": "i-video",
+      "days": [
+        {
+          "title": null,
+          "slug": "generale",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/i-video/generale/web/4-anni.mp4",
+                      "label": "Il video per i 4 anni",
+                      "devId": 21
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/i-video/generale/web/natale.mp4",
+                      "label": "Gli auguri di Natale",
+                      "devId": 22
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Altre cose",
+      "slug": "altre-cose",
+      "days": [
+        {
+          "title": null,
+          "slug": "generale",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Qui magari man mano continuerò ad aggiungere cose, o se vuoi puoi anche chiedermi tu di aggiungerne, magari se abbiamo altri “gruppi grandi” di ricordi, li possiamo mettere tutti insieme come quelli di settembre, così pian piano la bacheca dei ricordi diventa sempre più grande"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Una menzione onorevole a questa foto che mentre cercavo di creare il mondo bianco, è uscita, e mi ha colpito molto perché somiglia abbastanza a quello che mi sarebbe piaciuto fare per una di quelle sere tranne per qualcosa ahaha. Quindi mi andava di fartela vedere"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/generale/original/01.png",
+                      "thumbKey": "bacheca/altre-cose/generale/thumb/01.png",
+                      "devId": 219
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/generale/original/02.jpg",
+                      "thumbKey": "bacheca/altre-cose/generale/thumb/02.jpg",
+                      "devId": 220
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5000000000000001,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Il tuo bigliettino di auguri per l’8 marzo. Nota che ovviamente ci sono le mimose, ma anche una rosa e un mazzetto di margherite, che ormai per me rappresentano te ahaha"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Mi ricordo che quella volta ci ho messo giorni a pensare per bene a come fare questo disegno su minecraft. In qualche modo volevo che rappresentasse quello che avevo fatto nel disegno che ti ho dato. Ci doveva essere il cerchio, d’oro come quello del disegno, la rosa perché era il tuo fiore preferito e il fuoco del nostro amato cuore infuocato. E non puoi capire per quanto tempo ho cercato quelle lettere in quel modo, volevo che insomma fosse tutto perfetto, come sempre perché volevo strapparti un sorriso"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/generale/original/03.jpg",
+                      "thumbKey": "bacheca/altre-cose/generale/thumb/03.jpg",
+                      "devId": 221
+                    },
+                    {
+                      "type": "video",
+                      "key": "bacheca/altre-cose/generale/web/quadro-casa.mp4",
+                      "devId": 23
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5000000000000001,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/generale/original/04.png",
+                      "thumbKey": "bacheca/altre-cose/generale/thumb/04.png",
+                      "devId": 222
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Alla fine non credo di averti mai fatto vedere la versione finale di questo personaggio. Ogni volta che te l’ho fatto vedere non hai mai detto niente, quindi alla fine mi sono convinto che non ti importasse molto e ho smesso ahaha. Una volta mi avevi detto che questa era la dichiarazione d’amore più bella del mondo o qualcosa del genere. Ti ricordi?"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Beh come non menzionare le mie amate margherite? Devo ammettere che sono sempre state un fiore molto bello per me, anche se sai è un fiore comune quindi forse di solito non gli si da molto peso. Non avrei mai pensato che sarebbe diventato un simbolo così importante per me, per quanto questa mia passione sia nata da una cavolata forse stupida, ora ogni volta che vedo le margherite, mi vieni in mente"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/generale/original/05.jpg",
+                      "thumbKey": "bacheca/altre-cose/generale/thumb/05.jpg",
+                      "devId": 223
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/generale/original/06.png",
+                      "thumbKey": "bacheca/altre-cose/generale/thumb/06.png",
+                      "devId": 224
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5000000000000002,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "Per farti vedere anche questo. È il personaggio che ho fatto su The Sims. Lo so, non hai capelli così tanto rossi, ma non volevo farli semplicemente marroni. Volevo che comunque ci fosse il tuo rossiccio”. Le piace la fotografia, e le composizioni floreali. Ovviamente le ho fatto anche tutti gli altri vestiti, pensando un po’ al tuo stile, devo dire che è venuta molto bellina. Si chiama Denesme ahaha. Una delle prime cose che le ho fatto fare (anche perché non l’avevo mai provata sta cosa) è stato appunto farle fare una composizione floreale. E potevo scegliere la “base”, ovviamente controllo se ci sono le margherite, e si c’erano. E senza nemmeno guardare prendo la più costosa perché volevo farne una bella. E in poche parole fa questa composizione che si chiama “Crema di agrumi”, composta come? Tulipani, rose e margherite. Ovviamente non ci avevo fatto caso eh ahaha e non ho scelto io questa “accoppiata” ceh wow"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/generale/original/07.png",
+                      "thumbKey": "bacheca/altre-cose/generale/thumb/07.png",
+                      "devId": 225
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5000000000000001,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/generale/original/08.png",
+                      "thumbKey": "bacheca/altre-cose/generale/thumb/08.png",
+                      "devId": 226
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "text": "E questo è il quartiere dove ho messo la casa. Pensa che faccia ho fatto l’ho visto quando stavo cercando dove metterla ahaha"
+                    }
+                  ]
+                },
+                {
+                  "width": 0.5,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/generale/original/09.png",
+                      "thumbKey": "bacheca/altre-cose/generale/thumb/09.png",
+                      "devId": 227
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/altre-cose/generale/web/un-pezzo-della-nostra-storia.mp4",
+                      "label": "Un pezzo della nostra storia",
+                      "vertical": true,
+                      "devId": 24
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Giochi",
+          "slug": "giochi",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/giochi/original/047-photo.jpg",
+                      "devId": 228
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/giochi/original/048-photo.jpg",
+                      "devId": 229
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/giochi/original/053-photo.jpg",
+                      "devId": 230
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/giochi/original/054-photo.jpg",
+                      "devId": 231
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/giochi/original/055-photo.jpg",
+                      "devId": 232
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/giochi/original/056-photo.jpg",
+                      "devId": 233
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/giochi/original/057-photo.jpg",
+                      "devId": 234
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/giochi/original/058-photo.jpg",
+                      "devId": 235
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "video",
+                      "key": "bacheca/altre-cose/giochi/web/003-video.mp4",
+                      "devId": 25
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Fuochetto",
+          "slug": "fuochetto",
+          "rows": [
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/fuochetto/original/052-photo.jpg",
+                      "devId": 236
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "columns": [
+                {
+                  "width": 1,
+                  "blocks": [
+                    {
+                      "type": "photo",
+                      "key": "bacheca/altre-cose/fuochetto/original/059-photo.jpg",
+                      "devId": 237
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

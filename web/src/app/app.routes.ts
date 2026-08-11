@@ -83,7 +83,12 @@ export const routes: Routes = [
       {
         path: 'bacheca',
         data: { bodyClasses: ['bacheca-page'] },
-        loadComponent: () => import('./pages/bacheca/bacheca').then((m) => m.Bacheca)
+        loadComponent: () => import('./pages/bacheca-preview/bacheca-preview').then((m) => m.BachecaPreview)
+      },
+      {
+        path: 'bacheca-nuova',
+        redirectTo: 'bacheca',
+        pathMatch: 'full'
       },
       {
         path: 'lettere',

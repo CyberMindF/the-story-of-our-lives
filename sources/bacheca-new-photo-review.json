@@ -1,0 +1,1310 @@
+{
+  "updatedAt": "2026-08-11T17:19:21.825Z",
+  "photos": {
+    "photo_9@13-05-2026_22-39-36.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 9,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_10@13-05-2026_22-39-36.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 10,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_18@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "pranzo",
+      "order": 18,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_19@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "pranzo",
+      "order": 19,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_20@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "pranzo",
+      "order": 20,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_21@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "pranzo",
+      "order": 21,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_22@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "pranzo",
+      "order": 22,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_23@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 23,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_24@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 24,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_25@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 25,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_26@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 26,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_27@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 27,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_28@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 28,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_29@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 29,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_30@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 30,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_31@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 31,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_32@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 32,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_33@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 33,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_34@14-05-2026_21-19-27.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "Letterina col ti amo",
+      "order": 34,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_35@15-05-2026_10-16-22.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "extra",
+      "order": 35,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_36@15-05-2026_10-18-57.jpg": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "extra",
+      "order": 36,
+      "caption": "",
+      "notes": "Tutte le cose dell'ultimo giorno vanno prima degli screenshot e messi in mezzo alle cose del terzo giorno (dopo le foto delle chiavi di casa per intenderci, ma stesso blocco)"
+    },
+    "photo_37@15-05-2026_10-33-00.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 37,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_38@15-05-2026_10-33-00.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 38,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_39@15-05-2026_10-34-08.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 39,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_40@15-05-2026_10-34-10.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 40,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_41@15-05-2026_10-34-36.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 41,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_42@15-05-2026_10-34-36.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 42,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_43@15-05-2026_10-34-36.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 43,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_44@15-05-2026_10-34-36.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 44,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_45@15-05-2026_10-34-40.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 45,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_46@15-05-2026_10-35-34.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 46,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_47@16-05-2026_23-45-47.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "giochi",
+      "group": "",
+      "order": 47,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_48@16-05-2026_23-45-47.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "giochi",
+      "group": "",
+      "order": 48,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_49@19-05-2026_22-23-31.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 49,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_50@24-05-2026_09-04-26.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 50,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_51@25-05-2026_08-07-44.jpg": {
+      "status": "escludi",
+      "month": "maggio",
+      "day": "",
+      "group": "",
+      "order": 51,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_52@29-05-2026_16-56-13.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "fuochetto",
+      "group": "",
+      "order": 52,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_53@04-06-2026_18-56-06.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "giochi",
+      "group": "",
+      "order": 53,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_54@04-06-2026_18-56-06.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "giochi",
+      "group": "",
+      "order": 54,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_55@04-06-2026_18-56-06.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "giochi",
+      "group": "",
+      "order": 55,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_56@04-06-2026_18-56-06.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "giochi",
+      "group": "",
+      "order": 56,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_57@04-06-2026_18-56-06.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "giochi",
+      "group": "",
+      "order": 57,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_58@04-06-2026_18-56-06.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "giochi",
+      "group": "",
+      "order": 58,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_59@07-06-2026_12-25-03.jpg": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "fuochetto",
+      "group": "",
+      "order": 59,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_60@07-06-2026_12-25-06.jpg": {
+      "status": "escludi",
+      "month": "giugno",
+      "day": "",
+      "group": "",
+      "order": 60,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_61@09-08-2026_14-56-39.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "",
+      "order": 61,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_62@09-08-2026_14-56-39.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "Pizza",
+      "order": 62,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_63@09-08-2026_14-56-39.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "Pizza",
+      "order": 63,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_64@09-08-2026_14-56-39.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "Pizza",
+      "order": 64,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_65@09-08-2026_14-56-39.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "Pizza",
+      "order": 65,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_66@09-08-2026_14-56-39.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "Pizza",
+      "order": 66,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_67@09-08-2026_14-56-39.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "Pizza",
+      "order": 67,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_68@09-08-2026_14-56-39.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "Pizza",
+      "order": 68,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_69@09-08-2026_19-08-38.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "",
+      "order": 69,
+      "caption": "",
+      "notes": "Prima foto ero ancora in aereo"
+    },
+    "photo_70@09-08-2026_19-08-38.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "Cena di gala",
+      "order": 70,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_71@09-08-2026_19-08-38.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "",
+      "order": 71,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_72@09-08-2026_19-08-38.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 72,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_73@09-08-2026_19-08-38.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 73,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_74@09-08-2026_19-08-38.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 74,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_75@09-08-2026_19-08-38.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 75,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_76@09-08-2026_19-08-38.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 76,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_77@09-08-2026_19-08-38.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 77,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_78@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "cookies",
+      "order": 78,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_79@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 79,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_80@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 80,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_81@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 81,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_82@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 82,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_83@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 83,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_84@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 84,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_85@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 85,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_86@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 86,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_87@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 87,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_88@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 88,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_89@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 89,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_90@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 90,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_91@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 91,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_92@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 92,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_93@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 93,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_94@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 94,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_95@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 95,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_96@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "foto-rito",
+      "order": 96,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_97@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "foto-rito",
+      "order": 97,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_98@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "foto-rito",
+      "order": 98,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_99@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "foto-rito",
+      "order": 99,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_100@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "foto-rito",
+      "order": 100,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_101@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "foto-rito",
+      "order": 101,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_102@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "terzo giorno",
+      "group": "primo appuntamento",
+      "order": 102,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_103@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "terzo giorno",
+      "group": "primo appuntamento",
+      "order": 103,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_104@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "terzo giorno",
+      "group": "primo appuntamento",
+      "order": 104,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_105@09-08-2026_19-10-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "terzo giorno",
+      "group": "primo appuntamento",
+      "order": 105,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_106@09-08-2026_19-15-14.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 106,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_107@09-08-2026_19-15-14.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 107,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_108@09-08-2026_19-15-14.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 108,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_109@09-08-2026_19-15-14.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 109,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_110@09-08-2026_19-15-14.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 110,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_111@09-08-2026_19-15-14.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "bracciale",
+      "order": 111,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_112@09-08-2026_19-15-14.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "regalo",
+      "order": 112,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_113@09-08-2026_19-15-14.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 113,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_114@09-08-2026_19-15-14.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 114,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_115@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "terzo giorno",
+      "group": "primo appuntamento",
+      "order": 115,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_116@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "tatuaggio",
+      "order": 116,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_117@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "tatuaggio",
+      "order": 117,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_118@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "tatuaggio",
+      "order": 118,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_119@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 119,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_120@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 120,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_121@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 121,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_122@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 122,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_123@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 123,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_124@09-08-2026_19-18-13.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 124,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_125@09-08-2026_19-19-29.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 125,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_126@09-08-2026_19-19-29.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 126,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_127@09-08-2026_19-19-30.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 127,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_128@09-08-2026_19-19-30.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 128,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_129@09-08-2026_19-19-30.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 129,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_130@10-08-2026_01-37-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "",
+      "order": 130,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_131@10-08-2026_01-37-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "",
+      "order": 131,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_132@10-08-2026_01-37-53.jpg": {
+      "status": "escludi",
+      "month": "da-identificare",
+      "day": "",
+      "group": "",
+      "order": 132,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_133@10-08-2026_01-37-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 133,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_134@10-08-2026_01-37-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "cookies",
+      "order": 134,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_135@10-08-2026_01-37-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "cookies",
+      "order": 135,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_136@10-08-2026_01-37-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "cookies",
+      "order": 136,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_137@10-08-2026_01-37-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "sera",
+      "order": 137,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_138@10-08-2026_01-37-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "sera",
+      "order": 138,
+      "caption": "",
+      "notes": ""
+    },
+    "photo_139@10-08-2026_01-37-53.jpg": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "",
+      "order": 139,
+      "caption": "",
+      "notes": ""
+    },
+    "video_10@09-08-2026_19-15-14.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "ballo lento",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_11@09-08-2026_19-18-13.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "terzo giorno",
+      "group": "fuochetto",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_12@09-08-2026_19-18-13.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_13@09-08-2026_19-18-13.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_14@09-08-2026_19-18-13.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_15@09-08-2026_19-19-29.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_16@09-08-2026_19-19-29.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_17@09-08-2026_19-19-30.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_18@09-08-2026_19-19-30.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_19@09-08-2026_19-19-30.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "quarto giorno - ultimo",
+      "group": "\"graffiti\"",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_1@14-05-2026_21-19-27.mp4": {
+      "status": "includi",
+      "month": "maggio",
+      "day": "Ultimo giorno",
+      "group": "biscotti",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_20@10-08-2026_01-37-53.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "pasta",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_21@10-08-2026_01-37-53.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "pasta",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_2@15-05-2026_10-34-16.mp4": {
+      "status": "escludi",
+      "month": "da-identificare",
+      "day": "",
+      "group": "",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_3@07-06-2026_18-19-00.mp4": {
+      "status": "includi",
+      "month": "da-identificare",
+      "day": "giochi",
+      "group": "",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_4@08-06-2026_01-37-39.mp4": {
+      "status": "escludi",
+      "month": "da-identificare",
+      "day": "",
+      "group": "",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_5@09-08-2026_14-56-39.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "Pizza",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_6@09-08-2026_14-56-39.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "primo giorno",
+      "group": "Pizza",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_7@09-08-2026_19-08-38.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "cookies",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_8@09-08-2026_19-10-53.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "cookies",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    },
+    "video_9@09-08-2026_19-10-53.mp4": {
+      "status": "includi",
+      "month": "luglio",
+      "day": "secondo giorno",
+      "group": "stickers",
+      "order": 9999,
+      "caption": "",
+      "notes": ""
+    }
+  }
+}
