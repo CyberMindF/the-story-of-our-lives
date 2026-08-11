@@ -1,0 +1,15 @@
+@if (themeService.activeThemeId() === lanternThemeId) {
+  <div class="world-lanterns" aria-hidden="true">
+    @for (lantern of lanterns; track $index) {
+      <span
+        class="world-lantern"
+        [style.--lantern-x]="lantern.x + '%'"
+        [style.--lantern-size]="lantern.size + 'rem'"
+        [style.--lantern-opacity]="lantern.opacity"
+        [style.--lantern-sway]="lantern.sway + 'px'"
+        [style.--lantern-duration]="lantern.riseDuration + 's'"
+        [style.--lantern-delay]="lantern.riseDelay + 's'"
+      >🏮</span>
+    }
+  </div>
+}

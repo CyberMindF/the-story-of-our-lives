@@ -78,6 +78,65 @@ body.world-atmosphere {
   }
 }
 
+/* Lanterne che salgono, solo nel tema Notte (vedi world-lanterns.ts) — stesso riferimento
+   visivo della festa notturna con le lanterne (Terraria/notte delle lanterne in Thailandia).
+   Poche (8) e molto distanziate nel tempo: deve sembrare un'occasione, non un via vai. */
+.world-lanterns {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.world-lantern {
+  position: absolute;
+  bottom: -10%;
+  left: var(--lantern-x);
+  font-size: var(--lantern-size);
+  opacity: 0;
+  filter: drop-shadow(0 0 6px rgba(255, 176, 89, 0.55));
+  animation: lantern-rise var(--lantern-duration) linear var(--lantern-delay) infinite;
+}
+
+/* Un'unica sequenza di keyframe copre sia la salita a zig-zag (il "vento" che la fa oscillare
+   di lato) sia la dissolvenza in entrata/uscita — le percentuali non condivise (8%/92% per
+   l'opacità) si interpolano da sole dai keyframe vicini, non serve ripeterle ovunque. */
+@keyframes lantern-rise {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--lantern-opacity);
+  }
+  20% {
+    transform: translate(var(--lantern-sway), -20vh);
+  }
+  40% {
+    transform: translate(calc(var(--lantern-sway) * -1), -40vh);
+  }
+  60% {
+    transform: translate(var(--lantern-sway), -60vh);
+  }
+  80% {
+    transform: translate(calc(var(--lantern-sway) * -1), -80vh);
+  }
+  92% {
+    opacity: var(--lantern-opacity);
+  }
+  100% {
+    transform: translate(0, -115vh);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-lantern {
+    display: none;
+  }
+}
+
 /* Ocean è un cielo chiaro (unico tema diurno): le stelle diventano piccoli riflessi scuri,
    altrimenti sparirebbero su uno sfondo così chiaro. */
 body.world-atmosphere[data-theme="sea"] {

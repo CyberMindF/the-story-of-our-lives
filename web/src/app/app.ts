@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/ro
 import { filter } from 'rxjs';
 import { AuthService } from './core/auth.service';
 import { ThemeService } from './core/theme.service';
+import { WorldLanterns } from './shared/world-lanterns';
 import { WorldStars } from './shared/world-stars';
 
 // Eventi usati come "prova di attività" per rinnovare lo sblocco della Chiave (vedi
@@ -33,7 +34,7 @@ const ROUTE_BODY_CLASSES = [
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, WorldStars],
+  imports: [RouterOutlet, WorldStars, WorldLanterns],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

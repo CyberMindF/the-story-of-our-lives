@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { randomBetween } from './random';
 
 const STAR_COUNT = 150;
 
@@ -25,28 +26,17 @@ export class WorldStars {
   protected readonly stars: Star[] = Array.from({ length: STAR_COUNT }, () => this.createStar());
 
   private createStar(): Star {
-    const size = this.randomBetween(0.6, 2.1);
+    const size = randomBetween(0.6, 2.1);
     return {
-      x: Number(this.randomBetween(0, 100).toFixed(3)),
-      y: Number(this.randomBetween(0, 100).toFixed(3)),
+      x: Number(randomBetween(0, 100).toFixed(3)),
+      y: Number(randomBetween(0, 100).toFixed(3)),
       size: Number(size.toFixed(2)),
-      opacity: Number(this.randomBetween(0.2, 0.82).toFixed(2)),
-      bright: size > 1.65 && this.randomBetween(0, 1) > 0.45,
+      opacity: Number(randomBetween(0.2, 0.82).toFixed(2)),
+      bright: size > 1.65 && randomBetween(0, 1) > 0.45,
       // Durata/ritardo diversi per ogni stella (vedi world-atmosphere.css): senza questa
       // variazione tutte le 150 stelle pulserebbero in sincrono, un effetto palesemente finto.
-      twinkleDuration: Number(this.randomBetween(3.6, 7.6).toFixed(2)),
-      twinkleDelay: Number(this.randomBetween(0, 10).toFixed(2))
+      twinkleDuration: Number(randomBetween(3.6, 7.6).toFixed(2)),
+      twinkleDelay: Number(randomBetween(0, 10).toFixed(2))
     };
-  }
-
-  // Usa casualità crittografica quando disponibile, con fallback per browser meno recenti.
-  private randomBetween(minimum: number, maximum: number): number {
-    let value = Math.random();
-    if (globalThis.crypto?.getRandomValues) {
-      const randomValue = new Uint32Array(1);
-      globalThis.crypto.getRandomValues(randomValue);
-      value = randomValue[0] / 4294967295;
-    }
-    return minimum + value * (maximum - minimum);
   }
 }
