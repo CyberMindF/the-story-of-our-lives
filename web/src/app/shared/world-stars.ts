@@ -34,8 +34,8 @@ export class WorldStars {
       bright: size > 1.65 && this.randomBetween(0, 1) > 0.45,
       // Durata/ritardo diversi per ogni stella (vedi world-atmosphere.css): senza questa
       // variazione tutte le 150 stelle pulserebbero in sincrono, un effetto palesemente finto.
-      twinkleDuration: Number(this.randomBetween(1.8, 3.8).toFixed(2)),
-      twinkleDelay: Number(this.randomBetween(0, 5).toFixed(2))
+      twinkleDuration: Number(this.randomBetween(3.6, 7.6).toFixed(2)),
+      twinkleDelay: Number(this.randomBetween(0, 10).toFixed(2))
     };
   }
 
