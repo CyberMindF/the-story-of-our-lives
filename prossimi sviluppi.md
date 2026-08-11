@@ -91,8 +91,15 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `world-stars.ts`, altrimenti pulserebbero tutte in sincrono (effetto palesemente finto).
   Rispettato `prefers-reduced-motion`. Solo il colore delle stelle cambia per tema come prima
   (es. Ocean, l'unico cielo diurno); opacità e animazione restano uguali ovunque.
+  **Seguito (segnalato subito dopo la prima versione)**: il ciclo era troppo lento (3-7s) e il
+  calo troppo lieve (fino al 55% dell'opacità base), praticamente impercettibile. Accorciato a
+  ~0.9-1.9s e approfondito fino al 15%. Aggiunta anche una seconda animazione sull'alone
+  (box-shadow) delle sole stelle "luminose", che ora cresce e si restringe in sincrono con il
+  brillio invece di restare una macchia fissa — corretto di conseguenza anche
+  `prefers-reduced-motion`, che senza un selettore esplicito su `.is-bright` non disattivava
+  questa nuova animazione (specificità più alta della sola regola `.world-star`).
   Non verificato visivamente in questa sessione (nessun tool browser disponibile): confermato
-  solo che il CSS compilato servito dal dev server contiene la nuova keyframe e il nuovo colore.
+  solo che il CSS compilato servito dal dev server contiene le nuove keyframe e i nuovi valori.
 
 ### Bug chiusi
 
