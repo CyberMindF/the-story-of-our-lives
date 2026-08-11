@@ -165,12 +165,13 @@
 }
 
 .world-place-card.is-available {
-  border-color: color-mix(in srgb, var(--focus-color) 55%, rgba(255, 255, 255, 0.2));
-  background: color-mix(in srgb, var(--focus-color) 18%, rgba(255, 255, 255, 0.08));
+  border-color: var(--panel-border-color);
+  background: var(--panel-color);
 }
 
 .world-place-card.is-available:hover {
-  background-color: rgba(255, 255, 255, 0.13);
+  border-color: var(--focus-color);
+  background: var(--button-hover-bg);
 }
 
 .world-place-card:focus-visible,

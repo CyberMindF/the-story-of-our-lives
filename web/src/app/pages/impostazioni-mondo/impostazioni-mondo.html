@@ -8,72 +8,76 @@
     </p>
   </section>
 
-  <div class="settings-list">
-    <label class="settings-toggle card">
-      <span class="settings-toggle-info">
-        <span class="settings-toggle-title"><span aria-hidden="true">🏮</span> Lanterne che salgono</span>
-        <span class="settings-toggle-description">Lanterne calde che salgono lente nel cielo del mondo.</span>
-      </span>
-      <input
-        type="checkbox"
-        class="settings-toggle-input"
-        [checked]="worldSettingsService.settings().lanterns"
-        (change)="toggleSetting('lanterns', $event)"
-        aria-label="Lanterne che salgono"
-      />
-      <span class="settings-toggle-switch" aria-hidden="true"></span>
-    </label>
+  <section class="settings-theme-section" aria-labelledby="settings-theme-title">
+    <h2 id="settings-theme-title">L'aspetto del mondo</h2>
+    <p class="settings-theme-intro">
+      Scegli il cielo in cui entrare. Il tema è condiviso: quando cambia, cambia per tutti e due.
+    </p>
+    <div class="settings-theme-picker">
+      <app-theme-switcher />
+    </div>
+  </section>
 
-    <label class="settings-toggle card">
-      <span class="settings-toggle-info">
-        <span class="settings-toggle-title"><span aria-hidden="true">✨</span> Stelle nel cielo</span>
-        <span class="settings-toggle-description">Le stelle che brillano nel cielo del mondo, su ogni tema.</span>
-      </span>
-      <input
-        type="checkbox"
-        class="settings-toggle-input"
-        [checked]="worldSettingsService.settings().stars"
-        (change)="toggleSetting('stars', $event)"
-        aria-label="Stelle nel cielo"
-      />
-      <span class="settings-toggle-switch" aria-hidden="true"></span>
-    </label>
-
-    <div class="settings-toggle-card card">
-      <label class="settings-toggle">
+  <section class="settings-effects" aria-labelledby="settings-effects-title">
+    <h2 id="settings-effects-title">Cosa vive nel cielo</h2>
+    <p class="settings-effects-intro">Accendi o spegni gli elementi che abitano il mondo.</p>
+    <div class="settings-list">
+      <label class="settings-toggle card">
         <span class="settings-toggle-info">
-          <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
-          <span class="settings-toggle-description">La luna nel cielo del mondo, con la fase che scegli qui sotto.</span>
+          <span class="settings-toggle-title"><span aria-hidden="true">🏮</span> Lanterne che salgono</span>
+          <span class="settings-toggle-description">Lanterne calde che salgono lente nel cielo del mondo.</span>
         </span>
         <input
           type="checkbox"
           class="settings-toggle-input"
-          [checked]="worldSettingsService.settings().moon"
-          (change)="toggleSetting('moon', $event)"
-          aria-label="La luna"
+          [checked]="worldSettingsService.settings().lanterns"
+          (change)="toggleSetting('lanterns', $event)"
+          aria-label="Lanterne che salgono"
         />
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </label>
 
-      <div class="settings-phase-picker">
-        <label for="moon-phase-select">Fase</label>
-        <select id="moon-phase-select" [value]="worldSettingsService.values().moon || 'auto'" (change)="setMoonPhase($event)">
-          <option value="auto">Fase reale di oggi (automatica)</option>
-          @for (phase of moonPhaseOptions; track phase.index) {
-            <option [value]="phase.index">{{ phase.label }}</option>
-          }
-        </select>
-      </div>
-    </div>
-  </div>
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">✨</span> Stelle nel cielo</span>
+          <span class="settings-toggle-description">Le stelle che brillano nel cielo del mondo, su ogni tema.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().stars"
+          (change)="toggleSetting('stars', $event)"
+          aria-label="Stelle nel cielo"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
 
-  <section class="settings-theme-section" aria-labelledby="settings-theme-title">
-    <h2 id="settings-theme-title">L'aspetto del mondo</h2>
-    <p class="settings-theme-intro">
-      Anche il tema è condiviso: chi lo cambia qui lo cambia per tutti e due.
-    </p>
-    <div class="settings-theme-picker card">
-      <app-theme-switcher />
+      <div class="settings-toggle-card card">
+        <label class="settings-toggle">
+          <span class="settings-toggle-info">
+            <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
+            <span class="settings-toggle-description">La luna nel cielo del mondo, con la fase che scegli qui sotto.</span>
+          </span>
+          <input
+            type="checkbox"
+            class="settings-toggle-input"
+            [checked]="worldSettingsService.settings().moon"
+            (change)="toggleSetting('moon', $event)"
+            aria-label="La luna"
+          />
+          <span class="settings-toggle-switch" aria-hidden="true"></span>
+        </label>
+
+        <div class="settings-phase-picker">
+          <label for="moon-phase-select">Fase</label>
+          <select id="moon-phase-select" [value]="worldSettingsService.values().moon || 'auto'" (change)="setMoonPhase($event)">
+            <option value="auto">Fase reale di oggi (automatica)</option>
+            @for (phase of moonPhaseOptions; track phase.index) {
+              <option [value]="phase.index">{{ phase.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
     </div>
   </section>
 </app-shell>

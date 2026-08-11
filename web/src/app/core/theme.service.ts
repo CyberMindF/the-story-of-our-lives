@@ -5,7 +5,9 @@ export interface ThemeDefinition {
   id: string;
   label: string;
   swatch: string;
-  icon: string;
+  icon: 'night' | 'ocean' | 'velvet' | 'letter';
+  iconText?: string;
+  description: string;
 }
 
 const STORAGE_KEY = 'noi-crossword-theme-v15';
@@ -15,11 +17,43 @@ const DEFAULT_THEME_ID = 'the-white-world';
 // pagine vecchie e nuove finché la migrazione non è completa, per non perdere la scelta
 // dell'utente durante il passaggio.
 const THEMES: ThemeDefinition[] = [
-  { id: 'the-white-world', label: 'Notte', swatch: '#141f32', icon: '🌙' },
-  { id: 'sea', label: 'Ocean', swatch: '#467d77', icon: '🌊' },
-  { id: 'velvet', label: 'Velvet', swatch: '#5d4452', icon: '💜' },
-  { id: 'red-of-you', label: 'Red of You', swatch: '#bf3553', icon: '❤️' },
-  { id: 'green-of-me', label: 'Green of Me', swatch: '#486a53', icon: '💚' }
+  {
+    id: 'the-white-world',
+    label: 'Night Sky',
+    swatch: '#141f32',
+    icon: 'night',
+    description: 'Blu profondo, luna e stelle.'
+  },
+  {
+    id: 'sea',
+    label: 'Ocean',
+    swatch: '#467d77',
+    icon: 'ocean',
+    description: 'Luce chiara e colori del mare.'
+  },
+  {
+    id: 'velvet',
+    label: 'Velvet',
+    swatch: '#5d4452',
+    icon: 'velvet',
+    description: 'Viola scuro, morbido e raccolto.'
+  },
+  {
+    id: 'red-of-you',
+    label: 'Red of You',
+    swatch: '#bf3553',
+    icon: 'letter',
+    iconText: 'D',
+    description: 'Il tuo rosso, caldo e acceso.'
+  },
+  {
+    id: 'green-of-me',
+    label: 'Green of Me',
+    swatch: '#486a53',
+    icon: 'letter',
+    iconText: 'R',
+    description: 'Il mio verde, quieto e profondo.'
+  }
 ];
 
 // Porting di assets/js/shared/theme.js: stessa applicazione (document.body.dataset.theme,

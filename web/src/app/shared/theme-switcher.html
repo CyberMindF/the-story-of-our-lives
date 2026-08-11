@@ -5,12 +5,36 @@
       class="theme-chip"
       [class.is-selected]="themeService.activeThemeId() === theme.id"
       [style.--chip-color]="theme.swatch"
+      [attr.data-theme-id]="theme.id"
       [attr.aria-label]="'Attiva il tema ' + theme.label"
       [attr.aria-pressed]="themeService.activeThemeId() === theme.id"
       (click)="themeService.applyTheme(theme.id)"
     >
-      <span class="theme-chip-icon" aria-hidden="true">{{ theme.icon }}</span>
-      <span class="theme-chip-caption" aria-hidden="true">{{ theme.label }}</span>
+      <span class="theme-chip-preview" aria-hidden="true">
+        <span class="theme-chip-icon">
+          @switch (theme.icon) {
+            @case ('night') {
+              <svg viewBox="0 0 64 64"><path class="theme-icon-fill" d="M38.7 11.5a21.7 21.7 0 1 0 13.8 35.8A22.8 22.8 0 0 1 38.7 11.5Z"/><path class="theme-icon-spark" d="m48 9 1.5 4.2L54 15l-4.5 1.7L48 21l-1.6-4.3L42 15l4.4-1.8L48 9Zm8 16 .8 2.2L59 28l-2.2.8L56 31l-.8-2.2L53 28l2.2-.8L56 25Z"/></svg>
+            }
+            @case ('ocean') {
+              <svg viewBox="0 0 64 64"><path class="theme-icon-stroke" d="M7 37c7-1 9-9 17-9 6 0 9 5 15 5 7 0 10-7 18-8-2 10-10 21-25 21-11 0-20-4-25-9Z"/><path class="theme-icon-stroke is-soft" d="M10 48c6-3 11-3 17 0s11 3 17 0 10-3 14-1"/></svg>
+            }
+            @case ('velvet') {
+              <svg viewBox="0 0 64 64"><path class="theme-icon-fill" d="M13 10h38v37c-4-4-8-5-12-2-5 4-9 5-14 1-4-3-8-2-12 1V10Z"/><path class="theme-icon-fold" d="M23 11c0 13-2 24-6 34M41 11c0 13 2 24 6 34M32 11v38"/></svg>
+            }
+            @case ('letter') {
+              <span class="theme-icon-letter">{{ theme.iconText }}</span>
+            }
+          }
+        </span>
+      </span>
+      <span class="theme-chip-copy" aria-hidden="true">
+        <strong class="theme-chip-caption">{{ theme.label }}</strong>
+        <small class="theme-chip-description">{{ theme.description }}</small>
+      </span>
+      @if (themeService.activeThemeId() === theme.id) {
+        <span class="theme-chip-selected" aria-hidden="true">Attivo</span>
+      }
     </button>
   }
 </div>

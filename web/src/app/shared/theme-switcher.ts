@@ -10,6 +10,7 @@ import { ThemeService } from '../core/theme.service';
 @Component({
   selector: 'app-theme-switcher',
   standalone: true,
+  styleUrls: ['../../styles/components/theme-switcher.css'],
   templateUrl: './theme-switcher.html'
 })
 export class ThemeSwitcher {

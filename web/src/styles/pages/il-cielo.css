@@ -12,7 +12,7 @@
    con uno screenshot vero). Font serif come i titoli poetici del sito, non l'eyebrow piccolo
    in maiuscolo: quello leggeva come un'etichetta, non un titolo. */
 .sky-title {
-  margin: 0 0 clamp(2.5rem, 8vh, 4rem);
+  margin: clamp(1.25rem, 3vh, 2rem) 0 clamp(2.5rem, 8vh, 4rem);
   text-align: left;
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 400;

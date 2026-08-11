@@ -1,0 +1,176 @@
+:host {
+  display: block;
+}
+
+.theme-switcher {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12.5rem), 1fr));
+  gap: 1rem;
+}
+
+.theme-chip {
+  position: relative;
+  display: grid;
+  grid-template-rows: 7.5rem auto;
+  min-width: 0;
+  padding: .45rem;
+  overflow: hidden;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 1.2rem;
+  background: var(--panel-color);
+  backdrop-filter: blur(12px);
+  color: var(--text-color);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 .8rem 2rem rgba(0, 0, 0, .12);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.theme-chip:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--focus-color) 62%, var(--border-color));
+  box-shadow: 0 1.1rem 2.4rem rgba(0, 0, 0, .2);
+}
+
+.theme-chip.is-selected {
+  border-color: var(--focus-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus-color) 30%, transparent), 0 1.1rem 2.5rem rgba(0, 0, 0, .22);
+}
+
+.theme-chip:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 3px;
+}
+
+.theme-chip-preview {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: .9rem;
+  color: #fff;
+  isolation: isolate;
+}
+
+.theme-chip[data-theme-id='the-white-world'] .theme-chip-preview {
+  background:
+    radial-gradient(circle at 16% 22%, rgba(255,255,255,.85) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 78% 25%, rgba(255,255,255,.65) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 65% 72%, rgba(255,255,255,.7) 0 1.2px, transparent 1.7px),
+    linear-gradient(145deg, #263b5d, #0b1322 72%);
+}
+
+.theme-chip[data-theme-id='sea'] .theme-chip-preview {
+  background: radial-gradient(circle at 78% 12%, rgba(255,255,255,.8), transparent 24%), linear-gradient(150deg, #8fc9c1, #3f827e 62%, #285b62);
+}
+
+.theme-chip[data-theme-id='velvet'] .theme-chip-preview {
+  background: radial-gradient(circle at 22% 10%, rgba(196,139,186,.3), transparent 34%), linear-gradient(145deg, #704d6c, #291c2b 70%);
+}
+
+.theme-chip[data-theme-id='red-of-you'] .theme-chip-preview {
+  background: radial-gradient(circle at 75% 18%, rgba(255,204,214,.28), transparent 28%), linear-gradient(145deg, #b32e48, #5f0d19 72%);
+}
+
+.theme-chip[data-theme-id='green-of-me'] .theme-chip-preview {
+  background: radial-gradient(circle at 20% 12%, rgba(216,234,218,.18), transparent 30%), linear-gradient(145deg, #52745b, #1b3023 72%);
+}
+
+.theme-chip-icon {
+  display: grid;
+  place-items: center;
+  width: 4.2rem;
+  height: 4.2rem;
+  filter: drop-shadow(0 .35rem .75rem rgba(0, 0, 0, .32));
+}
+
+.theme-chip-icon svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.theme-icon-fill,
+.theme-icon-spark {
+  fill: currentColor;
+}
+
+.theme-icon-spark {
+  opacity: .88;
+}
+
+.theme-icon-stroke,
+.theme-icon-fold {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-icon-stroke.is-soft,
+.theme-icon-fold {
+  opacity: .66;
+  stroke-width: 2.7;
+}
+
+.theme-icon-letter {
+  font-family: Georgia, serif;
+  font-size: 3.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.theme-chip-copy {
+  display: grid;
+  gap: .28rem;
+  padding: .8rem .65rem .65rem;
+}
+
+.theme-chip-caption {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.theme-chip-description {
+  color: var(--muted-color);
+  font-size: .78rem;
+  line-height: 1.4;
+}
+
+.theme-chip-selected {
+  position: absolute;
+  top: .85rem;
+  right: .85rem;
+  padding: .28rem .55rem;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 999px;
+  background: rgba(8, 14, 24, .68);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 750;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+}
+
+@media (max-width: 480px) {
+  .theme-switcher {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-chip {
+    grid-template-columns: 7.5rem 1fr;
+    grid-template-rows: 7rem;
+  }
+
+  .theme-chip-copy {
+    align-content: center;
+    padding: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-chip {
+    transition: none;
+  }
+}

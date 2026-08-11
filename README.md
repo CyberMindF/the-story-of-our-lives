@@ -141,7 +141,7 @@ Le route lazy sono dichiarate in `web/src/app/app.routes.ts`. Ogni pagina usa `A
 
 Bottoni e card hanno classi condivise in `web/src/styles/components/buttons.css` (`.btn`, con i modifier `.btn-accent` per il colore oro ricorrente e `.btn-submit` per i bottoni di invio nei form) e `web/src/styles/components/cards.css` (`.card` per il pannello "frost" scuro, `.card--compact` per le righe di lista, `.card--paper` per l'inserto a foglio chiaro usato in Calendario e Mappamondo, `.card--dialog` per le finestre modali).
 
-Il selettore tema (5 pallini colorati: Notte/Ocean/Velvet/Red of You/Green of Me) è gestito da `ThemeService` e conserva la scelta nello stesso `localStorage` usato dal sito precedente. Cambia subito `--focus-color` e il tint del cielo stellato.
+Il selettore tema (Night Sky/Ocean/Velvet/Red of You/Green of Me) vive in Impostazioni del Mondo ed è gestito da `ThemeService`. La scelta è condivisa tramite `world_settings`; `localStorage` conserva l'ultimo valore noto per applicarlo prima del primo paint. Cambia subito `--focus-color` e il tint del cielo stellato.
 
 ## Progresso persistente
 
