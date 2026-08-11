@@ -20,6 +20,25 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #33 — Liste delle cose da fare insieme (la mia lista delle note)
 - #34 — Pagina delle nostre ricette?
 - #a4 - Creare una pagina "il cielo" dove è possibile vedere semplicemente la luna, la luna deve cambiare chiamando una API di qualche servizio esterno (se possibile) che da la fase lunare e noi la ricreiamo e la mostriamo. Qui è possibile godersi il cielo stellato, lunato, lanternato, ecc.
+- #a6 - Impostazioni del Mondo: interruttore per la luna e la sua fase, diverso da #a4 (quella
+  è una pagina dedicata a guardare il cielo insieme; questo è un piccolo elemento sempre
+  presente sullo sfondo, come le lanterne e le stelle, non una pagina a sé). Idea di Rory,
+  11/08/2026.
+- #a7 - Impostazioni del Mondo: interruttore per accendere/spegnere le stelle nel cielo (oggi
+  sono sempre presenti su ogni tema). Idea di Rory, 11/08/2026.
+- #a8 - Domanda aperta di Rory (11/08/2026): avrebbe senso rendere anche la scelta del tema
+  globale/condivisa da Impostazioni del Mondo invece che locale per dispositivo come oggi
+  (`ThemeService`, localStorage)? Parere di Claude quando gli è stato chiesto: probabilmente
+  sì — è concettualmente coerente con l'idea di "cambiare il mondo insieme" appena costruita
+  per lanterne/stelle/luna, e tecnicamente lo stesso meccanismo (`world_settings`) lo
+  reggerebbe senza problemi. L'unico compromesso reale: si perde la possibilità che i due
+  abbiano temi diversi nello stesso momento (oggi già possibile, per quanto probabilmente mai
+  usata di proposito). C'è anche un dettaglio tecnico da risolvere se si procede: oggi il tema
+  si applica prima del primo paint leggendo solo `localStorage` (fix per il bug #12, lampo di
+  colore sbagliato) — con un tema condiviso da un server, il primissimo paint dovrebbe comunque
+  partire dall'ultimo valore noto in locale (come cache, non più come fonte di verità) e poi
+  eventualmente correggersi appena arriva la risposta di rete, per non reintrodurre lo stesso
+  lampo in un'altra forma. Non implementato, in attesa di conferma.
 
 ---
 
