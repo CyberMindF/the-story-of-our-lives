@@ -11,7 +11,12 @@
         [style.--leaf-rotate-end]="leaf.rotateEnd + 'deg'"
         [style.--leaf-fall-duration]="leaf.fallDuration + 's'"
         [style.--leaf-fall-delay]="leaf.fallDelay + 's'"
-      >🍂</span>
+      >
+        <svg class="world-leaf-svg" viewBox="0 0 100 120">
+          <path class="world-leaf-shape" d="M50,8 C78,24 90,58 50,114 C10,58 22,24 50,8 Z" />
+          <path class="world-leaf-vein" d="M50,20 L50,98" />
+        </svg>
+      </span>
     }
   </div>
 }

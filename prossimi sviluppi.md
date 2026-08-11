@@ -21,7 +21,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   esistente.
 - #34 — Pagina delle nostre ricette?
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
-
+- #c1 - Verifica generale che tutti gli eventi siano presenti
 ---
 
 ## Da non fare
@@ -306,6 +306,33 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   insieme (stelle/luna/lanterne/brillantini/foglie/onde/fiori tutti accesi contemporaneamente)
   prima di consegnare, non solo build/curl. Migrazione 0029 (sostituisce "shells" con "waves",
   mai arrivata in produzione) applicata solo in locale.
+
+  **Ultimo giro, tre correzioni insieme**: Rory aveva chiarito meglio cosa intendeva con
+  "preset" — non solo accendere l'effetto del tema scelto lasciando invariato il resto, ma un
+  vero preset esclusivo ("tipo ocean disattiva tutto tranne mare"). `THEME_DEFAULT_EFFECT` è
+  diventato `THEME_PRESET` in `theme.service.ts`: quando la scelta del tema è davvero della
+  persona (`persistRemote` non forzato a `false`, quindi non la sincronizzazione dal server né
+  l'applicazione della cache locale all'avvio), scorre tutte le chiavi effetto e le accende o
+  spegne secondo il preset del tema — non solo la propria. Restano comunque libere da
+  riaccendere o mescolare a mano dopo: il preset decide solo il punto di partenza.
+  Di conseguenza l'avviso ⚠️ "poco senso su un cielo diurno" è diventato superfluo (scegliere
+  Ocean spegne comunque luna/stelle da solo) ed è stato tolto, insieme al gruppo "Su ogni
+  tema" che leggeva stonato accanto a quell'avviso: ora è "Consigliato per Night Sky", uguale
+  agli altri quattro gruppi, con un'unica nota in cima alla sezione che spiega il
+  comportamento esclusivo dei preset invece di ripeterla group per group.
+  Anche la margherita (prima l'emoji 🌼 sbiancata con un filtro grayscale, effetto "in bianco e
+  nero" che non piaceva) e il petalo di rosa (prima colore rosa/magenta, poi corretto in rosso
+  vero, ma con la forma — un div con border-radius asimmetrico — che non convinceva comunque)
+  sono passati a un vero SVG disegnato, stesso trattamento della luna (`MoonDisc`): il primo
+  tentativo di petalo era due lobi simmetrici che a schermo si leggevano come un cuoricino
+  invece che come un petalo — corretto con un contorno a goccia con una sola punta, niente
+  doppio lobo, per non somigliare a un cuore. Stesso trattamento per le foglie: dall'emoji 🍂
+  filtrata a un profilo SVG a punta singola con una vena centrale — "non sono singole, userei
+  un CSS o SVG" era il punto di Rory. Verificato di nuovo tutto a schermo con Playwright,
+  passando esplicitamente per ogni tema dal selettore reale (non impostando `world_settings`
+  a mano) per controllare l'esclusività del preset, più un rendering isolato dei tre SVG
+  (foglia, petalo, margherita) a dimensione grande per controllare le sole forme senza
+  l'animazione. Nessun errore in console, nessuna nuova migrazione necessaria.
 
 ### Bug chiusi
 

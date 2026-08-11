@@ -21,8 +21,11 @@
   <section class="settings-effects" aria-labelledby="settings-effects-title">
     <h2 id="settings-effects-title">Cosa vive nel cielo</h2>
     <p class="settings-effects-intro">Accendi o spegni gli elementi che abitano il mondo.</p>
+    <p class="settings-group-note">Ogni tema è un preset: sceglierlo qui sopra accende i suoi
+      effetti e spegne tutti gli altri. Restano comunque liberi da accendere o spegnere quando
+      vuoi, anche mescolati tra loro — il tema decide solo il punto di partenza.</p>
 
-    <h3 class="settings-group-title">Su ogni tema</h3>
+    <h3 class="settings-group-title">Consigliato per Night Sky</h3>
     <div class="settings-list">
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
@@ -42,10 +45,7 @@
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
           <span class="settings-toggle-title"><span aria-hidden="true">✨</span> Stelle nel cielo</span>
-          <span class="settings-toggle-description">Le stelle che brillano nel cielo del mondo, su ogni tema.</span>
-          @if (isDaytimeTheme()) {
-            <span class="settings-toggle-warning">⚠️ Poco senso su un cielo diurno come questo</span>
-          }
+          <span class="settings-toggle-description">Le stelle che brillano nel cielo del mondo.</span>
         </span>
         <input
           type="checkbox"
@@ -62,9 +62,6 @@
           <span class="settings-toggle-info">
             <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
             <span class="settings-toggle-description">La luna nel cielo del mondo, con la fase che scegli qui sotto.</span>
-            @if (isDaytimeTheme()) {
-              <span class="settings-toggle-warning">⚠️ Poco senso su un cielo diurno come questo</span>
-            }
           </span>
           <input
             type="checkbox"
@@ -89,7 +86,6 @@
     </div>
 
     <h3 class="settings-group-title">Consigliato per Red of You</h3>
-    <p class="settings-group-note">Come tutti gli effetti qui sotto, disponibile su qualunque tema — cambiare tema lo riaccende di default, ma resta libero da spegnere o accendere quando vuoi.</p>
     <div class="settings-list">
       <label class="settings-toggle card">
         <span class="settings-toggle-info">

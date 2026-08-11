@@ -13,14 +13,18 @@ export interface ThemeDefinition {
 const STORAGE_KEY = 'noi-crossword-theme-v15';
 const DEFAULT_THEME_ID = 'the-white-world';
 
-// Effetto "di casa" di ogni tema (#b3-b): scegliere un tema riaccende il suo, senza toccare
-// gli altri — restano comunque disattivabili liberamente dopo. the-white-world non è in lista:
-// non ha un effetto dedicato, solo gli elementi neutri (luna/stelle/lanterne).
-const THEME_DEFAULT_EFFECT: Partial<Record<string, WorldSettingKey>> = {
-  'red-of-you': 'sparkles',
-  'green-of-me': 'leaves',
-  sea: 'waves',
-  velvet: 'petals'
+// Ogni tema è un vero preset (#b3-b, chiarito da Rory dopo il primo tentativo — "tipo ocean
+// disattiva tutto tranne mare"): scegliere un tema accende i suoi effetti e spegne tutti gli
+// altri, luna/stelle/lanterne comprese — non solo "riaccende il proprio lasciando il resto
+// invariato" come nella prima versione. Restano comunque liberi da riaccendere a mano dopo,
+// il preset decide solo lo stato iniziale al momento della scelta.
+const ALL_EFFECT_KEYS: WorldSettingKey[] = ['lanterns', 'stars', 'moon', 'sparkles', 'leaves', 'waves', 'petals'];
+const THEME_PRESET: Record<string, WorldSettingKey[]> = {
+  'the-white-world': ['lanterns', 'stars', 'moon'],
+  'red-of-you': ['sparkles'],
+  'green-of-me': ['leaves'],
+  sea: ['waves'],
+  velvet: ['petals']
 };
 
 // Stessi 5 temi, stessa storageKey di assets/js/shared/theme.js — condivisa con tutte le
@@ -119,10 +123,10 @@ export class ThemeService {
       void this.worldSettingsService.setValue('theme', theme.id);
       // Solo quando è davvero una scelta della persona (non la sincronizzazione dal server né
       // l'applicazione della cache locale all'avvio, che passano persistRemote:false apposta):
-      // riaccende l'effetto di questo tema, senza spegnere quelli degli altri temi.
-      const defaultEffect = THEME_DEFAULT_EFFECT[theme.id];
-      if (defaultEffect) {
-        void this.worldSettingsService.set(defaultEffect, true);
+      // applica il preset completo, accendendo i suoi effetti e spegnendo tutti gli altri.
+      const preset = THEME_PRESET[theme.id] ?? [];
+      for (const key of ALL_EFFECT_KEYS) {
+        void this.worldSettingsService.set(key, preset.includes(key));
       }
     }
   }

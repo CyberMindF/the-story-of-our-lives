@@ -266,8 +266,10 @@ body.world-atmosphere[data-theme="green-of-me"] {
 }
 
 /* Ombre di foglia per Green of Me (#b3-a, secondo dei quattro): sagome scure e semitrasparenti
-   che cadono ruotando, non foglie colorate — filter:brightness(0) toglie il colore dell'emoji,
-   lasciando solo la sagoma, coerente con "ombra" più che con "foglia" vera e propria. */
+   che cadono ruotando, non foglie colorate. Prima era l'emoji 🍂 sbiancata con
+   filter:brightness(0); a Rory non sembrava "singola" — ora è una sagoma SVG disegnata (un
+   'ellisse a punta' con una vena centrale), con il colore scuro applicato direttamente al
+   fill invece che con un filtro. */
 .world-leaves {
   position: fixed;
   z-index: 0;
@@ -280,10 +282,24 @@ body.world-atmosphere[data-theme="green-of-me"] {
   position: absolute;
   top: -10%;
   left: var(--leaf-x);
-  font-size: var(--leaf-size);
   opacity: 0;
-  filter: brightness(0);
   animation: leaf-fall var(--leaf-fall-duration) linear var(--leaf-fall-delay) infinite;
+}
+
+.world-leaf-svg {
+  width: var(--leaf-size);
+  height: calc(var(--leaf-size) * 1.2);
+}
+
+.world-leaf-shape {
+  fill: rgba(12, 10, 9, 0.82);
+}
+
+.world-leaf-vein {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 2.5;
+  stroke-linecap: round;
 }
 
 /* Una sola deriva morbida verso un lato, non uno zig-zag: la prima versione cambiava
@@ -378,8 +394,14 @@ body.world-atmosphere[data-theme="green-of-me"] {
 /* Fiori che cadono (#b3-b, tre forme selezionabili — o "mix" — su richiesta di Rory): stessa
    meccanica di caduta delle foglie ma più lenta e morbida — un petalo scende leggero, non
    tumultuoso. .world-petal-item porta posizione/animazione comuni a tutte e tre le forme;
-   .world-daisy (🌼), .world-pink-flower (🌸) e .world-rose-petal (un div sagomato in CSS
-   puro — nessuna emoji di petalo esiste in Unicode) aggiungono solo l'aspetto. */
+   .world-daisy-svg (margherita, 8 petali disegnati in SVG), .world-pink-flower (emoji 🌸) e
+   .world-rose-svg (petalo di rosa, anche lui in SVG) aggiungono solo l'aspetto. La margherita
+   era prima l'emoji 🌼 sbiancata con un filtro grayscale — a Rory non piaceva l'effetto "in
+   bianco e nero", ora è disegnata in SVG con petali davvero bianchi e un centro avorio
+   tenue, nessun filtro necessario. Il petalo di rosa era prima un div con border-radius
+   asimmetrico; a Rory la forma non convinceva — ora è un path SVG con un lieve avvallamento
+   in cima (la punta "a cuore" tipica di un vero petalo di rosa) più una seconda linea più
+   chiara che suggerisce la curvatura interna. */
 .world-petals {
   position: fixed;
   z-index: 0;
@@ -396,27 +418,32 @@ body.world-atmosphere[data-theme="green-of-me"] {
   animation: petal-fall var(--petal-fall-duration) linear var(--petal-fall-delay) infinite;
 }
 
-.world-daisy {
-  font-size: var(--petal-size);
-  /* L'emoji ha il centro giallo di serie — Rory la voleva bianca: grayscale toglie il
-     colore (compreso il giallo), brightness la schiarisce verso il bianco invece che un
-     grigio spento. */
-  filter: grayscale(1) brightness(1.35);
+.world-daisy-svg {
+  width: var(--petal-size);
+  height: var(--petal-size);
+  filter: drop-shadow(0 0 0.15em rgba(0, 0, 0, 0.2));
 }
 
 .world-pink-flower {
   font-size: var(--petal-size);
 }
 
-/* Border-radius asimmetrico invece che un ovale: un angolo resta quasi a punta, gli altri tre
-   arrotondati — la sagoma tipica di un petalo singolo. Sfumatura radiale per un minimo di
-   volume invece di una macchia di colore piatta. */
-.world-rose-petal {
+.world-rose-svg {
   width: var(--petal-size);
-  height: calc(var(--petal-size) * 1.3);
-  border-radius: 0% 65% 65% 65%;
-  background: radial-gradient(ellipse at 32% 28%, #ffc2d4 0%, #d6547f 55%, #8f2850 100%);
-  box-shadow: inset 0 0 0.3em rgba(60, 10, 30, 0.25);
+  height: calc(var(--petal-size) * 1.2);
+  filter: drop-shadow(0 0 0.15em rgba(40, 5, 8, 0.3));
+}
+
+.world-rose-base {
+  fill: #c81f2e;
+}
+
+.world-rose-highlight {
+  fill: none;
+  stroke: #ff6a55;
+  stroke-width: 6;
+  stroke-linecap: round;
+  opacity: 0.45;
 }
 
 @keyframes petal-fall {

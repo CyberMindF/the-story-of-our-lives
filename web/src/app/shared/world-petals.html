@@ -3,9 +3,7 @@
     @for (petal of petals(); track $index) {
       <span
         class="world-petal-item"
-        [class.world-daisy]="petal.kind === 'daisy'"
         [class.world-pink-flower]="petal.kind === 'pink'"
-        [class.world-rose-petal]="petal.kind === 'rose'"
         [style.--petal-x]="petal.x + '%'"
         [style.--petal-size]="petal.size + 'rem'"
         [style.--petal-opacity]="petal.opacity"
@@ -14,7 +12,33 @@
         [style.--petal-rotate-end]="petal.rotateEnd + 'deg'"
         [style.--petal-fall-duration]="petal.fallDuration + 's'"
         [style.--petal-fall-delay]="petal.fallDelay + 's'"
-      >{{ petal.kind === 'daisy' ? '🌼' : petal.kind === 'pink' ? '🌸' : '' }}</span>
+      >
+        @if (petal.kind === 'pink') {
+          🌸
+        } @else if (petal.kind === 'daisy') {
+          <svg class="world-daisy-svg" viewBox="0 0 100 100">
+            <g fill="#ffffff">
+              <ellipse cx="50" cy="27" rx="11" ry="19" />
+              <ellipse cx="50" cy="27" rx="11" ry="19" transform="rotate(45 50 50)" />
+              <ellipse cx="50" cy="27" rx="11" ry="19" transform="rotate(90 50 50)" />
+              <ellipse cx="50" cy="27" rx="11" ry="19" transform="rotate(135 50 50)" />
+              <ellipse cx="50" cy="27" rx="11" ry="19" transform="rotate(180 50 50)" />
+              <ellipse cx="50" cy="27" rx="11" ry="19" transform="rotate(225 50 50)" />
+              <ellipse cx="50" cy="27" rx="11" ry="19" transform="rotate(270 50 50)" />
+              <ellipse cx="50" cy="27" rx="11" ry="19" transform="rotate(315 50 50)" />
+            </g>
+            <circle cx="50" cy="50" r="12" fill="#fbf6ea" />
+          </svg>
+        } @else if (petal.kind === 'rose') {
+          <svg class="world-rose-svg" viewBox="0 0 100 120">
+            <path
+              class="world-rose-base"
+              d="M50,10 C68,14 84,32 86,55 C88,80 68,102 50,117 C32,102 12,80 14,55 C16,32 32,14 50,10 Z"
+            />
+            <path class="world-rose-highlight" d="M46,22 C36,30 27,42 27,56 C27,74 36,90 46,100" />
+          </svg>
+        }
+      </span>
     }
   </div>
 }
