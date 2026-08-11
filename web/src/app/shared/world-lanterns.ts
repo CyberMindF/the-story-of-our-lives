@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { WorldSettingsService } from '../core/world-settings.service';
 import { randomBetween } from './random';
 
-const LANTERN_COUNT = 36;
+const LANTERN_COUNT = 50;
 
 interface Lantern {
   x: number;
@@ -28,7 +28,7 @@ export class WorldLanterns {
   private createLantern(): Lantern {
     return {
       x: Number(randomBetween(2, 98).toFixed(2)),
-      size: Number(randomBetween(1.6, 3.4).toFixed(2)),
+      size: Number(randomBetween(1, 3).toFixed(2)),
       opacity: Number(randomBetween(0.78, 1).toFixed(2)),
       sway: Number(randomBetween(18, 42).toFixed(1)),
       riseDuration: Number(randomBetween(20, 42).toFixed(2)),
