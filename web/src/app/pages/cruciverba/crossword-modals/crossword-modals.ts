@@ -17,4 +17,10 @@ export class CrosswordModals {
       this.crossword.closeCompletionModal();
     }
   }
+
+  protected onHintBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.crossword.closeHintModal();
+    }
+  }
 }

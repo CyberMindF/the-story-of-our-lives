@@ -10,4 +10,12 @@ Hai ritrovato tutti i nostri ricordi.</p>
 
 <app-confirmation-dialog dialogId="check" title="Controllare le risposte?" description="Le lettere inserite saranno indicate come corrette o errate. Le celle vuote non verranno considerate." confirmLabel="Controlla" cancelLabel="Annulla" [open]="crossword.checkModalOpen()" (confirm)="crossword.confirmCheck()" (cancel)="crossword.closeCheckModal()" />
 
-<app-confirmation-dialog dialogId="hint" title="Vuoi proprio un suggerimento?" [description]="crossword.hintDescription()" confirmLabel="Va bene, ti scrivo" cancelLabel="Annulla" [open]="crossword.hintModalOpen()" (confirm)="crossword.closeHintModal()" (cancel)="crossword.closeHintModal()" />
+<div class="modal" [class.hidden]="!crossword.hintModalOpen()" role="dialog" aria-modal="true" aria-labelledby="hint-title" aria-describedby="hint-intro hint-request hint-outro" (click)="onHintBackdropClick($event)">
+  <div class="modal-card hint-modal-card card--dialog">
+    <h2 id="hint-title">Vuoi proprio un suggerimento?</h2>
+    <p id="hint-intro">Per meritarti un aiutino, prima fai questo piccolo pegno in chat:</p>
+    <p id="hint-request" class="hint-request"><strong>“{{ crossword.hintRequest() }}”</strong></p>
+    <p id="hint-outro">Poi chiedimi direttamente il suggerimento.</p>
+    <button type="button" class="btn hint-accept" (click)="crossword.closeHintModal()">Affare fatto <span aria-hidden="true">🤝</span></button>
+  </div>
+</div>

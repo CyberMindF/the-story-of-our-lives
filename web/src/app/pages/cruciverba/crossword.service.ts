@@ -88,10 +88,6 @@ export class CrosswordService implements OnDestroy {
   readonly hintsAvailable = signal(false);
   readonly mobileSheetOpen = signal(false);
 
-  readonly hintDescription = computed(
-    () => `Per meritarti un aiutino, prima fai questo piccolo pegno in chat:\n\n${this.hintRequest()}\n\nPoi chiedimi direttamente il suggerimento.`
-  );
-
   readonly activeCellKeys = computed<ReadonlySet<string>>(() => {
     const entry = this.currentEntry();
     return new Set(entry ? entry.cells.map((cell) => cell.key) : []);

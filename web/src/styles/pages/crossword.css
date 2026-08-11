@@ -302,6 +302,21 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
   margin-top: 1rem;
 }
 
+.hint-modal-card {
+  max-width: 31rem;
+}
+
+.hint-request {
+  margin: 1.25rem 0;
+  color: var(--text-color);
+  font-size: clamp(1.08rem, 3vw, 1.25rem);
+  line-height: 1.55;
+}
+
+.hint-accept {
+  margin: 1.25rem auto 0;
+}
+
 /* Lettera finale mostrata a cruciverba completato, al posto di un dialog generico: stessa
    superficie di carta invecchiata di Lettere (.card--handwritten), qui con rotazione e
    dimensioni proprie della finestra di completamento. */
