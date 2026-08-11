@@ -30,7 +30,7 @@
 
 body[data-theme="velvet"] {
   --bg-color: #1c151f;
-  --panel-color: #2e222e;
+  --panel-color: rgba(46, 34, 46, 0.05);
   --panel-border-color: rgba(240, 199, 212, 0.14);
   --text-color: #f7f1f3;
   --muted-color: #ccb8c0;
@@ -53,7 +53,7 @@ body[data-theme="velvet"] {
 
 body[data-theme="sea"] {
   --bg-color: #e4efed;
-  --panel-color: #eef6f3;
+  --panel-color: rgba(238, 246, 243, 0.05);
   --panel-border-color: rgba(56, 92, 90, 0.1);
   --text-color: #355154;
   --muted-color: #6b8381;
@@ -76,7 +76,7 @@ body[data-theme="sea"] {
 
 body[data-theme="red-of-you"] {
   --bg-color: #5f0d19;
-  --panel-color: rgba(103, 18, 30, 0.84);
+  --panel-color: rgba(103, 18, 30, 0.05);
   --panel-border-color: rgba(255, 211, 219, 0.16);
   --text-color: #fff3f5;
   --muted-color: #e5b0b7;
@@ -105,7 +105,7 @@ body[data-theme="red-of-you"] {
 
 body[data-theme="green-of-me"] {
   --bg-color: #203429;
-  --panel-color: rgba(33, 53, 41, 0.9);
+  --panel-color: rgba(33, 53, 41, 0.05);
   --panel-border-color: rgba(198, 220, 205, 0.12);
   --text-color: #eef6ef;
   --muted-color: #bdd0c1;
