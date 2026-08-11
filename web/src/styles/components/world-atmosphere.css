@@ -8,13 +8,13 @@ body.world-atmosphere {
   --world-sky-top: #0a0f1c;
   --world-sky-middle: #141f32;
   --world-sky-bottom: #213246;
-  --world-glow: rgba(190, 218, 232, 0.16);
   --world-star: rgba(255, 255, 255, 0.72);
   min-height: 100dvh;
-  background:
-    radial-gradient(circle at 78% 13%, var(--world-glow), transparent 10rem),
-    radial-gradient(circle at 18% 16%, rgba(190, 218, 232, 0.1), transparent 19rem),
-    linear-gradient(155deg, var(--world-sky-top) 0%, var(--world-sky-middle) 48%, var(--world-sky-bottom) 100%);
+  /* Erano qui due macchie di luce statiche (radial-gradient), superflue ora che c'è una luna
+     vera (world-moon.ts) a fare da fonte di luce nel cielo — tolte su richiesta di Rory
+     l'11/08/2026. Si può rivalutare in futuro se la luna dovesse aver bisogno di un alone più
+     ampio del suo drop-shadow attuale. */
+  background: linear-gradient(155deg, var(--world-sky-top) 0%, var(--world-sky-middle) 48%, var(--world-sky-bottom) 100%);
   background-attachment: fixed;
 }
 
@@ -75,6 +75,31 @@ body.world-atmosphere {
   .world-star,
   .world-star.is-bright {
     animation: none;
+  }
+}
+
+/* Luna con la fase reale (vedi world-moon.ts/moon-phase.ts), interruttore indipendente dal
+   tema come le lanterne (#a6). Bagliore freddo/argenteo, non caldo come le lanterne — sono due
+   fonti di luce diverse nello stesso cielo. Ferma in un angolo (non fissa al centro, dove
+   interferirebbe con il titolo di pagina su schermi piccoli). */
+.world-moon {
+  position: fixed;
+  z-index: 0;
+  top: 6%;
+  right: 7%;
+  font-size: 2.6rem;
+  line-height: 1;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 6px rgba(230, 238, 245, 0.85))
+    drop-shadow(0 0 18px rgba(200, 220, 240, 0.5));
+}
+
+@media (max-width: 720px) {
+  .world-moon {
+    top: 4%;
+    right: 5%;
+    font-size: 2rem;
   }
 }
 
@@ -144,18 +169,17 @@ body.world-atmosphere {
 }
 
 /* Ocean è un cielo chiaro (unico tema diurno): le stelle diventano piccoli riflessi scuri,
-   altrimenti sparirebbero su uno sfondo così chiaro. */
+   altrimenti sparirebbero su uno sfondo così chiaro. I tre radial-gradient di riflessi che
+   c'erano qui sono stati tolti insieme a quelli degli altri temi (vedi sopra) — con
+   luna/stelle/lanterne ora veri elementi personalizzabili da Impostazioni del Mondo, un
+   bagliore statico e non spegnibile sarebbe rimasto "rumore" fuori dal loro controllo. */
 body.world-atmosphere[data-theme="sea"] {
   --world-star: rgba(53, 81, 84, 0.35);
-  background:
-    radial-gradient(circle at 12% 16%, rgba(255, 255, 255, 0.72), transparent 24%),
-    radial-gradient(circle at 82% 14%, rgba(205, 232, 227, 0.42), transparent 18%),
-    radial-gradient(circle at 68% 72%, rgba(196, 226, 220, 0.3), transparent 20%),
-    linear-gradient(180deg, #f1faf8 0%, var(--bg-color) 52%, #c4dbd6 100%);
+  background: linear-gradient(180deg, #f1faf8 0%, var(--bg-color) 52%, #c4dbd6 100%);
   background-attachment: fixed;
 }
 
-/* Velvet aggiunge una luce lunare rosata e un cielo scuro proprio. */
+/* Velvet ha un cielo scuro proprio. */
 /* "background-attachment: fixed" ripetuto in ognuno dei 4 temi qui sotto (bug segnalato
    10/08/2026): la shorthand "background" nella regola base più in alto lo imposta, ma ogni
    override per tema usa di nuovo la shorthand "background" — che azzera tutte le sue
@@ -163,28 +187,25 @@ body.world-atmosphere[data-theme="sea"] {
    al default "scroll". "the-white-world" non ha un override qui sotto (resta sulla regola
    base) ed è l'unico a non avere mai avuto il bug: il cielo scorreva con la pagina invece di
    restare fisso rispetto allo schermo, quindi su pagine lunghe si arrivava al colore più
-   scuro del gradiente ben prima della fine reale della pagina. */
+   scuro del gradiente ben prima della fine reale della pagina.
+   I radial-gradient di macchie di luce ambientale (velvet/red-of-you/green-of-me, non Ocean —
+   lì sono riflessi luminosi veri, parte del suo essere l'unico cielo diurno) erano
+   praticamente invisibili e non aggiungevano nulla alla pagina: tolti su richiesta di Rory
+   l'11/08/2026, stessa richiesta già fatta per the-white-world qui sopra. */
 body.world-atmosphere[data-theme="velvet"] {
   --world-star: rgba(250, 224, 235, 0.72);
-  background:
-    radial-gradient(circle at top left, rgba(240, 199, 212, 0.08), transparent 22%),
-    linear-gradient(180deg, #1f1620 0%, var(--bg-color) 56%, #0d090f 100%);
+  background: linear-gradient(180deg, #1f1620 0%, var(--bg-color) 56%, #0d090f 100%);
   background-attachment: fixed;
 }
 
 body.world-atmosphere[data-theme="red-of-you"] {
   --world-star: rgba(255, 222, 228, 0.7);
-  background:
-    radial-gradient(circle at 16% 18%, rgba(255, 213, 223, 0.16), transparent 18%),
-    radial-gradient(circle at 76% 16%, rgba(255, 219, 227, 0.12), transparent 16%),
-    linear-gradient(180deg, #7a1126 0%, var(--bg-color) 58%, #2f0610 100%);
+  background: linear-gradient(180deg, #7a1126 0%, var(--bg-color) 58%, #2f0610 100%);
   background-attachment: fixed;
 }
 
 body.world-atmosphere[data-theme="green-of-me"] {
   --world-star: rgba(225, 238, 225, 0.7);
-  background:
-    radial-gradient(circle at 14% 14%, rgba(224, 236, 224, 0.08), transparent 22%),
-    linear-gradient(180deg, #304a37 0%, var(--bg-color) 54%, #152118 100%);
+  background: linear-gradient(180deg, #304a37 0%, var(--bg-color) 54%, #152118 100%);
   background-attachment: fixed;
 }

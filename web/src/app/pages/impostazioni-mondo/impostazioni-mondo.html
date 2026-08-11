@@ -38,5 +38,20 @@
       />
       <span class="settings-toggle-switch" aria-hidden="true"></span>
     </label>
+
+    <label class="settings-toggle card">
+      <span class="settings-toggle-info">
+        <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
+        <span class="settings-toggle-description">La luna nel cielo del mondo, con la sua fase reale di oggi.</span>
+      </span>
+      <input
+        type="checkbox"
+        class="settings-toggle-input"
+        [checked]="worldSettingsService.settings().moon"
+        (change)="toggleSetting('moon', $event)"
+        aria-label="La luna"
+      />
+      <span class="settings-toggle-switch" aria-hidden="true"></span>
+    </label>
   </div>
 </app-shell>

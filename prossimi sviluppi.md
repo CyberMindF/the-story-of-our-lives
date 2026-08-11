@@ -20,10 +20,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #33 — Liste delle cose da fare insieme (la mia lista delle note)
 - #34 — Pagina delle nostre ricette?
 - #a4 - Creare una pagina "il cielo" dove è possibile vedere semplicemente la luna, la luna deve cambiare chiamando una API di qualche servizio esterno (se possibile) che da la fase lunare e noi la ricreiamo e la mostriamo. Qui è possibile godersi il cielo stellato, lunato, lanternato, ecc.
-- #a6 - Impostazioni del Mondo: interruttore per la luna e la sua fase, diverso da #a4 (quella
-  è una pagina dedicata a guardare il cielo insieme; questo è un piccolo elemento sempre
-  presente sullo sfondo, come le lanterne e le stelle, non una pagina a sé). Idea di Rory,
-  11/08/2026.
 - #a8 - Domanda aperta di Rory (11/08/2026): avrebbe senso rendere anche la scelta del tema
   globale/condivisa da Impostazioni del Mondo invece che locale per dispositivo come oggi
   (`ThemeService`, localStorage)? Parere di Claude quando gli è stato chiesto: probabilmente
@@ -164,6 +160,24 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Verificato end-to-end con un account di prova (poi ripulito): default `true`, spegni/riaccendi,
   letto correttamente insieme a "lanterns" nella stessa risposta. Anche questa migrazione è
   applicata solo in locale, non sul D1 di produzione.
+- [x] #a6 — terzo interruttore nella stanza: la luna, con la fase reale di oggi. A differenza
+  di #a4 (la pagina "il cielo" pensata a parte, con un'API esterna vera) qui la fase è
+  **calcolata**, non presa da un servizio esterno — un elemento di sfondo sempre presente su
+  ogni pagina non deve dipendere dalla rete. Formula astronomica standard (riferimento noto di
+  luna nuova + durata del mese sinodico, `shared/moon-phase.ts`), mappata su una delle 8 emoji
+  di fase (🌑→🌘). Un solo elemento fisso in un angolo del cielo (non 150 come le stelle, non
+  50 come le lanterne — la luna è una sola), bagliore freddo/argenteo per distinguerla dal
+  caldo delle lanterne. Stessa infrastruttura di #a5/#a7 (migrazione 0024, allowlist, terzo
+  toggle nella pagina). Verificato end-to-end con un account di prova (poi ripulito). Anche
+  questa migrazione resta da applicare sul D1 di produzione.
+  **Seguito, chiesto subito dopo**: Rory ha notato due macchie di luce statiche già presenti
+  nel cielo di "the-white-world" (radial-gradient nella regola base di
+  `world-atmosphere.css`) e ha chiesto di toglierle, visto che ora è la luna vera a fare da
+  fonte di luce — poi ha esteso la richiesta a **tutti** i radial-gradient decorativi degli
+  altri temi (Ocean compreso), non solo quelli del tema Notte: con luna/stelle/lanterne ora
+  elementi veri e personalizzabili, un bagliore statico e non spegnibile restava "rumore"
+  fuori dal loro controllo. Tolti da tutti e 5 i temi (rimane solo il gradiente lineare del
+  cielo per ciascuno); rimossa anche `--world-glow`, la custom property diventata inutilizzata.
 
 ### Bug chiusi
 
