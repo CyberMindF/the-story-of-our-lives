@@ -15,9 +15,10 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Aggiornata anche la validazione hardcoded in `mappa.ts` (si aspettava esattamente 6
   destinazioni, ora 7).
 - #26 — Mappa: completare Roma, aspetta il testo vero
-- #23 — zona giochi/cose da fare insieme
-- #24 — ricerca globale protetta (già segnata come rimandata)
-- #33 — Liste delle cose da fare insieme (la mia lista delle note)
+- #33 — Cose da fare insieme: pagina con liste fisse ricavate dalle note di Rory, non
+  modificabili dal sito. Comprende anche la vecchia #23 come categoria dedicata ai giochi da
+  fare insieme; per proporre aggiunte entrambi useranno il sistema di suggerimenti già
+  esistente.
 - #34 — Pagina delle nostre ricette?
 - #a4 - Creare una pagina "il cielo" dove è possibile vedere semplicemente la luna, la luna deve cambiare chiamando una API di qualche servizio esterno (se possibile) che da la fase lunare e noi la ricreiamo e la mostriamo. Qui è possibile godersi il cielo stellato, lunato, lanternato, ecc.
 - #a8 - Domanda aperta di Rory (11/08/2026): avrebbe senso rendere anche la scelta del tema
@@ -33,6 +34,16 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   partire dall'ultimo valore noto in locale (come cache, non più come fonte di verità) e poi
   eventualmente correggersi appena arriva la risposta di rete, per non reintrodurre lo stesso
   lampo in un'altra forma. Non implementato, in attesa di conferma.
+- #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
+
+---
+
+## Da non fare
+
+- [x] #24 — ricerca globale protetta: scartata. Le aree del sito sono poche e riconoscibili;
+  indicizzare contenuti protetti e formati diversi aggiungerebbe complessità senza risolvere
+  un bisogno emerso nell'uso reale. Da rivalutare solo se in futuro diventerà concretamente
+  difficile ritrovare i contenuti.
 
 ---
 
@@ -178,6 +189,22 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   elementi veri e personalizzabili, un bagliore statico e non spegnibile restava "rumore"
   fuori dal loro controllo. Tolti da tutti e 5 i temi (rimane solo il gradiente lineare del
   cielo per ciascuno); rimossa anche `--world-glow`, la custom property diventata inutilizzata.
+  **Secondo seguito**: la luna-emoji era "brutta e piccola", e mancava il selettore di fase
+  scelta a mano che Rory aveva effettivamente chiesto fin dall'inizio (perso nel primo giro).
+  Chiesto a Rory come vuole la resa prima di rifarla (sfera CSS con ombra reale vs. emoji
+  grande) invece di indovinare senza poterla vedere — scelta la sfera. Ridisegnata come tre
+  livelli CSS: un disco con sfumatura (per dare volume), una metà sempre scura (sinistra se
+  crescente, destra se calante) e un'ellisse che si somma o sottrae a quella metà in base alla
+  fase — geometria del terminatore lunare verificata numericamente (area scura attesa vs.
+  ottenuta ai 4 punti cardinali e alle fasi intermedie) prima di scriverla, non "a occhio".
+  Molto più grande (`clamp(4.5rem, 9vw, 8rem)` invece di un'emoji a 2.6rem). Aggiunto anche il
+  selettore di fase mancante: `world_settings` ha ora una colonna `value` generica (migrazione
+  0025, non solo per la luna: pensata per impostazioni future non booleane), popolata da un
+  `<select>` nella pagina Impostazioni con "fase reale di oggi" più le 8 fasi scelte a mano —
+  la stessa lista (`MOON_PHASE_LABEL`) è pensata per essere riusata da #a4 in futuro. Verificato
+  end-to-end con un account di prova (poi ripulito): value preservato quando si cambia solo
+  enabled, rifiuto di valori sconosciuti (400). Anche questa migrazione resta da applicare sul
+  D1 di produzione.
 
 ### Bug chiusi
 

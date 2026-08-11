@@ -81,25 +81,73 @@ body.world-atmosphere {
 /* Luna con la fase reale (vedi world-moon.ts/moon-phase.ts), interruttore indipendente dal
    tema come le lanterne (#a6). Bagliore freddo/argenteo, non caldo come le lanterne — sono due
    fonti di luce diverse nello stesso cielo. Ferma in un angolo (non fissa al centro, dove
-   interferirebbe con il titolo di pagina su schermi piccoli). */
+   interferirebbe con il titolo di pagina su schermi piccoli).
+
+   La forma della fase non è un'emoji ma tre livelli disegnati in CSS: il disco (sfumatura per
+   dare volume), una metà sempre scura ("fixed", sinistra se crescente/destra se calante) e
+   un'ellisse larga quanto serve che si somma o si sottrae a quella metà — geometria verificata
+   numericamente prima di scriverla (world-moon.ts/moon-phase.ts), non "a occhio": i 4 punti
+   cardinali (nuova/quarto/piena/quarto) tornano esatti, le fasi intermedie sono lisce. */
 .world-moon {
   position: fixed;
   z-index: 0;
-  top: 6%;
-  right: 7%;
-  font-size: 2.6rem;
-  line-height: 1;
+  top: 4%;
+  right: 5%;
+  width: clamp(4.5rem, 9vw, 8rem);
+  aspect-ratio: 1;
   pointer-events: none;
   filter:
-    drop-shadow(0 0 6px rgba(230, 238, 245, 0.85))
-    drop-shadow(0 0 18px rgba(200, 220, 240, 0.5));
+    drop-shadow(0 0 10px rgba(230, 238, 245, 0.75))
+    drop-shadow(0 0 28px rgba(200, 220, 240, 0.45));
+}
+
+.world-moon-disc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  /* Un radiale spostato dal centro invece che concentrico: dà l'idea di una sfera illuminata
+     di lato, non di un cerchio piatto con un cerchio più chiaro sopra. */
+  background: radial-gradient(circle at 38% 32%, #fdfdf8 0%, #e7e9ea 45%, #b9bfc4 78%, #8d949c 100%);
+}
+
+.world-moon-fixed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: #1b2230;
+}
+
+.world-moon-fixed.is-right {
+  left: auto;
+  right: 0;
+}
+
+.world-moon-ellipse {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+}
+
+.world-moon-ellipse.is-shadow {
+  background: #1b2230;
+}
+
+.world-moon-ellipse:not(.is-shadow) {
+  background: #e7e9ea;
 }
 
 @media (max-width: 720px) {
   .world-moon {
-    top: 4%;
-    right: 5%;
-    font-size: 2rem;
+    top: 3%;
+    right: 4%;
+    width: clamp(3.5rem, 14vw, 5rem);
   }
 }
 

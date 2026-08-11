@@ -72,3 +72,47 @@
   outline: 3px solid var(--focus-color);
   outline-offset: 3px;
 }
+
+/* Solo la luna ha bisogno di un secondo controllo (il selettore di fase) sotto il toggle
+   principale: qui il "card" si sposta sul contenitore esterno e la riga del toggle perde il
+   proprio padding (altrimenti raddoppiato) — le altre due impostazioni restano semplici
+   `<label class="settings-toggle card">` senza bisogno di questo wrapper. */
+.settings-toggle-card {
+  display: grid;
+  gap: .9rem;
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+}
+
+.settings-toggle-card .settings-toggle {
+  padding: 0;
+}
+
+.settings-phase-picker {
+  display: grid;
+  gap: .4rem;
+  padding-top: .9rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.settings-phase-picker label {
+  color: var(--muted-color);
+  font-size: .82rem;
+  font-weight: 600;
+}
+
+.settings-phase-picker select {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.8rem;
+  padding: .5rem .75rem;
+  border: 1px solid var(--border-color);
+  border-radius: .65rem;
+  background: var(--button-bg);
+  color: var(--text-color);
+  font: inherit;
+}
+
+.settings-phase-picker select:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 2px;
+}

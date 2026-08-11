@@ -1,3 +1,12 @@
 @if (worldSettingsService.settings().moon) {
-  <span class="world-moon" [attr.aria-label]="label" role="img">{{ emoji }}</span>
+  <div class="world-moon" [attr.aria-label]="label()" role="img">
+    <div class="world-moon-disc">
+      <div class="world-moon-fixed" [class.is-right]="render().fixedSide === 'right'"></div>
+      <div
+        class="world-moon-ellipse"
+        [class.is-shadow]="render().ellipseIsShadow"
+        [style.width.%]="render().ellipseWidthFraction * 100"
+      ></div>
+    </div>
+  </div>
 }

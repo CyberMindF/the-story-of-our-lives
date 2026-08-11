@@ -39,19 +39,31 @@
       <span class="settings-toggle-switch" aria-hidden="true"></span>
     </label>
 
-    <label class="settings-toggle card">
-      <span class="settings-toggle-info">
-        <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
-        <span class="settings-toggle-description">La luna nel cielo del mondo, con la sua fase reale di oggi.</span>
-      </span>
-      <input
-        type="checkbox"
-        class="settings-toggle-input"
-        [checked]="worldSettingsService.settings().moon"
-        (change)="toggleSetting('moon', $event)"
-        aria-label="La luna"
-      />
-      <span class="settings-toggle-switch" aria-hidden="true"></span>
-    </label>
+    <div class="settings-toggle-card card">
+      <label class="settings-toggle">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
+          <span class="settings-toggle-description">La luna nel cielo del mondo, con la fase che scegli qui sotto.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().moon"
+          (change)="toggleSetting('moon', $event)"
+          aria-label="La luna"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
+
+      <div class="settings-phase-picker">
+        <label for="moon-phase-select">Fase</label>
+        <select id="moon-phase-select" [value]="worldSettingsService.values().moon || 'auto'" (change)="setMoonPhase($event)">
+          <option value="auto">Fase reale di oggi (automatica)</option>
+          @for (phase of moonPhaseOptions; track phase.index) {
+            <option [value]="phase.index">{{ phase.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
   </div>
 </app-shell>
