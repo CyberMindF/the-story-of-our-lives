@@ -34,8 +34,10 @@ export class WorldStars {
       bright: size > 1.65 && this.randomBetween(0, 1) > 0.45,
       // Durata/ritardo diversi per ogni stella (vedi world-atmosphere.css): senza questa
       // variazione tutte le 150 stelle pulserebbero in sincrono, un effetto palesemente finto.
-      twinkleDuration: Number(this.randomBetween(3, 7).toFixed(2)),
-      twinkleDelay: Number(this.randomBetween(0, 8).toFixed(2))
+      // Ciclo breve apposta (~1-2s): un brillio realistico si nota subito, non è un respiro
+      // lento sullo sfondo.
+      twinkleDuration: Number(this.randomBetween(0.9, 1.9).toFixed(2)),
+      twinkleDelay: Number(this.randomBetween(0, 2.5).toFixed(2))
     };
   }
 
