@@ -24,8 +24,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   è una pagina dedicata a guardare il cielo insieme; questo è un piccolo elemento sempre
   presente sullo sfondo, come le lanterne e le stelle, non una pagina a sé). Idea di Rory,
   11/08/2026.
-- #a7 - Impostazioni del Mondo: interruttore per accendere/spegnere le stelle nel cielo (oggi
-  sono sempre presenti su ogni tema). Idea di Rory, 11/08/2026.
 - #a8 - Domanda aperta di Rory (11/08/2026): avrebbe senso rendere anche la scelta del tema
   globale/condivisa da Impostazioni del Mondo invece che locale per dispositivo come oggi
   (`ThemeService`, localStorage)? Parere di Claude quando gli è stato chiesto: probabilmente
@@ -158,6 +156,14 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   compresi): il valore è davvero condiviso tra account diversi, non solo persistito per uno.
   **Migrazione applicata solo in locale** (`--local`): quella sul D1 di produzione
   (`--remote`) resta da fare a mano, non l'ha applicata Claude.
+- [x] #a7 — secondo interruttore nella stanza appena costruita per #a5: le stelle nel cielo,
+  prima sempre attive su ogni tema, ora spegnibili — stessa infrastruttura di #a5
+  (`world_settings`, allowlist, `WorldSettingsService`), solo una nuova migrazione di seed
+  (0023) e una riga in più nella pagina. Toggle della pagina reso generico
+  (`toggleSetting(key, event)`) invece di duplicare il metodo che c'era solo per le lanterne.
+  Verificato end-to-end con un account di prova (poi ripulito): default `true`, spegni/riaccendi,
+  letto correttamente insieme a "lanterns" nella stessa risposta. Anche questa migrazione è
+  applicata solo in locale, non sul D1 di produzione.
 
 ### Bug chiusi
 
