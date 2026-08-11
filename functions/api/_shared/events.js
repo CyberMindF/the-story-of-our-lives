@@ -25,7 +25,9 @@ const ALLOWED_EVENTS = new Set([
   "question_asked",
   "answer_given",
   "question_edited",
-  "answer_edited"
+  "answer_edited",
+  "together_status_changed",
+  "together_nsfw_attempt"
 ]);
 const MAX_METADATA_LENGTH = 4096;
 

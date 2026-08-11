@@ -15,10 +15,13 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Aggiornata anche la validazione hardcoded in `mappa.ts` (si aspettava esattamente 6
   destinazioni, ora 7).
 - #26 — Mappa: completare Roma, aspetta il testo vero
-- #33 — Cose da fare insieme: pagina con liste fisse ricavate dalle note di Rory, non
-  modificabili dal sito. Comprende anche la vecchia #23 come categoria dedicata ai giochi da
-  fare insieme; per proporre aggiunte entrambi useranno il sistema di suggerimenti già
-  esistente.
+- [~] #33 — Cose da fare insieme: prima versione implementata con tutte le 77 idee nell'ordine
+  originale, filtri e stati condivisi “Da fare / Fatto / Da rifare”. Comprende anche la
+  vecchia #23 attraverso la categoria Giochi e usa il sistema di suggerimenti esistente per
+  proporre aggiunte. Le parti NSFW non vengono inviate al browser prima dello sblocco; la
+  risposta al prompt viene dichiaratamente registrata negli eventi e lo sblocco dura solo
+  fino a refresh/uscita. **Da rivedere con Rory**: classificazione delle voci normali/miste/
+  NSFW, testi ripuliti e mesi approssimativi da assegnare senza perdere l'ordine originale.
 - #34 — Pagina delle nostre ricette?
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
 - #c1 - Verifica generale che tutti gli eventi siano presenti

@@ -12,6 +12,7 @@ const CATEGORIES = new Set([
   "ponti",
   "lettere",
   "tavolo-da-gioco",
+  "cose-da-fare-insieme",
   "altro"
 ]);
 

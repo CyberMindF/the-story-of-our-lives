@@ -1,0 +1,97 @@
+<app-shell
+  homeHref="/mondo-bianco"
+  homeAria="Torna al Mondo Bianco"
+  homeIcon="⭕"
+  homeLabel="Il Mondo Bianco"
+  shellClass="world-shell"
+  headerExtraClass="world-header"
+  homeLinkExtraClass="world-mark"
+>
+  <main class="together-page">
+    <header class="together-hero">
+      <p class="together-eyebrow">Una lista che continua a crescere</p>
+      <h1>📝 Cose da fare insieme</h1>
+      <p>Idee piccole, viaggi, giochi e momenti da vivere. Nello stesso ordine in cui sono arrivati.</p>
+    </header>
+
+    <section class="together-tools card" aria-label="Filtri e contenuti riservati">
+      <div class="together-filters" aria-label="Filtra per stato">
+        <button type="button" [class.is-active]="filter() === 'all'" (click)="setFilter('all')">Tutte</button>
+        <button type="button" [class.is-active]="filter() === 'todo'" (click)="setFilter('todo')">Da fare</button>
+        <button type="button" [class.is-active]="filter() === 'done'" (click)="setFilter('done')">Fatte</button>
+        <button type="button" [class.is-active]="filter() === 'repeat'" (click)="setFilter('repeat')">Da rifare</button>
+      </div>
+
+      @if (!unlocked()) {
+        <button class="private-trigger" type="button" (click)="unlockOpen.set(!unlockOpen())">
+          <span aria-hidden="true">🔒</span> Mostra le idee NSFW
+        </button>
+      } @else {
+        <span class="private-unlocked"><span aria-hidden="true">🔓</span> Idee NSFW visibili</span>
+      }
+    </section>
+
+    @if (unlockOpen() && !unlocked()) {
+      <form class="unlock-panel card" (submit)="$event.preventDefault(); unlock(unlockAnswer)">
+        <label for="unlock-answer">Qual era la cosa che ti piaceva di più quando lo facevamo?</label>
+        <p>La risposta verrà conservata nei nostri eventi insieme all’esito del tentativo.</p>
+        <div>
+          <input #unlockAnswer id="unlock-answer" type="text" maxlength="240" autocomplete="off" required />
+          <button type="submit" [disabled]="unlocking()">{{ unlocking() ? 'Controllo…' : 'Prova a sbloccare' }}</button>
+        </div>
+        @if (unlockError()) { <p class="form-message is-error" role="status">{{ unlockError() }}</p> }
+      </form>
+    }
+
+    @if (error()) { <p class="page-message" role="alert">{{ error() }}</p> }
+    @if (loading()) {
+      <p class="page-message">Sto recuperando la lista…</p>
+    } @else {
+      <ol class="together-list">
+        @for (activity of visibleActivities(); track activity.id) {
+          <li class="activity-card card" [class.is-complete]="activity.status === 'done'" [class.is-repeat]="activity.status === 'repeat'">
+            <span class="activity-number" aria-label="Numero {{ activity.id }}">{{ activity.id }}</span>
+            <div class="activity-content">
+              <div class="activity-meta">
+                <span>{{ categoryLabel[activity.category] || activity.category }}</span>
+                @if (activity.approximateMonth) { <span>Aggiunta circa a {{ activity.approximateMonth }}</span> }
+              </div>
+
+              @if (activity.text) {
+                <h2>{{ activity.text }}</h2>
+              } @else if (!unlocked()) {
+                <h2 class="private-placeholder"><span aria-hidden="true">🔒</span> Idea NSFW</h2>
+              }
+
+              @if (activity.hasPrivatePart) {
+                @if (privateParts().get(activity.id); as privateText) {
+                  <p class="private-text"><span aria-hidden="true">18+</span> {{ privateText }}</p>
+                } @else if (activity.text) {
+                  <p class="private-variation"><span aria-hidden="true">🔒</span> Ha anche una variante NSFW</p>
+                }
+              }
+
+              @if (activity.link) {
+                <a [href]="activity.link" target="_blank" rel="noopener noreferrer">Apri il riferimento ↗</a>
+              }
+            </div>
+            <button
+              class="status-button"
+              type="button"
+              [class]="'status-button is-' + activity.status"
+              [disabled]="savingId() === activity.id"
+              (click)="advanceStatus(activity)"
+              [attr.aria-label]="'Stato: ' + statusLabel[activity.status] + '. Cambia stato'"
+            >
+              <span aria-hidden="true">{{ activity.status === 'todo' ? '○' : activity.status === 'done' ? '✓' : '↻' }}</span>
+              {{ statusLabel[activity.status] }}
+            </button>
+          </li>
+        } @empty {
+          <li class="empty-state card">Non ci sono attività con questo stato.</li>
+        }
+      </ol>
+    }
+  </main>
+</app-shell>
+
