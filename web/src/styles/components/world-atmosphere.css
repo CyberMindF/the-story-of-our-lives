@@ -51,8 +51,7 @@ body.world-atmosphere {
 /* Ogni stella scende fino al 15% della propria opacità di base (mai a 0: una stella non
    "sparisce", brilla di meno) — durata e ritardo sono randomizzati per stella in
    world-stars.ts, altrimenti 150 stelle che pulsano tutte insieme sembrerebbero un effetto
-   finto invece di un cielo reale. Ciclo volutamente breve (~1-2s): un brillio realistico si
-   nota, non è un respiro lentissimo sullo sfondo. */
+   finto invece di un cielo reale. */
 @keyframes star-twinkle {
   0%, 100% {
     opacity: var(--star-opacity);
@@ -68,7 +67,7 @@ body.world-atmosphere {
     box-shadow: 0 0 3px 0.5px var(--world-star);
   }
   50% {
-    box-shadow: 0 0 11px 3px var(--world-star);
+    box-shadow: 0 0 14px 3.6px var(--world-star);
   }
 }
 
