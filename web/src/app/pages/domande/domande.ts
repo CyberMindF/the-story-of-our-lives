@@ -5,6 +5,7 @@ import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { ContentMessage } from '../../shared/content-message/content-message';
 import { Question, QuestionCard } from './question-card/question-card';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 // Stesso scheletro di Lettere: fetch diretto nel componente, nessun service dedicato,
 // FormData+FormSubmission per il form in cima. Ogni domanda in lista gestisce le proprie
@@ -12,7 +13,7 @@ import { Question, QuestionCard } from './question-card/question-card';
 @Component({
   selector: 'app-domande',
   standalone: true,
-  imports: [AppShell, FormsModule, FormStatus, ContentMessage, QuestionCard],
+  imports: [AppShell, FormsModule, FormStatus, ContentMessage, QuestionCard, EditorialText],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/domande.css'],
   templateUrl: './domande.html'

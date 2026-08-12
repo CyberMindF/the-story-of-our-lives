@@ -777,6 +777,26 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Restano da fare**: verifica visiva reale (serve Node aggiornato o farlo girare altrove),
   applicare tutte le migrazioni al D1 di produzione (finora solo locale), le collezioni
   strutturate, le decisioni aperte sull'inventario, Fase 8 (export/backup).
+- [x] CMS (`planning editor contenuti.md`, Fase 4 — terzo lotto, testi `history` ancora
+  hardcoded): su `feature/content-editor`. Migrazione 0039: `ponti.introduzione`,
+  `domande.introduzione`, `tavolo.introduzione`, `gdr.introduzione` (`paragraphs`, tre paragrafi),
+  `linguaggio-segreto.introduzione` (`paragraphs`, due paragrafi) — tutti creati direttamente
+  `history` fin dall'inizio (entry + prima `content_versions` in un solo passaggio), a differenza
+  del primo lotto dove le 4 chiavi erano nate `replace` per assunzione e poi corrette. Restano
+  fuori: `mappamondo.introduzione` (bloccato dalla decisione #3 sull'inventario, non ancora
+  presa: racconto modificabile o documento immutabile); le introduzioni ancora in JSON
+  (`cuffiette.playlist/canzoni.introduzione`, `storie.introduzione`, `mappa.introduzione`,
+  `bacheca.introduzione`) — richiedono anche di aggiornare il consumo lato frontend
+  (`StaticContentService`), rimandate a un giro dedicato insieme alle rispettive collezioni
+  strutturate. Verificato con query diretta su D1 locale: tutte e 5 `history` con
+  `current_version_id` valorizzato e lunghezza del testo coerente. `tsc --noEmit` pulito.
+  **A questo punto la Fase 4 sui testi semplici/paragrafi è quasi esaurita**: restano solo le
+  introduzioni JSON delle raccolte (da fare insieme a Fase 7) e i pochi testi esclusi per limiti
+  reali di `EditorialText` (link inline, interruzioni di riga, codice di puzzle, etichette
+  inline) o perché raggiungibili senza sessione. Il grosso del lavoro non ancora fatto è altrove:
+  raccolte strutturate (Fase 4 prosegue/Fase 7), decisioni #2/#3/#4/#5 dell'inventario, Fase 8,
+  e soprattutto **applicare tutto a produzione** — finora ogni migrazione è stata verificata solo
+  su D1 locale.
 
 ---
 
