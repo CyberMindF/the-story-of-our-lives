@@ -29,6 +29,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e7 - Animazione bolle di sapone, che vagano un po' per lo schermo e poi scoppiano
 - #e8 - Animazione cuori possono essere molto piccoli e molto grandi, vagano un po' per lo schermo in modo legiadro e poi fanno un piccolo fadeout leggero
 - #e9 - team white-world deve dare la sensazione di bianco "puro" come una comperta di raso, perla biaanca, colori bianchi di quel tipo deve essere un bel colore ovviamente, non troppo giallo, però un po' "avorio" credo che abbiamo capito
+- #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
 ---
 
 ## Da non fare
@@ -1011,6 +1012,29 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   (introduzione + scene), card del Mondo Bianco (nome/descrizione), playlist/parole
   rubate/`songsIntroduction` delle Cuffiette (dopo il supporto ai link), Bacheca. Restano fuori
   scope: GDR e Linguaggio Segreto (nessun editor dedicato ancora costruito).
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — settimo editor dedicato: il Mappamondo,
+  decisione #3 dell'inventario): su `feature/content-editor`. La collezione più delicata sul
+  piano della fedeltà del testo: non un elenco di paragrafi come Storie/Mappa, ma dialoghi con
+  tag "R:"/"D:" a volte incorporati nello **stesso paragrafo** insieme alla narrazione (scena
+  "Dentro": "...con la mano e un piccolo inchino dico R: 'Prego! Ovviamente prima le donne'").
+  Un editor a paragrafi semplici avrebbe appiattito questa distinzione — fermato e chiesto
+  esplicitamente a Rory come procedere prima di rischiare di degradare un testo scritto con
+  cura. Progettato un formato dedicato: ogni riga di ogni scena è una lista di "segmenti"
+  `{speaker: null|"r"|"d", text}`, quasi sempre un solo segmento per riga, più di uno solo nei
+  paragrafi misti. Tabella `mappamondo_scenes` (migrazione 0054), 7 scene importate
+  trascrivendo `mappamondo.html` (migrazione 0055) — verificato che il paragrafo misto della
+  scena "Dentro" sia arrivato con due segmenti distinti, non fuso in uno. Editor admin con un
+  piccolo form per riga (select narrazione/R/D + testo, aggiungi/rimuovi riga, aggiungi
+  segmento nella stessa riga) invece di una textarea libera, per evitare che un admin scriva
+  markup a mano. **Verificato in browser**: 7 scene, 14 tag speaker totali, il paragrafo misto
+  della scena "Dentro" renderizza esattamente come "narrazione... R: \"battuta\"" nello stesso
+  `<p>`, l'immagine del mappamondo resta posizionata tra la scena 6 e la 7 (non dentro la card,
+  serviva un `@if` sul fratello precedente, non dentro il loro contenuto).
+  `mondo-bianco.canzone.citazione` (versi con `<br>`) e `mappamondo.introduzione` (non un testo
+  isolato ben definito, l'eyebrow resta strutturale) restano fuori, stessa cautela di sempre sui
+  contenuti con formattazione non banale.
+  **Restano da fare**: card del Mondo Bianco, supporto a link interni in `EditorialText` +
+  Cuffiette (playlist/parole rubate/`songsIntroduction`), Cruciverba, Bacheca.
 
 ---
 
