@@ -8,13 +8,17 @@
     <app-editorial-text contentKey="linguaggio-segreto.introduzione" />
   </section>
 
+  @if (loadError()) {
+    <app-content-message message="Non è stato possibile caricare il Linguaggio Segreto." tone="error" [panel]="true" />
+  }
+
   <!-- Rubrica/agenda con le linguette laterali: si clicca il nome della categoria come si
        sfoglierebbe un indice alfabetico, il contenuto cambia nel pannello a fianco. Scelta
        dopo aver confrontato 4 alternative dal vivo (griglia, colonna singola, fisarmonica,
        sfoglia a pagine). -->
   <section class="linguaggio-rubrica" aria-label="La tabella dei simboli">
     <div class="linguaggio-rubrica-tabs" role="tablist" aria-label="Categorie">
-      @for (category of categories; track category.title; let i = $index) {
+      @for (category of categories(); track category.id; let i = $index) {
         <button type="button" role="tab" [attr.aria-selected]="activeCategoryIndex() === i" [class.is-active]="activeCategoryIndex() === i" (click)="activeCategoryIndex.set(i)">
           <span class="linguaggio-rubrica-icon" aria-hidden="true">{{ category.icon }}</span>
           {{ category.title }}
@@ -22,13 +26,13 @@
       }
     </div>
     <div class="linguaggio-rubrica-panel">
-      @if (categories[activeCategoryIndex()]; as category) {
+      @if (categories()[activeCategoryIndex()]; as category) {
         <h2><span class="linguaggio-rubrica-icon" aria-hidden="true">{{ category.icon }}</span>{{ category.title }}</h2>
         @if (category.note) {
           <p class="linguaggio-category-note">{{ category.note }}</p>
         }
         <div class="linguaggio-entries">
-          @for (entry of category.entries; track entry.symbol) {
+          @for (entry of category.entries; track entry.id) {
             <div class="linguaggio-entry">
               <span class="linguaggio-symbol">{{ entry.symbol }}</span>
               <span class="linguaggio-meaning">
@@ -55,7 +59,7 @@
     <h2>Esempi</h2>
     <div class="linguaggio-examples-intro"><app-editorial-text contentKey="linguaggio-segreto.esempi-introduzione" /></div>
     <ul class="linguaggio-examples-list">
-      @for (example of examples; track example.code) {
+      @for (example of examples(); track example.id) {
         <li><span class="linguaggio-example-code">{{ example.code }}</span><span class="linguaggio-example-arrow" aria-hidden="true">→</span><span class="linguaggio-example-meaning">{{ example.meaning }}</span></li>
       }
     </ul>
@@ -63,6 +67,251 @@
 
   <section class="linguaggio-message card--handwritten" aria-label="Un messaggio da decifrare">
     <div class="linguaggio-message-hint"><app-editorial-text contentKey="linguaggio-segreto.messaggio-indizio" /></div>
-    <p class="linguaggio-message-code">. &amp; ... &lt;&gt;</p>
+    <div class="linguaggio-message-code"><app-editorial-text contentKey="linguaggio-segreto.messaggio-codice" /></div>
   </section>
+
+  @if (canEdit()) {
+    <section class="linguaggio-admin-section" aria-labelledby="linguaggio-admin-title">
+      <div class="linguaggio-admin-heading">
+        <h2 id="linguaggio-admin-title">Modifica il Linguaggio Segreto</h2>
+        <button type="button" class="btn" (click)="toggleAdminPanel()">
+          {{ adminPanelOpen() ? 'Chiudi' : 'Apri' }} l'editor
+        </button>
+      </div>
+
+      @if (adminPanelOpen()) {
+        <!-- Categorie -->
+        <div class="linguaggio-admin-block">
+          <div class="linguaggio-admin-block-heading">
+            <h3>Categorie</h3>
+            @if (categoryEditingId() === null) {
+              <button type="button" class="btn" (click)="startCreateCategory()">➕ Aggiungi categoria</button>
+            }
+          </div>
+
+          @if (categoryEditingId() !== null) {
+            <form class="linguaggio-admin-form card" (ngSubmit)="submitCategory()">
+              <h4>{{ categoryEditingId() === '__new__' ? 'Nuova categoria' : 'Modifica categoria' }}</h4>
+              @if (categoryEditingId() === '__new__') {
+                <label class="form-field">
+                  <span>ID (slug)</span>
+                  <input type="text" required [ngModel]="categoryDraft().id" (ngModelChange)="updateCategoryDraft({ id: $event })" name="categoryId" />
+                </label>
+              }
+              <label class="form-field">
+                <span>Titolo</span>
+                <input type="text" required [ngModel]="categoryDraft().title" (ngModelChange)="updateCategoryDraft({ title: $event })" name="categoryTitle" />
+              </label>
+              <label class="form-field">
+                <span>Icona</span>
+                <input type="text" required [ngModel]="categoryDraft().icon" (ngModelChange)="updateCategoryDraft({ icon: $event })" name="categoryIcon" />
+              </label>
+              <label class="form-field">
+                <span>Nota <small>facoltativa</small></span>
+                <textarea rows="3" [ngModel]="categoryDraft().note" (ngModelChange)="updateCategoryDraft({ note: $event })" name="categoryNote"></textarea>
+              </label>
+              <p class="linguaggio-admin-form-error">{{ categoryFormError() }}</p>
+              <div class="linguaggio-admin-form-actions">
+                <button type="button" class="btn" (click)="cancelEditCategory()">Annulla</button>
+                <button type="submit" class="btn btn-submit">Salva</button>
+              </div>
+            </form>
+          }
+
+          <div class="linguaggio-admin-list">
+            @for (category of categories(); track category.id) {
+              <article class="linguaggio-admin-entry">
+                <header class="linguaggio-admin-entry-heading">
+                  <span class="linguaggio-rubrica-icon" aria-hidden="true">{{ category.icon }}</span>
+                  <strong>{{ category.title }}</strong>
+                  <span class="linguaggio-admin-id">#{{ category.id }}</span>
+                </header>
+                <div class="linguaggio-admin-actions">
+                  <button type="button" class="btn" (click)="moveCategory(category.id, 'up')">⬆️</button>
+                  <button type="button" class="btn" (click)="moveCategory(category.id, 'down')">⬇️</button>
+                  <button type="button" class="btn" (click)="startEditCategory({ id: category.id, title: category.title, icon: category.icon, note: category.note, position: 0 })">✏️ Modifica</button>
+                  <button type="button" class="btn" (click)="requestDeleteCategory(category.id)">🗑️ Elimina</button>
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+
+        <!-- Simboli -->
+        <div class="linguaggio-admin-block">
+          <h3>Simboli</h3>
+
+          @if (symbolEditingId() !== null) {
+            <form class="linguaggio-admin-form card" (ngSubmit)="submitSymbol()">
+              <h4>{{ symbolEditingId() === '__new__' ? 'Nuovo simbolo' : 'Modifica simbolo' }}</h4>
+              @if (symbolEditingId() === '__new__') {
+                <label class="form-field">
+                  <span>Categoria</span>
+                  <select required [ngModel]="symbolDraft().categoryId" (ngModelChange)="updateSymbolDraft({ categoryId: $event })" name="symbolCategoryId">
+                    @for (category of categories(); track category.id) {
+                      <option [value]="category.id">{{ category.icon }} {{ category.title }}</option>
+                    }
+                  </select>
+                </label>
+              }
+              <label class="form-field">
+                <span>Simbolo</span>
+                <input type="text" required [ngModel]="symbolDraft().symbol" (ngModelChange)="updateSymbolDraft({ symbol: $event })" name="symbolSymbol" />
+              </label>
+              <label class="form-field">
+                <span>Significato</span>
+                <input type="text" required [ngModel]="symbolDraft().meaning" (ngModelChange)="updateSymbolDraft({ meaning: $event })" name="symbolMeaning" />
+              </label>
+              <label class="form-field">
+                <span>Spiegazione <small>facoltativa</small></span>
+                <textarea rows="3" [ngModel]="symbolDraft().explanation" (ngModelChange)="updateSymbolDraft({ explanation: $event })" name="symbolExplanation"></textarea>
+              </label>
+              <p class="linguaggio-admin-form-error">{{ symbolFormError() }}</p>
+              <div class="linguaggio-admin-form-actions">
+                <button type="button" class="btn" (click)="cancelEditSymbol()">Annulla</button>
+                <button type="submit" class="btn btn-submit">Salva</button>
+              </div>
+            </form>
+          }
+
+          @for (category of categories(); track category.id) {
+            <div class="linguaggio-admin-category-group">
+              <div class="linguaggio-admin-block-heading">
+                <h4>{{ category.icon }} {{ category.title }}</h4>
+                @if (symbolEditingId() === null) {
+                  <button type="button" class="btn" (click)="startCreateSymbol(category.id)">➕ Aggiungi simbolo</button>
+                }
+              </div>
+
+              <div class="linguaggio-admin-list">
+                @for (entry of category.entries; track entry.id) {
+                  <article class="linguaggio-admin-entry">
+                    <header class="linguaggio-admin-entry-heading">
+                      <span class="linguaggio-symbol">{{ entry.symbol }}</span>
+                      <strong>{{ entry.meaning }}</strong>
+                    </header>
+                    @if (entry.explanation) {
+                      <p class="linguaggio-explanation">{{ entry.explanation }}</p>
+                    }
+
+                    @if (movingSymbolId() === entry.id) {
+                      <div class="linguaggio-move-form">
+                        <label class="form-field">
+                          <span>Sposta in categoria</span>
+                          <select [ngModel]="moveTargetCategoryId()" (ngModelChange)="moveTargetCategoryId.set($event); moveAfterId.set('')" name="moveCategory">
+                            @for (target of categories(); track target.id) {
+                              <option [value]="target.id">{{ target.icon }} {{ target.title }}</option>
+                            }
+                          </select>
+                        </label>
+                        <label class="form-field">
+                          <span>Dopo quale elemento</span>
+                          <select [ngModel]="moveAfterId()" (ngModelChange)="moveAfterId.set($event)" name="moveAfter">
+                            <option value="">In cima alla categoria</option>
+                            @for (other of symbolsForMoveTarget(); track other.id) {
+                              <option [value]="other.id">{{ other.symbol }} — {{ other.meaning }}</option>
+                            }
+                          </select>
+                        </label>
+                        <p class="linguaggio-admin-form-error">{{ moveError() }}</p>
+                        <div class="linguaggio-admin-form-actions">
+                          <button type="button" class="btn" (click)="cancelMoveSymbol()">Annulla</button>
+                          <button type="button" class="btn btn-submit" (click)="confirmMoveSymbol()">Sposta</button>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="linguaggio-admin-actions">
+                        <button type="button" class="btn" (click)="moveSymbol(entry.id, 'up')">⬆️</button>
+                        <button type="button" class="btn" (click)="moveSymbol(entry.id, 'down')">⬇️</button>
+                        <button type="button" class="btn" (click)="startMoveSymbol({ id: entry.id, categoryId: category.id, symbol: entry.symbol, meaning: entry.meaning, explanation: entry.explanation, position: 0 })">↔️ Sposta…</button>
+                        <button type="button" class="btn" (click)="startEditSymbol({ id: entry.id, categoryId: category.id, symbol: entry.symbol, meaning: entry.meaning, explanation: entry.explanation, position: 0 })">✏️ Modifica</button>
+                        <button type="button" class="btn" (click)="requestDeleteSymbol(entry.id)">🗑️ Elimina</button>
+                      </div>
+                    }
+                  </article>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Esempi -->
+        <div class="linguaggio-admin-block">
+          <div class="linguaggio-admin-block-heading">
+            <h3>Esempi</h3>
+            @if (exampleEditingId() === null) {
+              <button type="button" class="btn" (click)="startCreateExample()">➕ Aggiungi esempio</button>
+            }
+          </div>
+
+          @if (exampleEditingId() !== null) {
+            <form class="linguaggio-admin-form card" (ngSubmit)="submitExample()">
+              <h4>{{ exampleEditingId() === '__new__' ? 'Nuovo esempio' : 'Modifica esempio' }}</h4>
+              <label class="form-field">
+                <span>Codice</span>
+                <input type="text" required [ngModel]="exampleDraft().code" (ngModelChange)="updateExampleDraft({ code: $event })" name="exampleCode" />
+              </label>
+              <label class="form-field">
+                <span>Significato</span>
+                <input type="text" required [ngModel]="exampleDraft().meaning" (ngModelChange)="updateExampleDraft({ meaning: $event })" name="exampleMeaning" />
+              </label>
+              <p class="linguaggio-admin-form-error">{{ exampleFormError() }}</p>
+              <div class="linguaggio-admin-form-actions">
+                <button type="button" class="btn" (click)="cancelEditExample()">Annulla</button>
+                <button type="submit" class="btn btn-submit">Salva</button>
+              </div>
+            </form>
+          }
+
+          <div class="linguaggio-admin-list">
+            @for (example of examples(); track example.id) {
+              <article class="linguaggio-admin-entry">
+                <header class="linguaggio-admin-entry-heading">
+                  <span class="linguaggio-example-code">{{ example.code }}</span>
+                  <strong>{{ example.meaning }}</strong>
+                </header>
+                <div class="linguaggio-admin-actions">
+                  <button type="button" class="btn" (click)="moveExample(example.id, 'up')">⬆️</button>
+                  <button type="button" class="btn" (click)="moveExample(example.id, 'down')">⬇️</button>
+                  <button type="button" class="btn" (click)="startEditExample(example)">✏️ Modifica</button>
+                  <button type="button" class="btn" (click)="requestDeleteExample(example.id)">🗑️ Elimina</button>
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+      }
+    </section>
+
+    <app-confirmation-dialog
+      dialogId="delete-linguaggio-category"
+      title="Eliminare questa categoria?"
+      description="Sposta o elimina prima tutti i suoi simboli."
+      confirmLabel="Elimina"
+      cancelLabel="Annulla"
+      [open]="categoryDeleteTargetId() !== null"
+      (confirm)="confirmDeleteCategory()"
+      (cancel)="cancelDeleteCategory()"
+    />
+    <app-confirmation-dialog
+      dialogId="delete-linguaggio-symbol"
+      title="Eliminare questo simbolo?"
+      description="L'operazione non può essere annullata."
+      confirmLabel="Elimina"
+      cancelLabel="Annulla"
+      [open]="symbolDeleteTargetId() !== null"
+      (confirm)="confirmDeleteSymbol()"
+      (cancel)="cancelDeleteSymbol()"
+    />
+    <app-confirmation-dialog
+      dialogId="delete-linguaggio-example"
+      title="Eliminare questo esempio?"
+      description="L'operazione non può essere annullata."
+      confirmLabel="Elimina"
+      cancelLabel="Annulla"
+      [open]="exampleDeleteTargetId() !== null"
+      (confirm)="confirmDeleteExample()"
+      (cancel)="cancelDeleteExample()"
+    />
+  }
 </app-shell>
