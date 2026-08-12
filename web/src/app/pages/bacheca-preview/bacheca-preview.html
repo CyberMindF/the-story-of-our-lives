@@ -1,8 +1,231 @@
 <app-shell>
- <header class="memory-hero card"><p class="memory-kicker">Il nostro archivio</p><h1>📸 La Bacheca dei Ricordi</h1><div class="memory-intro">@for(p of introduction();track $index){<p>{{p}}</p>}</div></header>
- <nav class="memory-nav card">@for(period of layoutPeriods();track period.slug){<div class="memory-nav-group"><strong>{{period.title}}</strong><div class="memory-nav-links">@for(day of period.days;track day.slug){<a [routerLink]="[]" [fragment]="dayId(period,day)">{{day.title||period.title}}</a>}</div></div>}</nav>
- <div class="memory-dev-toolbar"><button [class.is-active]="devMode()" (click)="devMode.set(!devMode())">{{devMode()?'Nascondi ID':'Modalità modifica'}}</button></div>
- <main class="memory-book">@for(period of layoutPeriods();track period.slug){<section class="memory-period"><header class="memory-period-header"><h2>{{period.title}}</h2></header>@for(day of period.days;track day.slug){<article class="memory-day card" [id]="dayId(period,day)">@if(day.title){<h3>{{day.title}}</h3>}<div class="memory-rows">@for(row of day.rows;track $index){<section class="memory-row" [class.is-gallery]="rowPhotos(row).length===row.columns.length&&rowPhotos(row).length>1">@for(column of row.columns;track $index){<div class="memory-column" [style.--column-width]="column.width">@for(block of column.blocks;track $index){@switch(block.type){@case('text'){<p class="memory-prose">{{block.text}}@if(block.link){<a class="memory-inline-link" [href]="block.link.href" target="_blank">{{block.link.label}} ↗</a>}</p>}@case('photo'){<figure class="memory-photo">@if(devMode()){<span class="memory-media-id">{{mediaId(block,'Foto')}}</span>}<button (click)="openLightbox(rowPhotos(row),rowPhotos(row).indexOf(block))"><img [src]="mediaUrl(block.key)" [alt]="block.caption||'Foto della Bacheca'" loading="lazy"></button>@if(block.caption){<figcaption>{{block.caption}}</figcaption>}</figure>}@case('audio'){<app-audio-player class="memory-audio" [src]="mediaUrl(block.key)" [label]="block.label||'Ascolta'"/>}@case('video'){<figure class="memory-media" [class.is-vertical]="block.vertical">@if(devMode()){<span class="memory-media-id">{{mediaId(block,'Video')}}</span>}@if(block.label){<figcaption>{{block.label}}</figcaption>}<video [src]="mediaUrl(block.key)" controls preload="metadata"></video></figure>}@case('external'){<a class="memory-external" [href]="block.href" target="_blank">{{block.caption||'Apri questo ricordo'}} ↗</a>}}}</div>}</section>}</div></article>}</section>}</main>
- @if(loadError()){<app-content-message message="Non è stato possibile caricare la Bacheca." tone="error" [panel]="true"/>}
+  <header class="memory-hero card">
+    <p class="memory-kicker">Il nostro archivio</p>
+    <h1>📸 La Bacheca dei Ricordi</h1>
+    <div class="memory-intro"><app-editorial-text contentKey="bacheca.introduzione" /></div>
+  </header>
+
+  <nav class="memory-nav card">
+    @for (period of layoutPeriods(); track period.id) {
+      <div class="memory-nav-group">
+        <strong>{{ period.title }}</strong>
+        <div class="memory-nav-links">
+          @for (day of period.days; track day.slug) {
+            <a [routerLink]="[]" [fragment]="dayId(period, day)">{{ day.title || period.title }}</a>
+          }
+        </div>
+      </div>
+    }
+  </nav>
+
+  <main class="memory-book">
+    @for (period of layoutPeriods(); track period.id) {
+      <section class="memory-period">
+        <header class="memory-period-header">
+          <h2>{{ period.title }}</h2>
+          @if (canEdit()) {
+            <div class="bk-admin-inline-actions">
+              <button type="button" class="btn" (click)="movePeriod(period.id, 'up')">⬆️</button>
+              <button type="button" class="btn" (click)="movePeriod(period.id, 'down')">⬇️</button>
+              <button type="button" class="btn" (click)="startEditPeriod({ id: period.id, title: period.title, position: 0 })">✏️ Rinomina periodo</button>
+              <button type="button" class="btn" (click)="requestDeletePeriod(period.id)">🗑️ Elimina periodo</button>
+              <button type="button" class="btn" (click)="startCreateDay(period.id)">➕ Aggiungi giorno</button>
+            </div>
+          }
+        </header>
+
+        @for (day of period.days; track day.slug) {
+          <article class="memory-day card" [id]="dayId(period, day)">
+            @if (day.title) {
+              <h3>{{ day.title }}</h3>
+            }
+
+            @if (canEdit()) {
+              <div class="bk-admin-inline-actions">
+                <button type="button" class="btn" (click)="moveDay(day.id, 'up')">⬆️</button>
+                <button type="button" class="btn" (click)="moveDay(day.id, 'down')">⬇️</button>
+                <button type="button" class="btn" (click)="startMoveDay({ id: day.id, periodId: period.id, slug: day.slug, title: day.title ?? null, content: { rows: day.rows }, position: 0 })">↔️ Sposta giorno…</button>
+                <button type="button" class="btn" (click)="startEditDay({ id: day.id, periodId: period.id, slug: day.slug, title: day.title ?? null, content: { rows: day.rows }, position: 0 })">✏️ Titolo/slug</button>
+                <button type="button" class="btn" (click)="requestDeleteDay(day.id)">🗑️ Elimina giorno</button>
+                <button type="button" class="btn btn-submit" (click)="toggleContentEditor(day.id)">
+                  {{ editingDayId() === day.id ? 'Chiudi editor contenuto' : '✏️ Modifica contenuto' }}
+                </button>
+              </div>
+            }
+
+            @if (dayMoveTargetId() === day.id) {
+              <div class="bk-move-form card">
+                <label class="form-field">
+                  <span>Sposta in periodo</span>
+                  <select [ngModel]="dayMovePeriodId()" (ngModelChange)="dayMovePeriodId.set($event); dayMoveAfterId.set('')" name="dayMovePeriod-{{ day.id }}">
+                    @for (target of layoutPeriods(); track target.id) {
+                      <option [value]="target.id">{{ target.title }}</option>
+                    }
+                  </select>
+                </label>
+                <label class="form-field">
+                  <span>Dopo quale giorno</span>
+                  <select [ngModel]="dayMoveAfterId()" (ngModelChange)="dayMoveAfterId.set($event)" name="dayMoveAfter-{{ day.id }}">
+                    <option value="">In cima al periodo</option>
+                    @for (other of daysForMoveTarget(); track other.id) {
+                      <option [value]="other.id">{{ other.title || other.slug }}</option>
+                    }
+                  </select>
+                </label>
+                <div class="bk-form-actions">
+                  <button type="button" class="btn" (click)="cancelMoveDay()">Annulla</button>
+                  <button type="button" class="btn btn-submit" (click)="confirmMoveDay()">Sposta</button>
+                </div>
+              </div>
+            }
+
+            @if (editingDayId() === day.id) {
+              <app-bacheca-day-editor
+                [content]="{ rows: day.rows }"
+                (save)="saveDayContent(day.id, $event)"
+                (cancelled)="toggleContentEditor(day.id)"
+              />
+            } @else {
+              <div class="memory-rows">
+                @for (row of day.rows; track $index) {
+                  <section class="memory-row" [class.is-gallery]="rowPhotos(row).length === row.columns.length && rowPhotos(row).length > 1">
+                    @for (column of row.columns; track $index) {
+                      <div class="memory-column" [style.--column-width]="column.width">
+                        @for (block of column.blocks; track $index) {
+                          @switch (block.type) {
+                            @case ('text') {
+                              <p class="memory-prose">
+                                {{ block.text }}
+                                @if (block.link) {
+                                  <a class="memory-inline-link" [href]="block.link.href" target="_blank">{{ block.link.label }} ↗</a>
+                                }
+                              </p>
+                            }
+                            @case ('photo') {
+                              <figure class="memory-photo">
+                                <button (click)="openLightbox(rowPhotos(row), rowPhotos(row).indexOf(block))">
+                                  <img [src]="mediaUrl(block.key)" [alt]="block.caption || 'Foto della Bacheca'" loading="lazy" />
+                                </button>
+                                @if (block.caption) {
+                                  <figcaption>{{ block.caption }}</figcaption>
+                                }
+                              </figure>
+                            }
+                            @case ('audio') {
+                              <app-audio-player class="memory-audio" [src]="mediaUrl(block.key)" [label]="block.label || 'Ascolta'" />
+                            }
+                            @case ('video') {
+                              <figure class="memory-media" [class.is-vertical]="block.vertical">
+                                @if (block.label) {
+                                  <figcaption>{{ block.label }}</figcaption>
+                                }
+                                <video [src]="mediaUrl(block.key)" controls preload="metadata"></video>
+                              </figure>
+                            }
+                            @case ('link') {
+                              <a class="memory-external" [href]="block.href" target="_blank">{{ block.caption || 'Apri questo ricordo' }} ↗</a>
+                            }
+                          }
+                        }
+                      </div>
+                    }
+                  </section>
+                }
+              </div>
+            }
+          </article>
+        }
+      </section>
+    }
+
+    @if (canEdit()) {
+      <section class="bk-admin-section">
+        @if (periodEditingId() === null) {
+          <button type="button" class="btn" (click)="startCreatePeriod()">➕ Aggiungi periodo</button>
+        }
+        @if (periodEditingId() !== null) {
+          <form class="bk-admin-form card" (ngSubmit)="submitPeriod()">
+            <h3>{{ periodEditingId() === '__new__' ? 'Nuovo periodo' : 'Rinomina periodo' }}</h3>
+            @if (periodEditingId() === '__new__') {
+              <label class="form-field">
+                <span>ID (slug)</span>
+                <input type="text" required [ngModel]="periodDraft().id" (ngModelChange)="updatePeriodDraft({ id: $event })" name="periodId" />
+              </label>
+            }
+            <label class="form-field">
+              <span>Titolo</span>
+              <input type="text" required [ngModel]="periodDraft().title" (ngModelChange)="updatePeriodDraft({ title: $event })" name="periodTitle" />
+            </label>
+            <p class="bk-form-error">{{ periodFormError() }}</p>
+            <div class="bk-form-actions">
+              <button type="button" class="btn" (click)="cancelEditPeriod()">Annulla</button>
+              <button type="submit" class="btn btn-submit">Salva</button>
+            </div>
+          </form>
+        }
+      </section>
+    }
+  </main>
+
+  @if (dayEditingId() !== null) {
+    <form class="bk-admin-form card bk-day-meta-form" (ngSubmit)="submitDay()">
+      <h3>{{ dayEditingId() === '__new__' ? 'Nuovo giorno' : 'Titolo e slug del giorno' }}</h3>
+      <label class="form-field">
+        <span>Titolo <small>facoltativo</small></span>
+        <input type="text" [ngModel]="dayDraft().title" (ngModelChange)="updateDayDraft({ title: $event })" name="dayTitle" />
+      </label>
+      <label class="form-field">
+        <span>Slug</span>
+        <input type="text" required [ngModel]="dayDraft().slug" (ngModelChange)="updateDayDraft({ slug: $event })" name="daySlug" />
+      </label>
+      <p class="bk-form-error">{{ dayFormError() }}</p>
+      <div class="bk-form-actions">
+        <button type="button" class="btn" (click)="cancelEditDay()">Annulla</button>
+        <button type="submit" class="btn btn-submit">Salva</button>
+      </div>
+    </form>
+  }
+
+  @if (loadError()) {
+    <app-content-message message="Non è stato possibile caricare la Bacheca." tone="error" [panel]="true" />
+  }
 </app-shell>
-<dialog #lightbox class="memory-lightbox">@if(activeGallery().length>1){<button class="memory-lightbox-nav prev" (click)="stepLightbox(-1)">‹</button>}<figure>@if(activePhoto();as photo){<img [src]="mediaUrl(photo.key)">@if(photo.caption){<figcaption>{{photo.caption}}</figcaption>}}</figure>@if(activeGallery().length>1){<button class="memory-lightbox-nav next" (click)="stepLightbox(1)">›</button>}<button class="memory-lightbox-close" (click)="closeLightbox()">×</button></dialog>
+
+<dialog #lightbox class="memory-lightbox">
+  @if (activeGallery().length > 1) {
+    <button class="memory-lightbox-nav prev" (click)="stepLightbox(-1)">‹</button>
+  }
+  <figure>
+    @if (activePhoto(); as photo) {
+      <img [src]="mediaUrl(photo.key)" />
+      @if (photo.caption) {
+        <figcaption>{{ photo.caption }}</figcaption>
+      }
+    }
+  </figure>
+  @if (activeGallery().length > 1) {
+    <button class="memory-lightbox-nav next" (click)="stepLightbox(1)">›</button>
+  }
+  <button class="memory-lightbox-close" (click)="closeLightbox()">×</button>
+</dialog>
+
+<app-confirmation-dialog
+  dialogId="delete-bacheca-period"
+  title="Eliminare questo periodo?"
+  description="Sposta o elimina prima tutti i suoi giorni."
+  confirmLabel="Elimina"
+  cancelLabel="Annulla"
+  [open]="periodDeleteTargetId() !== null"
+  (confirm)="confirmDeletePeriod()"
+  (cancel)="cancelDeletePeriod()"
+/>
+<app-confirmation-dialog
+  dialogId="delete-bacheca-day"
+  title="Eliminare questo giorno?"
+  description="Tutto il suo contenuto verrà rimosso. L'operazione non può essere annullata."
+  confirmLabel="Elimina"
+  cancelLabel="Annulla"
+  [open]="dayDeleteTargetId() !== null"
+  (confirm)="confirmDeleteDay()"
+  (cancel)="cancelDeleteDay()"
+/>

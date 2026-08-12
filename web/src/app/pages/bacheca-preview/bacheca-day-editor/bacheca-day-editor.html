@@ -1,0 +1,241 @@
+<div class="bde-root">
+  <div class="bde-toolbar">
+    <button type="button" class="btn" (click)="cancel()">Annulla</button>
+    <button type="button" class="btn btn-submit" (click)="submit()">Salva giorno</button>
+  </div>
+  <p class="bde-error">{{ saveError() }}</p>
+
+  <div class="bde-rows">
+    @for (row of draft().rows; track $index; let rowIndex = $index) {
+      <section class="bde-row">
+        <header class="bde-row-header">
+          <span>Riga {{ rowIndex + 1 }} · {{ row.columns.length === 1 ? 'larghezza intera' : row.columns.length + ' colonne' }}</span>
+          <div class="bde-row-actions">
+            <button type="button" class="btn" (click)="moveRow(rowIndex, 'up')">⬆️</button>
+            <button type="button" class="btn" (click)="moveRow(rowIndex, 'down')">⬇️</button>
+            <button type="button" class="btn" (click)="startMoveRow(rowIndex)">↔️ Sposta…</button>
+            <button type="button" class="btn" (click)="requestDeleteRow(rowIndex)">🗑️ Elimina riga</button>
+          </div>
+        </header>
+
+        @if (rowMoveTarget() === rowIndex) {
+          <div class="bde-move-form">
+            <label class="form-field">
+              <span>Sposta dopo la riga</span>
+              <select [ngModel]="rowMoveAfter()" (ngModelChange)="rowMoveAfter.set($event)" name="rowMoveAfter-{{ rowIndex }}">
+                <option value="">In cima</option>
+                @for (other of otherRowIndexes(); track other) {
+                  <option [value]="other">Riga {{ other + 1 }}</option>
+                }
+              </select>
+            </label>
+            <div class="bde-form-actions">
+              <button type="button" class="btn" (click)="cancelMoveRow()">Annulla</button>
+              <button type="button" class="btn btn-submit" (click)="confirmMoveRow()">Sposta</button>
+            </div>
+          </div>
+        }
+
+        <div class="bde-columns">
+          @for (column of row.columns; track $index; let colIndex = $index) {
+            <div class="bde-column">
+              @for (block of column.blocks; track $index; let blockIndex = $index) {
+                <article class="bde-block">
+                  <header class="bde-block-heading">
+                    <span class="bde-block-type">{{ block.type }}</span>
+                    <span class="bde-block-summary">{{ summary(block) }}</span>
+                  </header>
+
+                  @switch (block.type) {
+                    @case ('photo') {
+                      <img class="bde-block-preview" [src]="mediaUrl(block.key)" [alt]="block.caption || ''" loading="lazy" />
+                    }
+                    @case ('video') {
+                      <video class="bde-block-preview" [src]="mediaUrl(block.key)" preload="metadata" muted></video>
+                    }
+                    @case ('audio') {
+                      <app-audio-player [src]="mediaUrl(block.key)" [label]="block.label || 'Ascolta'" />
+                    }
+                  }
+
+                  <div class="bde-block-actions">
+                    @if (column.blocks.length > 1) {
+                      <button type="button" class="btn" (click)="moveBlock(rowIndex, colIndex, blockIndex, 'up')">⬆️</button>
+                      <button type="button" class="btn" (click)="moveBlock(rowIndex, colIndex, blockIndex, 'down')">⬇️</button>
+                    }
+                    <button type="button" class="btn" (click)="startEditBlock(rowIndex, colIndex, blockIndex, block)">✏️ Modifica</button>
+                    <button type="button" class="btn" (click)="requestDeleteBlock(rowIndex, colIndex, blockIndex)">🗑️ Elimina</button>
+                  </div>
+                </article>
+              }
+
+              @if (blockTarget() === null || blockTarget()?.rowIndex !== rowIndex || blockTarget()?.colIndex !== colIndex) {
+                <button type="button" class="btn bde-add-block" (click)="startAddBlock(rowIndex, colIndex)">➕ Aggiungi blocco</button>
+              }
+
+              @if (blockTarget()?.rowIndex === rowIndex && blockTarget()?.colIndex === colIndex) {
+                <form class="bde-block-form card" (ngSubmit)="submitBlockForm()">
+                  <label class="form-field">
+                    <span>Tipo di blocco</span>
+                    <select [ngModel]="blockForm().type" (ngModelChange)="updateBlockForm({ type: $event })" name="blockType-{{ rowIndex }}-{{ colIndex }}" [disabled]="blockTarget()?.blockIndex !== null">
+                      <option value="text">Testo</option>
+                      <option value="photo">Foto</option>
+                      <option value="video">Video</option>
+                      <option value="audio">Audio</option>
+                      <option value="link">Link</option>
+                    </select>
+                  </label>
+
+                  @switch (blockForm().type) {
+                    @case ('text') {
+                      <label class="form-field">
+                        <span>Testo</span>
+                        <textarea rows="4" [ngModel]="blockForm().text" (ngModelChange)="updateBlockForm({ text: $event })" name="text"></textarea>
+                      </label>
+                      <label class="form-field">
+                        <span>Link (facoltativo) <small>indirizzo</small></span>
+                        <input type="text" [ngModel]="blockForm().linkHref" (ngModelChange)="updateBlockForm({ linkHref: $event })" name="linkHref" placeholder="/bacheca oppure https://…" />
+                      </label>
+                      <label class="form-field">
+                        <span>Link (facoltativo) <small>etichetta</small></span>
+                        <input type="text" [ngModel]="blockForm().linkLabel" (ngModelChange)="updateBlockForm({ linkLabel: $event })" name="linkLabel" />
+                      </label>
+                    }
+                    @case ('photo') {
+                      <label class="bde-upload-field">
+                        <span>Foto</span>
+                        <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="uploading()" (change)="uploadFile($event, 'photo')" />
+                      </label>
+                      @if (uploading()) { <p class="bde-upload-status">Caricamento in corso…</p> }
+                      @if (blockForm().key) {
+                        <div class="bde-upload-preview">
+                          <img [src]="mediaUrl(blockForm().key)" alt="" />
+                          <span>Caricata ✓</span>
+                        </div>
+                      }
+                      <label class="form-field">
+                        <span>Didascalia <small>facoltativa, appare sotto la foto</small></span>
+                        <input type="text" [ngModel]="blockForm().caption" (ngModelChange)="updateBlockForm({ caption: $event })" name="caption" />
+                      </label>
+                      <details class="bde-advanced">
+                        <summary>Chiave tecnica (avanzato)</summary>
+                        <label class="form-field">
+                          <span>Chiave del file</span>
+                          <input type="text" [ngModel]="blockForm().key" (ngModelChange)="updateBlockForm({ key: $event })" name="key" />
+                        </label>
+                        <label class="form-field">
+                          <span>Chiave miniatura</span>
+                          <input type="text" [ngModel]="blockForm().thumbKey" (ngModelChange)="updateBlockForm({ thumbKey: $event })" name="thumbKey" />
+                        </label>
+                      </details>
+                    }
+                    @case ('video') {
+                      <label class="bde-upload-field">
+                        <span>Video</span>
+                        <input type="file" accept="video/mp4,video/webm,video/quicktime" [disabled]="uploading()" (change)="uploadFile($event, 'video')" />
+                      </label>
+                      @if (uploading()) { <p class="bde-upload-status">Caricamento in corso…</p> }
+                      @if (blockForm().key) { <p class="bde-upload-status">Caricato ✓</p> }
+                      <label class="form-field">
+                        <span>Etichetta <small>facoltativa</small></span>
+                        <input type="text" [ngModel]="blockForm().label" (ngModelChange)="updateBlockForm({ label: $event })" name="label" />
+                      </label>
+                      <label class="form-field-inline">
+                        <input type="checkbox" [ngModel]="blockForm().vertical" (ngModelChange)="updateBlockForm({ vertical: $event })" name="vertical" />
+                        <span>Video verticale</span>
+                      </label>
+                      <details class="bde-advanced">
+                        <summary>Chiave tecnica (avanzato)</summary>
+                        <label class="form-field">
+                          <span>Chiave del file</span>
+                          <input type="text" [ngModel]="blockForm().key" (ngModelChange)="updateBlockForm({ key: $event })" name="key" />
+                        </label>
+                      </details>
+                    }
+                    @case ('audio') {
+                      <label class="bde-upload-field">
+                        <span>Audio</span>
+                        <input type="file" accept="audio/mpeg,audio/mp4,audio/wav,audio/ogg" [disabled]="uploading()" (change)="uploadFile($event, 'audio')" />
+                      </label>
+                      @if (uploading()) { <p class="bde-upload-status">Caricamento in corso…</p> }
+                      @if (blockForm().key) { <p class="bde-upload-status">Caricato ✓</p> }
+                      <label class="form-field">
+                        <span>Etichetta <small>facoltativa</small></span>
+                        <input type="text" [ngModel]="blockForm().label" (ngModelChange)="updateBlockForm({ label: $event })" name="label" />
+                      </label>
+                      <details class="bde-advanced">
+                        <summary>Chiave tecnica (avanzato)</summary>
+                        <label class="form-field">
+                          <span>Chiave del file</span>
+                          <input type="text" [ngModel]="blockForm().key" (ngModelChange)="updateBlockForm({ key: $event })" name="key" />
+                        </label>
+                      </details>
+                    }
+                    @case ('link') {
+                      <label class="form-field">
+                        <span>Indirizzo</span>
+                        <input type="text" [ngModel]="blockForm().href" (ngModelChange)="updateBlockForm({ href: $event })" name="href" placeholder="https://…" />
+                      </label>
+                      <label class="form-field">
+                        <span>Testo del link <small>facoltativo</small></span>
+                        <input type="text" [ngModel]="blockForm().caption" (ngModelChange)="updateBlockForm({ caption: $event })" name="caption" />
+                      </label>
+                    }
+                  }
+
+                  <p class="bde-error">{{ uploadError() || blockFormError() }}</p>
+                  <div class="bde-form-actions">
+                    <button type="button" class="btn" (click)="cancelBlockForm()">Annulla</button>
+                    <button type="submit" class="btn btn-submit" [disabled]="uploading()">Salva blocco</button>
+                  </div>
+                </form>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </div>
+
+  @if (addingRow()) {
+    <div class="bde-row-presets card">
+      <p>Scegli il layout della nuova riga</p>
+      <div class="bde-preset-buttons">
+        <button type="button" class="btn" (click)="addRow('full')">Larghezza intera</button>
+        <button type="button" class="btn" (click)="addRow('two')">Due colonne</button>
+        <button type="button" class="btn" (click)="addRow('three')">Tre colonne</button>
+        <button type="button" class="btn" (click)="addRow('photo-text')">Foto + testo</button>
+        <button type="button" class="btn" (click)="addRow('text-photo')">Testo + foto</button>
+      </div>
+      <button type="button" class="btn" (click)="cancelAddRow()">Annulla</button>
+    </div>
+  } @else {
+    <button type="button" class="btn" (click)="startAddRow()">➕ Aggiungi riga</button>
+  }
+
+  <div class="bde-toolbar">
+    <button type="button" class="btn" (click)="cancel()">Annulla</button>
+    <button type="button" class="btn btn-submit" (click)="submit()">Salva giorno</button>
+  </div>
+</div>
+
+<app-confirmation-dialog
+  dialogId="delete-bacheca-row"
+  title="Eliminare questa riga?"
+  description="Tutti i blocchi al suo interno verranno rimossi. L'operazione non può essere annullata."
+  confirmLabel="Elimina"
+  cancelLabel="Annulla"
+  [open]="deleteRowTarget() !== null"
+  (confirm)="confirmDeleteRow()"
+  (cancel)="cancelDeleteRow()"
+/>
+<app-confirmation-dialog
+  dialogId="delete-bacheca-block"
+  title="Eliminare questo blocco?"
+  description="L'operazione non può essere annullata."
+  confirmLabel="Elimina"
+  cancelLabel="Annulla"
+  [open]="deleteBlockTarget() !== null"
+  (confirm)="confirmDeleteBlock()"
+  (cancel)="cancelDeleteBlock()"
+/>
