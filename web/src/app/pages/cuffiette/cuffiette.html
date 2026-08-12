@@ -21,18 +21,55 @@
   @if (data(); as musicData) {
     <section class="songs-section" aria-labelledby="songs-title">
       <div class="songs-heading">
-        <p class="music-eyebrow">Nove canzoni</p>
+        <p class="music-eyebrow">{{ sortedSongs().length }} canzoni</p>
         <h2 id="songs-title">Quelle che ho scritto pensando a noi</h2>
         <p [innerHTML]="songsIntroductionHtml()"></p>
+        @if (canEdit() && editingId() === null) {
+          <button type="button" class="btn" (click)="startCreate()">➕ Aggiungi canzone</button>
+        }
       </div>
+
+      @if (editingId() !== null) {
+        <form class="song-form card" (ngSubmit)="submitEdit()">
+          <h3>{{ editingId() === '__new__' ? 'Nuova canzone' : 'Modifica canzone' }}</h3>
+          @if (editingId() === '__new__') {
+            <label class="form-field">
+              <span>ID (slug)</span>
+              <input type="text" required [ngModel]="draft().id" (ngModelChange)="updateDraft({ id: $event })" name="id" />
+            </label>
+          }
+          <label class="form-field">
+            <span>Titolo</span>
+            <input type="text" required [ngModel]="draft().title" (ngModelChange)="updateDraft({ title: $event })" name="title" />
+          </label>
+          <label class="form-field">
+            <span>Introduzione</span>
+            <textarea rows="4" [ngModel]="draft().introduction" (ngModelChange)="updateDraft({ introduction: $event })" name="introduction"></textarea>
+          </label>
+          <label class="form-field">
+            <span>Testo della canzone</span>
+            <textarea rows="8" [ngModel]="draft().lyrics" (ngModelChange)="updateDraft({ lyrics: $event })" name="lyrics"></textarea>
+          </label>
+          <label class="form-field">
+            <span>Chiave media <small>es. cuffiette/canzoni/nome.mp3</small></span>
+            <input type="text" [ngModel]="draft().mediaKey" (ngModelChange)="updateDraft({ mediaKey: $event })" name="mediaKey" />
+          </label>
+          <p class="song-form-error">{{ formError() }}</p>
+          <div class="song-form-actions">
+            <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
+            <button type="submit" class="btn btn-submit">Salva</button>
+          </div>
+        </form>
+      }
+
       <div class="music-layout">
         <nav class="track-list" aria-label="Indice delle canzoni">
-          @for (song of musicData.songs; track song.id; let i = $index) {
+          @for (song of sortedSongs(); track song.id; let i = $index) {
             <a [routerLink]="[]" [fragment]="'song-' + song.id"><span>{{ (i + 1).toString().padStart(2, '0') }}</span><strong>{{ song.title }}</strong></a>
           }
         </nav>
         <div class="songs-list">
-          @for (song of musicData.songs; track song.id; let i = $index) {
+          @for (song of sortedSongs(); track song.id; let i = $index) {
             <article [id]="'song-' + song.id" class="song-entry">
               <header><span>{{ (i + 1).toString().padStart(2, '0') }}</span><h3>{{ song.title }}</h3></header>
               <p class="song-introduction">{{ song.introduction }}</p>
@@ -52,6 +89,14 @@
                   }
                 </div>
               </details>
+              @if (canEdit()) {
+                <div class="song-admin-actions">
+                  <button type="button" class="btn" (click)="move(song.id, 'up')">⬆️</button>
+                  <button type="button" class="btn" (click)="move(song.id, 'down')">⬇️</button>
+                  <button type="button" class="btn" (click)="startEdit(song)">✏️ Modifica</button>
+                  <button type="button" class="btn" (click)="requestDelete(song.id)">🗑️ Elimina</button>
+                </div>
+              }
             </article>
           }
         </div>
@@ -85,4 +130,14 @@
     <app-content-message message="Non è stato possibile caricare Le Cuffiette." tone="error" [panel]="true" />
   }
 
+  <app-confirmation-dialog
+    dialogId="delete-song"
+    title="Eliminare questa canzone?"
+    description="La canzone verrà rimossa definitivamente dalla raccolta (il file audio resta su R2, non viene cancellato)."
+    confirmLabel="Elimina"
+    cancelLabel="Annulla"
+    [open]="deleteTargetId() !== null"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
 </app-shell>

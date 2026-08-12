@@ -911,6 +911,25 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   richiude a ogni ricaricamento dati — bug dello script, non dell'app, ma non ho perso altro
   tempo a inseguirlo avendo già la conferma dal livello API).
   **Restano da fare**: Cuffiette e Mappa (prossime, piccole), poi il resto della Fase 7.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — quarto editor dedicato: le canzoni delle
+  Cuffiette): su `feature/content-editor`. Migrazione a metà, deliberatamente: la vera raccolta
+  strutturata secondo l'inventario (`cuffiette.canzoni`, 9 elementi) è ora in
+  `cuffiette_songs`/`functions/api/cuffiette-songs/`, stesso pattern CRUD + `move.js` di
+  Ricettario/Storie. Playlist, bonus e Parole Rubate **restano** in
+  `web/public/content/music.json` (rimosso solo l'array `songs`, il resto intatto): `bonus` e
+  `stolenWords.items` sono singoli oggetti/collezione vuota non ancora meritevoli di editor
+  proprio, e soprattutto `songsIntroduction` ha un rendering HTML speciale (sostituisce
+  `[ 🌈 I Ponti ]` con un link cliccabile vero, via `[innerHTML]` con sanitizzazione manuale) che
+  l'editor di testo semplice del CMS generico non supporta — migrarlo con `EditorialText` avrebbe
+  fatto perdere quel link, stesso motivo per cui `messaggio-criptato.istruzioni` era stato
+  escluso in un lotto precedente. `cuffiette.ts` ora combina due fonti (JSON statico per
+  playlist/bonus/parole rubate, API per le canzoni) sulla stessa pagina — non ideale come stato
+  finale, ma esplicitamente in linea con quanto il piano ammette per la migrazione incrementale.
+  Verificato in browser: 9 canzoni corrette, link inline verso `/ponti` ancora funzionante,
+  creazione confermata (9→10) ed eliminazione verificata via API diretta, tornato a 9/9.
+  **Restano da fare**: playlist/bonus/parole rubate delle Cuffiette (in un giro dedicato, serve
+  prima decidere se dare a `songsIntroduction` un modo di avere link inline nel CMS generico o
+  trattarla come eccezione permanente), poi Mappa e il resto della Fase 7.
 
 ---
 
