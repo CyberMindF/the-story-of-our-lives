@@ -6,41 +6,22 @@ import { AudioPlayer } from '../../shared/audio-player/audio-player';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
+import { WORLD_PLACES } from '../../core/world-places';
 
 // Emoji, rotta, disponibilità e ordine restano nel codice (documentazione/cms/planning-editor-contenuti.md,
 // decisione #2 dell'inventario): solo nome e descrizione sono contenuto editoriale, letti da
 // /api/mondo-bianco-cards e sovrascrivibili in modalità admin. L'elenco e l'ordine delle card
 // non cambiano dall'editor — aggiungerne o toglierne una è comunque una modifica di codice.
-interface PlaceMeta {
-  id: string;
-  emoji: string;
-  route: string;
-  fallbackName: string;
-}
-
-const PLACES: readonly PlaceMeta[] = [
-  { id: 'bacheca', emoji: '📸', route: '/bacheca', fallbackName: 'La Bacheca dei Ricordi' },
-  { id: 'mappamondo', emoji: '🌍', route: '/mappamondo', fallbackName: 'Il Mappamondo' },
-  { id: 'ponti', emoji: '🌈', route: '/ponti', fallbackName: 'I Ponti' },
-  { id: 'storie', emoji: '📖', route: '/storie', fallbackName: 'Le Storie' },
-  { id: 'calendario', emoji: '📅', route: '/calendario', fallbackName: 'Il Calendario' },
-  { id: 'cuffiette', emoji: '🎧', route: '/cuffiette', fallbackName: 'Le Cuffiette' },
-  { id: 'tavolo-da-gioco', emoji: '🎲', route: '/tavolo-da-gioco', fallbackName: 'Il Tavolo da Gioco' },
-  { id: 'mappa', emoji: '🗺️', route: '/mappa', fallbackName: 'La Mappa' },
-  { id: 'lettere', emoji: '📫', route: '/lettere', fallbackName: 'La Cassetta delle Lettere' },
-  { id: 'domande', emoji: '⛲', route: '/domande', fallbackName: 'Il Pozzo dei Dubbi' },
-  { id: 'cose-da-fare-insieme', emoji: '📔', route: '/cose-da-fare-insieme', fallbackName: "L'Agenda delle Idee" },
-  { id: 'ricettario', emoji: '🍳', route: '/ricettario', fallbackName: 'Il Ricettario' },
-  { id: 'impostazioni-mondo', emoji: '🎛️', route: '/impostazioni-mondo', fallbackName: 'La Stanza dei Bottoni' },
-  { id: 'il-cielo', emoji: '🌌', route: '/il-cielo', fallbackName: 'Il Cielo' }
-];
-
 interface CardOverride {
   name: string;
   description: string | null;
 }
 
-interface PlaceView extends PlaceMeta {
+interface PlaceView {
+  id: string;
+  emoji: string;
+  route: string;
+  fallbackName: string;
   name: string;
   description: string | null;
 }
@@ -61,7 +42,7 @@ export class MondoBianco {
 
   private readonly overrides = signal<Map<string, CardOverride>>(new Map());
   protected readonly places = computed<PlaceView[]>(() =>
-    PLACES.map((place) => {
+    WORLD_PLACES.filter((place): place is typeof place & { route: string } => Boolean(place.primary && place.route)).map((place) => {
       const override = this.overrides().get(place.id);
       return { ...place, name: override?.name ?? place.fallbackName, description: override?.description ?? null };
     })

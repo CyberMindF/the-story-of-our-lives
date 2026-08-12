@@ -32,18 +32,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
 - #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
-- #e11 - Trasformare il finale del Mappamondo in un vero atlante per orientarsi nel sito,
-  senza sostituire né interrompere la storia esistente. Dopo l'ultima scena aggiungere la
-  sezione **“Ora, dove vuoi andare?”**, che includa ogni pagina raggiungibile e non soltanto i
-  luoghi principali già presenti nella home. Ogni destinazione deve avere nome, icona, link e
-  una spiegazione molto breve in forma “se cerchi questo, lo trovi qui”; non deve duplicare
-  l'introduzione completa della pagina. Per i contenuti non ancora disponibili mostrare
-  soltanto “Arriverà presto”. Direzione visiva consigliata: un piccolo atlante illustrato del
-  Mondo Bianco, con il mondo al centro e luoghi/oggetti raggruppati e collegati, invece di una
-  cartina geografica arbitraria o di una semplice griglia identica alla home. Le destinazioni
-  devono provenire da un unico registro condiviso/estensibile, così aggiungere una pagina in
-  futuro aggiorna automaticamente anche l'atlante; route e disponibilità restano dati
-  funzionali, mentre le brevi descrizioni possono essere contenuti editoriali modificabili.
 - #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”,
   “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire
   piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che
@@ -81,6 +69,16 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ## Fatto
 
 ### Extra (fuori scaletta, chiesti il 12/08/2026)
+
+- [x] #e11 — il finale del Mappamondo è diventato un atlante del sito senza interrompere la
+  storia: dopo l'ultima scena compare **“Ora, dove vuoi andare?”**, con il Mondo Bianco al
+  centro e le destinazioni divise in quattro regioni (`Per ritrovare noi`, `Per immaginare il
+  dopo`, `Per giocare`, `Per cambiare il mondo`). Ogni voce ha icona, nome, indicazione breve
+  e link; “La casa che trattiene il respiro” mostra soltanto “Arriverà presto”. Home e atlante
+  usano ora lo stesso registro `WORLD_PLACES`, quindi rotte, disponibilità e nuove pagine non
+  vanno duplicate. Per le 14 destinazioni principali l'atlante riusa anche nomi e descrizioni
+  già modificabili tramite il CMS delle card del Mondo Bianco. Su mobile il disegno orbitale
+  diventa una sequenza lineare leggibile.
 
 - [x] CMS Fase 7 — editor della Bacheca dei Ricordi, ultima e più grande collezione del piano
   (302 blocchi su 142 righe, 19 giorni, 5 periodi — un ordine di grandezza sopra tutto il

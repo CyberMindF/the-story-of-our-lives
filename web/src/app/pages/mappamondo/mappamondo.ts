@@ -1,10 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AudioPlayer } from '../../shared/audio-player/audio-player';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
+import { WORLD_PLACES, WORLD_PLACE_GROUPS, WorldPlace } from '../../core/world-places';
 
 type Speaker = 'r' | 'd' | null;
 
@@ -36,6 +38,11 @@ interface SceneDraft {
   lines: LineDraft[];
 }
 
+interface AtlasPlace extends WorldPlace {
+  name: string;
+  description: string;
+}
+
 function emptyDraft(nextNumber: number): SceneDraft {
   return { id: '', sceneNumber: String(nextNumber), title: '', isWide: false, isFinale: false, lines: [{ segments: [{ speaker: '', text: '' }] }] };
 }
@@ -58,7 +65,7 @@ function toDraft(scene: Scene): SceneDraft {
 @Component({
   selector: 'app-mappamondo',
   standalone: true,
-  imports: [AppShell, AudioPlayer, FormsModule, ConfirmationDialog],
+  imports: [AppShell, AudioPlayer, FormsModule, RouterLink, ConfirmationDialog],
   styleUrls: ['../../../styles/pages/mappamondo.css'],
   templateUrl: './mappamondo.html'
 })
@@ -73,6 +80,20 @@ export class Mappamondo {
   private readonly scenes = signal<Scene[]>([]);
   protected readonly sortedScenes = computed(() => [...this.scenes()].sort((a, b) => a.position - b.position));
   protected readonly loadError = signal(false);
+  private readonly placeOverrides = signal<Map<string, { name: string; description: string | null }>>(new Map());
+  protected readonly atlasGroups = computed(() => WORLD_PLACE_GROUPS.map((group) => ({
+    ...group,
+    places: WORLD_PLACES
+      .filter((place) => place.group === group.id && place.id !== 'mappamondo')
+      .map<AtlasPlace>((place) => {
+        const override = this.placeOverrides().get(place.id);
+        return {
+          ...place,
+          name: override?.name ?? place.fallbackName,
+          description: override?.description || place.fallbackDescription
+        };
+      })
+  })));
 
   protected readonly editingId = signal<string | 'new' | null>(null);
   protected readonly draft = signal<SceneDraft>(emptyDraft(1));
@@ -81,6 +102,7 @@ export class Mappamondo {
 
   constructor() {
     void this.load();
+    void this.loadAtlas();
   }
 
   private async load(): Promise<void> {
@@ -92,6 +114,17 @@ export class Mappamondo {
     } catch (error) {
       console.error('Errore nel caricamento del Mappamondo:', error);
       this.loadError.set(true);
+    }
+  }
+
+  private async loadAtlas(): Promise<void> {
+    try {
+      const response = await fetch('/api/mondo-bianco-cards', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+      if (!response.ok) return;
+      const result = await this.api.readApiResponse<{ cards?: { id: string; name: string; description: string | null }[] }>(response);
+      this.placeOverrides.set(new Map((result.cards ?? []).map((card) => [card.id, { name: card.name, description: card.description }])));
+    } catch (error) {
+      console.error('Errore nel caricamento delle destinazioni dell’atlante:', error);
     }
   }
 

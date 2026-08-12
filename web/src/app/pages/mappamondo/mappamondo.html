@@ -106,6 +106,56 @@
     }
   </article>
 
+  <section class="world-atlas" aria-labelledby="world-atlas-title">
+    <div class="world-atlas-heading">
+      <p class="globe-eyebrow">Il mondo continua da qui</p>
+      <h2 id="world-atlas-title">Ora, dove vuoi andare?</h2>
+      <p>Se cerchi qualcosa, qui puoi capire in quale angolo del nostro mondo trovarlo.</p>
+    </div>
+
+    <div class="world-atlas-map">
+      <div class="world-atlas-center" aria-hidden="true">
+        <span>🌍</span>
+        <strong>Il Mondo Bianco</strong>
+      </div>
+
+      @for (group of atlasGroups(); track group.id; let groupIndex = $index) {
+        <section class="atlas-region card" [class]="'atlas-region atlas-region-' + group.id + ' card'">
+          <header class="atlas-region-heading">
+            <span class="atlas-region-number">{{ (groupIndex + 1).toString().padStart(2, '0') }}</span>
+            <div>
+              <h3>{{ group.label }}</h3>
+              <p>{{ group.description }}</p>
+            </div>
+          </header>
+
+          <div class="atlas-destinations">
+            @for (place of group.places; track place.id) {
+              @if (place.route) {
+                <a class="atlas-destination" [routerLink]="place.route">
+                  <span class="atlas-destination-icon" aria-hidden="true">{{ place.emoji }}</span>
+                  <span>
+                    <strong>{{ place.name }}</strong>
+                    <small>{{ place.description }}</small>
+                  </span>
+                  <span class="atlas-destination-arrow" aria-hidden="true">→</span>
+                </a>
+              } @else {
+                <div class="atlas-destination is-coming-soon">
+                  <span class="atlas-destination-icon" aria-hidden="true">{{ place.emoji }}</span>
+                  <span>
+                    <strong>{{ place.name }}</strong>
+                    <small>Arriverà presto.</small>
+                  </span>
+                </div>
+              }
+            }
+          </div>
+        </section>
+      }
+    </div>
+  </section>
+
   <app-confirmation-dialog
     dialogId="delete-scene"
     title="Eliminare questa scena?"
