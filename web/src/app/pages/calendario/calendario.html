@@ -18,7 +18,33 @@
       <p class="calendar-eyebrow">Dal 2021 a oggi</p>
       <h2 id="history-title">Le nostre date</h2>
       <p class="calendar-count" aria-live="polite">{{ countLabel() }}</p>
+      @if (canEdit() && !adding()) {
+        <button type="button" class="btn" (click)="startAdd()">➕ Aggiungi data</button>
+      }
     </div>
+
+    @if (adding()) {
+      <form class="calendar-edit-form card" (ngSubmit)="submitAdd()">
+        <label class="form-field">
+          <span>Data</span>
+          <input type="date" name="date" required [(ngModel)]="newDate" />
+        </label>
+        <label class="form-field">
+          <span>Etichetta</span>
+          <input type="text" name="label" required maxlength="40" placeholder="es. 17/09/2021" [(ngModel)]="newLabel" />
+        </label>
+        <label class="form-field">
+          <span>Testo</span>
+          <textarea name="body" required rows="3" [(ngModel)]="newBody"></textarea>
+        </label>
+        <p class="calendar-form-error">{{ addError() }}</p>
+        <div class="calendar-edit-actions">
+          <button type="button" class="btn" (click)="cancelAdd()">Annulla</button>
+          <button type="submit" class="btn btn-submit">Salva</button>
+        </div>
+      </form>
+    }
+
     <div class="calendar-timeline">
       @for (group of yearGroups(); track group.year) {
         <section class="calendar-year" [attr.aria-labelledby]="'calendar-year-' + group.year">
@@ -26,14 +52,38 @@
           <ol>
             @for (cell of group.entries; track cell.event.id) {
               <li [class]="cell.accentClass">
-                <time [attr.datetime]="cell.event.date" [attr.aria-label]="cell.event.label">
-                  <span class="date-face" aria-hidden="true">
-                    <span class="date-face-month">{{ cell.monthLabel }}</span>
-                    <span class="date-face-day">{{ cell.dayLabel }}</span>
-                    <span class="date-face-year">{{ cell.yearLabel }}</span>
-                  </span>
-                </time>
-                <p>{{ cell.event.text }}</p>
+                @if (editingId() === cell.event.id) {
+                  <form class="calendar-edit-form" (ngSubmit)="submitEdit()">
+                    <label class="form-field">
+                      <span>Etichetta</span>
+                      <input type="text" name="editLabel" required maxlength="40" [(ngModel)]="editLabel" />
+                    </label>
+                    <label class="form-field">
+                      <span>Testo</span>
+                      <textarea name="editBody" required rows="3" [(ngModel)]="editBody"></textarea>
+                    </label>
+                    <p class="calendar-form-error">{{ editError() }}</p>
+                    <div class="calendar-edit-actions">
+                      <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
+                      <button type="submit" class="btn btn-submit">Salva</button>
+                    </div>
+                  </form>
+                } @else {
+                  <time [attr.datetime]="cell.event.date" [attr.aria-label]="cell.event.label">
+                    <span class="date-face" aria-hidden="true">
+                      <span class="date-face-month">{{ cell.monthLabel }}</span>
+                      <span class="date-face-day">{{ cell.dayLabel }}</span>
+                      <span class="date-face-year">{{ cell.yearLabel }}</span>
+                    </span>
+                  </time>
+                  <p>{{ cell.event.body }}</p>
+                  @if (canEdit()) {
+                    <div class="calendar-cell-actions">
+                      <button type="button" class="btn" (click)="startEdit(cell.event)">✏️</button>
+                      <button type="button" class="btn" (click)="requestDelete(cell.event.id)">🗑️</button>
+                    </div>
+                  }
+                }
               </li>
             }
           </ol>
@@ -42,4 +92,14 @@
     </div>
   </section>
 
+  <app-confirmation-dialog
+    dialogId="delete-calendar-event"
+    title="Eliminare questa data?"
+    description="L'evento verrà rimosso definitivamente dal Calendario."
+    confirmLabel="Elimina"
+    cancelLabel="Annulla"
+    [open]="deleteTargetId() !== null"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
 </app-shell>

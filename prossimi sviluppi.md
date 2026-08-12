@@ -797,6 +797,30 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   raccolte strutturate (Fase 4 prosegue/Fase 7), decisioni #2/#3/#4/#5 dell'inventario, Fase 8,
   e soprattutto **applicare tutto a produzione** — finora ogni migrazione è stata verificata solo
   su D1 locale.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — primo editor dedicato: il Calendario): su
+  `feature/content-editor`. Nuova tabella `calendar_events` (migrazione 0040: `id` = la data
+  stessa, stabile e leggibile come nel JSON originale; niente campo `position`, l'ordine è
+  sempre cronologico e un riordino manuale non avrebbe senso qui) con i 29 eventi importati da
+  `web/public/content/calendar.json` (migrazione 0041). API dedicata in
+  `functions/api/calendar-events/` (non dentro `content_entries`: le raccolte strutturate hanno
+  ognuna la propria tabella, per lo stesso principio già seguito in Fase 3) — GET/POST
+  sull'indice, PUT/DELETE su `/:id`, permessi `content.read/create/edit/delete`.
+  **Bug reale trovato e sistemato**: `calendario.ts` aveva una validazione "deve contenere
+  esattamente 29 date", pensata per uno snapshot JSON statico — appena l'admin ne avesse
+  aggiunta una trentesima dall'editor nuovo, l'intera pagina si sarebbe rotta. Rimossa insieme
+  al passaggio da `StaticContentService` a `fetch('/api/calendar-events')`. Aggiunti i controlli
+  admin (aggiungi/modifica/elimina con conferma tramite `ConfirmationDialog` già condiviso),
+  visibili solo con `isAdmin() && adminModeEnabled()` — la vera barriera resta il backend.
+  **Rimosso `web/public/content/calendar.json`** subito dopo la verifica dell'importazione
+  (29/29 righe, prima e ultima data coincidenti): nessun altro file lo referenziava, tenerlo
+  avrebbe creato due fonti di verità equivalenti (CLAUDE.md, zero duplicazione) — a differenza
+  delle altre raccolte JSON ancora attive (musica, storie, mappa, bacheca), rimaste finché non
+  hanno il loro editor. `tsc --noEmit` pulito; non verificato in browser per lo stesso limite di
+  Node.
+  **Restano da fare**: Ricettario (prossimo secondo l'ordine consigliato dall'inventario), le
+  altre raccolte strutturate, le decisioni #2/#3/#4/#5, Fase 8, e — il gap più grosso di tutta la
+  sessione — **applicare qualunque cosa al D1 di produzione**: tutto quello costruito finora,
+  comprese le 41 migrazioni, esiste solo in locale.
 
 ---
 
