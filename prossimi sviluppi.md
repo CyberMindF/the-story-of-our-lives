@@ -694,6 +694,27 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   eseguibile in locale in questo giro. **Restano da fare**: Fase 1 (inventario completo, incluse
   le raccolte JSON), il resto della Fase 4 (raccolte strutturate), Fase 5 (editor vero e proprio,
   versionamento selettivo, pulsante "Modifica" in modalità admin), Fase 6+ (pannello, log).
+- [x] CMS (`planning editor contenuti.md`, Fase 5 — editor dei testi e versioni): su
+  `feature/content-editor`. `EditorialText` diventa l'editor vero e proprio, non solo lettura:
+  pulsante "✏️ Modifica" visibile solo con `authService.isAdmin() && authService.adminModeEnabled()`
+  (pattern riusato identico da `profilo.html`, la sicurezza reale resta comunque sul backend —
+  ogni endpoint `/api/content` richiede il permesso, il frontend nasconde solo un controllo
+  inutile a chi non può usarlo); textarea con anteprima live (stessi paragrafi mostrati in
+  lettura), annullamento prima del salvataggio, "Salva modifica"/"Aggiungi nuova versione"
+  distinti come da piano — il secondo compare solo se `versioningMode === 'history'`. Aggiunto
+  anche il selettore delle versioni (`‹ Versione 1 · Versione 2 › `) per i contenuti storici, con
+  nota quando si sta leggendo una versione non corrente. `ContentService.save()` ora ha un tipo
+  di ritorno dedicato (`ContentSaveResult`) invece di spacciare la risposta parziale del `PUT`
+  per un `ContentEntry` completo: dopo un salvataggio storico si ricarica l'intero contenuto dal
+  server per la cronologia aggiornata, un salvataggio `replace` aggiorna lo stato in locale senza
+  un giro a vuoto. CSS dedicato in `styles/components/editorial-text.css`, referenziato via
+  `styleUrls` sul componente (stesso pattern di `password-field`/`app-select`, non nell'array
+  globale di `angular.json`). `tsc --noEmit` pulito; non verificato in browser per lo stesso
+  limite di Node già segnalato sopra. Le 5 chiavi migrate restano tutte `replace`: il percorso
+  "history" è implementato ma non ancora esercitato da nessun contenuto reale — da verificare
+  quando la Fase 4 completa (in corso separatamente) porterà il primo contenuto storico.
+  **Restano da fare**: Fase 1 (inventario, in corso separatamente), resto Fase 4 (raccolte
+  strutturate), Fase 6 (pannello indice contenuti, pagina log), Fase 7 (editor dedicati).
 
 ---
 
