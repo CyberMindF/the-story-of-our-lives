@@ -18,7 +18,7 @@
   }
 
   @for (paragraph of paragraphs(); track $index) {
-    <p>{{ paragraph }}</p>
+    <p [innerHTML]="paragraph"></p>
   }
 
   @if (loadError()) {
@@ -37,7 +37,7 @@
 
     <div class="editorial-preview">
       @for (paragraph of draftParagraphs(); track $index) {
-        <p>{{ paragraph }}</p>
+        <p [innerHTML]="paragraph"></p>
       }
     </div>
 

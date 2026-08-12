@@ -1,6 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { TelemetryService } from '../../core/telemetry.service';
 import { StaticContentService } from '../../core/static-content.service';
@@ -8,6 +7,7 @@ import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
 import { AudioPlayer } from '../../shared/audio-player/audio-player';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 
@@ -41,13 +41,12 @@ interface StolenWordItem {
   source: string;
 }
 
-// playlist/bonus/parole rubate restano per ora nel JSON: solo le canzoni (la vera raccolta
-// strutturata secondo l'inventario) sono migrate in cuffiette_songs via /api/cuffiette-songs.
+// playlist.name/url, bonus e le citazioni delle Parole Rubate restano per ora nel JSON: le tre
+// introduzioni e le canzoni sono già migrate nel CMS (content_entries/cuffiette_songs).
 interface MusicData {
-  playlist: { name: string; introduction: string; url: string };
-  songsIntroduction: string;
+  playlist: { name: string; url: string };
   bonus?: { available: boolean; key?: string };
-  stolenWords: { introduction: string; items: StolenWordItem[] };
+  stolenWords: { items: StolenWordItem[] };
 }
 
 // Editor dedicato delle canzoni delle Cuffiette (planning editor contenuti.md, Fase 7). Porting
@@ -56,14 +55,13 @@ interface MusicData {
 @Component({
   selector: 'app-cuffiette',
   standalone: true,
-  imports: [AppShell, ContentMessage, RouterLink, AudioPlayer, FormsModule, ConfirmationDialog],
+  imports: [AppShell, ContentMessage, RouterLink, AudioPlayer, FormsModule, ConfirmationDialog, EditorialText],
   styleUrls: ['../../../styles/pages/music.css'],
   templateUrl: './cuffiette.html'
 })
 export class Cuffiette {
   private readonly staticContent = inject(StaticContentService);
   private readonly telemetryService = inject(TelemetryService);
-  private readonly sanitizer = inject(DomSanitizer);
   private readonly api = inject(ApiService);
   protected readonly authService = inject(AuthService);
 
@@ -78,11 +76,6 @@ export class Cuffiette {
 
   private readonly songs = signal<Song[]>([]);
   protected readonly sortedSongs = computed(() => [...this.songs()].sort((a, b) => a.position - b.position));
-
-  protected readonly songsIntroductionHtml = computed<SafeHtml>(() => {
-    const text = this.data()?.songsIntroduction ?? '';
-    return this.sanitizer.bypassSecurityTrustHtml(this.renderSongsIntroduction(text));
-  });
 
   protected readonly editingId = signal<string | null>(null);
   protected readonly draft = signal<SongDraft>(emptyDraft());
@@ -141,11 +134,6 @@ export class Cuffiette {
 
   protected onBonusCompleted(): void {
     void this.telemetryService.trackEvent('music', 'song_completed', { bonus: true });
-  }
-
-  private renderSongsIntroduction(text: string): string {
-    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return escaped.replace(/\[\s*🌈\s*I Ponti\s*\]/, '<a class="music-inline-mark" href="/ponti">🌈 I Ponti</a>');
   }
 
   protected startCreate(): void {

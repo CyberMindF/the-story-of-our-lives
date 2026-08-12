@@ -64,3 +64,17 @@
   flex-wrap: wrap;
   gap: 0.6rem;
 }
+
+/* Sintassi [etichetta](/rotta) (inventario contenuti CMS.md, decisione #6): unico modo
+   controllato di avere link interni dentro un testo del CMS generico. */
+.editorial-inline-link {
+  color: var(--text-color);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--focus-color);
+  text-underline-offset: 0.2em;
+}
+
+.editorial-inline-link:hover {
+  text-decoration-thickness: 2px;
+}

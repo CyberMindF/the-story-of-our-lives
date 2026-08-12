@@ -9,7 +9,7 @@
         <div>
           <p class="music-eyebrow">La playlist</p>
           <p class="playlist-name">{{ musicData.playlist.name }}</p>
-          <p>{{ musicData.playlist.introduction }}</p>
+          <app-editorial-text contentKey="cuffiette.playlist.introduzione" />
         </div>
         <a class="btn btn-accent" [href]="musicData.playlist.url" target="_blank" rel="noopener noreferrer" (click)="onPlaylistLinkClick()">
           Apri la playlist <span aria-hidden="true">↗</span>
@@ -23,7 +23,7 @@
       <div class="songs-heading">
         <p class="music-eyebrow">{{ sortedSongs().length }} canzoni</p>
         <h2 id="songs-title">Quelle che ho scritto pensando a noi</h2>
-        <p [innerHTML]="songsIntroductionHtml()"></p>
+        <app-editorial-text contentKey="cuffiette.canzoni.introduzione" />
         @if (canEdit() && editingId() === null) {
           <button type="button" class="btn" (click)="startCreate()">➕ Aggiungi canzone</button>
         }
@@ -114,7 +114,7 @@
     <section class="stolen-section" aria-labelledby="stolen-title">
       <p class="music-eyebrow">Frasi conservate</p>
       <h2 id="stolen-title">Parole Rubate</h2>
-      <p>{{ musicData.stolenWords.introduction }}</p>
+      <app-editorial-text contentKey="cuffiette.parole-rubate.introduzione" />
       <div class="stolen-words">
         @for (item of musicData.stolenWords.items; track $index) {
           <blockquote>

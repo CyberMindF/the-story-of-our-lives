@@ -1,4 +1,5 @@
 import { Component, computed, inject, Input, OnChanges, signal } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AuthService } from '../../core/auth.service';
 import { ContentEntry, ContentService } from '../../core/content.service';
 import { FormStatus } from '../form-status/form-status';
@@ -20,6 +21,7 @@ export class EditorialText implements OnChanges {
   @Input({ required: true }) contentKey = '';
 
   private readonly contentService = inject(ContentService);
+  private readonly sanitizer = inject(DomSanitizer);
   protected readonly authService = inject(AuthService);
 
   private readonly entry = signal<ContentEntry | null>(null);
@@ -34,11 +36,18 @@ export class EditorialText implements OnChanges {
     return !entry || entry.versionId === entry.currentVersionId;
   });
 
-  protected readonly paragraphs = computed(() => toParagraphs(this.entry()?.body ?? ''));
+  // Supporto minimo e controllato ai link interni (inventario contenuti CMS.md, decisione #6):
+  // solo la sintassi esplicita [etichetta](/rotta), mai HTML libero o URL esterni — sostituisce
+  // il caso speciale che le Cuffiette gestivano a mano per il link verso "I Ponti".
+  protected readonly paragraphs = computed(() =>
+    toParagraphs(this.entry()?.body ?? '').map((paragraph) => this.renderInlineLinks(paragraph))
+  );
 
   protected readonly editing = signal(false);
   protected readonly draft = signal('');
-  protected readonly draftParagraphs = computed(() => toParagraphs(this.draft()));
+  protected readonly draftParagraphs = computed(() =>
+    toParagraphs(this.draft()).map((paragraph) => this.renderInlineLinks(paragraph))
+  );
   protected readonly saving = signal(false);
   protected readonly saveError = signal('');
 
@@ -107,6 +116,20 @@ export class EditorialText implements OnChanges {
     } finally {
       this.saving.set(false);
     }
+  }
+
+  // Escapa tutto l'HTML del paragrafo, poi sostituisce solo [etichetta](/rotta) con un vero
+  // link — mai testo libero non passato dall'escape, mai una rotta che non inizi per "/".
+  private renderInlineLinks(paragraph: string): SafeHtml {
+    const escaped = paragraph
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    const withLinks = escaped.replace(
+      /\[([^[\]]{1,80})\]\((\/[a-z0-9\-/]*)\)/gi,
+      (_match, label: string, route: string) => `<a class="editorial-inline-link" href="${route}">${label}</a>`
+    );
+    return this.sanitizer.bypassSecurityTrustHtml(withLinks);
   }
 }
 

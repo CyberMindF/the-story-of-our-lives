@@ -1035,6 +1035,22 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   contenuti con formattazione non banale.
   **Restano da fare**: card del Mondo Bianco, supporto a link interni in `EditorialText` +
   Cuffiette (playlist/parole rubate/`songsIntroduction`), Cruciverba, Bacheca.
+- [x] CMS: supporto minimo ai link interni in `EditorialText` (decisione #6 dell'inventario) e
+  completamento delle Cuffiette. `EditorialText` ora riconosce solo la sintassi esplicita
+  `[etichetta](/rotta)` — mai HTML libero, mai URL esterni (la regex richiede `/` iniziale) —
+  escapando prima tutto il resto del paragrafo e sostituendo solo i match con un vero `<a>`;
+  template passato da interpolazione a `[innerHTML]` con `DomSanitizer.bypassSecurityTrustHtml`
+  sull'esito già escapato, sia in lettura sia nell'anteprima di modifica. Migrate le ultime 3
+  chiavi delle Cuffiette (migrazione 0056): `cuffiette.playlist.introduzione` e
+  `cuffiette.canzoni.introduzione` (`history`), `cuffiette.parole-rubate.introduzione`
+  (`replace`) — quest'ultima aveva `[ 🌈 I Ponti ]` nella vecchia notazione a mano gestita da
+  `cuffiette.ts`, convertita in `[🌈 I Ponti](/ponti)` durante la migrazione. Rimossi da
+  `cuffiette.ts` il `computed` `songsIntroductionHtml` e il metodo `renderSongsIntroduction` —
+  il caso speciale non serve più, lo gestisce il componente condiviso. `music.json` alleggerito
+  di altri tre campi (restano solo `playlist.name/url`, `bonus`, le citazioni di
+  `stolenWords.items`). Verificato in browser: il link renderizza come `<a href="/ponti">🌈 I
+  Ponti</a>` vero (non più testo con parentesi quadre), tutte e 3 le introduzioni visibili.
+  **Restano da fare**: card del Mondo Bianco, Cruciverba, Bacheca.
 
 ---
 
