@@ -715,6 +715,43 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   quando la Fase 4 completa (in corso separatamente) porterà il primo contenuto storico.
   **Restano da fare**: Fase 1 (inventario, in corso separatamente), resto Fase 4 (raccolte
   strutturate), Fase 6 (pannello indice contenuti, pagina log), Fase 7 (editor dedicati).
+- [x] CMS (`planning editor contenuti.md`, Fase 4 — secondo lotto guidato da
+  `inventario contenuti CMS.md`, prodotto da Codex in parallelo su questa stessa branch): su
+  `feature/content-editor`. Due migrazioni. La **0037** corregge un'assunzione mia: le 4 chiavi
+  già migrate (`mondo-bianco.benvenuta`, `calendario.introduzione`, `lettere.introduzione`,
+  `cose-insieme.introduzione`) erano state seedate `replace` senza una vera decisione — non era
+  scritto da nessuna parte, l'avevo scelto io. L'inventario raccomanda `history` per i messaggi
+  personali legati a un momento preciso, confermato da Rory: la migrazione crea la prima
+  `content_versions` da ciascun `body` esistente e libera `content_entries.body` (per `history`
+  il valore non vive più lì, vedi `functions/api/content/[key].js`). La **0038** aggiunge 17
+  chiavi nuove, tutte `replace`, con un `INSERT` separato per riga invece di un unico
+  `UNION ALL`: D1/SQLite ha un limite sui termini di una SELECT composta, superato a 17 righe
+  (`SQLITE_ERROR: too many terms in compound SELECT` — la migrazione con `UNION ALL` non si
+  applica affatto, non registrata come applicata, nessun dato parziale). Testato con reset
+  completo del D1 locale (`rm -rf .wrangler/state/v3/d1`) e riapplicazione di tutte le 38
+  migrazioni da zero, poi verificato con una query diretta che le 4 `history` leggano
+  correttamente da `content_versions` (`body` NULL su `content_entries`, `current_version_id`
+  valorizzato) e le 18 `replace` abbiano il testo diretto.
+  **Scelte di esclusione, non solo di ordine** — testi individuati dall'inventario ma lasciati
+  nel codice per limiti reali del componente o dell'architettura attuale, non per pigrizia:
+  `portone.*` e `not-found.messaggio` (pagine raggiungibili senza sessione — `GET /api/content`
+  richiede sempre un utente autenticato, quindi risponderebbe 401 prima del login rompendo
+  proprio le pagine che un utente non loggato deve vedere); `messaggio-criptato.istruzioni`
+  (contiene un link `<a>` inline necessario per usare la pagina — `EditorialText` renderizza
+  solo paragrafi di testo semplice, un editor lo trasformerebbe in testo non cliccabile);
+  `mondo-bianco.canzone.citazione` (versi separati da `<br>` dentro un unico paragrafo — lo split
+  di `EditorialText` riconosce solo paragrafi separati da riga vuota, non interruzioni singole);
+  `linguaggio-segreto.messaggio-codice` (non è prosa ma il codice letterale di un puzzle: un
+  editor generico lo esporrebbe a modifiche accidentali che romperebbero l'enigma);
+  `storie.suggerimento.eyebrow`/`.titolo` (etichette brevi dentro `<span>`/`<strong>` inline,
+  `EditorialText` renderizza sempre `<p>` — nesting non valido). Tutti i testi marcati `history`
+  ancora "Da migrare" nell'inventario (Ponti, Mappamondo, Domande, Tavolo, GDR, Linguaggio
+  Segreto, Cuffiette, Storie, Mappa, Bacheca) restano fuori da questo lotto: la decisione
+  `history` per le chiavi *nuove* non è stata ancora presa, solo per le 4 già migrate.
+  `tsc --noEmit` pulito; non verificato in browser per lo stesso limite di Node.
+  **Restano da fare**: le collezioni strutturate (Fase 4 prosegue con calendario/ricettario per
+  primi secondo l'ordine consigliato dall'inventario), i testi `history` non ancora confermati,
+  Fase 6/7.
 
 ---
 

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 
@@ -27,7 +28,7 @@ interface Character {
 @Component({
   selector: 'app-la-tua-maga',
   standalone: true,
-  imports: [FormsModule, AppShell, IpdvNavigation],
+  imports: [FormsModule, AppShell, IpdvNavigation, EditorialText],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './la-tua-maga.html'

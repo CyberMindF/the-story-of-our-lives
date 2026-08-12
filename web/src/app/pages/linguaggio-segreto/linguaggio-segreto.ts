@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 interface CodeEntry {
   symbol: string;
@@ -24,7 +25,7 @@ interface CodeExample {
 @Component({
   selector: 'app-linguaggio-segreto',
   standalone: true,
-  imports: [AppShell],
+  imports: [AppShell, EditorialText],
   styleUrls: ['../../../styles/pages/linguaggio-segreto.css'],
   templateUrl: './linguaggio-segreto.html'
 })

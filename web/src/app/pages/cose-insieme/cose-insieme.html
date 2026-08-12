@@ -45,7 +45,7 @@
 
     @if (unlockOpen() && !unlocked()) {
       <form class="unlock-panel card" (submit)="$event.preventDefault(); unlock(unlockAnswer)">
-        <p class="unlock-kicker"><span aria-hidden="true">🔐</span> Se vuoi davvero conoscere queste idee, la chiave dovresti già conoscerla.</p>
+        <div class="unlock-kicker"><span aria-hidden="true">🔐</span> <app-editorial-text contentKey="cose-insieme.sblocco.introduzione" /></div>
         <label for="unlock-answer">Qual era la cosa che ti piaceva di più quando lo facevamo?</label>
         <div>
           <input #unlockAnswer id="unlock-answer" type="text" maxlength="240" autocomplete="off" required />

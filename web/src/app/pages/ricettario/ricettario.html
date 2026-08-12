@@ -1,7 +1,7 @@
 <app-shell>
   <main class="recipe-page">
     <header class="recipe-hero">
-      <p class="recipe-eyebrow">Il nostro personalissimo libro di ricette</p>
+      <div class="recipe-eyebrow"><app-editorial-text contentKey="ricettario.eyebrow" /></div>
       <h1>🍳 Il Ricettario</h1>
       <app-editorial-text contentKey="ricettario.introduzione" />
       <a class="recipe-suggest" routerLink="/suggerimenti" [queryParams]="{ category: 'ricettario' }">

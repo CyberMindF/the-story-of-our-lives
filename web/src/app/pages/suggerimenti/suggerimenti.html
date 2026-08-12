@@ -2,7 +2,7 @@
   <section class="suggerimenti-hero" aria-labelledby="suggerimenti-title">
     <p class="suggerimenti-eyebrow">Il Mondo Bianco</p>
     <h1 id="suggerimenti-title"><span aria-hidden="true">💡</span> Suggerimenti</h1>
-    <p class="suggerimenti-intro">Se hai un'idea per una nuova pagina, un ricordo da aggiungere o qualcosa che vorresti vedere in questo mondo, scrivila qui. Quando potrò la leggerò e la aggiungerò.</p>
+    <div class="suggerimenti-intro"><app-editorial-text contentKey="suggerimenti.introduzione" /></div>
   </section>
 
   <form class="suggestion-form" aria-label="Invia un suggerimento" #suggestionForm (ngSubmit)="submit(suggestionForm)">

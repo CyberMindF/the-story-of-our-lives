@@ -48,13 +48,13 @@
   <details class="details-toggle linguaggio-instructions-toggle" aria-label="Istruzioni per l'app">
     <summary>Istruizioni per entrare nella stanza segreta<span class="details-toggle-icon" aria-hidden="true">+</span></summary>
     <div class="details-toggle-body">
-      <p>Avevo trovato un'app per mandarci notifiche veloci quando il documento era troppo lento, si chiama ntfy. Dopo che la scarichi, fare il "+" in basso a destra e come "nome dell'argomento" scrivere "update-daemon-v17x9" (senza virgolette). L'ho chiamato così perché sembra il nome di una notifica di sistema, e 17x9 è il nostro anniversario, così non entra gente a caso. Io comunque quell'app non l'ho mai disinstallata.</p>
+      <app-editorial-text contentKey="linguaggio-segreto.ntfy-istruzioni" />
     </div>
   </details>
 
   <section class="linguaggio-examples card" aria-label="Qualche esempio di frase">
     <h2>Esempi</h2>
-    <p class="linguaggio-examples-intro">Qui ci sono alcuni esempi per prendere confidenza con i codici, potrebbe essere praticamente una conversazione:</p>
+    <div class="linguaggio-examples-intro"><app-editorial-text contentKey="linguaggio-segreto.esempi-introduzione" /></div>
     <ul class="linguaggio-examples-list">
       @for (example of examples; track example.code) {
         <li><span class="linguaggio-example-code">{{ example.code }}</span><span class="linguaggio-example-arrow" aria-hidden="true">→</span><span class="linguaggio-example-meaning">{{ example.meaning }}</span></li>
@@ -63,7 +63,7 @@
   </section>
 
   <section class="linguaggio-message card--handwritten" aria-label="Un messaggio da decifrare">
-    <p class="linguaggio-message-hint">Prova a decifrarlo, la chiave è qui sopra</p>
+    <div class="linguaggio-message-hint"><app-editorial-text contentKey="linguaggio-segreto.messaggio-indizio" /></div>
     <p class="linguaggio-message-code">. &amp; ... &lt;&gt;</p>
   </section>
 </app-shell>

@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 const SAVE_DEBOUNCE_MS = 800;
@@ -14,7 +15,7 @@ const SAVE_DEBOUNCE_MS = 800;
 @Component({
   selector: 'app-i-tuoi-appunti',
   standalone: true,
-  imports: [FormsModule, AppShell, IpdvNavigation],
+  imports: [FormsModule, AppShell, IpdvNavigation, EditorialText],
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './i-tuoi-appunti.html'
 })

@@ -7,6 +7,7 @@ import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { ContentMessage } from '../../shared/content-message/content-message';
 import { AudioPlayer } from '../../shared/audio-player/audio-player';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 interface Story {
   id: string;
@@ -35,7 +36,7 @@ interface StoryView {
 @Component({
   selector: 'app-storie',
   standalone: true,
-  imports: [AppShell, FormsModule, FormStatus, ContentMessage, AudioPlayer],
+  imports: [AppShell, FormsModule, FormStatus, ContentMessage, AudioPlayer, EditorialText],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/stories.css'],
   templateUrl: './storie.html'
