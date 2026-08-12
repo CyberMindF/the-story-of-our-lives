@@ -6,7 +6,9 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
-- #16 — seconda avventura GDR: aspetta titolo/testo/regole
+- [x] #16 — seconda avventura GDR: mantenuta visibile come card “Coming soon”. La storia
+  esiste, ma non viene presentata come giocabile finché non sarà adattata al play-by-chat;
+  nessun titolo, testo o sistema incompleto viene esposto.
 - [~] #25 — Mappa: Sicilia. Struttura pronta in `map.json` (destinazione tra Olanda e Roma,
   coordinate su Catania) con le 4 foto vere già al loro posto (fiume Amenano/Catania, Gole
   dell'Alcantara, laghetti di Cavagrande del Cassibile/Avola, Isola Bella a Taormina —
@@ -22,7 +24,11 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   risposta al prompt viene dichiaratamente registrata negli eventi e lo sblocco dura solo
   fino a refresh/uscita. **Da rivedere con Rory**: classificazione delle voci normali/miste/
   NSFW, testi ripuliti e mesi approssimativi da assegnare senza perdere l'ordine originale.
-- #34 — Pagina delle nostre ricette?
+- [~] #34 — “Il Ricettario”: pagina realizzata con card lunghe, ingredienti, procedimento,
+  filtri “Fatta insieme / Da provare” e collegamento ai Suggerimenti già preselezionato.
+  Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**:
+  sostituire la ricetta placeholder del pollo al curry con la loro versione definitiva e
+  ricostruire ingredienti/procedimento dei biscotti di pasta frolla.
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
 - #c1 - Verifica generale che tutti gli eventi siano presenti
 ---
@@ -591,6 +597,20 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   verificato byte per byte (tutti i 10 blob AES unici e i 5 paragrafi cifrati coincidono
   esattamente) prima di scrivere la pagina definitiva. Nessuna verifica automatica nel
   sito: si decifra fuori, con lo strumento esterno indicato nel testo originale.
+- [x] Menu di `app-select` (selettore condiviso, usato per fase luna/forma fiori/forma pesci
+  in Impostazioni del Mondo) a volte del tutto trasparente e apparentemente "dietro" le card
+  successive. Non era un problema di z-index (verificato con `elementFromPoint`: il menu è
+  sempre stato correttamente sopra) — il menu si appoggiava per intero a `backdrop-filter:
+  blur(22px)` su uno sfondo quasi trasparente (`--panel-color`, 5% alpha) per essere leggibile;
+  annidato dentro una `.card` che ha già il suo `backdrop-filter`, il blur a volte non compone
+  (browser headless sempre, hardware reale a volte), lasciando uno sfondo praticamente
+  invisibile attraverso cui si leggeva a fuoco il contenuto sottostante — sembrava dietro
+  perché in pratica ci si vedeva attraverso. Stesso fix già usato da `.card--dialog` per lo
+  stesso motivo: sfondo quasi opaco via `color-mix(var(--bg-color), var(--text-color))`,
+  niente più backdrop-filter da far dipendere dalla composizione GPU. Verificato con uno
+  script isolato (stessa struttura card+select, non l'app vera: `world_settings` mostrava
+  ancora segni di uso reale) che riproduceva il bug esatto e confermava la correzione, più un
+  confronto visivo su tutti e 5 i temi.
 
 ---
 
