@@ -592,3 +592,18 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* Editor amministrativo delle definizioni (planning editor contenuti.md, Fase 7). */
+.word-admin-section { margin-top: 2rem; display: grid; gap: 1rem; }
+.word-admin-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; }
+.word-admin-form { display: grid; gap: 1rem; padding: 1.4rem; }
+.word-admin-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
+.word-admin-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.word-admin-form-error:empty { display: none; }
+.word-admin-list { display: grid; gap: .8rem; }
+.word-admin-entry { border: 1px solid var(--border-color); border-radius: .9rem; padding: 1rem 1.2rem; display: grid; gap: .5rem; }
+.word-admin-entry-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem; }
+.word-admin-entry-heading span:first-child { color: var(--muted-color); font-size: .82rem; }
+.word-admin-coords { margin-left: auto; color: var(--muted-color); font-size: .8rem; }
+.word-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .4rem; padding-top: .8rem; border-top: 1px solid var(--border-color); }
+.word-admin-actions .btn { padding: .4rem .7rem; font-size: .82rem; }

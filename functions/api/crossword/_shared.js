@@ -21,15 +21,20 @@ export async function authenticateCrosswordRequest(context, options = {}) {
   return { session, body };
 }
 
-// Carica da data.json la definizione usando l'ID progressivo derivato dalla posizione nell'array.
+// Carica da crossword_words la definizione usando l'ID progressivo che il client assegna per
+// posizione (planning editor contenuti.md, Fase 7): la griglia non usa più l'id stabile della
+// riga DB come identificativo di parola, ma l'indice 1-based nell'ordine di `position` — lo
+// stesso schema di data.json quando era un array ordinato a mano.
 export async function loadWordDefinition(context, wordId) {
-  const dataUrl = new URL("/data.json", context.request.url);
-  const response = await context.env.ASSETS.fetch(dataUrl);
-  if (!response.ok) {
-    throw new Error(`Impossibile caricare data.json: HTTP ${response.status}`);
+  const numericId = Number(wordId);
+  if (!Number.isInteger(numericId) || numericId < 1) {
+    return null;
   }
 
-  const data = await response.json();
-  const numericId = Number(wordId);
-  return Number.isInteger(numericId) && numericId > 0 ? data.words?.[numericId - 1] || null : null;
+  const row = await context.env.DB
+    .prepare("SELECT solution, clue, grid_row, grid_col, direction FROM crossword_words ORDER BY position LIMIT 1 OFFSET ?")
+    .bind(numericId - 1)
+    .first();
+
+  return row ? { word: row.solution, clue: row.clue, row: row.grid_row, col: row.grid_col, direction: row.direction } : null;
 }

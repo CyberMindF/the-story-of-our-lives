@@ -16,6 +16,7 @@ import {
   CrosswordData,
   CrosswordDimensions,
   CrosswordDirection,
+  CrosswordWordData,
   PersistentAnswer,
   SelectCellOptions,
   SelectWordOptions,
@@ -33,8 +34,11 @@ const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const LEGACY_ACCESS_STORAGE_KEY = 'noi-crossword-access';
 const WORD_ATTEMPT_DEBOUNCE_MS = 1000;
 const RESETTABLE_STORAGE_PREFIXES = ['noi-crossword-progress-', 'noi-crossword-theme-'];
-// data.json è servito direttamente dagli asset pubblici della SPA.
-const CROSSWORD_DATA_URL = '/data.json';
+// Le 100 definizioni vivono ora in crossword_words (planning editor contenuti.md, Fase 7),
+// stesso pattern di /api/map-destinations. Titolo e sottotitolo sono content_entries a sé
+// (`cruciverba.titolo`/`cruciverba.sottotitolo`), renderizzati direttamente nel template con
+// <app-editorial-text> come ogni altro testo editoriale — non passano da questo servizio.
+const CROSSWORD_WORDS_URL = '/api/crossword-words';
 const CROSSWORD_HINTS_URL = '/content/crossword-hints.json';
 
 type ProgressSource = 'local' | 'remote';
@@ -67,8 +71,6 @@ export class CrosswordService implements OnDestroy {
   // ==================== Stato osservato dai template ====================
   readonly loading = signal(true);
   readonly loadError = signal(false);
-  readonly title = signal('Caricamento…');
-  readonly subtitle = signal('');
   readonly words = signal<WordEntry[]>([]);
   readonly cellsList = signal<CellState[]>([]);
   readonly dimensions = signal<CrosswordDimensions>({ rows: 0, cols: 0, rowOffset: 0, colOffset: 0 });
@@ -164,7 +166,7 @@ export class CrosswordService implements OnDestroy {
       if (!validation.ok) {
         this.checkSummary.set('Sono presenti errori nei dati. Controlla la console.');
       }
-      this.setupState(data, validation);
+      this.setupState(validation);
 
       const persistentProgress = await this.loadProgress();
       this.initializeTelemetryState();
@@ -184,8 +186,7 @@ export class CrosswordService implements OnDestroy {
       this.loading.set(false);
     } catch (error) {
       console.error("Errore durante l'inizializzazione del cruciverba:", error);
-      this.title.set('Errore di caricamento');
-      this.checkSummary.set('Impossibile leggere data.json.');
+      this.checkSummary.set('Impossibile leggere le definizioni del cruciverba.');
       this.loadError.set(true);
       this.loading.set(false);
     }
@@ -220,11 +221,15 @@ export class CrosswordService implements OnDestroy {
   }
 
   private async loadData(): Promise<CrosswordData> {
-    const response = await fetch(CROSSWORD_DATA_URL, { cache: 'no-store' });
+    const response = await fetch(CROSSWORD_WORDS_URL, {
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json' }
+    });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    return response.json();
+    const result = await this.api.readApiResponse<{ words?: CrosswordWordData[] }>(response);
+    return { words: result.words ?? [] };
   }
 
   private async loadHintRequests(): Promise<void> {
@@ -308,10 +313,7 @@ export class CrosswordService implements OnDestroy {
     return { ok: conflicts.length === 0, words, dimensions: { rows, cols, rowOffset, colOffset } };
   }
 
-  private setupState(
-    data: CrosswordData,
-    validation: { words: ValidatedWordData[]; dimensions: CrosswordDimensions }
-  ): void {
+  private setupState(validation: { words: ValidatedWordData[]; dimensions: CrosswordDimensions }): void {
     this.dimensions.set(validation.dimensions);
     const words = validation.words.map((entry) => this.buildWordEntry(entry));
     this.words.set(words);
@@ -340,9 +342,6 @@ export class CrosswordService implements OnDestroy {
 
     const sortedCells = Array.from(this.cells.values()).sort((a, b) => a.row - b.row || a.col - b.col);
     this.cellsList.set(sortedCells);
-
-    this.title.set(data.title);
-    this.subtitle.set(data.subtitle);
   }
 
   private buildWordEntry(entry: ValidatedWordData): WordEntry {

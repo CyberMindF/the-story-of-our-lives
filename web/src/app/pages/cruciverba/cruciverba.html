@@ -7,8 +7,8 @@
   [beforeLogout]="beforeLogout"
 >
   <section class="crossword-hero" aria-labelledby="title">
-    <h1 id="title">{{ crossword.title() }}</h1>
-    <p class="subtitle" id="subtitle">{{ crossword.subtitle() }}</p>
+    <h1 id="title"><app-editorial-text contentKey="cruciverba.titolo" /></h1>
+    <p class="subtitle" id="subtitle"><app-editorial-text contentKey="cruciverba.sottotitolo" /></p>
     <div class="crossword-status">
       <p id="completion-status">{{ crossword.completionStatusText() }}</p>
       <p id="check-summary" aria-live="polite">{{ crossword.checkSummary() }}</p>
@@ -23,6 +23,87 @@
 
     <app-crossword-clues />
   </div>
+
+  @if (canEdit()) {
+    <section class="word-admin-section" aria-labelledby="word-admin-title">
+      <div class="word-admin-heading">
+        <h2 id="word-admin-title">Modifica definizioni</h2>
+        <button type="button" class="btn" (click)="toggleAdminPanel()">
+          {{ adminPanelOpen() ? 'Chiudi' : 'Apri' }} l'editor
+        </button>
+      </div>
+
+      @if (adminPanelOpen()) {
+        @if (editingId() === null) {
+          <button type="button" class="btn" (click)="startCreate()">➕ Aggiungi definizione</button>
+        }
+
+        @if (editingId() !== null) {
+          <form class="word-admin-form card" (ngSubmit)="submitEdit()">
+            <h3>{{ editingId() === '__new__' ? 'Nuova definizione' : 'Modifica definizione' }}</h3>
+            <label class="form-field">
+              <span>Soluzione</span>
+              <input type="text" required [ngModel]="draft().word" (ngModelChange)="updateDraft({ word: $event })" name="word" />
+            </label>
+            <label class="form-field">
+              <span>Definizione</span>
+              <textarea rows="3" required [ngModel]="draft().clue" (ngModelChange)="updateDraft({ clue: $event })" name="clue"></textarea>
+            </label>
+            <label class="form-field">
+              <span>Riga</span>
+              <input type="text" inputmode="numeric" required [ngModel]="draft().row" (ngModelChange)="updateDraft({ row: $event })" name="row" />
+            </label>
+            <label class="form-field">
+              <span>Colonna</span>
+              <input type="text" inputmode="numeric" required [ngModel]="draft().col" (ngModelChange)="updateDraft({ col: $event })" name="col" />
+            </label>
+            <label class="form-field">
+              <span>Direzione</span>
+              <select required [ngModel]="draft().direction" (ngModelChange)="updateDraft({ direction: $event })" name="direction">
+                <option value="O">Orizzontale</option>
+                <option value="V">Verticale</option>
+              </select>
+            </label>
+            <p class="word-admin-form-error">{{ formError() }}</p>
+            <div class="word-admin-form-actions">
+              <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
+              <button type="submit" class="btn btn-submit">Salva</button>
+            </div>
+          </form>
+        }
+
+        <div class="word-admin-list">
+          @for (entry of adminWordViews(); track entry.id) {
+            <article class="word-admin-entry">
+              <header class="word-admin-entry-heading">
+                <span>#{{ entry.id }}</span>
+                <strong>{{ entry.word }}</strong>
+                <span class="word-admin-coords">R{{ entry.row }} C{{ entry.col }} · {{ entry.direction === 'O' ? 'Orizzontale' : 'Verticale' }}</span>
+              </header>
+              <p>{{ entry.clue }}</p>
+              <div class="word-admin-actions">
+                <button type="button" class="btn" (click)="move(entry.id, 'up')">⬆️</button>
+                <button type="button" class="btn" (click)="move(entry.id, 'down')">⬇️</button>
+                <button type="button" class="btn" (click)="startEdit(entry)">✏️ Modifica</button>
+                <button type="button" class="btn" (click)="requestDelete(entry.id)">🗑️ Elimina</button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    <app-confirmation-dialog
+      dialogId="delete-word"
+      title="Eliminare questa definizione?"
+      description="L'operazione non può essere annullata."
+      confirmLabel="Elimina"
+      cancelLabel="Annulla"
+      [open]="deleteTargetId() !== null"
+      (confirm)="confirmDelete()"
+      (cancel)="cancelDelete()"
+    />
+  }
 
 </app-shell>
 
