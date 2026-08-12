@@ -18,7 +18,12 @@ export async function onRequestGet({ request, env }) {
       return json({ authenticated: false }, 401);
     }
 
-    return json({ authenticated: true, user: session.user, expiresAt: session.expiresAt });
+    return json({
+      authenticated: true,
+      user: session.user,
+      expiresAt: session.expiresAt,
+      adminModeEnabled: session.adminModeEnabled
+    });
   } catch (error) {
     console.error(JSON.stringify({ event: "auth_session_error", message: error.message }));
     return json({ error: "Errore interno del server." }, 500);
@@ -51,7 +56,12 @@ export async function onRequestPost(context) {
       })
     ]));
     return json(
-      { authenticated: true, user: session.user, expiresAt: session.expiresAt },
+      {
+        authenticated: true,
+        user: session.user,
+        expiresAt: session.expiresAt,
+        adminModeEnabled: session.adminModeEnabled
+      },
       200,
       { "Set-Cookie": session.cookie }
     );

@@ -25,7 +25,9 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e3 - Animazione sfondi stickers, con immagini piccolina e stupide come stickers per l'appunto tipo arcobaleni, unicorni, gelati, soli, lune, orsetti, cuori, caramelle, cose così. Però non penso che voglio delle emoji e nemmeno svg o css plain, se deve essere un svg devono essere carini come disegnini. Nel pannello delle impostazioni del mondo, puoi decidere quali stickers vuoi che si vefano "cadere"
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio
-- #e6 test generalee fix finali mobile
+- #e6 - Test generalee fix finali mobile
+- #e7 - Animazione bolle di sapone, che vagano un po' per lo schermo e poi scoppiano
+- #e8 - Animazione cuori possono essere molto piccoli e molto grandi, vagano un po' per lo schermo in modo legiadro e poi fanno un piccolo fadeout leggero
 ---
 
 ## Da non fare
@@ -627,6 +629,31 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   script isolato (stessa struttura card+select, non l'app vera: `world_settings` mostrava
   ancora segni di uso reale) che riproduceva il bug esatto e confermava la correzione, più un
   confronto visivo su tutti e 5 i temi.
+- [x] CMS (`planning editor contenuti.md`, Fase 2 — identità, ruoli e sicurezza): prima fetta
+  concreta su `feature/content-editor`. Migrazioni 0033 (`identity`/`role` su `users`, default
+  `lei`/`member`, promozione esplicita a `lui`/`admin` solo per l'email di Rory — Desy non si è
+  ancora registrata, quindi non c'era un secondo indirizzo da promuovere) e 0034
+  (`admin_mode_enabled` su `sessions`, non su `users`: la Modalità admin dura per la sessione,
+  non è un permesso permanente). `functions/api/_shared/permissions.js` con la mappa
+  ruolo→permessi dal documento; `getAuthenticatedSession` ora porta anche identity/role/
+  adminModeEnabled, così ogni endpoint futuro può controllarli senza una query in più.
+  Endpoint `auth/admin-mode` (solo role "admin") per accenderla/spegnerla, con evento di audit.
+  Frontend: `AuthService` espone `isAdmin`/`adminModeEnabled`; interruttore "Modalità admin" in
+  Profilo, visibile solo a chi ha già role admin — nessun controllo lato client sostituisce
+  quello del backend, è solo per non mostrare un controllo inutile a chi non può usarlo.
+  Riusato l'interruttore di Impostazioni del Mondo invece di ricostruirne uno: estratto in
+  `styles/components/toggle-switch.css` (prima duplicato sarebbe stato in due file di pagina,
+  contro la regola di zero duplicazione), aggiunto alla lista `styles` globale di
+  `angular.json` — che ha richiesto un riavvio del dev server per essere raccolta (le nuove
+  voci in quell'array non si ricaricano a caldo). Verificato con due account di prova (uno
+  member, uno promosso admin a mano in locale): il riquadro non compare per member, compare e
+  funziona per admin, lo stato sopravvive a un refresh perché letto dal server. Non è un bug
+  ma buono da sapere: uno screenshot a pagina intera di Playwright su questa pagina mostrava
+  uno strappo chiaro sotto la piega — artefatto noto di `background-attachment: fixed` con le
+  catture "fullPage", sparito con uno screenshot normale su viewport scrollato; il sito vero
+  non ne risente. **Restano da fare, non toccate in questo giro**: Fase 1 (inventario di tutti
+  i contenuti), Fase 3 (tabelle `content_entries`/`content_versions` e le loro API), Fase 5+
+  (editor vero e proprio, versionamento, pagina dei log). Migrazioni applicate solo in locale.
 
 ---
 

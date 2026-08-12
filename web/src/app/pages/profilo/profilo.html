@@ -36,4 +36,26 @@
     </div>
     <app-form-status [message]="passwordMessage()" [status]="passwordStatus()" />
   </form>
+
+  @if (authService.isAdmin()) {
+    <section class="profilo-form card" aria-labelledby="admin-mode-title">
+      <h2 id="admin-mode-title">Modalità admin</h2>
+      <p class="profilo-admin-note">
+        Mostra i controlli di modifica dei contenuti. Resta accesa solo per questa sessione.
+      </p>
+      <label class="settings-toggle">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title">Modalità admin attiva</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="authService.adminModeEnabled()"
+          (change)="toggleAdminMode($event)"
+          aria-label="Modalità admin attiva"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
+    </section>
+  }
 </app-shell>

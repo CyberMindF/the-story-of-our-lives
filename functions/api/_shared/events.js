@@ -32,7 +32,9 @@ const ALLOWED_EVENTS = new Set([
   "letter_read",
   "nickname_changed",
   "story_suggestion_sent",
-  "world_setting_changed"
+  "world_setting_changed",
+  "admin_mode_enabled",
+  "admin_mode_disabled"
 ]);
 const MAX_METADATA_LENGTH = 4096;
 
