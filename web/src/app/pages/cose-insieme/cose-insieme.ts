@@ -1,8 +1,12 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AppSelect, AppSelectOption } from '../../shared/app-select/app-select';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
+import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
+import { AuthService } from '../../core/auth.service';
+import { ApiService } from '../../core/api.service';
 
 type ActivityStatus = 'todo' | 'done' | 'repeat' | 'unavailable';
 type ActivityFilter = 'all' | ActivityStatus;
@@ -17,6 +21,39 @@ interface TogetherActivity {
   hasPrivatePart: boolean;
   privateOnly: boolean;
   status: ActivityStatus;
+}
+
+// Vista completa, con privateText: arriva solo da GET /api/together/activities (content.edit),
+// mai dalla lista pubblica — usata solo per precompilare il form di modifica in modalità admin.
+interface FullActivity {
+  id: number;
+  text: string | null;
+  category: string;
+  privateText: string | null;
+  link: string | null;
+  approximateDate: string;
+}
+
+interface ActivityDraft {
+  text: string;
+  category: string;
+  privateText: string;
+  link: string;
+  approximateDate: string;
+}
+
+function emptyDraft(): ActivityDraft {
+  return { text: '', category: '', privateText: '', link: '', approximateDate: '' };
+}
+
+function toDraft(activity: FullActivity): ActivityDraft {
+  return {
+    text: activity.text ?? '',
+    category: activity.category,
+    privateText: activity.privateText ?? '',
+    link: activity.link ?? '',
+    approximateDate: activity.approximateDate
+  };
 }
 
 interface PrivatePart {
@@ -46,11 +83,16 @@ const CATEGORY_LABEL: Record<string, string> = {
 @Component({
   selector: 'app-cose-insieme',
   standalone: true,
-  imports: [AppShell, AppSelect, RouterLink, EditorialText],
+  imports: [AppShell, AppSelect, RouterLink, EditorialText, ConfirmationDialog, FormsModule],
   styleUrls: ['../../../styles/pages/cose-insieme.css'],
   templateUrl: './cose-insieme.html'
 })
 export class CoseInsieme {
+  private readonly api = inject(ApiService);
+  protected readonly authService = inject(AuthService);
+
+  protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
+
   protected readonly activities = signal<TogetherActivity[]>([]);
   protected readonly filter = signal<ActivityFilter>('all');
   protected readonly categoryFilter = signal('all');
@@ -81,6 +123,11 @@ export class CoseInsieme {
     { value: 'repeat', label: '↻ Da rifare' },
     { value: 'unavailable', label: '— Non più possibile' }
   ];
+
+  protected readonly editingId = signal<number | 'new' | null>(null);
+  protected readonly draft = signal<ActivityDraft>(emptyDraft());
+  protected readonly formError = signal('');
+  protected readonly deleteTargetId = signal<number | null>(null);
 
   constructor() {
     void this.load();
@@ -156,5 +203,86 @@ export class CoseInsieme {
 
   private updateLocalStatus(id: number, status: ActivityStatus): void {
     this.activities.update((items) => items.map((item) => item.id === id ? { ...item, status } : item));
+  }
+
+  protected startCreate(): void {
+    this.draft.set(emptyDraft());
+    this.formError.set('');
+    this.editingId.set('new');
+  }
+
+  // Il testo privato non arriva mai dalla lista pubblica (this.activities): va richiesto qui,
+  // con permesso content.edit, solo nel momento in cui l'admin apre davvero la modifica.
+  protected async startEdit(activityId: number): Promise<void> {
+    this.formError.set('');
+    try {
+      const response = await fetch('/api/together/activities', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error();
+      const result = await this.api.readApiResponse<{ activities?: FullActivity[] }>(response);
+      const full = (result.activities ?? []).find((item) => item.id === activityId);
+      if (!full) {
+        this.formError.set('Non sono riuscito a trovare l\'attività.');
+        return;
+      }
+      this.draft.set(toDraft(full));
+      this.editingId.set(activityId);
+    } catch {
+      this.formError.set('Non sono riuscito a caricare l\'attività per la modifica.');
+    }
+  }
+
+  protected cancelEdit(): void {
+    this.editingId.set(null);
+  }
+
+  protected updateDraft(patch: Partial<ActivityDraft>): void {
+    this.draft.set({ ...this.draft(), ...patch });
+  }
+
+  protected async submitEdit(): Promise<void> {
+    const d = this.draft();
+    if (!d.text.trim() && !d.privateText.trim()) {
+      this.formError.set('Serve almeno un testo pubblico o privato.');
+      return;
+    }
+    if (!d.category.trim() || !d.approximateDate.trim()) {
+      this.formError.set('Categoria e data indicativa sono obbligatorie.');
+      return;
+    }
+
+    const payload = {
+      text: d.text.trim() || null,
+      category: d.category.trim(),
+      privateText: d.privateText.trim() || null,
+      link: d.link.trim() || null,
+      approximateDate: d.approximateDate.trim()
+    };
+
+    const isNew = this.editingId() === 'new';
+    const endpoint = isNew ? '/api/together/activities' : `/api/together/activities/${this.editingId()}`;
+    const ok = await this.api.sendAuthenticatedJson(endpoint, payload, isNew ? 'POST' : 'PUT');
+    if (!ok) {
+      this.formError.set('Non è stato possibile salvare l\'attività.');
+      return;
+    }
+
+    this.editingId.set(null);
+    await this.load();
+  }
+
+  protected requestDelete(id: number): void {
+    this.deleteTargetId.set(id);
+  }
+
+  protected cancelDelete(): void {
+    this.deleteTargetId.set(null);
+  }
+
+  protected async confirmDelete(): Promise<void> {
+    const id = this.deleteTargetId();
+    if (id === null) return;
+    await this.api.sendAuthenticatedJson(`/api/together/activities/${id}`, {}, 'DELETE');
+    this.deleteTargetId.set(null);
+    await this.load();
   }
 }

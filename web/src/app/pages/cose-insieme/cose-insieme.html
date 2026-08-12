@@ -14,7 +14,41 @@
       <a class="suggest-activity-link" routerLink="/suggerimenti" [queryParams]="{ category: 'cose-da-fare-insieme' }">
         <span aria-hidden="true">＋</span> Proponi una cosa nuova
       </a>
+      @if (canEdit() && editingId() === null) {
+        <button type="button" class="btn" (click)="startCreate()">➕ Aggiungi attività</button>
+      }
     </header>
+
+    @if (editingId() !== null) {
+      <form class="activity-form card" (ngSubmit)="submitEdit()">
+        <h2>{{ editingId() === 'new' ? 'Nuova attività' : 'Modifica attività' }}</h2>
+        <label class="form-field">
+          <span>Testo pubblico <small>lascia vuoto se è un'idea solo privata</small></span>
+          <textarea rows="3" [ngModel]="draft().text" (ngModelChange)="updateDraft({ text: $event })" name="text"></textarea>
+        </label>
+        <label class="form-field">
+          <span>Testo privato (NSFW) <small>facoltativo</small></span>
+          <textarea rows="3" [ngModel]="draft().privateText" (ngModelChange)="updateDraft({ privateText: $event })" name="privateText"></textarea>
+        </label>
+        <label class="form-field">
+          <span>Categoria</span>
+          <input type="text" required [ngModel]="draft().category" (ngModelChange)="updateDraft({ category: $event })" name="category" placeholder="es. giochi, ricordi, uscite…" />
+        </label>
+        <label class="form-field">
+          <span>Data indicativa</span>
+          <input type="text" required [ngModel]="draft().approximateDate" (ngModelChange)="updateDraft({ approximateDate: $event })" name="approximateDate" placeholder="es. GEN–LUG 2026" />
+        </label>
+        <label class="form-field">
+          <span>Link <small>facoltativo</small></span>
+          <input type="text" [ngModel]="draft().link" (ngModelChange)="updateDraft({ link: $event })" name="link" />
+        </label>
+        <p class="activity-form-error">{{ formError() }}</p>
+        <div class="activity-form-actions">
+          <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
+          <button type="submit" class="btn btn-submit">Salva</button>
+        </div>
+      </form>
+    }
 
     <section class="together-tools card" aria-label="Filtri e contenuti riservati">
       <div class="together-filters" aria-label="Filtra per stato">
@@ -108,6 +142,12 @@
                 <strong><span aria-hidden="true">🔒</span> Idea NSFW <span aria-hidden="true">🔞</span></strong>
               </div>
             }
+            @if (canEdit()) {
+              <div class="activity-admin-actions">
+                <button type="button" class="btn" (click)="startEdit(activity.id)">✏️ Modifica</button>
+                <button type="button" class="btn" (click)="requestDelete(activity.id)">🗑️ Elimina</button>
+              </div>
+            }
           </li>
         } @empty {
           <li class="empty-state card">Non ci sono attività con questo stato.</li>
@@ -115,4 +155,15 @@
       </ol>
     }
   </main>
+
+  <app-confirmation-dialog
+    dialogId="delete-activity"
+    title="Eliminare questa attività?"
+    description="L'attività (e il suo stato salvato) verrà rimossa definitivamente dall'Agenda delle Idee."
+    confirmLabel="Elimina"
+    cancelLabel="Annulla"
+    [open]="deleteTargetId() !== null"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
 </app-shell>

@@ -1,6 +1,5 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
-import { TOGETHER_ACTIVITIES } from "./_data.js";
 
 const MAX_ANSWER_LENGTH = 240;
 const ANSWERS = new Set([
@@ -43,11 +42,14 @@ export async function onRequestPost(context) {
     );
 
     if (!unlocked) return json({ unlocked: false });
+
+    const { results } = await context.env.DB
+      .prepare("SELECT id, private_text FROM together_activities WHERE private_text IS NOT NULL ORDER BY id")
+      .all();
+
     return json({
       unlocked: true,
-      privateParts: TOGETHER_ACTIVITIES
-        .filter((activity) => activity.privateText)
-        .map((activity) => ({ id: activity.id, text: activity.privateText }))
+      privateParts: results.map((row) => ({ id: row.id, text: row.private_text }))
     });
   } catch (error) {
     console.error(JSON.stringify({ event: "together_unlock_error", message: error.message }));

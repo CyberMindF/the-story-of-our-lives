@@ -953,6 +953,39 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   nell'originale.
   **Restano da fare**: playlist/bonus/parole rubate delle Cuffiette, poi le raccolte più
   annidate (Linguaggio Segreto, GDR, Messaggio Criptato), Agenda delle Idee, Cruciverba, Bacheca.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — sesto editor dedicato: l'Agenda delle Idee):
+  su `feature/content-editor`. La raccolta più delicata migrata finora — alcune delle 77 voci
+  hanno un `private_text` (12) visibile solo dopo la risposta corretta alla domanda segreta in
+  `cose-insieme.html`, un meccanismo distinto dal permesso `content.read` che l'API deve
+  continuare a rispettare indipendentemente dal ruolo di chi chiama. Confermato con l'utente
+  prima di procedere (contenuto NSFW). Nuova tabella `together_activities` (migrazione 0052,
+  `id` esplicito invece di auto-increment: deve restare compatibile con
+  `together_activity_status.activity_id` che lo referenzia già) importata dalle 77 attività
+  attive di `functions/api/together/_data.js` (migrazione 0053, id 1–78 con un buco al 48 per
+  la voce già rimossa in passato — id non riusato). **Corretto un secondo bug dello stesso tipo
+  già visto nel Calendario**: `together_activity_status` aveva un `CHECK (activity_id BETWEEN 1
+  AND 78)` pensato per l'array fisso, sostituito con una vera `FOREIGN KEY` verso
+  `together_activities(id)`; anche `functions/api/together/status.js` aveva lo stesso limite
+  `activityId > 78` hardcoded, sostituito con una query di esistenza reale — altrimenti lo stato
+  di una 79ª attività aggiunta dall'editor non si sarebbe mai potuto salvare.
+  **Disegno della privacy, verificato esplicitamente**: `GET /api/together` (pubblico) non
+  include mai `private_text`, nemmeno come campo nullo — confermato via chiamata diretta
+  contando i campi (`0` su 77 righe). Solo due strade per raggiungere quel testo: (1)
+  `GET /api/together/activities`, dietro `content.edit` (quindi admin), usata solo per
+  precompilare il form di modifica lato `cose-insieme.ts`, mai per il rendering della lista
+  pubblica; (2) `POST /api/together/unlock`, invariato nella logica (stesso set di risposte
+  accettate, normalizzazione identica), ora legge da D1 invece che dall'array statico. Verificato
+  con un account `member` appena creato: `403` su `/api/together/activities`, `200` su
+  `/api/together`, e l'unlock con la risposta corretta restituisce comunque le 12 parti private
+  (il gate è basato sulla risposta, non sul ruolo — comportamento invariato, Desy è la
+  destinataria di quel contenuto). Verificato in browser: `0` testi privati visibili prima dello
+  sblocco, `12` dopo. CRUD admin testato via API diretta: creazione (id 79, oltre il vecchio
+  limite fisso), modifica, impostazione stato, eliminazione con pulizia dello stato orfano
+  collegato, tornato esattamente a 77/77. Rimosso `functions/api/together/_data.js` (l'array
+  statico), non più importato da nessun endpoint.
+  **Restano da fare**: Cruciverba (100 definizioni con coordinate, zero margine di errore) e
+  Bacheca (la più complessa, due fonti JSON da unificare prima) sono le ultime due raccolte
+  strutturate del piano.
 
 ---
 
