@@ -930,6 +930,29 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Restano da fare**: playlist/bonus/parole rubate delle Cuffiette (in un giro dedicato, serve
   prima decidere se dare a `songsIntroduction` un modo di avere link inline nel CMS generico o
   trattarla come eccezione permanente), poi Mappa e il resto della Fase 7.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — quinto editor dedicato: la Mappa): su
+  `feature/content-editor`. Tabella `map_destinations` (migrazione 0049), la raccolta più
+  annidata migrata finora: paragrafi e immagini restano JSON in colonna di testo, non
+  normalizzati in tabelle figlie — le immagini sono legate a un indice di paragrafo specifico
+  (`beforeParagraph`) e a una posizione (`before`/`after`), una relazione troppo fine per una
+  lista "semplice"; l'editor le tratta come un blocco JSON unico con validazione di forma
+  minima lato backend, non un repeater visuale. 7 destinazioni importate (migrazione 0050,
+  verificate: Roma senza immagini, "prossima-meta" con coordinate `NULL` e `is_open=1` — casi
+  limite tutti corretti) e `mappa.introduzione` migrata insieme come `content_entries`
+  `paragraphs`/`history` (migrazione 0051, stesso motivo di `storie.introduzione`: viveva nello
+  stesso JSON). Rimossa la validazione "esattamente 7 destinazioni". `map.json` **rimosso del
+  tutto** (non solo alleggerito come per le Cuffiette): non c'era nessun campo rimasto non
+  migrato, a differenza di `music.json`. Estratta anche `.form-field-inline` da
+  `ricettario.css` a `styles/components/forms.css` (file già nell'elenco globale di
+  `angular.json`): la seconda volta che serviva la stessa classe su una pagina diversa era il
+  segnale di doverla condividere invece di copiarla di nuovo (CLAUDE.md, zero duplicazione).
+  **Verificato in browser con particolare attenzione alla parte più delicata**: la proiezione
+  Equal Earth delle coordinate in puntine sulla mappa (formula matematica invariata, portata
+  1:1 da `assets/js/map/main.js`) — le 7 puntine compaiono nelle posizioni corrette, il click
+  su una puntina aggiorna l'anteprima, la galleria immagini alterna prima/dopo il testo come
+  nell'originale.
+  **Restano da fare**: playlist/bonus/parole rubate delle Cuffiette, poi le raccolte più
+  annidate (Linguaggio Segreto, GDR, Messaggio Criptato), Agenda delle Idee, Cruciverba, Bacheca.
 
 ---
 

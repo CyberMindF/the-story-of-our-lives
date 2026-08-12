@@ -1,9 +1,13 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
+import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
+import { AuthService } from '../../core/auth.service';
+import { ApiService } from '../../core/api.service';
 
 interface Coordinates {
   latitude: number;
@@ -21,9 +25,10 @@ interface Destination {
   id: string;
   name: string;
   isOpen: boolean;
-  coordinates?: Coordinates;
+  coordinates: Coordinates | null;
   paragraphs: string[];
   images: DestinationImage[];
+  position: number;
 }
 
 interface Passage {
@@ -47,27 +52,63 @@ interface PinView {
   y: number;
 }
 
-// Porting fedele di assets/js/map/main.js: stessa proiezione Equal Earth (funzione pura,
-// portata carattere per carattere), stessa validazione (introduzione + N destinazioni,
-// aggiornata a 7 con l'aggiunta della Sicilia), stessa anteprima aggiornata al click su una
-// puntina, stesso diario di viaggio completo
-// sotto. La costruzione DOM (createPin/createDestination/createGallery/createNarrative)
-// diventa binding dichiarativo nel template — la logica di raggruppamento immagini per
-// paragrafo resta identica, solo precalcolata una volta invece che ad ogni createElement.
+interface DestinationDraft {
+  id: string;
+  name: string;
+  isOpen: boolean;
+  latitude: string;
+  longitude: string;
+  paragraphs: string;
+  imagesJson: string;
+}
+
+function emptyDraft(): DestinationDraft {
+  return { id: '', name: '', isOpen: false, latitude: '', longitude: '', paragraphs: '', imagesJson: '[]' };
+}
+
+function toDraft(destination: Destination): DestinationDraft {
+  return {
+    id: destination.id,
+    name: destination.name,
+    isOpen: destination.isOpen,
+    latitude: destination.coordinates ? String(destination.coordinates.latitude) : '',
+    longitude: destination.coordinates ? String(destination.coordinates.longitude) : '',
+    paragraphs: destination.paragraphs.join('\n\n'),
+    imagesJson: JSON.stringify(destination.images, null, 2)
+  };
+}
+
+// Editor dedicato della Mappa (planning editor contenuti.md, Fase 7): le destinazioni vivono ora
+// in map_destinations via /api/map-destinations, stesso pattern di posizione esplicita e
+// riordino "su/giù" di Ricettario/Storie/Cuffiette. Le immagini restano un campo JSON grezzo in
+// modifica (sono legate a un indice di paragrafo specifico, non un semplice elenco) — editor
+// "senza fronzoli", non un repeater visuale. Niente più vincolo "esattamente 7 destinazioni":
+// stesso bug già corretto altrove, qui non ancora esercitato ma comunque rimosso.
 @Component({
   selector: 'app-mappa',
   standalone: true,
-  imports: [AppShell, ContentMessage, NgTemplateOutlet, RouterLink],
+  imports: [AppShell, ContentMessage, NgTemplateOutlet, RouterLink, EditorialText, FormsModule, ConfirmationDialog],
   styleUrls: ['../../../styles/pages/map.css'],
   templateUrl: './mappa.html'
 })
-export class Mappa implements OnInit {
-  private readonly staticContent = inject(StaticContentService);
-  protected readonly introduction = signal<string[]>([]);
-  protected readonly destinationViews = signal<DestinationView[]>([]);
-  protected readonly pins = signal<PinView[]>([]);
-  protected readonly selectedId = signal<string | null>(null);
+export class Mappa {
+  private readonly api = inject(ApiService);
+  protected readonly authService = inject(AuthService);
+
+  protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
+
+  private readonly destinations = signal<Destination[]>([]);
   protected readonly loadError = signal(false);
+  protected readonly selectedId = signal<string | null>(null);
+
+  protected readonly destinationViews = computed<DestinationView[]>(() =>
+    [...this.destinations()]
+      .sort((a, b) => a.position - b.position)
+      .map((destination, index) => this.toDestinationView(destination, index))
+  );
+  protected readonly pins = computed<PinView[]>(() =>
+    this.destinationViews().map((view) => this.toPinView(view.destination, view.index))
+  );
 
   protected readonly selected = computed(() => {
     const id = this.selectedId();
@@ -90,17 +131,25 @@ export class Mappa implements OnInit {
     };
   });
 
-  async ngOnInit(): Promise<void> {
-    try {
-      const data = await this.staticContent.load<{ introduction: string[]; destinations: Destination[] }>('/content/map.json');
-      if (!Array.isArray(data.introduction) || !Array.isArray(data.destinations) || data.destinations.length !== 7) {
-        throw new Error('La mappa deve contenere introduzione e sette destinazioni');
-      }
+  protected readonly editingId = signal<string | null>(null);
+  protected readonly draft = signal<DestinationDraft>(emptyDraft());
+  protected readonly formError = signal('');
+  protected readonly deleteTargetId = signal<string | null>(null);
 
-      this.introduction.set(data.introduction);
-      this.destinationViews.set(data.destinations.map((destination, index) => this.toDestinationView(destination, index)));
-      this.pins.set(data.destinations.map((destination, index) => this.toPinView(destination, index)));
-      this.selectedId.set(data.destinations[0].id);
+  constructor() {
+    void this.load();
+  }
+
+  private async load(): Promise<void> {
+    try {
+      const response = await fetch('/api/map-destinations', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error(`Errore ${response.status}`);
+      const result = await this.api.readApiResponse<{ destinations?: Destination[] }>(response);
+      const destinations = result.destinations ?? [];
+      this.destinations.set(destinations);
+      if (!this.selectedId() && destinations.length > 0) {
+        this.selectedId.set([...destinations].sort((a, b) => a.position - b.position)[0].id);
+      }
     } catch (error) {
       console.error('Errore nel caricamento della mappa:', error);
       this.loadError.set(true);
@@ -112,7 +161,7 @@ export class Mappa implements OnInit {
   }
 
   private toPinView(destination: Destination, index: number): PinView {
-    const position = this.projectCoordinates(destination.coordinates);
+    const position = this.projectCoordinates(destination.coordinates ?? undefined);
     return { destination, index, x: position.x, y: position.y };
   }
 
@@ -125,7 +174,6 @@ export class Mappa implements OnInit {
     return { destination, index, passages, hasImages: destination.images.length > 0 };
   }
 
-  // Proietta coordinate reali sulla stessa Equal Earth usata dall'immagine cartografica.
   private projectCoordinates(coordinates?: Coordinates): { x: number; y: number } {
     if (!coordinates) {
       return { x: 50, y: 50 };
@@ -149,5 +197,90 @@ export class Mappa implements OnInit {
     const y = 50 - (projectedY / 1.31736) * 50;
 
     return { x, y };
+  }
+
+  protected startCreate(): void {
+    this.draft.set(emptyDraft());
+    this.formError.set('');
+    this.editingId.set('__new__');
+  }
+
+  protected startEdit(destination: Destination): void {
+    this.draft.set(toDraft(destination));
+    this.formError.set('');
+    this.editingId.set(destination.id);
+  }
+
+  protected cancelEdit(): void {
+    this.editingId.set(null);
+  }
+
+  protected updateDraft(patch: Partial<DestinationDraft>): void {
+    this.draft.set({ ...this.draft(), ...patch });
+  }
+
+  protected async submitEdit(): Promise<void> {
+    const d = this.draft();
+    const paragraphs = d.paragraphs.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+
+    let images: unknown;
+    try {
+      images = JSON.parse(d.imagesJson || '[]');
+    } catch {
+      this.formError.set('Il campo immagini non è JSON valido.');
+      return;
+    }
+
+    if (!d.name.trim() || paragraphs.length === 0) {
+      this.formError.set('Nome e paragrafi sono obbligatori.');
+      return;
+    }
+
+    const isNew = this.editingId() === '__new__';
+    const payload = {
+      ...(isNew ? { id: d.id.trim().toLowerCase() } : {}),
+      name: d.name.trim(),
+      isOpen: d.isOpen,
+      latitude: d.latitude.trim() || null,
+      longitude: d.longitude.trim() || null,
+      paragraphs,
+      images
+    };
+
+    if (isNew && !/^[a-z][a-z0-9-]{0,63}$/.test(payload.id ?? '')) {
+      this.formError.set('ID non valido: solo lettere minuscole, numeri e trattini.');
+      return;
+    }
+
+    const endpoint = isNew ? '/api/map-destinations' : `/api/map-destinations/${this.editingId()}`;
+    const ok = await this.api.sendAuthenticatedJson(endpoint, payload, isNew ? 'POST' : 'PUT');
+    if (!ok) {
+      this.formError.set('Non è stato possibile salvare la destinazione.');
+      return;
+    }
+
+    this.editingId.set(null);
+    await this.load();
+  }
+
+  protected requestDelete(id: string): void {
+    this.deleteTargetId.set(id);
+  }
+
+  protected cancelDelete(): void {
+    this.deleteTargetId.set(null);
+  }
+
+  protected async confirmDelete(): Promise<void> {
+    const id = this.deleteTargetId();
+    if (!id) return;
+    await this.api.sendAuthenticatedJson(`/api/map-destinations/${id}`, {}, 'DELETE');
+    this.deleteTargetId.set(null);
+    await this.load();
+  }
+
+  protected async move(id: string, direction: 'up' | 'down'): Promise<void> {
+    await this.api.sendAuthenticatedJson(`/api/map-destinations/${id}/move`, { direction }, 'POST');
+    await this.load();
   }
 }

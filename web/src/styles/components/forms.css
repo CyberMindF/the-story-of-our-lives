@@ -22,3 +22,5 @@
 
 .form-submit-row { display: flex; justify-content: flex-end; align-items: center; }
 .form-submit-row button { flex: 0 0 auto; }
+
+.form-field-inline { display: flex; align-items: center; gap: .5rem; }

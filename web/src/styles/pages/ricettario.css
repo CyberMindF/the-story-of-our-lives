@@ -3,7 +3,6 @@
 .recipe-form { display: grid; gap: .85rem; margin: 0 auto 2rem; padding: 1.5rem; text-align: left; }
 .recipe-form h2 { margin: 0; }
 .recipe-form small { color: var(--muted-color); font-weight: 500; }
-.form-field-inline { display: flex; align-items: center; gap: .5rem; }
 .recipe-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
 .recipe-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
 .recipe-form-error:empty { display: none; }
