@@ -20,6 +20,7 @@ export const authGuard: CanActivateFn = async (_route, state) => {
   const session = await authService.loadAuthSession();
   if (session.authenticated && session.user && authService.isAccessUnlocked(session.user.id)) {
     authService.currentUser.set(session.user);
+    authService.adminModeEnabled.set(session.adminModeEnabled === true);
     authService.touchAccessUnlock(session.user.id);
     return true;
   }

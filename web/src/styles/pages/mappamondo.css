@@ -136,3 +136,19 @@
     justify-self: stretch;
   }
 }
+
+.scene-form { display: grid; gap: .85rem; margin: 1.5rem 0; padding: 1.5rem; text-align: left; }
+.scene-form h2 { margin: 0; }
+.form-field-label { display: block; color: var(--text-color); font-size: .9rem; font-weight: 700; margin-bottom: .3rem; }
+.scene-lines { display: grid; gap: .85rem; }
+.scene-line-editor { display: grid; gap: .5rem; padding: .85rem; border: 1px solid var(--border-color); border-radius: .85rem; }
+.scene-segment-editor { display: grid; grid-template-columns: 10rem 1fr; gap: .5rem; }
+.scene-segment-editor select { border-radius: .6rem; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); }
+.scene-segment-editor textarea { font-size: .88rem; }
+.scene-line-actions { display: flex; flex-wrap: wrap; gap: .4rem; }
+.scene-line-actions .btn { padding: .3rem .6rem; font-size: .76rem; }
+.scene-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
+.scene-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.scene-form-error:empty { display: none; }
+.scene-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+.scene-admin-actions .btn { padding: .35rem .6rem; font-size: .8rem; }

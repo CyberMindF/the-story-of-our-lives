@@ -24,8 +24,47 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e2 - Tema love, molto "rosa" tipo fragola e panna
 - #e3 - Animazione sfondi stickers, con immagini piccolina e stupide come stickers per l'appunto tipo arcobaleni, unicorni, gelati, soli, lune, orsetti, cuori, caramelle, cose così. Però non penso che voglio delle emoji e nemmeno svg o css plain, se deve essere un svg devono essere carini come disegnini. Nel pannello delle impostazioni del mondo, puoi decidere quali stickers vuoi che si vefano "cadere"
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
-- #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio
-- #e6 test generalee fix finali mobile
+- #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
+- #e6 - Test generalee fix finali mobile
+- #e7 - Animazione bolle di sapone, che vagano un po' per lo schermo e poi scoppiano
+- #e8 - Animazione cuori possono essere molto piccoli e molto grandi, vagano un po' per lo schermo in modo legiadro e poi fanno un piccolo fadeout leggero
+- #e9 - tema white-world deve dare la sensazione di bianco "puro" come una comperta di raso, perla biaanca, colori bianchi di quel tipo deve essere un bel colore ovviamente, non troppo giallo, però un po' "avorio" credo che abbiamo capito
+- #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
+- #e11 - Trasformare il finale del Mappamondo in un vero atlante per orientarsi nel sito,
+  senza sostituire né interrompere la storia esistente. Dopo l'ultima scena aggiungere la
+  sezione **“Ora, dove vuoi andare?”**, che includa ogni pagina raggiungibile e non soltanto i
+  luoghi principali già presenti nella home. Ogni destinazione deve avere nome, icona, link e
+  una spiegazione molto breve in forma “se cerchi questo, lo trovi qui”; non deve duplicare
+  l'introduzione completa della pagina. Per i contenuti non ancora disponibili mostrare
+  soltanto “Arriverà presto”. Direzione visiva consigliata: un piccolo atlante illustrato del
+  Mondo Bianco, con il mondo al centro e luoghi/oggetti raggruppati e collegati, invece di una
+  cartina geografica arbitraria o di una semplice griglia identica alla home. Le destinazioni
+  devono provenire da un unico registro condiviso/estensibile, così aggiungere una pagina in
+  futuro aggiorna automaticamente anche l'atlante; route e disponibilità restano dati
+  funzionali, mentre le brevi descrizioni possono essere contenuti editoriali modificabili.
+- #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”,
+  “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire
+  piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che
+  amo di lei o messaggi “da aprire quando…”. Evitare una normale lista o un feed: mostrare un
+  barattolo/insieme di bigliettini e un gesto semplice di pesca, seguito da una breve animazione
+  di apertura del foglietto. La scelta può essere casuale, eventualmente preceduta da una
+  categoria o da “Come ti senti?” (`A caso`, `Mi manchi`, `Giornata difficile`, `Hai bisogno di
+  sorridere`, `Un nostro ricordo`); non mostrare anteprime che rovinino la sorpresa. Tenere per
+  per ciascun utente una coda mobile delle ultime 10 estrazioni: quei biglietti sono esclusi
+  temporaneamente, e all'undicesima pesca il primo estratto rientra in circolo, poi il secondo
+  alla dodicesima e così via. Tra i biglietti disponibili usare una casualità pesata che dia
+  una probabilità leggermente maggiore a quelli usciti meno volte, senza rendere mai la scelta
+  deterministica e senza mostrare quali sono già usciti. Se una categoria contiene meno di 11
+  biglietti, ridurre automaticamente la coda quanto basta per lasciare sempre almeno un
+  candidato disponibile. Dopo l'apertura permettere soltanto `Rimetti nel barattolo` e `Pesca ancora`:
+  niente preferiti, archivio personale o lista dei biglietti letti, perché renderebbero la
+  raccolta prevedibile e toglierebbero valore alla sorpresa. Nessun limite giornaliero
+  artificiale. I biglietti devono vivere nel DB ed essere amministrabili con un editor a lista
+  semplice (testo, categoria/stato d'animo, eventuale titolo “Apri quando…”, attivo/non attivo,
+  posizione), senza drag and drop: frecce e comando `Sposta…`. Lei può proporre un nuovo
+  biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi
+  del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il
+  testo del messaggio.
 ---
 
 ## Da non fare
@@ -41,6 +80,183 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ### Extra (fuori scaletta, chiesti il 12/08/2026)
 
+- [x] CMS Fase 7 — editor della Bacheca dei Ricordi, ultima e più grande collezione del piano
+  (302 blocchi su 142 righe, 19 giorni, 5 periodi — un ordine di grandezza sopra tutto il
+  resto fatto in questa sessione). Rory ha chiesto esplicitamente un'opzione ibrida ("opzione
+  D") invece del CRUD granulare a 5 livelli usato per le altre collezioni: un giorno è un solo
+  record con l'intero layout (righe→colonne→blocchi) come JSON, ma l'admin non vede mai quel
+  JSON — solo un editor visuale con controlli semplici sui blocchi reali. Fatta in 5 fasi
+  come richiesto:
+  1. **Migrazione struttura**: `bacheca_periods` (lista piatta) + `bacheca_days` (annidati per
+     periodo, `content` come blob JSON), migrazioni 0067/0068, dati importati da
+     `bacheca-layout.json` con `external`→`link` rinominato e `devId` tolto (serviva solo per
+     il vecchio riferimento incrociato nel JSON grezzo, superato ora che si modifica in loco).
+     Verificato byte-per-byte: zero differenze su tutti i 302 blocchi.
+  2. **Editor visuale** (`BachecaDayEditor`, componente dedicato): righe con 5 preset
+     (larghezza intera / due colonne / tre colonne / foto+testo / testo+foto — gli ultimi due
+     strutturalmente uguali a "due colonne", esistono solo per farli riconoscere subito nel
+     picker), blocchi tipizzati (testo/foto/video/audio/link) con un vero modulo per tipo, non
+     JSON. Riordino senza drag&drop come richiesto: frecce su/giù per le righe e i blocchi
+     nella stessa colonna, comando "Sposta…" con destinazione "dopo la riga #" per i salti
+     lunghi. Tutta la modifica avviene su una copia in memoria; "Salva" invia l'intero
+     `content` del giorno in un colpo solo.
+  3. **Pannello admin periodi/giorni** integrato direttamente nella pagina reale (non un
+     pannello separato sotto): CRUD+riordino per i periodi, CRUD+riordino+comando "Sposta…"
+     (periodo di destinazione + "dopo quale giorno") per i giorni — "Aggiungi giorno" crea un
+     giorno vuoto con un blocco di testo segnaposto e mostra subito "Aggiungi blocco".
+  4. **Upload media verso R2** (`/api/bacheca-media/upload`): l'admin non scrive mai una
+     chiave a mano, viene generata dal server; per le foto la miniatura è generata **nel
+     browser** (Canvas, ridimensionata a 480px) prima dell'upload — Cloudflare Workers non può
+     eseguire una libreria di resize nativa come `sharp` (usata invece dallo script Node
+     esistente per le foto già migrate), quindi il ridimensionamento lato server non era
+     un'opzione. Validazione rigorosa di formato/dimensione per tipo (foto ≤15MB
+     jpeg/png/webp, video ≤200MB mp4/webm/mov, audio ≤50MB). Il file originale non viene mai
+     eliminato automaticamente alla rimozione di un blocco (solo il riferimento sparisce dal
+     layout), come richiesto esplicitamente per non rischiare perdite.
+  5. **Verifica finale e pulizia**: `bacheca-layout.json`, `bacheca.json` e la vecchia
+     implementazione `pages/bacheca/bacheca.*` (mai instradata, tenuta in vita solo perché
+     `BachecaPreview` ne ereditava lightbox/utility media) eliminati — la logica del lightbox
+     è stata prima portata direttamente in `BachecaPreview`, così l'eredità da un componente
+     morto non bloccasse la rimozione del JSON da cui quel componente dipendeva.
+
+  **Bug trovato e corretto durante la verifica**: il validatore backend del contenuto di un
+  giorno limitava le didascalie a 300 caratteri, ma nella Bacheca reale sono spesso paragrafi
+  narrativi (la più lunga esistente è 736 caratteri) — il primo tentativo di salvare un giorno
+  reale falliva sempre con 400, scoperto testando in browser (non dal solo build), isolato con
+  un confronto diretto tra un payload rifiutato e il validatore eseguito fuori dal Worker.
+  Portato il limite a 4000 caratteri. Rifatta la verifica byte-per-byte dopo il fix: tutti i
+  19 giorni ora superano la validazione.
+
+  Testato con Playwright end-to-end su un account admin di prova (poi ripulito dal DB, incluso
+  il file di test caricato su R2): resa pubblica identica all'originale (237 foto, 25 video, 2
+  audio, 38 testi), editor con creazione/modifica/eliminazione/spostamento di righe e blocchi,
+  creazione/eliminazione di un periodo di prova, upload reale di una foto con generazione
+  della miniatura (verificato che entrambi i file esistano davvero su R2 scaricandoli),
+  lightbox (apertura/navigazione/chiusura) ancora funzionante dopo la rimozione del componente
+  legacy da cui dipendeva. Verifica byte-per-byte finale ripetuta a fine sessione: zero
+  differenze.
+
+- [x] CMS Fase 7 — editor del GDR "Il Prezzo della Verità" (punto 6 dell'ordine di
+  migrazione consigliato, il più corposo rimasto): il testo narrativo di `avventura.html`
+  (41 blocchi: titoli, paragrafi, callout, immagini, la griglia dei 4 NPC) e le sezioni
+  editoriali di `la-tua-maga.html` (Abilità speciali, tabella Effetti Selvaggi, Incantesimi —
+  4 blocchi; la scheda utente Aspetto/Statistiche/Inventario resta dati dinamici come deciso
+  nell'inventario) sono migrati in un'unica tabella D1 `gdr_blocks`
+  (`document_key` + `position` scoped al documento, migrazioni 0065/0066). Estratti in modo
+  programmatico con un parser HTML (BeautifulSoup) dal markup esistente, non ritrascritti a
+  mano, per la stessa fedeltà byte-per-byte delle altre migrazioni di questa sessione — poi
+  verificato con un confronto automatico che conferma zero differenze sui 45 blocchi totali.
+  Un blocco è `{ type, data }` con 7 tipi possibili (`heading`, `paragraph`, `callout`,
+  `image`, `npc_grid`, `list`, `table`): editor "senza fronzoli" con selettore del tipo e un
+  campo JSON grezzo per `data` (stesso principio già usato per le immagini di Mappa), non un
+  builder visuale per 7 forme di dati diverse. Endpoint `/api/gdr-blocks` con CRUD + `move.js`
+  (su/giù dentro lo stesso documento); nessun comando "Sposta…" qui, a differenza del
+  Linguaggio Segreto — i blocchi non si spostano tra Avventura e La Tua Maga, sono due pagine
+  diverse. Costruiti due componenti condivisi riusati identici dalle due pagine (zero
+  duplicazione): `GdrBlocks` (rendering pubblico, un `@switch` sui 7 tipi) e
+  `GdrDocumentEditor` (pannello admin, parametrizzato solo da `documentKey`). Estratta anche
+  la funzione di rendering dei link interni `[etichetta](/rotta)` da `EditorialText` in
+  un'utility condivisa (`shared/inline-text.ts`), riusata ora anche dai paragrafi del GDR
+  invece di duplicare la stessa regex. Le regole CSS specifiche (sezioni, figure, griglia NPC,
+  callout, liste, tabella) spostate da `tavolo.css` (page-scoped, non avrebbe raggiunto un
+  componente figlio per via dell'incapsulamento di Angular) al CSS proprio di `GdrBlocks`.
+  Verificato con Playwright su un account admin di prova (poi ripulito dal DB): conteggi
+  titoli/paragrafi/figure/NPC/callout corretti su Avventura, link interno verso "La Tua Maga"
+  funzionante, tabella Effetti Selvaggi e liste Abilità/Incantesimi corrette su La Tua Maga,
+  editor admin con creazione/spostamento/eliminazione di un blocco di prova verificati
+  end-to-end. Trovato e corretto un piccolo problema di stile in corsa (le voci delle liste
+  Abilità/Incantesimi apparivano senza il riquadro previsto in un primo screenshot — risolto,
+  verificato di nuovo che il riquadro (bordo + sfondo) sia presente).
+
+- [x] CMS — `cruciverba.titolo`/`cruciverba.sottotitolo` migrati a `content_entries`
+  (migrazione 0064): erano rimasti come costanti nel codice quando `data.json` è stato
+  eliminato. Ora `<h1 id="title">`/`<p id="subtitle">` in `cruciverba.html` usano
+  `<app-editorial-text>` come ogni altro testo editoriale, con pulsante "Modifica" per
+  l'admin. Rimossi di conseguenza i signal `title`/`subtitle` e le costanti hardcoded da
+  `crossword.service.ts` (non più letti da nessuno). Verificato con Playwright: testo
+  corretto, modifica e ripristino funzionanti. **Deciso anche** (chiarito da Rory):
+  `portone.*` e `not-found.messaggio` restano nel codice — non sono testi personali ma testi
+  del software (istruzioni di accesso), quindi non richiedono un percorso di lettura pubblico
+  su `/api/content` né alcuna migrazione futura.
+
+- [x] CMS Fase 7 — editor del Linguaggio Segreto (punto 6 dell'ordine di migrazione
+  consigliato in `inventario contenuti CMS.md`): le 6 categorie, i 25 simboli annidati e i 12
+  esempi sono migrati da `linguaggio-segreto.ts` (array TypeScript inline) a tre tabelle D1
+  dedicate — `linguaggio_segreto_categories`, `linguaggio_segreto_symbols` (con `category_id`,
+  annidati sotto una categoria) e `linguaggio_segreto_examples` (lista piatta indipendente),
+  migrazioni 0062/0063. Tre collezioni di endpoint CRUD+move
+  (`/api/linguaggio-segreto-categories`, `-symbols`, `-examples`), stesso schema di
+  Mappa/Cruciverba. Per i simboli, oltre al su/giù tra vicini nella stessa categoria
+  (`move.js`), aggiunto anche il comando "Sposta…" richiesto esplicitamente
+  dall'inventario (decisione #4): sceglie categoria di destinazione ed elemento dopo cui
+  inserire (o "in cima" alla categoria) in una sola operazione, senza dover premere giù N
+  volte per spostamenti lontani — mai esistito prima nel codebase, progettato da zero
+  (`move-to.js`, ricalcola le posizioni chiudendo il vuoto nella categoria di origine e
+  aprendone uno in quella di destinazione). Verificato byte-per-byte con un confronto
+  automatico contro l'array TypeScript originale (categorie, icone, note, ogni simbolo con
+  significato/spiegazione, ogni esempio): nessuna differenza. Testato con Playwright su un
+  account admin di prova (poi ripulito dal DB): le 6 schede pubbliche mostrano i conteggi
+  corretti (9+2+4+4+4+2 simboli, 12 esempi), creazione/spostamento cross-categoria/
+  eliminazione di un simbolo di prova verificati end-to-end (Urgenza 2→3→2, Soggetti 2→3→2,
+  ordine di inserimento rispettato), screenshot dell'editor admin confrontato con lo stile del
+  resto del sito. Notato e lasciato invariato (coerente con tutte le altre collezioni
+  esistenti): un `DELETE` non rinumera le posizioni rimaste, lascia un "buco" nella sequenza —
+  l'ordinamento resta comunque corretto perché si legge sempre `ORDER BY position`, solo i
+  valori non restano contigui.
+
+- [x] CMS — chiusura dei testi semplici rimasti "Da migrare" (punto 1 dell'ordine di
+  migrazione consigliato in `inventario contenuti CMS.md`, mai completato del tutto).
+  Scoperto per prima cosa che l'inventario era rimasto fermo al 09/08: quasi tutti i content
+  key elencati come "Da migrare" erano in realtà già migrati nelle sessioni precedenti
+  (migrazioni 0038/0039/0046) senza che il documento venisse aggiornato — verificato ogni riga
+  sul codice reale invece di fidarsi del documento, e corretto lo stato di tutte. I pochi
+  davvero ancora da fare: `mondo-bianco.canzone.citazione`, `storie.suggerimento.eyebrow`,
+  `storie.suggerimento.titolo`, `bacheca.introduzione`, `linguaggio-segreto.messaggio-codice`,
+  `profilo.introduzione` (migrazione 0061). Tre restano volutamente **bloccati**: `portone.*`
+  e `not-found.messaggio` perché sono pagine raggiungibili prima del login e `/api/content`
+  richiede sempre una sessione autenticata (servirebbe un percorso di lettura pubblico, una
+  decisione non presa qui); `messaggio-criptato.istruzioni` perché il testo contiene un link a
+  un sito esterno e la sintassi link di `EditorialText` supporta solo rotte interne — coerente
+  con la decisione già presa che il Messaggio Criptato non ha un editor CMS dedicato.
+  `ponti.solo.introduzione` non era applicabile: la card non ha oggi un corpo separato.
+  Aggiunto anche un supporto minimo mai esistito prima in `EditorialText`: gli a-capo singoli
+  dentro un paragrafo diventano `<br>` (necessario per i 4 versi della canzone, che devono
+  restare un unico blocco compatto e non diventare paragrafi separati con la spaziatura
+  normale). Durante la migrazione di Storie trovato un bug non ovvio: i contenitori grid/flex
+  non "collassano" il margine di default dei `<p>` dei loro figli come farebbe il normale
+  flusso a blocchi, quindi il riquadro del suggerimento cresceva ben oltre l'altezza prevista
+  (112px attesi, 211px ottenuti) — risolto alla radice nel componente condiviso
+  (`:host p { margin: 0 } :host p + p { margin-top: 1em }`), non con un CSS specifico per quella
+  sola pagina, così qualunque altro contesto grid/flex futuro non ripete lo stesso bug.
+  Verificato con Playwright su un account di prova (poi ripulito dal DB) ogni pagina toccata:
+  testo letterale e HTML renderizzato confrontati con l'originale, dimensioni del riquadro di
+  Storie prima/dopo il fix, screenshot di Mondo Bianco/Storie/Linguaggio Segreto/Profilo/Bacheca.
+
+- [x] CMS Fase 7 — editor del Cruciverba: le 100 definizioni (soluzione, definizione,
+  coordinate riga/colonna, direzione) sono migrate da `data.json` alla tabella dedicata
+  `crossword_words` (migrazioni 0059/0060), stesso pattern posizione esplicita + riordino
+  su/giù di Mappa/Storie/Ricettario/Cuffiette (`/api/crossword-words`, CRUD + `move.js`).
+  L'id resta un intero progressivo (non uno slug testuale come le altre collezioni): non è
+  mai stato un identificativo leggibile, solo il numero mostrato in griglia. Verificato
+  byte-per-byte che le 100 righe importate corrispondano esattamente all'originale (id,
+  soluzione, definizione, riga, colonna, direzione, posizione). Aggiunto un editor
+  amministrativo dedicato nella pagina del gioco stesso (pannello richiudibile "Modifica
+  definizioni", sotto la griglia, non mescolato al gioco) con lo stesso schema
+  aggiungi/modifica/elimina/sposta delle altre collezioni. Aggiornati anche i due punti del
+  backend che leggevano `data.json` server-side per validare le risposte
+  (`functions/api/crossword/_shared.js`, `functions/api/telemetry/word-attempts.js`): ora
+  interrogano `crossword_words` ordinata per `position`, mantenendo lo stesso indice 1-based
+  che il client assegna per ordine (non l'id stabile della riga), coerente con come
+  `data.json` era sempre stato un array ordinato a mano. Titolo e sottotitolo del gioco
+  (`cruciverba.titolo`/`cruciverba.sottotitolo`, content key distinti non ancora migrati)
+  spostati come costanti in `crossword.service.ts`, non più letti da `data.json`. Testato con
+  Playwright end-to-end su un account admin di prova (poi ripulito dal DB): caricamento della
+  griglia da 100 parole, inserimento di una risposta corretta con "Controlla" (completamento
+  registrato), editor admin con creazione/modifica/eliminazione/riordino di una definizione di
+  prova, e le due chiamate server-side (`PUT /api/crossword/answers/:wordId`,
+  `POST /api/telemetry/word-attempts`) verificate via curl dopo la rimozione di `data.json`
+  dal disco. `web/public/data.json` eliminato: non c'è più nessun consumatore, né client né
+  server.
 - [x] #c1 — verifica generale della telemetria completata. Le aperture di tutte le pagine e
   le principali scritture erano già registrate; aggiunti gli eventi mancanti per cambio di
   tema/impostazioni del mondo, cambio nickname, lettura di una nuova lettera, proposta di una
@@ -627,6 +843,440 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   script isolato (stessa struttura card+select, non l'app vera: `world_settings` mostrava
   ancora segni di uso reale) che riproduceva il bug esatto e confermava la correzione, più un
   confronto visivo su tutti e 5 i temi.
+- [x] CMS (`planning editor contenuti.md`, Fase 2 — identità, ruoli e sicurezza): prima fetta
+  concreta su `feature/content-editor`. Migrazioni 0033 (`identity`/`role` su `users`, default
+  `lei`/`member`, promozione esplicita a `lui`/`admin` solo per l'email di Rory — Desy non si è
+  ancora registrata, quindi non c'era un secondo indirizzo da promuovere) e 0034
+  (`admin_mode_enabled` su `sessions`, non su `users`: la Modalità admin dura per la sessione,
+  non è un permesso permanente). `functions/api/_shared/permissions.js` con la mappa
+  ruolo→permessi dal documento; `getAuthenticatedSession` ora porta anche identity/role/
+  adminModeEnabled, così ogni endpoint futuro può controllarli senza una query in più.
+  Endpoint `auth/admin-mode` (solo role "admin") per accenderla/spegnerla, con evento di audit.
+  Frontend: `AuthService` espone `isAdmin`/`adminModeEnabled`; interruttore "Modalità admin" in
+  Profilo, visibile solo a chi ha già role admin — nessun controllo lato client sostituisce
+  quello del backend, è solo per non mostrare un controllo inutile a chi non può usarlo.
+  Riusato l'interruttore di Impostazioni del Mondo invece di ricostruirne uno: estratto in
+  `styles/components/toggle-switch.css` (prima duplicato sarebbe stato in due file di pagina,
+  contro la regola di zero duplicazione), aggiunto alla lista `styles` globale di
+  `angular.json` — che ha richiesto un riavvio del dev server per essere raccolta (le nuove
+  voci in quell'array non si ricaricano a caldo). Verificato con due account di prova (uno
+  member, uno promosso admin a mano in locale): il riquadro non compare per member, compare e
+  funziona per admin, lo stato sopravvive a un refresh perché letto dal server. Non è un bug
+  ma buono da sapere: uno screenshot a pagina intera di Playwright su questa pagina mostrava
+  uno strappo chiaro sotto la piega — artefatto noto di `background-attachment: fixed` con le
+  catture "fullPage", sparito con uno screenshot normale su viewport scrollato; il sito vero
+  non ne risente. **Restano da fare, non toccate in questo giro**: Fase 1 (inventario di tutti
+  i contenuti), Fase 3 (tabelle `content_entries`/`content_versions` e le loro API), Fase 5+
+  (editor vero e proprio, versionamento, pagina dei log). Migrazioni applicate solo in locale.
+- [x] CMS (`planning editor contenuti.md`, Fase 3 — fondamenta del CMS): su
+  `feature/content-editor`. Migrazione 0035 con `content_entries` (valore corrente, letto da
+  `body` per i contenuti `replace` o da `current_version_id` per quelli `history`) e
+  `content_versions` (cronologia, popolata solo per `history`). API in `functions/api/content/`:
+  `GET/POST /api/content` (lista per il futuro pannello e creazione, `content.edit`/
+  `content.create`), `GET/PUT/DELETE /api/content/:key` (lettura con elenco versioni leggero e
+  `?versionId=` per una versione specifica, modifica, eliminazione — `content.read`/
+  `content.edit`/`content.delete`). `PUT` distingue esplicitamente "Salva modifica" (corregge il
+  testo in vigore, sulla versione corrente se `history`) da "Aggiungi nuova versione"
+  (`createVersion: true`, inserisce una riga in più lasciando intatta la cronologia) come deciso
+  nel piano. Primo uso reale di `hasPermission()` da `functions/api/_shared/permissions.js`,
+  finora definito ma non richiamato da nessun endpoint. Validazione (chiave, etichetta, tipo,
+  modalità, lunghezza del testo) solo lato backend in `functions/api/content/_shared.js`. Nuovi
+  tipi di evento (`content_created`, `content_updated`, `content_version_added`,
+  `content_deleted`) in `_shared/events.js`. Migrazione applicata e verificata solo in locale.
+  **Restano da fare**: Fase 1 (inventario completo), Fase 4 (migrazione effettiva dei JSON/testi
+  Angular nel database — per ora le tabelle sono vuote), Fase 5+ (editor frontend, pannello,
+  pagina dei log).
+- [x] CMS (`planning editor contenuti.md`, Fase 4 ridotta + prima fetta di Fase 5 — migrazione
+  delle introduzioni testuali e componente di visualizzazione condiviso): su
+  `feature/content-editor`. Migrazione 0036: le 5 introduzioni testuali chiaramente hardcoded nei
+  template (non quelle già esternalizzate in `web/public/content/*.json` per mappa/bacheca/
+  storie/cuffiette, che restano JSON in attesa dei rispettivi editor dedicati di Fase 7, per non
+  confondere "migrazione al CMS generico" con "raccolta strutturata") — `mondo-bianco.benvenuta`,
+  `ricettario.introduzione`, `calendario.introduzione`, `cose-insieme.introduzione`,
+  `lettere.introduzione`, tutte `plain_text`/`replace`. `created_by` risolto con un `JOIN` su
+  `users.email` invece di un id hardcoded, così la migrazione resta valida sia in locale sia in
+  remoto. Nuovo `ContentService` (`web/src/app/core/content.service.ts`, stesso pattern a
+  `fetch`+`credentials: 'same-origin'` di `AuthService`, non `HttpClient`: il progetto non lo usa
+  da nessuna parte) e componente condiviso `EditorialText` (`web/src/app/shared/editorial-text/`)
+  che legge `body` da `GET /api/content/:key` e lo spacca in paragrafi — usato dalle 5 pagine al
+  posto del testo hardcoded, così la modifica di un solo file di componente vale per tutte
+  (regola di zero duplicazione). Nessun controllo di modifica in pagina ancora: `EditorialText` è
+  solo lettura, l'editor arriva con il resto della Fase 5. Verificato con una query diretta su D1
+  locale che le 5 righe siano state inserite con lunghezza attesa e `created_by` corretto;
+  `tsc --noEmit` pulito. **Non verificato in browser**: `ng build`/`ng serve` in questo ambiente
+  richiedono Node ≥22.22.3/24.15.0, qui è installato v24.14.1 — nessun bug noto, solo build non
+  eseguibile in locale in questo giro. **Restano da fare**: Fase 1 (inventario completo, incluse
+  le raccolte JSON), il resto della Fase 4 (raccolte strutturate), Fase 5 (editor vero e proprio,
+  versionamento selettivo, pulsante "Modifica" in modalità admin), Fase 6+ (pannello, log).
+- [x] CMS (`planning editor contenuti.md`, Fase 5 — editor dei testi e versioni): su
+  `feature/content-editor`. `EditorialText` diventa l'editor vero e proprio, non solo lettura:
+  pulsante "✏️ Modifica" visibile solo con `authService.isAdmin() && authService.adminModeEnabled()`
+  (pattern riusato identico da `profilo.html`, la sicurezza reale resta comunque sul backend —
+  ogni endpoint `/api/content` richiede il permesso, il frontend nasconde solo un controllo
+  inutile a chi non può usarlo); textarea con anteprima live (stessi paragrafi mostrati in
+  lettura), annullamento prima del salvataggio, "Salva modifica"/"Aggiungi nuova versione"
+  distinti come da piano — il secondo compare solo se `versioningMode === 'history'`. Aggiunto
+  anche il selettore delle versioni (`‹ Versione 1 · Versione 2 › `) per i contenuti storici, con
+  nota quando si sta leggendo una versione non corrente. `ContentService.save()` ora ha un tipo
+  di ritorno dedicato (`ContentSaveResult`) invece di spacciare la risposta parziale del `PUT`
+  per un `ContentEntry` completo: dopo un salvataggio storico si ricarica l'intero contenuto dal
+  server per la cronologia aggiornata, un salvataggio `replace` aggiorna lo stato in locale senza
+  un giro a vuoto. CSS dedicato in `styles/components/editorial-text.css`, referenziato via
+  `styleUrls` sul componente (stesso pattern di `password-field`/`app-select`, non nell'array
+  globale di `angular.json`). `tsc --noEmit` pulito; non verificato in browser per lo stesso
+  limite di Node già segnalato sopra. Le 5 chiavi migrate restano tutte `replace`: il percorso
+  "history" è implementato ma non ancora esercitato da nessun contenuto reale — da verificare
+  quando la Fase 4 completa (in corso separatamente) porterà il primo contenuto storico.
+  **Restano da fare**: Fase 1 (inventario, in corso separatamente), resto Fase 4 (raccolte
+  strutturate), Fase 6 (pannello indice contenuti, pagina log), Fase 7 (editor dedicati).
+- [x] CMS (`planning editor contenuti.md`, Fase 4 — secondo lotto guidato da
+  `inventario contenuti CMS.md`, prodotto da Codex in parallelo su questa stessa branch): su
+  `feature/content-editor`. Due migrazioni. La **0037** corregge un'assunzione mia: le 4 chiavi
+  già migrate (`mondo-bianco.benvenuta`, `calendario.introduzione`, `lettere.introduzione`,
+  `cose-insieme.introduzione`) erano state seedate `replace` senza una vera decisione — non era
+  scritto da nessuna parte, l'avevo scelto io. L'inventario raccomanda `history` per i messaggi
+  personali legati a un momento preciso, confermato da Rory: la migrazione crea la prima
+  `content_versions` da ciascun `body` esistente e libera `content_entries.body` (per `history`
+  il valore non vive più lì, vedi `functions/api/content/[key].js`). La **0038** aggiunge 17
+  chiavi nuove, tutte `replace`, con un `INSERT` separato per riga invece di un unico
+  `UNION ALL`: D1/SQLite ha un limite sui termini di una SELECT composta, superato a 17 righe
+  (`SQLITE_ERROR: too many terms in compound SELECT` — la migrazione con `UNION ALL` non si
+  applica affatto, non registrata come applicata, nessun dato parziale). Testato con reset
+  completo del D1 locale (`rm -rf .wrangler/state/v3/d1`) e riapplicazione di tutte le 38
+  migrazioni da zero, poi verificato con una query diretta che le 4 `history` leggano
+  correttamente da `content_versions` (`body` NULL su `content_entries`, `current_version_id`
+  valorizzato) e le 18 `replace` abbiano il testo diretto.
+  **Scelte di esclusione, non solo di ordine** — testi individuati dall'inventario ma lasciati
+  nel codice per limiti reali del componente o dell'architettura attuale, non per pigrizia:
+  `portone.*` e `not-found.messaggio` (pagine raggiungibili senza sessione — `GET /api/content`
+  richiede sempre un utente autenticato, quindi risponderebbe 401 prima del login rompendo
+  proprio le pagine che un utente non loggato deve vedere); `messaggio-criptato.istruzioni`
+  (contiene un link `<a>` inline necessario per usare la pagina — `EditorialText` renderizza
+  solo paragrafi di testo semplice, un editor lo trasformerebbe in testo non cliccabile);
+  `mondo-bianco.canzone.citazione` (versi separati da `<br>` dentro un unico paragrafo — lo split
+  di `EditorialText` riconosce solo paragrafi separati da riga vuota, non interruzioni singole);
+  `linguaggio-segreto.messaggio-codice` (non è prosa ma il codice letterale di un puzzle: un
+  editor generico lo esporrebbe a modifiche accidentali che romperebbero l'enigma);
+  `storie.suggerimento.eyebrow`/`.titolo` (etichette brevi dentro `<span>`/`<strong>` inline,
+  `EditorialText` renderizza sempre `<p>` — nesting non valido). Tutti i testi marcati `history`
+  ancora "Da migrare" nell'inventario (Ponti, Mappamondo, Domande, Tavolo, GDR, Linguaggio
+  Segreto, Cuffiette, Storie, Mappa, Bacheca) restano fuori da questo lotto: la decisione
+  `history` per le chiavi *nuove* non è stata ancora presa, solo per le 4 già migrate.
+  `tsc --noEmit` pulito; non verificato in browser per lo stesso limite di Node.
+  **Restano da fare**: le collezioni strutturate (Fase 4 prosegue con calendario/ricettario per
+  primi secondo l'ordine consigliato dall'inventario), i testi `history` non ancora confermati,
+  Fase 6/7.
+- [x] CMS (`planning editor contenuti.md`, Fase 6 — pannello e pagina log): su
+  `feature/content-editor`. Colmato un buco esplicitamente nei criteri di completamento della
+  prima milestone ("Un accesso diretto alla pagina log senza `events.view` restituisce 403") che
+  era rimasto del tutto assente finora. Nuovo endpoint `GET /api/events`
+  (`functions/api/events/`): filtri per identità/sezione/tipo evento/periodo, paginazione,
+  ordinamento dal più recente, un `JOIN` su `users` per esporre `identity`/`nickname` senza
+  duplicare quell'informazione nella tabella eventi. Ogni consultazione registra a sua volta un
+  evento `admin_log_viewed` (nuovo tipo in `_shared/events.js`) — non genera rumore perché è
+  un'azione singola per visita alla pagina, non per riga letta. Nuovo `adminGuard`
+  (`core/admin.guard.ts`), da usare dopo `authGuard` sulle rotte riservate: si affida al
+  `currentUser` già risolto da `authGuard` invece di rifare una chiamata di rete, così la pagina
+  non compare per un istante prima del controllo (stesso principio richiesto dal piano per il
+  resolver). La vera barriera resta comunque il backend — l'endpoint verifica `events.view`
+  indipendentemente da cosa fa il frontend. Due pagine nuove protette da `authGuard`+`adminGuard`:
+  `/log` (filtri, tabella, paginazione) e `/contenuti` (indice di sola lettura di
+  `content_entries`, riusa `GET /api/content` già esistente dalla Fase 3, con ricerca ed elenco
+  tipi lato client — il salvataggio resta sulla pagina dove il contenuto vive, questo è solo per
+  trovarli). Collegamenti a entrambe in `profilo.html`, visibili solo con
+  `adminModeEnabled()` acceso, accanto all'interruttore della modalità admin. `tsc --noEmit`
+  pulito; non verificato in browser (stesso limite di Node), e non ho potuto far girare
+  `wrangler pages dev` per un test end-to-end perché richiede una build Angular già pronta in
+  `web/dist/`, che qui non riesco a produrre.
+  **Restano da fare**: verifica visiva reale (serve Node aggiornato o farlo girare altrove),
+  applicare tutte le migrazioni al D1 di produzione (finora solo locale), le collezioni
+  strutturate, le decisioni aperte sull'inventario, Fase 8 (export/backup).
+- [x] CMS (`planning editor contenuti.md`, Fase 4 — terzo lotto, testi `history` ancora
+  hardcoded): su `feature/content-editor`. Migrazione 0039: `ponti.introduzione`,
+  `domande.introduzione`, `tavolo.introduzione`, `gdr.introduzione` (`paragraphs`, tre paragrafi),
+  `linguaggio-segreto.introduzione` (`paragraphs`, due paragrafi) — tutti creati direttamente
+  `history` fin dall'inizio (entry + prima `content_versions` in un solo passaggio), a differenza
+  del primo lotto dove le 4 chiavi erano nate `replace` per assunzione e poi corrette. Restano
+  fuori: `mappamondo.introduzione` (bloccato dalla decisione #3 sull'inventario, non ancora
+  presa: racconto modificabile o documento immutabile); le introduzioni ancora in JSON
+  (`cuffiette.playlist/canzoni.introduzione`, `storie.introduzione`, `mappa.introduzione`,
+  `bacheca.introduzione`) — richiedono anche di aggiornare il consumo lato frontend
+  (`StaticContentService`), rimandate a un giro dedicato insieme alle rispettive collezioni
+  strutturate. Verificato con query diretta su D1 locale: tutte e 5 `history` con
+  `current_version_id` valorizzato e lunghezza del testo coerente. `tsc --noEmit` pulito.
+  **A questo punto la Fase 4 sui testi semplici/paragrafi è quasi esaurita**: restano solo le
+  introduzioni JSON delle raccolte (da fare insieme a Fase 7) e i pochi testi esclusi per limiti
+  reali di `EditorialText` (link inline, interruzioni di riga, codice di puzzle, etichette
+  inline) o perché raggiungibili senza sessione. Il grosso del lavoro non ancora fatto è altrove:
+  raccolte strutturate (Fase 4 prosegue/Fase 7), decisioni #2/#3/#4/#5 dell'inventario, Fase 8,
+  e soprattutto **applicare tutto a produzione** — finora ogni migrazione è stata verificata solo
+  su D1 locale.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — primo editor dedicato: il Calendario): su
+  `feature/content-editor`. Nuova tabella `calendar_events` (migrazione 0040: `id` = la data
+  stessa, stabile e leggibile come nel JSON originale; niente campo `position`, l'ordine è
+  sempre cronologico e un riordino manuale non avrebbe senso qui) con i 29 eventi importati da
+  `web/public/content/calendar.json` (migrazione 0041). API dedicata in
+  `functions/api/calendar-events/` (non dentro `content_entries`: le raccolte strutturate hanno
+  ognuna la propria tabella, per lo stesso principio già seguito in Fase 3) — GET/POST
+  sull'indice, PUT/DELETE su `/:id`, permessi `content.read/create/edit/delete`.
+  **Bug reale trovato e sistemato**: `calendario.ts` aveva una validazione "deve contenere
+  esattamente 29 date", pensata per uno snapshot JSON statico — appena l'admin ne avesse
+  aggiunta una trentesima dall'editor nuovo, l'intera pagina si sarebbe rotta. Rimossa insieme
+  al passaggio da `StaticContentService` a `fetch('/api/calendar-events')`. Aggiunti i controlli
+  admin (aggiungi/modifica/elimina con conferma tramite `ConfirmationDialog` già condiviso),
+  visibili solo con `isAdmin() && adminModeEnabled()` — la vera barriera resta il backend.
+  **Rimosso `web/public/content/calendar.json`** subito dopo la verifica dell'importazione
+  (29/29 righe, prima e ultima data coincidenti): nessun altro file lo referenziava, tenerlo
+  avrebbe creato due fonti di verità equivalenti (CLAUDE.md, zero duplicazione) — a differenza
+  delle altre raccolte JSON ancora attive (musica, storie, mappa, bacheca), rimaste finché non
+  hanno il loro editor. `tsc --noEmit` pulito; non verificato in browser per lo stesso limite di
+  Node.
+  **Restano da fare**: Ricettario (prossimo secondo l'ordine consigliato dall'inventario), le
+  altre raccolte strutturate, le decisioni #2/#3/#4/#5, Fase 8, e — il gap più grosso di tutta la
+  sessione — **applicare qualunque cosa al D1 di produzione**: tutto quello costruito finora,
+  comprese le 41 migrazioni, esiste solo in locale.
+- [x] Fix: due bug segnalati da Codex durante la revisione del CMS, su `feature/content-editor`.
+  **Grave** — aprire una versione storica di un contenuto `history` e premere "Salva modifica"
+  sovrascriveva la versione *corrente* col testo di quella vecchia: `save(false)` finiva sempre
+  nel ramo che aggiorna `content_versions` tramite `current_version_id`, indipendentemente da
+  quale versione si stesse effettivamente guardando. Corretto in due punti di
+  `EditorialText` (`web/src/app/shared/editorial-text/`): `save()` ora forza
+  `createVersion = true` ogni volta che `!isViewingCurrent()`, indipendentemente da quale
+  pulsante ha chiamato il metodo (difesa anche lato codice, non solo UI); il pulsante "Salva
+  modifica" scompare del tutto quando si guarda una versione non corrente di un contenuto
+  `history`, lasciando solo "Aggiungi nuova versione" con una nota esplicita. **Nickname** —
+  `functions/api/auth/profile/nickname.js` rispondeva con `{ id, email, nickname }`, senza
+  `identity`/`role`; `profilo.ts` sostituisce l'intero `currentUser` con quella risposta
+  (`currentUser.set(result.user)`), quindi dopo un cambio nome `isAdmin()` diventava `false`
+  finché non si ricaricava la pagina — la Modalità admin spariva dal profilo senza preavviso.
+  Corretto restituendo `{ ...session.user, nickname }`: `session.user` (da
+  `getAuthenticatedSession`) porta già `identity`/`role` letti da D1, nessuna query in più.
+  Verificato che gli altri endpoint che restituiscono `user` (`register.js`, `login.js`,
+  `_shared.js` della sessione) includessero già questi campi — solo `nickname.js` ne era privo.
+  `tsc --noEmit` pulito.
+- [x] Prima verifica visiva reale del CMS in browser (Playwright, non solo `tsc`), e un terzo bug
+  trovato e sistemato di conseguenza. Il limite di Node segnalato per tutta la sessione era in
+  realtà superabile: la shell aveva `PATH`/`NVM_BIN` fissati su v24.14.1 fin dall'avvio (variabili
+  d'ambiente lette una sola volta, non per ogni comando), ma sulla macchina era già installata
+  v24.19.0 (compatibile, prelevata da `.nvmrc` presumibilmente da `scripts/dev.sh` in una sessione
+  precedente) — bastava `nvm use` esplicito. `ng build`/`ng serve --port 4202` e
+  `wrangler pages dev --port 8788` (porte separate da quelle del terminale dell'utente, come da
+  README) hanno funzionato subito. Login bypassato via Playwright con cookie `noi_session` +
+  `sessionStorage` (metodo già in memoria di progetto), account di test promosso admin solo in
+  locale e ripulito a fine verifica (utente, sessioni, eventi). Screenshot reali hanno confermato:
+  testo migrato visibile su `/mondo-bianco`, toggle Modalità admin funzionante con comparsa dei
+  link "Indice dei contenuti"/"Log degli eventi", editor di `EditorialText` che si apre con
+  anteprima e i pulsanti corretti, `/log` e `/contenuti` popolati con dati reali, CRUD completo
+  del Calendario testato via click reali (aggiungi → modifica → elimina, tornato a 29/29).
+  **Bug reale trovato**: su `/calendario` la finestra di conferma eliminazione
+  (`ConfirmationDialog`, riusata per la prima volta fuori dal Cruciverba) restava visibile anche
+  con `[open]="false"` — le regole `.modal`/`.modal.hidden`/`.modal-card`/`.modal-actions`
+  vivevano solo in `styles/pages/crossword.css`, caricato sulla pagina Cruciverba, che sul suo
+  bundle/chunk lazy le rendeva disponibili anche al componente condiviso ma non su un chunk
+  diverso come quello del Calendario. Spostate in `styles/components/modal.css` e referenziate
+  via `styleUrls` sia su `ConfirmationDialog` sia su `CrosswordModals` (per l'hint-modal, markup
+  grezzo non passa dal componente condiviso); rimossa la copia da `crossword.css`. Verificato con
+  Playwright che il modale sia `visible=false` con `.hidden` sia su Calendario sia su Cruciverba.
+  Trovata e corretta anche una falsa partenza mia in questa stessa verifica: `git add -A`
+  marcava per la cancellazione 10 file mp3 sotto `Nuovi media/` (aggiunta di recente al
+  `.gitignore` da Rory, restavano nell'indice) — annullato lo staging prima di committare,
+  poi rimossi dal tracking con `git rm --cached` una volta chiarita l'intenzione.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — secondo editor dedicato: il Ricettario): su
+  `feature/content-editor`. Tabella `recipes` (migrazione 0042) con `position` esplicito — a
+  differenza del Calendario, qui l'ordine non è deducibile da nessun altro campo, quindi serve
+  davvero. Ingredienti e passaggi restano un array JSON in una colonna di testo (non due tabelle
+  figlie): sono liste ordinate senza bisogno di un ID proprio per riga, coerente con l'editor
+  "semplice" richiesto dal piano — textarea multi-riga in modifica, una riga per elemento.
+  13 ricette importate da `web/public/content/recipes.json` (migrazione 0043, verificate:
+  `placeholder` corretto sulle 2 attese, posizioni sequenziali 0–12). API in
+  `functions/api/recipes/`: CRUD standard su `index.js`/`[id].js`, più `[id]/move.js` per il
+  riordino "prima/dopo" richiesto dal piano (niente drag and drop) — scambia la posizione con il
+  vicino usando `env.DB.batch()` per una vera transazione atomica, mai due ricette sulla stessa
+  posizione. Editor inline in `ricettario.ts`/`.html` con lo stesso pattern del Calendario
+  (creazione, modifica, eliminazione con conferma, frecce su/giù), visibile solo in modalità
+  admin. `recipes.json` rimosso dopo la verifica dell'importazione.
+  **Verificato interamente in browser con Playwright** (non solo `tsc`): creazione, modifica del
+  titolo, riordino ed eliminazione con conferma testati con click reali, tornato esattamente a
+  13/13 ricette a fine test. Due bug trovati **negli script di test**, non nell'app — lasciati
+  qui perché istruttivi: (1) `.recipe-hero button` matchava anche i pulsanti "Modifica" di
+  `EditorialText` annidati nell'eyebrow/introduzione della stessa sezione, cliccando quello
+  sbagliato; risolto puntando al testo esatto del pulsante. (2) un click Playwright con
+  `{force:true}` sul toggle Modalità admin non ha attivato lo stato atteso in un run (causa non
+  isolata: probabile timing prima che Angular finisse di idratare `/profilo`) — bypassato
+  attivando `admin_mode_enabled` via chiamata diretta a `/api/auth/admin-mode` e verificando che
+  `authGuard` la sincronizzasse correttamente alla navigazione successiva, cosa che ha
+  funzionato. **Account di test lasciato attivo** (non richiesto ripulirlo: sono dati locali che
+  non arrivano mai in produzione, restano utili per le prossime verifiche).
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — terzo editor dedicato: le Storie): su
+  `feature/content-editor`. Tabella `stories` (migrazione 0044) con `position` esplicito come nel
+  Ricettario. Media (`audio_key`, `image`, ecc.) restano campi di testo che puntano a una risorsa
+  già esistente (R2 o assets statici): niente upload in questo giro, editor "semplice" coerente
+  col resto della Fase 7. 4 storie importate (migrazione 0045) e `storie.introduzione` migrata
+  insieme come `content_entries` `history` (migrazione 0046) — era rimasta apposta fuori dai lotti
+  precedenti perché viveva nello stesso JSON della raccolta: migrarla da sola avrebbe richiesto
+  toccare `stories.json` due volte, contro la regola di zero duplicazione. API in
+  `functions/api/stories/` (accanto alla già esistente `suggestions.js`, nessuna collisione:
+  path diversi), stesso pattern CRUD + `move.js` del Ricettario. Rimossa anche qui la validazione
+  "esattamente 4 storie" (stesso bug già corretto nel Calendario, presente per lo stesso motivo:
+  pensata per uno snapshot statico). `stories.json` rimosso dopo la verifica dell'importazione.
+  Verificato in browser: introduzione e pulsante "Modifica" di `EditorialText` visibili, elenco
+  numerato corretto, creazione ed eliminazione confermate (quest'ultima via chiamata diretta
+  all'API dopo che lo script di Playwright è incappato in un problema di `<details>` che si
+  richiude a ogni ricaricamento dati — bug dello script, non dell'app, ma non ho perso altro
+  tempo a inseguirlo avendo già la conferma dal livello API).
+  **Restano da fare**: Cuffiette e Mappa (prossime, piccole), poi il resto della Fase 7.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — quarto editor dedicato: le canzoni delle
+  Cuffiette): su `feature/content-editor`. Migrazione a metà, deliberatamente: la vera raccolta
+  strutturata secondo l'inventario (`cuffiette.canzoni`, 9 elementi) è ora in
+  `cuffiette_songs`/`functions/api/cuffiette-songs/`, stesso pattern CRUD + `move.js` di
+  Ricettario/Storie. Playlist, bonus e Parole Rubate **restano** in
+  `web/public/content/music.json` (rimosso solo l'array `songs`, il resto intatto): `bonus` e
+  `stolenWords.items` sono singoli oggetti/collezione vuota non ancora meritevoli di editor
+  proprio, e soprattutto `songsIntroduction` ha un rendering HTML speciale (sostituisce
+  `[ 🌈 I Ponti ]` con un link cliccabile vero, via `[innerHTML]` con sanitizzazione manuale) che
+  l'editor di testo semplice del CMS generico non supporta — migrarlo con `EditorialText` avrebbe
+  fatto perdere quel link, stesso motivo per cui `messaggio-criptato.istruzioni` era stato
+  escluso in un lotto precedente. `cuffiette.ts` ora combina due fonti (JSON statico per
+  playlist/bonus/parole rubate, API per le canzoni) sulla stessa pagina — non ideale come stato
+  finale, ma esplicitamente in linea con quanto il piano ammette per la migrazione incrementale.
+  Verificato in browser: 9 canzoni corrette, link inline verso `/ponti` ancora funzionante,
+  creazione confermata (9→10) ed eliminazione verificata via API diretta, tornato a 9/9.
+  **Restano da fare**: playlist/bonus/parole rubate delle Cuffiette (in un giro dedicato, serve
+  prima decidere se dare a `songsIntroduction` un modo di avere link inline nel CMS generico o
+  trattarla come eccezione permanente), poi Mappa e il resto della Fase 7.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — quinto editor dedicato: la Mappa): su
+  `feature/content-editor`. Tabella `map_destinations` (migrazione 0049), la raccolta più
+  annidata migrata finora: paragrafi e immagini restano JSON in colonna di testo, non
+  normalizzati in tabelle figlie — le immagini sono legate a un indice di paragrafo specifico
+  (`beforeParagraph`) e a una posizione (`before`/`after`), una relazione troppo fine per una
+  lista "semplice"; l'editor le tratta come un blocco JSON unico con validazione di forma
+  minima lato backend, non un repeater visuale. 7 destinazioni importate (migrazione 0050,
+  verificate: Roma senza immagini, "prossima-meta" con coordinate `NULL` e `is_open=1` — casi
+  limite tutti corretti) e `mappa.introduzione` migrata insieme come `content_entries`
+  `paragraphs`/`history` (migrazione 0051, stesso motivo di `storie.introduzione`: viveva nello
+  stesso JSON). Rimossa la validazione "esattamente 7 destinazioni". `map.json` **rimosso del
+  tutto** (non solo alleggerito come per le Cuffiette): non c'era nessun campo rimasto non
+  migrato, a differenza di `music.json`. Estratta anche `.form-field-inline` da
+  `ricettario.css` a `styles/components/forms.css` (file già nell'elenco globale di
+  `angular.json`): la seconda volta che serviva la stessa classe su una pagina diversa era il
+  segnale di doverla condividere invece di copiarla di nuovo (CLAUDE.md, zero duplicazione).
+  **Verificato in browser con particolare attenzione alla parte più delicata**: la proiezione
+  Equal Earth delle coordinate in puntine sulla mappa (formula matematica invariata, portata
+  1:1 da `assets/js/map/main.js`) — le 7 puntine compaiono nelle posizioni corrette, il click
+  su una puntina aggiorna l'anteprima, la galleria immagini alterna prima/dopo il testo come
+  nell'originale.
+  **Restano da fare**: playlist/bonus/parole rubate delle Cuffiette, poi le raccolte più
+  annidate (Linguaggio Segreto, GDR, Messaggio Criptato), Agenda delle Idee, Cruciverba, Bacheca.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — sesto editor dedicato: l'Agenda delle Idee):
+  su `feature/content-editor`. La raccolta più delicata migrata finora — alcune delle 77 voci
+  hanno un `private_text` (12) visibile solo dopo la risposta corretta alla domanda segreta in
+  `cose-insieme.html`, un meccanismo distinto dal permesso `content.read` che l'API deve
+  continuare a rispettare indipendentemente dal ruolo di chi chiama. Confermato con l'utente
+  prima di procedere (contenuto NSFW). Nuova tabella `together_activities` (migrazione 0052,
+  `id` esplicito invece di auto-increment: deve restare compatibile con
+  `together_activity_status.activity_id` che lo referenzia già) importata dalle 77 attività
+  attive di `functions/api/together/_data.js` (migrazione 0053, id 1–78 con un buco al 48 per
+  la voce già rimossa in passato — id non riusato). **Corretto un secondo bug dello stesso tipo
+  già visto nel Calendario**: `together_activity_status` aveva un `CHECK (activity_id BETWEEN 1
+  AND 78)` pensato per l'array fisso, sostituito con una vera `FOREIGN KEY` verso
+  `together_activities(id)`; anche `functions/api/together/status.js` aveva lo stesso limite
+  `activityId > 78` hardcoded, sostituito con una query di esistenza reale — altrimenti lo stato
+  di una 79ª attività aggiunta dall'editor non si sarebbe mai potuto salvare.
+  **Disegno della privacy, verificato esplicitamente**: `GET /api/together` (pubblico) non
+  include mai `private_text`, nemmeno come campo nullo — confermato via chiamata diretta
+  contando i campi (`0` su 77 righe). Solo due strade per raggiungere quel testo: (1)
+  `GET /api/together/activities`, dietro `content.edit` (quindi admin), usata solo per
+  precompilare il form di modifica lato `cose-insieme.ts`, mai per il rendering della lista
+  pubblica; (2) `POST /api/together/unlock`, invariato nella logica (stesso set di risposte
+  accettate, normalizzazione identica), ora legge da D1 invece che dall'array statico. Verificato
+  con un account `member` appena creato: `403` su `/api/together/activities`, `200` su
+  `/api/together`, e l'unlock con la risposta corretta restituisce comunque le 12 parti private
+  (il gate è basato sulla risposta, non sul ruolo — comportamento invariato, Desy è la
+  destinataria di quel contenuto). Verificato in browser: `0` testi privati visibili prima dello
+  sblocco, `12` dopo. CRUD admin testato via API diretta: creazione (id 79, oltre il vecchio
+  limite fisso), modifica, impostazione stato, eliminazione con pulizia dello stato orfano
+  collegato, tornato esattamente a 77/77. Rimosso `functions/api/together/_data.js` (l'array
+  statico), non più importato da nessun endpoint.
+  **Restano da fare**: Cruciverba (100 definizioni con coordinate, zero margine di errore) e
+  Bacheca (la più complessa, due fonti JSON da unificare prima) sono le ultime due raccolte
+  strutturate del piano.
+- [x] Fix: gap trovato rileggendo il piano — avevo eliminato `calendar.json`, `recipes.json`,
+  `stories.json`, `map.json` e `_data.js` senza mai creare l'"export di sicurezza" che il piano
+  richiede esplicitamente prima di rimuovere una vecchia fonte (criterio di completamento della
+  prima milestone, Fase 8). I dati restavano recuperabili dalla cronologia git, ma la procedura
+  del piano non era stata seguita. Aggiunto `GET /api/export` (`functions/api/export/`, dietro
+  `content.edit`): dump JSON di tutte le tabelle CMS (`content_entries`/`content_versions`,
+  `calendar_events`, `recipes`, `stories`, `cuffiette_songs`, `map_destinations`,
+  `together_activities` — quest'ultima **con** `private_text`, è un backup per l'autore, non un
+  endpoint pubblico, resta comunque dietro lo stesso permesso admin di ogni altra azione). Link
+  "⬇️ Esporta backup di sicurezza" in `/contenuti`. Prodotto un export reale per colmare
+  retroattivamente il gap (29 content_entries, 29 eventi calendario, 13 ricette, 4 storie, 9
+  canzoni, 7 destinazioni, 77 attività — tutti i conteggi coincidono con quanto migrato finora).
+  Il file resta fuori da git (`backups/` in `.gitignore`): contiene anche il testo NSFW privato
+  dell'Agenda, non ha senso concentrarlo in un unico file facilmente individuabile in un
+  repository, anche se lo stesso contenuto era già in chiaro nella cronologia di `_data.js`.
+- [x] Decisioni #2-#6 dell'inventario (`inventario contenuti CMS.md`) prese da Rory/Codex:
+  separare contenuto e navigazione nelle card del Mondo Bianco; Mappamondo modificabile con
+  editor strutturato; GDR ampliabile ma con editor dedicato futuro (non il semplice editor di
+  paragrafi), Messaggio Criptato invece concluso e permanentemente nel codice;
+  `bacheca-layout.json` confermato come sola fonte strutturale; supporto minimo a link interni
+  da aggiungere a `EditorialText` prima di migrare `songsIntroduction`. Sbloccano: Mappamondo
+  (introduzione + scene), card del Mondo Bianco (nome/descrizione), playlist/parole
+  rubate/`songsIntroduction` delle Cuffiette (dopo il supporto ai link), Bacheca. Restano fuori
+  scope: GDR e Linguaggio Segreto (nessun editor dedicato ancora costruito).
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — settimo editor dedicato: il Mappamondo,
+  decisione #3 dell'inventario): su `feature/content-editor`. La collezione più delicata sul
+  piano della fedeltà del testo: non un elenco di paragrafi come Storie/Mappa, ma dialoghi con
+  tag "R:"/"D:" a volte incorporati nello **stesso paragrafo** insieme alla narrazione (scena
+  "Dentro": "...con la mano e un piccolo inchino dico R: 'Prego! Ovviamente prima le donne'").
+  Un editor a paragrafi semplici avrebbe appiattito questa distinzione — fermato e chiesto
+  esplicitamente a Rory come procedere prima di rischiare di degradare un testo scritto con
+  cura. Progettato un formato dedicato: ogni riga di ogni scena è una lista di "segmenti"
+  `{speaker: null|"r"|"d", text}`, quasi sempre un solo segmento per riga, più di uno solo nei
+  paragrafi misti. Tabella `mappamondo_scenes` (migrazione 0054), 7 scene importate
+  trascrivendo `mappamondo.html` (migrazione 0055) — verificato che il paragrafo misto della
+  scena "Dentro" sia arrivato con due segmenti distinti, non fuso in uno. Editor admin con un
+  piccolo form per riga (select narrazione/R/D + testo, aggiungi/rimuovi riga, aggiungi
+  segmento nella stessa riga) invece di una textarea libera, per evitare che un admin scriva
+  markup a mano. **Verificato in browser**: 7 scene, 14 tag speaker totali, il paragrafo misto
+  della scena "Dentro" renderizza esattamente come "narrazione... R: \"battuta\"" nello stesso
+  `<p>`, l'immagine del mappamondo resta posizionata tra la scena 6 e la 7 (non dentro la card,
+  serviva un `@if` sul fratello precedente, non dentro il loro contenuto).
+  `mondo-bianco.canzone.citazione` (versi con `<br>`) e `mappamondo.introduzione` (non un testo
+  isolato ben definito, l'eyebrow resta strutturale) restano fuori, stessa cautela di sempre sui
+  contenuti con formattazione non banale.
+  **Restano da fare**: card del Mondo Bianco, supporto a link interni in `EditorialText` +
+  Cuffiette (playlist/parole rubate/`songsIntroduction`), Cruciverba, Bacheca.
+- [x] CMS: supporto minimo ai link interni in `EditorialText` (decisione #6 dell'inventario) e
+  completamento delle Cuffiette. `EditorialText` ora riconosce solo la sintassi esplicita
+  `[etichetta](/rotta)` — mai HTML libero, mai URL esterni (la regex richiede `/` iniziale) —
+  escapando prima tutto il resto del paragrafo e sostituendo solo i match con un vero `<a>`;
+  template passato da interpolazione a `[innerHTML]` con `DomSanitizer.bypassSecurityTrustHtml`
+  sull'esito già escapato, sia in lettura sia nell'anteprima di modifica. Migrate le ultime 3
+  chiavi delle Cuffiette (migrazione 0056): `cuffiette.playlist.introduzione` e
+  `cuffiette.canzoni.introduzione` (`history`), `cuffiette.parole-rubate.introduzione`
+  (`replace`) — quest'ultima aveva `[ 🌈 I Ponti ]` nella vecchia notazione a mano gestita da
+  `cuffiette.ts`, convertita in `[🌈 I Ponti](/ponti)` durante la migrazione. Rimossi da
+  `cuffiette.ts` il `computed` `songsIntroductionHtml` e il metodo `renderSongsIntroduction` —
+  il caso speciale non serve più, lo gestisce il componente condiviso. `music.json` alleggerito
+  di altri tre campi (restano solo `playlist.name/url`, `bonus`, le citazioni di
+  `stolenWords.items`). Verificato in browser: il link renderizza come `<a href="/ponti">🌈 I
+  Ponti</a>` vero (non più testo con parentesi quadre), tutte e 3 le introduzioni visibili.
+  **Restano da fare**: card del Mondo Bianco, Cruciverba, Bacheca.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — card del Mondo Bianco, decisione #2
+  dell'inventario): su `feature/content-editor`. A differenza delle altre raccolte, qui
+  l'insieme delle card è fisso — emoji, rotta, ordine e disponibilità restano hardcoded in
+  `mondo-bianco.ts` (`PLACES`, un array readonly), solo nome e descrizione sono contenuto
+  editoriale. Per questo la tabella `mondo_bianco_cards` (migrazione 0057) e l'API
+  (`functions/api/mondo-bianco-cards/`) hanno solo GET e PUT — niente POST/DELETE/riordino, non
+  avrebbe senso: aggiungere o togliere una card è comunque una modifica di codice. 14 card
+  importate con il nome attuale (migrazione 0058, `description` parte `NULL`: non esisteva già
+  prima). Il template ora fa `@for` sull'array fisso arricchito dai nomi/descrizioni dal
+  server, con un pulsante ✏️ per card in modalità admin. **Verificato in browser**: 14 card, 14
+  pulsanti di modifica, salvataggio di nome+descrizione riflesso subito, e soprattutto il
+  `routerLink` verso `/bacheca` ancora funzionante dopo la modifica — la rotta non passa mai
+  dall'editor, resta quella hardcoded nell'array `PLACES`.
+  **Restano da fare**: solo Cruciverba e Bacheca, le ultime due raccolte del piano.
 
 ---
 

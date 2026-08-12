@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
 import { MoonDisc } from '../../shared/moon-disc';
 import { moonPhaseFraction } from '../../shared/moon-phase';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 // Pagina minimale (#a4): solo fermarsi a guardare il cielo, "solo noi e la luna". Qui la fase
 // è sempre quella reale di oggi, non quella scelta a mano in Impostazioni del Mondo — questa
@@ -10,7 +11,7 @@ import { moonPhaseFraction } from '../../shared/moon-phase';
 @Component({
   selector: 'app-il-cielo',
   standalone: true,
-  imports: [AppShell, MoonDisc],
+  imports: [AppShell, MoonDisc, EditorialText],
   styleUrls: ['../../../styles/pages/il-cielo.css'],
   templateUrl: './il-cielo.html'
 })

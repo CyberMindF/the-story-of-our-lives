@@ -623,3 +623,13 @@
     transition: none;
   }
 }
+
+.destination-form { display: grid; gap: .85rem; margin: 1.5rem 0; padding: 1.5rem; text-align: left; }
+.destination-form h3 { margin: 0; }
+.destination-form small { color: var(--muted-color); font-weight: 500; }
+.destination-form textarea { font-family: monospace; font-size: .85rem; }
+.destination-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
+.destination-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.destination-form-error:empty { display: none; }
+.destination-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+.destination-admin-actions .btn { padding: .4rem .7rem; font-size: .82rem; }

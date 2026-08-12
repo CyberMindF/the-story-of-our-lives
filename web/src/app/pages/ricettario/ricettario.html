@@ -1,12 +1,15 @@
 <app-shell>
   <main class="recipe-page">
     <header class="recipe-hero">
-      <p class="recipe-eyebrow">Il nostro personalissimo libro di ricette</p>
+      <div class="recipe-eyebrow"><app-editorial-text contentKey="ricettario.eyebrow" /></div>
       <h1>🍳 Il Ricettario</h1>
-      <p>La raccolta di tutte le ricette che abbiamo fatto insieme e di tutte quelle che vorremmo fare prima o poi.</p>
+      <app-editorial-text contentKey="ricettario.introduzione" />
       <a class="recipe-suggest" routerLink="/suggerimenti" [queryParams]="{ category: 'ricettario' }">
         <span aria-hidden="true">＋</span> Proponi una nuova ricetta
       </a>
+      @if (canEdit() && editingId() === null) {
+        <button type="button" class="btn" (click)="startCreate()">➕ Aggiungi ricetta</button>
+      }
     </header>
 
     <nav class="recipe-filters card" aria-label="Filtra le ricette">
@@ -14,6 +17,60 @@
       <button type="button" [class.is-active]="filter() === 'Fatta insieme'" (click)="setFilter('Fatta insieme')">Fatte insieme</button>
       <button type="button" [class.is-active]="filter() === 'Da provare'" (click)="setFilter('Da provare')">Da provare</button>
     </nav>
+
+    @if (editingId() !== null) {
+      <form class="recipe-form card" (ngSubmit)="submit()">
+        <h2>{{ editingId() === '__new__' ? 'Nuova ricetta' : 'Modifica ricetta' }}</h2>
+
+        @if (editingId() === '__new__') {
+          <label class="form-field">
+            <span>ID (slug, es. "pizza-pane")</span>
+            <input type="text" required [ngModel]="draft().id" (ngModelChange)="updateDraft({ id: $event })" name="id" />
+          </label>
+        }
+        <label class="form-field">
+          <span>Titolo</span>
+          <input type="text" required [ngModel]="draft().title" (ngModelChange)="updateDraft({ title: $event })" name="title" />
+        </label>
+        <label class="form-field">
+          <span>Categoria</span>
+          <select [ngModel]="draft().kind" (ngModelChange)="updateDraft({ kind: $event })" name="kind">
+            <option value="Fatta insieme">Fatta insieme</option>
+            <option value="Da provare">Da provare</option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>Nota <small>facoltativa</small></span>
+          <input type="text" [ngModel]="draft().note" (ngModelChange)="updateDraft({ note: $event })" name="note" />
+        </label>
+        <label class="form-field">
+          <span>Ingredienti <small>una riga per ingrediente</small></span>
+          <textarea rows="6" [ngModel]="draft().ingredients" (ngModelChange)="updateDraft({ ingredients: $event })" name="ingredients"></textarea>
+        </label>
+        <label class="form-field">
+          <span>Procedimento <small>una riga per passaggio</small></span>
+          <textarea rows="6" [ngModel]="draft().steps" (ngModelChange)="updateDraft({ steps: $event })" name="steps"></textarea>
+        </label>
+        <label class="form-field">
+          <span>Fonte — etichetta <small>facoltativa</small></span>
+          <input type="text" [ngModel]="draft().sourceLabel" (ngModelChange)="updateDraft({ sourceLabel: $event })" name="sourceLabel" />
+        </label>
+        <label class="form-field">
+          <span>Fonte — link <small>facoltativo</small></span>
+          <input type="text" [ngModel]="draft().sourceHref" (ngModelChange)="updateDraft({ sourceHref: $event })" name="sourceHref" />
+        </label>
+        <label class="form-field-inline">
+          <input type="checkbox" [ngModel]="draft().placeholder" (ngModelChange)="updateDraft({ placeholder: $event })" name="placeholder" />
+          <span>Segna come provvisoria (da personalizzare)</span>
+        </label>
+
+        <p class="recipe-form-error">{{ formError() }}</p>
+        <div class="recipe-form-actions">
+          <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
+          <button type="submit" class="btn btn-submit">Salva</button>
+        </div>
+      </form>
+    }
 
     @if (loading()) {
       <p class="recipe-message">Sto aprendo il ricettario…</p>
@@ -55,6 +112,15 @@
                 {{ recipe.source.label }} ↗
               </a>
             }
+
+            @if (canEdit()) {
+              <div class="recipe-admin-actions">
+                <button type="button" class="btn" (click)="move(recipe.id, 'up')">⬆️</button>
+                <button type="button" class="btn" (click)="move(recipe.id, 'down')">⬇️</button>
+                <button type="button" class="btn" (click)="startEdit(recipe)">✏️ Modifica</button>
+                <button type="button" class="btn" (click)="requestDelete(recipe.id)">🗑️ Elimina</button>
+              </div>
+            }
           </article>
         } @empty {
           <p class="recipe-message card">Non ci sono ancora ricette in questa categoria.</p>
@@ -62,4 +128,15 @@
       </section>
     }
   </main>
+
+  <app-confirmation-dialog
+    dialogId="delete-recipe"
+    title="Eliminare questa ricetta?"
+    description="La ricetta verrà rimossa definitivamente dal Ricettario."
+    confirmLabel="Elimina"
+    cancelLabel="Annulla"
+    [open]="deleteTargetId() !== null"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
 </app-shell>

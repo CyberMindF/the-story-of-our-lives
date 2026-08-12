@@ -2,7 +2,7 @@
   <section class="lettere-hero" aria-labelledby="lettere-title">
     <p class="lettere-eyebrow">Il Mondo Bianco</p>
     <h1 id="lettere-title"><span aria-hidden="true">📫</span> La Cassetta delle Lettere</h1>
-    <p class="lettere-intro">Un tempo era un posto pensato per lasciarmi foto e video come ricordo, adesso invece può essere quello che è sempre stato: una cassetta dove lasciare pensieri e letterine che rimarranno raccolti qui.</p>
+    <div class="lettere-intro"><app-editorial-text contentKey="lettere.introduzione" /></div>
   </section>
 
   <form class="letter-form" aria-label="Scrivi una lettera" #letterForm (ngSubmit)="submitLetter(letterForm)">

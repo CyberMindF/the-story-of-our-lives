@@ -145,6 +145,9 @@ export class Portone implements OnInit {
   // qui usiamo il Router, coerente con l'obiettivo dell'intera migrazione.
   private async completeAccess(user: AuthUser): Promise<void> {
     this.authService.currentUser.set(user);
+    // Login/registrazione producono sempre una sessione nuova, quindi la Modalità admin
+    // riparte spenta (vive sulla sessione, non sull'utente — vedi setAdminMode).
+    this.authService.adminModeEnabled.set(false);
     this.unlocked.set(true);
 
     // Stesso fallback di assets/js/portone/main.js (onUnlock -> "./mondo-bianco/"): senza una

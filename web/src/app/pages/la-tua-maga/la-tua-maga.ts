@@ -3,6 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
+import { GdrBlocks } from '../../shared/gdr-blocks/gdr-blocks';
+import { GdrDocumentEditor } from '../../shared/gdr-blocks/gdr-document-editor';
+import { GdrBlockRow } from '../../shared/gdr-blocks/gdr-block.types';
+import { ApiService } from '../../core/api.service';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 
@@ -27,12 +32,13 @@ interface Character {
 @Component({
   selector: 'app-la-tua-maga',
   standalone: true,
-  imports: [FormsModule, AppShell, IpdvNavigation],
+  imports: [FormsModule, AppShell, IpdvNavigation, EditorialText, GdrBlocks, GdrDocumentEditor],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './la-tua-maga.html'
 })
 export class LaTuaMaga implements OnInit {
+  private readonly api = inject(ApiService);
   protected readonly submission = inject(FormSubmission);
   protected name = '';
   protected catName = '';
@@ -49,8 +55,34 @@ export class LaTuaMaga implements OnInit {
   protected readonly statusMessage = signal('Sto caricando la scheda...');
   protected readonly statTotal = computed(() => this.statMente + this.statCuore + this.statCorpo + this.statMagia);
 
+  // Abilità/tabella effetti/incantesimi (gdr.prezzo-verita.maga-regole): la scheda del
+  // personaggio sopra (nome, statistiche, inventario) resta invece dati utente dinamici, non
+  // tocca questa collezione — coerente con inventario contenuti CMS.md. I primi 3 blocchi
+  // (intro abilità + lista + tabella) vanno sotto "Abilità speciali", il resto sotto
+  // "Incantesimi": lo spacco è per conteggio, non per un campo esplicito nel blocco, perché i
+  // due titoli restano intestazioni strutturali fisse nel template.
+  private readonly rawBlocks = signal<GdrBlockRow[]>([]);
+  private readonly magaBlocks = computed(() =>
+    this.rawBlocks()
+      .filter((block) => block.documentKey === 'maga-regole')
+      .sort((a, b) => a.position - b.position)
+  );
+  protected readonly abilitaBlocks = computed(() => this.magaBlocks().slice(0, 3));
+  protected readonly incantesimiBlocks = computed(() => this.magaBlocks().slice(3));
+
   async ngOnInit(): Promise<void> {
-    await this.loadCharacter();
+    await Promise.all([this.loadCharacter(), this.loadBlocks()]);
+  }
+
+  private async loadBlocks(): Promise<void> {
+    try {
+      const response = await fetch('/api/gdr-blocks', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error(`Errore ${response.status}`);
+      const result = await this.api.readApiResponse<{ blocks?: GdrBlockRow[] }>(response);
+      this.rawBlocks.set(result.blocks ?? []);
+    } catch (error) {
+      console.error('Errore nel caricamento delle regole della maga:', error);
+    }
   }
 
   private async loadCharacter(): Promise<void> {

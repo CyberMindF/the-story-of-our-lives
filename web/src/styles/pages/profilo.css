@@ -12,3 +12,7 @@
 .profilo-form { width: min(100%, 34rem); margin: 0 auto clamp(1.5rem, 4vw, 2.5rem); display: grid; gap: 1.15rem; padding: clamp(1.4rem, 4vw, 2rem); }
 .profilo-form h2 { margin: 0; font-size: 1.3rem; }
 .profilo-form:last-of-type { margin-bottom: clamp(3rem, 7vw, 5rem); }
+
+.profilo-admin-note { margin: 0; color: var(--muted-color); font-size: .88rem; line-height: 1.5; }
+.profilo-form .settings-toggle { padding: 0; }
+.profilo-admin-links { display: flex; flex-wrap: wrap; gap: .6rem; }

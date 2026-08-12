@@ -34,7 +34,7 @@ export async function onRequestPost(context) {
 
     // La password è attualmente confrontata in chiaro per rispettare l'implementazione richiesta.
     const user = await env.DB
-      .prepare("SELECT id, email, nickname, password, is_activated FROM users WHERE email = ?")
+      .prepare("SELECT id, email, nickname, password, is_activated, identity, role FROM users WHERE email = ?")
       .bind(email)
       .first();
 
@@ -64,8 +64,9 @@ export async function onRequestPost(context) {
     ]));
     return json(
       {
-        user: { id: user.id, email: user.email, nickname: user.nickname },
-        expiresAt: session.expiresAt
+        user: { id: user.id, email: user.email, nickname: user.nickname, identity: user.identity, role: user.role },
+        expiresAt: session.expiresAt,
+        adminModeEnabled: false
       },
       200,
       { "Set-Cookie": session.cookie }

@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 // Porting di templates/pages/tavolo-da-gioco.content.html — interamente statico.
 @Component({
   selector: 'app-tavolo-da-gioco',
   standalone: true,
-  imports: [RouterLink, AppShell],
+  imports: [RouterLink, AppShell, EditorialText],
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './tavolo-da-gioco.html'
 })

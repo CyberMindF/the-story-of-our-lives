@@ -32,6 +32,7 @@
               "src/styles/components/buttons.css",
               "src/styles/components/cards.css",
               "src/styles/components/details-toggle.css",
+              "src/styles/components/toggle-switch.css",
               "src/styles/components/typography.css",
               "src/styles/components/forms.css",
               "src/styles/components/feedback.css",

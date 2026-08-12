@@ -12,7 +12,8 @@ leggere e a proporre modifiche tramite i Suggerimenti.
 ## Vincolo della branch di lavoro
 
 Lo sviluppo descritto in questo documento deve avvenire in una branch dedicata esclusivamente
-al CMS e alla centralizzazione dei contenuti.
+al CMS e alla centralizzazione dei contenuti. La branch dedicata è
+`feature/content-editor`.
 
 Finché quella branch è attiva, se Rory chiede modifiche che non riguardano direttamente:
 

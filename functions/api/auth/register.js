@@ -78,7 +78,11 @@ export async function onRequestPost(context) {
     ]));
 
     return json(
-      { user: { id: userId, email, nickname }, expiresAt: session.expiresAt },
+      {
+        user: { id: userId, email, nickname, identity: "lei", role: "member" },
+        expiresAt: session.expiresAt,
+        adminModeEnabled: false
+      },
       201,
       { "Set-Cookie": session.cookie }
     );

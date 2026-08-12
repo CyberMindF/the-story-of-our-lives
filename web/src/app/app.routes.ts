@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth.guard';
+import { adminGuard } from './core/admin.guard';
 import { Portone } from './portone/portone';
 
 // Struttura route: '/' è il Portone (pathMatch 'full' essenziale — senza, matcherebbe come
@@ -48,6 +49,18 @@ export const routes: Routes = [
         path: 'profilo',
         data: { bodyClasses: ['profilo-page'] },
         loadComponent: () => import('./pages/profilo/profilo').then((m) => m.Profilo)
+      },
+      {
+        path: 'log',
+        canActivate: [adminGuard],
+        data: { bodyClasses: ['log-page'] },
+        loadComponent: () => import('./pages/log/log').then((m) => m.Log)
+      },
+      {
+        path: 'contenuti',
+        canActivate: [adminGuard],
+        data: { bodyClasses: ['contenuti-page'] },
+        loadComponent: () => import('./pages/contenuti/contenuti').then((m) => m.Contenuti)
       },
       {
         path: 'il-cielo',

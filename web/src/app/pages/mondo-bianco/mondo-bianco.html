@@ -32,7 +32,7 @@
         />
       </div>
       <blockquote class="card">
-        <p>Non so da dove partirò<br />Ma ovunque sarò<br />Siamo un cerchio, che non ha inizio, né una fine<br />Perché da te io sempre tornerò</p>
+        <app-editorial-text contentKey="mondo-bianco.canzone.citazione" />
       </blockquote>
     </div>
   </section>
@@ -45,9 +45,7 @@
   <section class="world-welcome" aria-labelledby="welcome-title">
     <p class="world-eyebrow">Finalmente sei qui</p>
     <h2 id="welcome-title">Benvenuta nel mondo bianco</h2>
-    <p>
-      Benvenuta nel mondo bianco, ne hai sentito tanto parlare e forse ti sei chiesta cos'è e cosa intendessi dire ogni volta e finalmente eccoti qui, anche tu ci sei entrata. Forse ti ricordi com'è nato e forse no. Ma non ti preoccupare qui dentro c'è tutto quello che devi sapere su questo mondo e anche molto di più. Spero che per te sarà bello vederlo, quanto lo è stato per me farlo e sinceramente spero davvero che anche tu prenderai il tuo posto qui dentro e che questo possa essere e rimanere un luogo dove forse niente ha senso, ma per noi due si. Allora ti lascio esplorarlo e viverlo, spero che amerai perderti tra i suoi luoghi e le mie idee, e che magari questa diventerà una meta dove tornare, anche perché lo sai, ogni tanto ho aggiunto qualcosa in più. Buon viaggio
-    </p>
+    <app-editorial-text contentKey="mondo-bianco.benvenuta" />
   </section>
 
   <section class="world-places" aria-labelledby="places-title">
@@ -56,45 +54,42 @@
       <h2 id="places-title">I posti di questo mondo</h2>
     </div>
 
-    <!-- I luoghi restano esattamente otto. Le destinazioni non ancora migrate ad Angular
-         puntano comunque al path finale corretto (routerLink): 404 finché quella fase non è
-         fatta, non un bug — è lo stato atteso di una migrazione incrementale a pagine. -->
+    <!-- Emoji, rotta e ordine restano fissi nel codice (mondo-bianco.ts); nome e descrizione
+         sono contenuto editoriale, letti da /api/mondo-bianco-cards (decisione #2
+         dell'inventario). -->
     <div class="world-places-grid">
-      <a class="world-place-card card is-available" routerLink="/bacheca"><span class="world-place-emoji">📸</span><strong>La Bacheca dei Ricordi</strong><small>Entra</small></a>
-      <a class="world-place-card card is-available" routerLink="/mappamondo"><span class="world-place-emoji">🌍</span><strong>Il Mappamondo</strong><small>Entra</small></a>
-      <a class="world-place-card card is-available" routerLink="/ponti"><span class="world-place-emoji">🌈</span><strong>I Ponti</strong><small>Entra</small></a>
-      <a class="world-place-card card is-available" routerLink="/storie"><span class="world-place-emoji">📖</span><strong>Le Storie</strong><small>Entra</small></a>
-      <a class="world-place-card card is-available" routerLink="/calendario"><span class="world-place-emoji">📅</span><strong>Il Calendario</strong><small>Entra</small></a>
-      <a class="world-place-card card is-available" routerLink="/cuffiette"><span class="world-place-emoji">🎧</span><strong>Le Cuffiette</strong><small>Entra</small></a>
-      <a class="world-place-card card is-available" routerLink="/tavolo-da-gioco"><span class="world-place-emoji">🎲</span><strong>Il Tavolo da Gioco</strong><small>Entra</small></a>
-      <a class="world-place-card card is-available" routerLink="/mappa"><span class="world-place-emoji">🗺️</span><strong>La Mappa</strong><small>Entra</small></a>
-      <!-- Non è uno degli otto luoghi originari, ma un oggetto fisico del mondo comunque —
-           non più elencata dentro Ponti (che è un elenco di metodi per comunicare, non un
-           luogo), condivide solo la griglia per mantenere l'allineamento. -->
-      <a class="world-place-card card is-available" routerLink="/lettere">
-        <span class="world-place-emoji">📫</span><strong>La Cassetta delle Lettere</strong><small>Entra</small>
-      </a>
-      <!-- Stesso discorso della Cassetta qui sopra: un oggetto fisico del mondo, non uno
-           degli otto luoghi originari. -->
-      <a class="world-place-card card is-available" routerLink="/domande">
-        <span class="world-place-emoji">⛲</span><strong>Il Pozzo dei Dubbi</strong><small>Entra</small>
-      </a>
-      <a class="world-place-card card is-available" routerLink="/cose-da-fare-insieme">
-        <span class="world-place-emoji">📔</span><strong>L'Agenda delle Idee</strong><small>Entra</small>
-      </a>
-      <a class="world-place-card card is-available" routerLink="/ricettario">
-        <span class="world-place-emoji">🍳</span><strong>Il Ricettario</strong><small>Entra</small>
-      </a>
-      <!-- Stesso discorso delle altre due scorciatoie extra qui sopra: non un luogo, ma dove
-           si accendono/spengono gli effetti condivisi del mondo (backlog #a3/#a5). -->
-      <a class="world-place-card card is-available" routerLink="/impostazioni-mondo">
-        <span class="world-place-emoji">🎛️</span><strong>La Stanza dei Bottoni</strong><small>Entra</small>
-      </a>
-      <!-- Stesso discorso delle altre scorciatoie extra qui sopra: non uno degli otto luoghi,
-           una pagina minimale pensata solo per fermarsi a guardare il cielo (#a4). -->
-      <a class="world-place-card card is-available" routerLink="/il-cielo">
-        <span class="world-place-emoji">🌌</span><strong>Il Cielo</strong><small>Entra</small>
-      </a>
+      @for (place of places(); track place.id) {
+        <div class="world-place-card-wrap">
+          <a class="world-place-card card is-available" [routerLink]="place.route">
+            <span class="world-place-emoji">{{ place.emoji }}</span>
+            <strong>{{ place.name }}</strong>
+            @if (place.description) { <span class="world-place-description">{{ place.description }}</span> }
+            <small>Entra</small>
+          </a>
+          @if (canEdit()) {
+            <button type="button" class="btn world-place-edit-button" (click)="startEdit(place)">✏️</button>
+          }
+        </div>
+      }
     </div>
+
+    @if (editingId() !== null) {
+      <form class="world-place-form card" (ngSubmit)="submitEdit()">
+        <h3>Modifica "{{ editingId() }}"</h3>
+        <label class="form-field">
+          <span>Nome</span>
+          <input type="text" required [ngModel]="draftName()" (ngModelChange)="draftName.set($event)" name="name" />
+        </label>
+        <label class="form-field">
+          <span>Descrizione <small>facoltativa</small></span>
+          <input type="text" [ngModel]="draftDescription()" (ngModelChange)="draftDescription.set($event)" name="description" />
+        </label>
+        <p class="world-place-form-error">{{ formError() }}</p>
+        <div class="world-place-form-actions">
+          <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
+          <button type="submit" class="btn btn-submit">Salva</button>
+        </div>
+      </form>
+    }
   </section>
 </app-shell>

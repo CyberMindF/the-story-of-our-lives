@@ -1,0 +1,15 @@
+:host { display: block; color: var(--text-color); }
+
+.contenuti-hero { width: min(100%, 64rem); margin: auto; padding: clamp(2rem, 6vw, 4rem) 0 1.5rem; }
+.contenuti-eyebrow { margin: 0 0 .5rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+
+.contenuti-filters { width: min(100%, 64rem); margin: 0 auto 1.5rem; padding: 1.25rem; display: flex; flex-wrap: wrap; gap: 1rem; }
+.contenuti-filters .form-field { min-width: 12rem; flex: 1 1 12rem; }
+
+.contenuti-error { width: min(100%, 64rem); margin: 0 auto; color: #ffb4b4; }
+
+.contenuti-table-wrap { width: min(100%, 64rem); margin: 0 auto; padding: 0; overflow-x: auto; }
+.contenuti-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.contenuti-table th, .contenuti-table td { padding: .7rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+.contenuti-table td.contenuti-key { color: var(--muted-color); font-family: monospace; font-size: .8rem; }
+.contenuti-table .contenuti-empty { text-align: center; color: var(--muted-color); white-space: normal; }

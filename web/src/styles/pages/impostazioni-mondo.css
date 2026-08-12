@@ -10,68 +10,8 @@
 
 .settings-list { display: grid; gap: 1rem; }
 
-.settings-toggle {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  padding: clamp(1.1rem, 3vw, 1.5rem);
-  cursor: pointer;
-}
-
-.settings-toggle-info { display: grid; gap: .35rem; flex: 1 1 auto; min-width: 0; }
-.settings-toggle-title { font-weight: 700; font-size: 1.05rem; }
-.settings-toggle-description { color: var(--muted-color); font-size: .88rem; line-height: 1.5; }
-
-/* L'input reale resta nel DOM (accessibile da tastiera/screen reader) ma invisibile: lo
-   "switch" è tutto disegnato dallo span accanto, che legge lo stato con :checked + selettore
-   di fratello — nessun JS in più per sincronizzare un elemento decorativo separato. */
-.settings-toggle-input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-}
-
-.settings-toggle-switch {
-  flex: 0 0 auto;
-  position: relative;
-  width: 3.1rem;
-  height: 1.7rem;
-  border-radius: 999px;
-  background: var(--button-bg);
-  border: 1px solid var(--border-color);
-  transition: background-color .18s ease;
-}
-
-.settings-toggle-switch::before {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 1.3rem;
-  height: 1.3rem;
-  border-radius: 50%;
-  background: var(--text-color);
-  transition: transform .18s ease;
-}
-
-.settings-toggle-input:checked + .settings-toggle-switch {
-  background: var(--focus-color);
-  border-color: var(--focus-color);
-}
-
-.settings-toggle-input:checked + .settings-toggle-switch::before {
-  transform: translateX(1.4rem);
-}
-
-.settings-toggle-input:focus-visible + .settings-toggle-switch {
-  outline: 3px solid var(--focus-color);
-  outline-offset: 3px;
-}
+/* L'interruttore (.settings-toggle e le sue parti) ora vive in
+   styles/components/toggle-switch.css, condiviso anche dalla Modalità admin in profilo. */
 
 /* Solo la luna ha bisogno di un secondo controllo (il selettore di fase) sotto il toggle
    principale: qui il "card" si sposta sul contenitore esterno e la riga del toggle perde il

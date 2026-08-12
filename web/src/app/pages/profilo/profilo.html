@@ -2,7 +2,7 @@
   <section class="profilo-hero" aria-labelledby="profilo-title">
     <p class="profilo-eyebrow">Il Mondo Bianco</p>
     <h1 id="profilo-title"><span aria-hidden="true">🪪</span> Il tuo profilo</h1>
-    <p class="profilo-intro">Da qui puoi cambiare come ti chiami e la tua password.</p>
+    <div class="profilo-intro"><app-editorial-text contentKey="profilo.introduzione" /></div>
   </section>
 
   <form class="profilo-form card" aria-label="Cambia nome" (ngSubmit)="submitNickname()">
@@ -36,4 +36,33 @@
     </div>
     <app-form-status [message]="passwordMessage()" [status]="passwordStatus()" />
   </form>
+
+  @if (authService.isAdmin()) {
+    <section class="profilo-form card" aria-labelledby="admin-mode-title">
+      <h2 id="admin-mode-title">Modalità admin</h2>
+      <p class="profilo-admin-note">
+        Mostra i controlli di modifica dei contenuti. Resta accesa solo per questa sessione.
+      </p>
+      <label class="settings-toggle">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title">Modalità admin attiva</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="authService.adminModeEnabled()"
+          (change)="toggleAdminMode($event)"
+          aria-label="Modalità admin attiva"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
+
+      @if (authService.adminModeEnabled()) {
+        <div class="profilo-admin-links">
+          <a class="btn" routerLink="/contenuti">📚 Indice dei contenuti</a>
+          <a class="btn" routerLink="/log">🗂️ Log degli eventi</a>
+        </div>
+      }
+    </section>
+  }
 </app-shell>

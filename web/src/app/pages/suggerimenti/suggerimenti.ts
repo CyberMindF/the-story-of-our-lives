@@ -5,13 +5,14 @@ import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { AppSelect, AppSelectOption } from '../../shared/app-select/app-select';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 // Porting fedele di assets/js/suggestions/main.js: stesso endpoint, stesso invio come
 // FormData (non JSON, a differenza degli altri servizi già portati), stessi messaggi.
 @Component({
   selector: 'app-suggerimenti',
   standalone: true,
-  imports: [AppShell, FormsModule, FormStatus, AppSelect],
+  imports: [AppShell, FormsModule, FormStatus, AppSelect, EditorialText],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/suggerimenti.css'],
   templateUrl: './suggerimenti.html'

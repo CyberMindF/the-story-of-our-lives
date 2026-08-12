@@ -1,0 +1,15 @@
+/* Editor amministrativo condiviso del GDR (planning editor contenuti.md, Fase 7). */
+:host { display: block; }
+.gdr-admin-section { width: min(100%, 60rem); margin: clamp(3rem, 6vw, 4rem) auto 0; display: grid; gap: 1rem; }
+.gdr-admin-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; }
+.gdr-admin-form { display: grid; gap: 1rem; padding: 1.4rem; }
+.gdr-admin-form textarea { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: .85rem; }
+.gdr-admin-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
+.gdr-admin-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.gdr-admin-form-error:empty { display: none; }
+.gdr-admin-list { display: grid; gap: .7rem; }
+.gdr-admin-entry { border: 1px solid var(--panel-border-color); border-radius: .9rem; padding: .9rem 1.1rem; display: grid; gap: .5rem; }
+.gdr-admin-entry-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem; }
+.gdr-admin-type { padding: .15rem .55rem; border-radius: 999px; background: var(--button-bg); color: var(--muted-color); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.gdr-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .2rem; padding-top: .7rem; border-top: 1px solid var(--panel-border-color); }
+.gdr-admin-actions .btn { padding: .4rem .7rem; font-size: .82rem; }

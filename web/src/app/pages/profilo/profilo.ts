@@ -1,7 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService } from '../../core/auth.service';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { SubmissionStatus } from '../../shared/form-submission/form-submission';
 import { PasswordField } from '../../shared/password-field/password-field';
@@ -12,12 +14,12 @@ import { PasswordField } from '../../shared/password-field/password-field';
 @Component({
   selector: 'app-profilo',
   standalone: true,
-  imports: [AppShell, FormsModule, FormStatus, PasswordField],
+  imports: [AppShell, FormsModule, FormStatus, PasswordField, RouterLink, EditorialText],
   styleUrls: ['../../../styles/pages/profilo.css'],
   templateUrl: './profilo.html'
 })
 export class Profilo {
-  private readonly authService = inject(AuthService);
+  protected readonly authService = inject(AuthService);
 
   protected nickname = this.authService.currentUser()?.nickname ?? '';
   protected readonly nicknameLoading = signal(false);
@@ -100,6 +102,19 @@ export class Profilo {
       this.passwordMessage.set(error instanceof Error ? error.message : 'Impossibile cambiare la password.');
     } finally {
       this.passwordLoading.set(false);
+    }
+  }
+
+  // Ottimistico come gli altri interruttori del sito (world-settings.service.ts): riflette
+  // subito il click, poi torna indietro solo se il backend rifiuta (sessione persa, ruolo
+  // cambiato altrove).
+  protected async toggleAdminMode(event: Event): Promise<void> {
+    const enabled = (event.target as HTMLInputElement).checked;
+    const previous = this.authService.adminModeEnabled();
+    this.authService.adminModeEnabled.set(enabled);
+    const saved = await this.authService.setAdminMode(enabled);
+    if (!saved) {
+      this.authService.adminModeEnabled.set(previous);
     }
   }
 }

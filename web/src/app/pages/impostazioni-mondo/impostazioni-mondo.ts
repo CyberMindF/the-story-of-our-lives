@@ -6,6 +6,7 @@ import { PETAL_KIND_LABEL, PetalKind } from '../../shared/world-petals';
 import { FISH_KIND_LABEL, FishKind } from '../../shared/world-fish';
 import { ThemeSwitcher } from '../../shared/theme-switcher';
 import { AppSelect, AppSelectOption } from '../../shared/app-select/app-select';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 // Tutto ciò che si vede nel Mondo Bianco e che prima o poi è diventato condivisibile: gli
 // effetti del cielo (#a3/#a5/#a6) e, da #a8, anche il tema stesso — chi li cambia qui li
@@ -13,7 +14,7 @@ import { AppSelect, AppSelectOption } from '../../shared/app-select/app-select';
 @Component({
   selector: 'app-impostazioni-mondo',
   standalone: true,
-  imports: [AppShell, ThemeSwitcher, AppSelect],
+  imports: [AppShell, ThemeSwitcher, AppSelect, EditorialText],
   styleUrls: ['../../../styles/pages/impostazioni-mondo.css'],
   templateUrl: './impostazioni-mondo.html'
 })

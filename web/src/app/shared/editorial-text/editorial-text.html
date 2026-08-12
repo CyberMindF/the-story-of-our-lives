@@ -1,0 +1,62 @@
+@if (!editing()) {
+  @if (isHistory() && versions().length > 1) {
+    <nav class="editorial-versions" aria-label="Versioni del contenuto">
+      @for (version of versions(); track version.id) {
+        <button
+          type="button"
+          class="editorial-version-chip"
+          [class.is-active]="version.id === viewingVersionId()"
+          (click)="selectVersion(version.id)"
+        >
+          Versione {{ $index + 1 }}
+        </button>
+      }
+    </nav>
+    @if (!isViewingCurrent()) {
+      <p class="editorial-version-note">Stai leggendo una versione precedente, non quella attuale.</p>
+    }
+  }
+
+  @for (paragraph of paragraphs(); track $index) {
+    <p [innerHTML]="paragraph"></p>
+  }
+
+  @if (loadError()) {
+    <p class="editorial-error">Non è stato possibile caricare questo contenuto.</p>
+  }
+
+  @if (canEdit()) {
+    <button type="button" class="editorial-edit-button" (click)="startEdit()">✏️ Modifica</button>
+  }
+} @else {
+  <div class="editorial-editor">
+    <label class="form-field">
+      <span>Testo</span>
+      <textarea rows="6" [value]="draft()" (input)="onDraftInput($event)"></textarea>
+    </label>
+
+    <div class="editorial-preview">
+      @for (paragraph of draftParagraphs(); track $index) {
+        <p [innerHTML]="paragraph"></p>
+      }
+    </div>
+
+    @if (isHistory() && !isViewingCurrent()) {
+      <p class="editorial-version-note">
+        Stai modificando una versione precedente: puoi solo aggiungerla come nuova versione, non sovrascrivere quella attuale.
+      </p>
+    }
+
+    <div class="editorial-editor-actions">
+      <button type="button" class="btn" (click)="cancelEdit()" [disabled]="saving()">Annulla</button>
+      @if (!isHistory() || isViewingCurrent()) {
+        <button type="button" class="btn btn-submit" (click)="save(false)" [disabled]="saving()">Salva modifica</button>
+      }
+      @if (isHistory()) {
+        <button type="button" class="btn btn-submit" (click)="save(true)" [disabled]="saving()">Aggiungi nuova versione</button>
+      }
+    </div>
+
+    <app-form-status [message]="saveError()" [status]="saveError() ? 'error' : ''" />
+  </div>
+}

@@ -11,8 +11,17 @@ export async function onRequestPost(context) {
     const body = await context.request.json();
     const activityId = Number(body.activityId);
     const status = typeof body.status === "string" ? body.status : "";
-    if (!Number.isInteger(activityId) || activityId < 1 || activityId > 78 || !ALLOWED_STATUS.has(status)) {
+    if (!Number.isInteger(activityId) || activityId < 1 || !ALLOWED_STATUS.has(status)) {
       return json({ error: "Stato non valido." }, 400);
+    }
+
+    // Il range fisso "activityId > 78" era pensato per l'array statico originale: con
+    // together_activities editabile (l'admin può aggiungerne di nuove) verifichiamo che l'id
+    // esista davvero invece di un limite superiore hardcoded, altrimenti lo stato delle nuove
+    // attività non si potrebbe mai salvare.
+    const activity = await context.env.DB.prepare("SELECT id FROM together_activities WHERE id = ?").bind(activityId).first();
+    if (!activity) {
+      return json({ error: "Attività non trovata." }, 404);
     }
 
     const updatedAt = new Date().toISOString();

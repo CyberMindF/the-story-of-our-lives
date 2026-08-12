@@ -1,4 +1,5 @@
-// Tipi condivisi dal cruciverba — rispecchiano la forma di data.json e le strutture derivate
+// Tipi condivisi dal cruciverba — rispecchiano la forma dei dati letti da /api/crossword-words
+// (in precedenza data.json) e le strutture derivate
 // costruite da assets/js/crossword/main.js (validateData/buildWordEntry).
 export type CrosswordDirection = 'O' | 'V';
 
@@ -11,8 +12,6 @@ export interface CrosswordWordData {
 }
 
 export interface CrosswordData {
-  title: string;
-  subtitle: string;
   words: CrosswordWordData[];
 }
 

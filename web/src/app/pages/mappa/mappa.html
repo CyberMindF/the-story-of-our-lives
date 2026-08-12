@@ -2,11 +2,7 @@
   <section class="map-hero" aria-labelledby="map-title">
     <p class="map-eyebrow">I posti che abbiamo immaginato</p>
     <h1 id="map-title"><span aria-hidden="true">🗺️</span> La Mappa</h1>
-    <div class="map-introduction">
-      @for (paragraph of introduction(); track $index) {
-        <p>{{ paragraph }}</p>
-      }
-    </div>
+    <div class="map-introduction"><app-editorial-text contentKey="mappa.introduzione" /></div>
   </section>
 
   <section class="dream-map-section" aria-labelledby="dream-map-title">
@@ -65,7 +61,52 @@
   <section class="destination-section" aria-labelledby="travel-diary-title">
     <div class="map-section-heading">
       <h2 id="travel-diary-title">Il diario di viaggio</h2>
+      @if (canEdit() && editingId() === null) {
+        <button type="button" class="btn" (click)="startCreate()">➕ Aggiungi destinazione</button>
+      }
     </div>
+
+    @if (editingId() !== null) {
+      <form class="destination-form card" (ngSubmit)="submitEdit()">
+        <h3>{{ editingId() === '__new__' ? 'Nuova destinazione' : 'Modifica destinazione' }}</h3>
+        @if (editingId() === '__new__') {
+          <label class="form-field">
+            <span>ID (slug)</span>
+            <input type="text" required [ngModel]="draft().id" (ngModelChange)="updateDraft({ id: $event })" name="id" />
+          </label>
+        }
+        <label class="form-field">
+          <span>Nome</span>
+          <input type="text" required [ngModel]="draft().name" (ngModelChange)="updateDraft({ name: $event })" name="name" />
+        </label>
+        <label class="form-field-inline">
+          <input type="checkbox" [ngModel]="draft().isOpen" (ngModelChange)="updateDraft({ isOpen: $event })" name="isOpen" />
+          <span>Meta ancora da decidere (puntina aperta)</span>
+        </label>
+        <label class="form-field">
+          <span>Latitudine <small>facoltativa</small></span>
+          <input type="text" [ngModel]="draft().latitude" (ngModelChange)="updateDraft({ latitude: $event })" name="latitude" />
+        </label>
+        <label class="form-field">
+          <span>Longitudine <small>facoltativa</small></span>
+          <input type="text" [ngModel]="draft().longitude" (ngModelChange)="updateDraft({ longitude: $event })" name="longitude" />
+        </label>
+        <label class="form-field">
+          <span>Paragrafi <small>uno o più, separati da riga vuota</small></span>
+          <textarea rows="8" [ngModel]="draft().paragraphs" (ngModelChange)="updateDraft({ paragraphs: $event })" name="paragraphs"></textarea>
+        </label>
+        <label class="form-field">
+          <span>Immagini <small>JSON: [&#123; "src": "...", "alt": "...", "beforeParagraph": 0, "position": "before" &#125;]</small></span>
+          <textarea rows="6" [ngModel]="draft().imagesJson" (ngModelChange)="updateDraft({ imagesJson: $event })" name="imagesJson"></textarea>
+        </label>
+        <p class="destination-form-error">{{ formError() }}</p>
+        <div class="destination-form-actions">
+          <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
+          <button type="submit" class="btn btn-submit">Salva</button>
+        </div>
+      </form>
+    }
+
     <div class="destination-list">
       @for (view of destinationViews(); track view.destination.id) {
         <article
@@ -103,6 +144,14 @@
               </section>
             }
           </div>
+          @if (canEdit()) {
+            <div class="destination-admin-actions">
+              <button type="button" class="btn" (click)="move(view.destination.id, 'up')">⬆️</button>
+              <button type="button" class="btn" (click)="move(view.destination.id, 'down')">⬇️</button>
+              <button type="button" class="btn" (click)="startEdit(view.destination)">✏️ Modifica</button>
+              <button type="button" class="btn" (click)="requestDelete(view.destination.id)">🗑️ Elimina</button>
+            </div>
+          }
         </article>
       }
     </div>
@@ -111,4 +160,14 @@
     }
   </section>
 
+  <app-confirmation-dialog
+    dialogId="delete-destination"
+    title="Eliminare questa destinazione?"
+    description="La destinazione verrà rimossa definitivamente dalla Mappa."
+    confirmLabel="Elimina"
+    cancelLabel="Annulla"
+    [open]="deleteTargetId() !== null"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
 </app-shell>

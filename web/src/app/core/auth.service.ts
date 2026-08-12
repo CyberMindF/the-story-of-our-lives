@@ -1,16 +1,27 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApiService } from './api.service';
+
+export type UserIdentity = 'lui' | 'lei';
+export type UserRole = 'member' | 'admin';
 
 export interface AuthUser {
   id: number;
   email: string;
   nickname: string;
+  identity: UserIdentity;
+  role: UserRole;
 }
 
 export interface AuthSessionResponse {
   authenticated: boolean;
   user?: AuthUser;
   expiresAt?: string;
+  adminModeEnabled?: boolean;
+  error?: string;
+}
+
+export interface AdminModeResponse {
+  adminModeEnabled?: boolean;
   error?: string;
 }
 
@@ -39,6 +50,10 @@ const ACCESS_UNLOCK_IDLE_TIMEOUT_MS = 60 * 60 * 1000;
 export class AuthService {
   private readonly api = inject(ApiService);
   readonly currentUser = signal<AuthUser | null>(null);
+  // Dura per la sessione (planning editor contenuti.md, Fase 2): la sorgente di verità resta
+  // il backend, questo signal riflette solo l'ultima risposta nota per pilotare la UI.
+  readonly adminModeEnabled = signal(false);
+  readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
 
   // Chiede al backend se il cookie HttpOnly identifica ancora una sessione valida.
   async loadAuthSession(): Promise<AuthSessionResponse> {
@@ -98,6 +113,24 @@ export class AuthService {
     });
 
     return { response, result: (await this.api.readApiResponse<ProfilePasswordResponse>(response)) as ProfilePasswordResponse };
+  }
+
+  // Accende/spegne la Modalità admin per la sessione corrente. Solo chi ha già role "admin"
+  // ottiene un 200 dal backend — qui ci limitiamo a riflettere l'esito, il controllo vero
+  // resta lato server.
+  async setAdminMode(enabled: boolean): Promise<boolean> {
+    const response = await fetch('/api/auth/admin-mode', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled })
+    });
+    const result = (await this.api.readApiResponse<AdminModeResponse>(response)) as AdminModeResponse;
+    if (!response.ok || result.adminModeEnabled === undefined) {
+      return false;
+    }
+    this.adminModeEnabled.set(result.adminModeEnabled);
+    return true;
   }
 
   // Revoca la sessione corrente sul backend.

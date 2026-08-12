@@ -4,6 +4,7 @@ import { Component, Input, output } from '@angular/core';
   selector: 'app-confirmation-dialog',
   standalone: true,
   host: { style: 'display: contents' },
+  styleUrls: ['../../../styles/components/modal.css'],
   templateUrl: './confirmation-dialog.html'
 })
 export class ConfirmationDialog {

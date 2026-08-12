@@ -1,0 +1,54 @@
+<app-shell [showSuggestLink]="false">
+  <section class="contenuti-hero" aria-labelledby="contenuti-title">
+    <p class="contenuti-eyebrow">Modalità admin</p>
+    <h1 id="contenuti-title"><span aria-hidden="true">📚</span> Indice dei contenuti</h1>
+    <a class="btn" href="/api/export" download>⬇️ Esporta backup di sicurezza</a>
+  </section>
+
+  <div class="contenuti-filters card">
+    <label class="form-field">
+      <span>Cerca</span>
+      <input type="text" [(ngModel)]="search" name="search" placeholder="Etichetta o chiave…" />
+    </label>
+    <label class="form-field">
+      <span>Tipo</span>
+      <select [(ngModel)]="typeFilter" name="typeFilter">
+        <option value="">Tutti</option>
+        @for (type of contentTypes(); track type) {
+          <option [value]="type">{{ type }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  @if (error()) {
+    <p class="contenuti-error">{{ error() }}</p>
+  } @else {
+    <div class="contenuti-table-wrap card">
+      <table class="contenuti-table">
+        <thead>
+          <tr>
+            <th>Etichetta</th>
+            <th>Chiave</th>
+            <th>Tipo</th>
+            <th>Versionamento</th>
+            <th>Aggiornato</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of visibleEntries(); track entry.id) {
+            <tr>
+              <td>{{ entry.label }}</td>
+              <td class="contenuti-key">{{ entry.contentKey }}</td>
+              <td>{{ entry.contentType }}</td>
+              <td>{{ entry.versioningMode }}</td>
+              <td>{{ entry.updatedAt }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="contenuti-empty">{{ loading() ? 'Caricamento…' : 'Nessun contenuto trovato.' }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-shell>

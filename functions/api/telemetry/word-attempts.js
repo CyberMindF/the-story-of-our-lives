@@ -74,16 +74,15 @@ export async function onRequestPost(context) {
   }
 }
 
-// Legge data.json dagli asset Pages e trova la soluzione tramite l'ID progressivo della parola.
+// Legge crossword_words (ordinata per position, stesso indice 1-based del client) e trova la
+// soluzione tramite l'ID progressivo della parola.
 async function loadSolution(context, wordId) {
-  const dataUrl = new URL("/data.json", context.request.url);
-  const response = await context.env.ASSETS.fetch(dataUrl);
-  if (!response.ok) {
-    throw new Error(`Impossibile caricare data.json: HTTP ${response.status}`);
-  }
+  const row = await context.env.DB
+    .prepare("SELECT solution FROM crossword_words ORDER BY position LIMIT 1 OFFSET ?")
+    .bind(wordId - 1)
+    .first();
 
-  const data = await response.json();
-  const word = data.words?.[wordId - 1]?.word;
+  const word = row?.solution;
   return typeof word === "string" ? word.trim().toLocaleUpperCase("it") : "";
 }
 

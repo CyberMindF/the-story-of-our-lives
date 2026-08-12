@@ -4,7 +4,7 @@
   <section class="maga-hero" aria-labelledby="maga-title">
     <p class="tavolo-eyebrow">Il Prezzo della Verità</p>
     <h1 id="maga-title"><span aria-hidden="true">✨</span> La Tua Maga</h1>
-    <p>Questa è la scheda del tuo personaggio e della tua gatta. Aggiornala man mano che andiamo avanti, quando ti dico magari "perdi questo" "guadagni quello" — si salva da sola.</p>
+    <app-editorial-text contentKey="gdr.prezzo-verita.maga.introduzione" />
   </section>
 
   <form class="maga-body" #magaForm (ngSubmit)="saveCharacter(magaForm)">
@@ -33,43 +33,15 @@
 
     <section class="maga-section" aria-labelledby="abilita-title">
       <h3 id="abilita-title">Abilità speciali</h3>
-      <p>(una per scena, automatiche, nessun tiro necessario)</p>
-      <ul class="maga-list">
-        <li>Lettura dell'eco: tocchi un oggetto e percepisci un'emozione o un ricordo recente legato a esso</li>
-        <li>Luce senziente: evochi una piccola luce che puoi guidare con la mente</li>
-        <li>Senso della menzogna: una volta per scena, puoi chiedermi se quello che ti ha detto qualcuno è una bugia</li>
-        <li>Magia selvaggia: ogni volta che lanci un incantesimo, tira il D8 + Magia come sempre per vedere se riesce. Poi tira anche il D20 → se esce 1-5, la magia è andata fuori controllo: tira il D10 e consulta la tabella "Effetti Selvaggi". Puoi tirare tutti e tre i dadi insieme se vuoi per fare prima</li>
-      </ul>
-
-      <div class="wild-table-wrap" style="margin-top: 1.25rem;">
-        <table class="wild-table">
-          <tr><th>Tabella Effetti Selvaggi → Tira un D10</th><th>Effetto</th></tr>
-          <tr><td>1</td><td>L'incantesimo si ritorce: colpisce te invece del bersaglio. Perdi 2 Punti Stress.</td></tr>
-          <tr><td>2</td><td>L'incantesimo esplode: in modo vistoso e rumoroso. Funziona, ma chiunque nelle vicinanze se ne accorge.</td></tr>
-          <tr><td>3</td><td>Perdi il controllo per un momento: un oggetto vicino si rompe da solo in modo rumoroso. Perdi 1 Punto Stress.</td></tr>
-          <tr><td>4</td><td>Sovraccarico: il prossimo tiro ha -2. Il tuo corpo ha bruciato troppo in una volta sola.</td></tr>
-          <tr><td>5</td><td>Lasci un segno visibile: gli occhi brillano, le mani fumano leggermente, i capelli si muovono come se ci fosse vento. Dura una scena intera.</td></tr>
-          <tr><td>6</td><td>Un'onda di calore esplode dal tuo corpo: tutto quello che ti circonda per un metro prende fuoco brevemente.</td></tr>
-          <tr><td>7</td><td>L'incantesimo si duplica: colpisce due bersagli invece di uno, o ha effetto doppio sullo stesso.</td></tr>
-          <tr><td>8</td><td>Una scarica di energia pura parte dalle tue mani: non è l'incantesimo che volevi lanciare, è qualcosa di grezzo e potentissimo. Risolve la situazione nel modo più diretto possibile.</td></tr>
-          <tr><td>9</td><td>Una luce accecante esplode attorno a te per un istante: chiunque ti stia guardando è abbagliato per qualche secondo. Tu rimani al centro, illesa.</td></tr>
-          <tr><td>10</td><td>La magia ti attraversa completamente: senti la trama stessa attraversarti e per un istante sei pura energia. Descrivi la magia che ne scaturisce, qualsiasi cosa, che ti porti a risolvere la situazione. Non consuma slot, e recuperi 2 Punti Stress.</td></tr>
-        </table>
-      </div>
+      <app-gdr-blocks [blocks]="abilitaBlocks()" />
     </section>
 
     <section class="maga-section" aria-labelledby="incantesimi-title">
       <h3 id="incantesimi-title">Incantesimi</h3>
       <label class="maga-field maga-field-inline"><span>Slot disponibili</span><span class="stat-input-row"><input name="spellSlotsCurrent" type="number" min="0" max="3" [(ngModel)]="spellSlotsCurrent" [disabled]="fieldsDisabled()" /> / 3</span></label>
-      <ul class="maga-list" style="margin-top: 1rem;">
-        <li>Dardo magico: attacco base, silenzioso e affidabile</li>
-        <li>Scudo magico: blocca un colpo in arrivo</li>
-        <li>Individuazione del magico: percepisci la presenza di magia nelle vicinanze</li>
-        <li>Passo felpato: ti muovi in silenzio assoluto</li>
-        <li>Amicizia: predisponi positivamente qualcuno verso di te per breve tempo</li>
-        <li>Illusione minore: crei una piccola immagine o suono falso per distrarre</li>
-        <li>Individuazione dei pensieri: leggi la superficie della mente di qualcuno vicino</li>
-      </ul>
+      <div style="margin-top: 1rem;">
+        <app-gdr-blocks [blocks]="incantesimiBlocks()" />
+      </div>
     </section>
 
     <section class="maga-section" aria-labelledby="inventario-title">
@@ -84,4 +56,5 @@
     </div>
   </form>
 
+  <app-gdr-document-editor documentKey="maga-regole" />
 </app-shell>
