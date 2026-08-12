@@ -41,9 +41,17 @@
       }
     </div>
 
+    @if (isHistory() && !isViewingCurrent()) {
+      <p class="editorial-version-note">
+        Stai modificando una versione precedente: puoi solo aggiungerla come nuova versione, non sovrascrivere quella attuale.
+      </p>
+    }
+
     <div class="editorial-editor-actions">
       <button type="button" class="btn" (click)="cancelEdit()" [disabled]="saving()">Annulla</button>
-      <button type="button" class="btn btn-submit" (click)="save(false)" [disabled]="saving()">Salva modifica</button>
+      @if (!isHistory() || isViewingCurrent()) {
+        <button type="button" class="btn btn-submit" (click)="save(false)" [disabled]="saving()">Salva modifica</button>
+      }
       @if (isHistory()) {
         <button type="button" class="btn btn-submit" (click)="save(true)" [disabled]="saving()">Aggiungi nuova versione</button>
       }

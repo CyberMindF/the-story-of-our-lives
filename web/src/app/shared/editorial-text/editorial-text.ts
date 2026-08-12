@@ -83,10 +83,16 @@ export class EditorialText implements OnChanges {
       return;
     }
 
+    // Se si sta guardando una versione non corrente, "Salva modifica" scriverebbe il testo
+    // vecchio sopra la versione in vigore (bug segnalato: apri una versione storica, premi
+    // Salva modifica, la versione corrente viene sovrascritta col testo vecchio). Su una
+    // versione storica l'unica azione possibile è aggiungerne una nuova, mai sovrascrivere.
+    const effectiveCreateVersion = createVersion || !this.isViewingCurrent();
+
     this.saving.set(true);
     this.saveError.set('');
     try {
-      const result = await this.contentService.save(this.contentKey, body, createVersion);
+      const result = await this.contentService.save(this.contentKey, body, effectiveCreateVersion);
       if (currentEntry.versioningMode === 'history') {
         // La cronologia (elenco versioni, versionId in vigore) va ricaricata dal server: la
         // risposta del PUT non la porta per non duplicare quella logica in due posti.

@@ -40,7 +40,10 @@ export async function onRequestPost(context) {
       }
     ));
 
-    return json({ user: { id: session.user.id, email: session.user.email, nickname } });
+    // session.user porta già identity/role (bug corretto: la risposta precedente li ometteva,
+    // e AuthService.currentUser.set() sostituisce l'intero oggetto — dopo il cambio nickname
+    // isAdmin() diventava false finché non si ricaricava la pagina).
+    return json({ user: { ...session.user, nickname } });
   } catch (error) {
     console.error(JSON.stringify({ event: "auth_profile_nickname_error", message: error.message }));
     return json({ error: "Errore interno del server." }, 500);

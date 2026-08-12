@@ -821,6 +821,25 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   altre raccolte strutturate, le decisioni #2/#3/#4/#5, Fase 8, e — il gap più grosso di tutta la
   sessione — **applicare qualunque cosa al D1 di produzione**: tutto quello costruito finora,
   comprese le 41 migrazioni, esiste solo in locale.
+- [x] Fix: due bug segnalati da Codex durante la revisione del CMS, su `feature/content-editor`.
+  **Grave** — aprire una versione storica di un contenuto `history` e premere "Salva modifica"
+  sovrascriveva la versione *corrente* col testo di quella vecchia: `save(false)` finiva sempre
+  nel ramo che aggiorna `content_versions` tramite `current_version_id`, indipendentemente da
+  quale versione si stesse effettivamente guardando. Corretto in due punti di
+  `EditorialText` (`web/src/app/shared/editorial-text/`): `save()` ora forza
+  `createVersion = true` ogni volta che `!isViewingCurrent()`, indipendentemente da quale
+  pulsante ha chiamato il metodo (difesa anche lato codice, non solo UI); il pulsante "Salva
+  modifica" scompare del tutto quando si guarda una versione non corrente di un contenuto
+  `history`, lasciando solo "Aggiungi nuova versione" con una nota esplicita. **Nickname** —
+  `functions/api/auth/profile/nickname.js` rispondeva con `{ id, email, nickname }`, senza
+  `identity`/`role`; `profilo.ts` sostituisce l'intero `currentUser` con quella risposta
+  (`currentUser.set(result.user)`), quindi dopo un cambio nome `isAdmin()` diventava `false`
+  finché non si ricaricava la pagina — la Modalità admin spariva dal profilo senza preavviso.
+  Corretto restituendo `{ ...session.user, nickname }`: `session.user` (da
+  `getAuthenticatedSession`) porta già `identity`/`role` letti da D1, nessuna query in più.
+  Verificato che gli altri endpoint che restituiscono `user` (`register.js`, `login.js`,
+  `_shared.js` della sessione) includessero già questi campi — solo `nickname.js` ne era privo.
+  `tsc --noEmit` pulito.
 
 ---
 
