@@ -1,4 +1,4 @@
-/* Componente condiviso EditorialText (planning editor contenuti.md, Fase 5): selettore
+/* Componente condiviso EditorialText (documentazione/cms/planning-editor-contenuti.md, Fase 5): selettore
    versioni, pulsante "Modifica" e editor inline, usati identici su tutte le pagine che
    mostrano un content_entries — vedi CLAUDE.md, zero duplicazione. */
 
@@ -84,7 +84,7 @@
   gap: 0.6rem;
 }
 
-/* Sintassi [etichetta](/rotta) (inventario contenuti CMS.md, decisione #6): unico modo
+/* Sintassi [etichetta](/rotta) (documentazione/cms/inventario-contenuti.md, decisione #6): unico modo
    controllato di avere link interni dentro un testo del CMS generico. */
 .editorial-inline-link {
   color: var(--text-color);

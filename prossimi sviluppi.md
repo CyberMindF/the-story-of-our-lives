@@ -19,27 +19,18 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**:
   sostituire la ricetta placeholder del pollo al curry con la loro versione definitiva e
   ricostruire ingredienti/procedimento dei biscotti di pasta frolla.
-- #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
+- Mappamondo: capire se si può migliorare — nessuna richiesta concreta ricevuta finora; il
+  contenuto (scene, dialoghi) è comunque già modificabile dal sito dal 12/08/2026 (editor CMS
+  dedicato), resta da vedere se serve altro oltre a quello.
+- #16 (continua) — seconda avventura del Gioco di Ruolo: la card "Coming soon" esiste già
+  (vedi Fatto). Resta da scrivere l'avventura vera quando Rory ha titolo/testo/regole pronti
+  — con l'editor GDR (12/08/2026) si può fare direttamente dal sito, un blocco alla volta,
+  senza toccare codice.
 - #e1 - Aggiungere qualcosa a "le cuffiette", per creare insieme una playlist su spotify, in modo che lei possa proporne di nuove e pure io. Magari devono essere accettate dall'altro per poter dire "si inseriamole"?
-- [x] #e2 - Tema **Love**: palette chiara fragola e panna, pannelli rosati traslucidi,
-  contrasto scuro e cielo con luce crema. Ha una propria anteprima e icona a cuore nel
-  selettore; il preset usa i petali già esistenti.
 - #e3 - Animazione sfondi stickers, con immagini piccolina e stupide come stickers per l'appunto tipo arcobaleni, unicorni, gelati, soli, lune, orsetti, cuori, caramelle, cose così. Però non penso che voglio delle emoji e nemmeno svg o css plain, se deve essere un svg devono essere carini come disegnini. Nel pannello delle impostazioni del mondo, puoi decidere quali stickers vuoi che si vefano "cadere"
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
-- [x] #e7 - Animazione bolle di sapone per Ocean: salgono vagando leggermente e si dissolvono con un piccolo scoppio. Effetto indipendente e disattivabile dalla Stanza dei bottoni.
-- [x] #e8 - Animazione cuori per Love: dimensioni diverse, caduta leggera e dissolvenza. Effetto indipendente e disattivabile dalla Stanza dei bottoni.
-- [x] #e9 - Tema **White World**: bianco perla e avorio freddo, con riflessi larghi che
-  ricordano il raso senza usare texture decorative. Pannelli bianchi leggibili, ombre calde
-  leggere, testo antracite e icona a perla. È distinto dall'id storico `the-white-world`, che
-  continua a rappresentare Night Sky per compatibilità.
-  L'effetto **Seta** è indipendente, trasparente e senza varianti: modifica soltanto luci e
-  ombre, conservando la palette del tema. L'**Aurora** è un effetto distinto, con raggi
-  nordici nei colori verde/azzurro/magenta/misti ed è consigliata per Night Sky.
-- [x] #e13 - Animazione **Stelle cadenti** per Night Sky: scie rare con posizione, lunghezza,
-  luminosità e tempi differenti. Effetto indipendente e disattivabile dalla Stanza dei
-  bottoni; fa parte del preset Night Sky e rispetta `prefers-reduced-motion`.
 - #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
 - #e11 - Trasformare il finale del Mappamondo in un vero atlante per orientarsi nel sito,
   senza sostituire né interrompere la storia esistente. Dopo l'ultima scena aggiungere la
@@ -191,7 +182,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   su `/api/content` né alcuna migrazione futura.
 
 - [x] CMS Fase 7 — editor del Linguaggio Segreto (punto 6 dell'ordine di migrazione
-  consigliato in `inventario contenuti CMS.md`): le 6 categorie, i 25 simboli annidati e i 12
+  consigliato in `documentazione/cms/inventario-contenuti.md`): le 6 categorie, i 25 simboli annidati e i 12
   esempi sono migrati da `linguaggio-segreto.ts` (array TypeScript inline) a tre tabelle D1
   dedicate — `linguaggio_segreto_categories`, `linguaggio_segreto_symbols` (con `category_id`,
   annidati sotto una categoria) e `linguaggio_segreto_examples` (lista piatta indipendente),
@@ -216,7 +207,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   valori non restano contigui.
 
 - [x] CMS — chiusura dei testi semplici rimasti "Da migrare" (punto 1 dell'ordine di
-  migrazione consigliato in `inventario contenuti CMS.md`, mai completato del tutto).
+  migrazione consigliato in `documentazione/cms/inventario-contenuti.md`, mai completato del tutto).
   Scoperto per prima cosa che l'inventario era rimasto fermo al 09/08: quasi tutti i content
   key elencati come "Da migrare" erano in realtà già migrati nelle sessioni precedenti
   (migrazioni 0038/0039/0046) senza che il documento venisse aggiornato — verificato ogni riga
@@ -286,6 +277,21 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   menu opaco e leggibile e card portata davanti alle sorelle durante l'apertura. Uniformate
   anche la freccia di ritorno delle pagine interne, il pulsante in fondo e la barra profilo
   alle superfici e ai colori del tema.
+- [x] #e2 - Tema **Love**: palette chiara fragola e panna, pannelli rosati traslucidi,
+  contrasto scuro e cielo con luce crema. Ha una propria anteprima e icona a cuore nel
+  selettore; il preset usa i petali già esistenti.
+- [x] #e7 - Animazione bolle di sapone per Ocean: salgono vagando leggermente e si dissolvono con un piccolo scoppio. Effetto indipendente e disattivabile dalla Stanza dei bottoni.
+- [x] #e8 - Animazione cuori per Love: dimensioni diverse, caduta leggera e dissolvenza. Effetto indipendente e disattivabile dalla Stanza dei bottoni.
+- [x] #e9 - Tema **White World**: bianco perla e avorio freddo, con riflessi larghi che
+  ricordano il raso senza usare texture decorative. Pannelli bianchi leggibili, ombre calde
+  leggere, testo antracite e icona a perla. È distinto dall'id storico `the-white-world`, che
+  continua a rappresentare Night Sky per compatibilità.
+  L'effetto **Seta** è indipendente, trasparente e senza varianti: modifica soltanto luci e
+  ombre, conservando la palette del tema. L'**Aurora** è un effetto distinto, con raggi
+  nordici nei colori verde/azzurro/magenta/misti ed è consigliata per Night Sky.
+- [x] #e13 - Animazione **Stelle cadenti** per Night Sky: scie rare con posizione, lunghezza,
+  luminosità e tempi differenti. Effetto indipendente e disattivabile dalla Stanza dei
+  bottoni; fa parte del preset Night Sky e rispetta `prefers-reduced-motion`.
 
 ### Extra (fuori scaletta, chiesto l'11/08/2026)
 
@@ -854,7 +860,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   script isolato (stessa struttura card+select, non l'app vera: `world_settings` mostrava
   ancora segni di uso reale) che riproduceva il bug esatto e confermava la correzione, più un
   confronto visivo su tutti e 5 i temi.
-- [x] CMS (`planning editor contenuti.md`, Fase 2 — identità, ruoli e sicurezza): prima fetta
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 2 — identità, ruoli e sicurezza): prima fetta
   concreta su `feature/content-editor`. Migrazioni 0033 (`identity`/`role` su `users`, default
   `lei`/`member`, promozione esplicita a `lui`/`admin` solo per l'email di Rory — Desy non si è
   ancora registrata, quindi non c'era un secondo indirizzo da promuovere) e 0034
@@ -879,7 +885,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   non ne risente. **Restano da fare, non toccate in questo giro**: Fase 1 (inventario di tutti
   i contenuti), Fase 3 (tabelle `content_entries`/`content_versions` e le loro API), Fase 5+
   (editor vero e proprio, versionamento, pagina dei log). Migrazioni applicate solo in locale.
-- [x] CMS (`planning editor contenuti.md`, Fase 3 — fondamenta del CMS): su
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 3 — fondamenta del CMS): su
   `feature/content-editor`. Migrazione 0035 con `content_entries` (valore corrente, letto da
   `body` per i contenuti `replace` o da `current_version_id` per quelli `history`) e
   `content_versions` (cronologia, popolata solo per `history`). API in `functions/api/content/`:
@@ -897,7 +903,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Restano da fare**: Fase 1 (inventario completo), Fase 4 (migrazione effettiva dei JSON/testi
   Angular nel database — per ora le tabelle sono vuote), Fase 5+ (editor frontend, pannello,
   pagina dei log).
-- [x] CMS (`planning editor contenuti.md`, Fase 4 ridotta + prima fetta di Fase 5 — migrazione
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 4 ridotta + prima fetta di Fase 5 — migrazione
   delle introduzioni testuali e componente di visualizzazione condiviso): su
   `feature/content-editor`. Migrazione 0036: le 5 introduzioni testuali chiaramente hardcoded nei
   template (non quelle già esternalizzate in `web/public/content/*.json` per mappa/bacheca/
@@ -919,7 +925,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   eseguibile in locale in questo giro. **Restano da fare**: Fase 1 (inventario completo, incluse
   le raccolte JSON), il resto della Fase 4 (raccolte strutturate), Fase 5 (editor vero e proprio,
   versionamento selettivo, pulsante "Modifica" in modalità admin), Fase 6+ (pannello, log).
-- [x] CMS (`planning editor contenuti.md`, Fase 5 — editor dei testi e versioni): su
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 5 — editor dei testi e versioni): su
   `feature/content-editor`. `EditorialText` diventa l'editor vero e proprio, non solo lettura:
   pulsante "✏️ Modifica" visibile solo con `authService.isAdmin() && authService.adminModeEnabled()`
   (pattern riusato identico da `profilo.html`, la sicurezza reale resta comunque sul backend —
@@ -940,8 +946,8 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   quando la Fase 4 completa (in corso separatamente) porterà il primo contenuto storico.
   **Restano da fare**: Fase 1 (inventario, in corso separatamente), resto Fase 4 (raccolte
   strutturate), Fase 6 (pannello indice contenuti, pagina log), Fase 7 (editor dedicati).
-- [x] CMS (`planning editor contenuti.md`, Fase 4 — secondo lotto guidato da
-  `inventario contenuti CMS.md`, prodotto da Codex in parallelo su questa stessa branch): su
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 4 — secondo lotto guidato da
+  `documentazione/cms/inventario-contenuti.md`, prodotto da Codex in parallelo su questa stessa branch): su
   `feature/content-editor`. Due migrazioni. La **0037** corregge un'assunzione mia: le 4 chiavi
   già migrate (`mondo-bianco.benvenuta`, `calendario.introduzione`, `lettere.introduzione`,
   `cose-insieme.introduzione`) erano state seedate `replace` senza una vera decisione — non era
@@ -977,7 +983,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Restano da fare**: le collezioni strutturate (Fase 4 prosegue con calendario/ricettario per
   primi secondo l'ordine consigliato dall'inventario), i testi `history` non ancora confermati,
   Fase 6/7.
-- [x] CMS (`planning editor contenuti.md`, Fase 6 — pannello e pagina log): su
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 6 — pannello e pagina log): su
   `feature/content-editor`. Colmato un buco esplicitamente nei criteri di completamento della
   prima milestone ("Un accesso diretto alla pagina log senza `events.view` restituisce 403") che
   era rimasto del tutto assente finora. Nuovo endpoint `GET /api/events`
@@ -1002,7 +1008,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Restano da fare**: verifica visiva reale (serve Node aggiornato o farlo girare altrove),
   applicare tutte le migrazioni al D1 di produzione (finora solo locale), le collezioni
   strutturate, le decisioni aperte sull'inventario, Fase 8 (export/backup).
-- [x] CMS (`planning editor contenuti.md`, Fase 4 — terzo lotto, testi `history` ancora
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 4 — terzo lotto, testi `history` ancora
   hardcoded): su `feature/content-editor`. Migrazione 0039: `ponti.introduzione`,
   `domande.introduzione`, `tavolo.introduzione`, `gdr.introduzione` (`paragraphs`, tre paragrafi),
   `linguaggio-segreto.introduzione` (`paragraphs`, due paragrafi) — tutti creati direttamente
@@ -1022,7 +1028,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   raccolte strutturate (Fase 4 prosegue/Fase 7), decisioni #2/#3/#4/#5 dell'inventario, Fase 8,
   e soprattutto **applicare tutto a produzione** — finora ogni migrazione è stata verificata solo
   su D1 locale.
-- [x] CMS (`planning editor contenuti.md`, Fase 7 — primo editor dedicato: il Calendario): su
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 7 — primo editor dedicato: il Calendario): su
   `feature/content-editor`. Nuova tabella `calendar_events` (migrazione 0040: `id` = la data
   stessa, stabile e leggibile come nel JSON originale; niente campo `position`, l'ordine è
   sempre cronologico e un riordino manuale non avrebbe senso qui) con i 29 eventi importati da
@@ -1092,7 +1098,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   marcava per la cancellazione 10 file mp3 sotto `Nuovi media/` (aggiunta di recente al
   `.gitignore` da Rory, restavano nell'indice) — annullato lo staging prima di committare,
   poi rimossi dal tracking con `git rm --cached` una volta chiarita l'intenzione.
-- [x] CMS (`planning editor contenuti.md`, Fase 7 — secondo editor dedicato: il Ricettario): su
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 7 — secondo editor dedicato: il Ricettario): su
   `feature/content-editor`. Tabella `recipes` (migrazione 0042) con `position` esplicito — a
   differenza del Calendario, qui l'ordine non è deducibile da nessun altro campo, quindi serve
   davvero. Ingredienti e passaggi restano un array JSON in una colonna di testo (non due tabelle
@@ -1118,7 +1124,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `authGuard` la sincronizzasse correttamente alla navigazione successiva, cosa che ha
   funzionato. **Account di test lasciato attivo** (non richiesto ripulirlo: sono dati locali che
   non arrivano mai in produzione, restano utili per le prossime verifiche).
-- [x] CMS (`planning editor contenuti.md`, Fase 7 — terzo editor dedicato: le Storie): su
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 7 — terzo editor dedicato: le Storie): su
   `feature/content-editor`. Tabella `stories` (migrazione 0044) con `position` esplicito come nel
   Ricettario. Media (`audio_key`, `image`, ecc.) restano campi di testo che puntano a una risorsa
   già esistente (R2 o assets statici): niente upload in questo giro, editor "semplice" coerente
@@ -1136,7 +1142,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   richiude a ogni ricaricamento dati — bug dello script, non dell'app, ma non ho perso altro
   tempo a inseguirlo avendo già la conferma dal livello API).
   **Restano da fare**: Cuffiette e Mappa (prossime, piccole), poi il resto della Fase 7.
-- [x] CMS (`planning editor contenuti.md`, Fase 7 — quarto editor dedicato: le canzoni delle
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 7 — quarto editor dedicato: le canzoni delle
   Cuffiette): su `feature/content-editor`. Migrazione a metà, deliberatamente: la vera raccolta
   strutturata secondo l'inventario (`cuffiette.canzoni`, 9 elementi) è ora in
   `cuffiette_songs`/`functions/api/cuffiette-songs/`, stesso pattern CRUD + `move.js` di
@@ -1155,7 +1161,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Restano da fare**: playlist/bonus/parole rubate delle Cuffiette (in un giro dedicato, serve
   prima decidere se dare a `songsIntroduction` un modo di avere link inline nel CMS generico o
   trattarla come eccezione permanente), poi Mappa e il resto della Fase 7.
-- [x] CMS (`planning editor contenuti.md`, Fase 7 — quinto editor dedicato: la Mappa): su
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 7 — quinto editor dedicato: la Mappa): su
   `feature/content-editor`. Tabella `map_destinations` (migrazione 0049), la raccolta più
   annidata migrata finora: paragrafi e immagini restano JSON in colonna di testo, non
   normalizzati in tabelle figlie — le immagini sono legate a un indice di paragrafo specifico
@@ -1178,7 +1184,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   nell'originale.
   **Restano da fare**: playlist/bonus/parole rubate delle Cuffiette, poi le raccolte più
   annidate (Linguaggio Segreto, GDR, Messaggio Criptato), Agenda delle Idee, Cruciverba, Bacheca.
-- [x] CMS (`planning editor contenuti.md`, Fase 7 — sesto editor dedicato: l'Agenda delle Idee):
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 7 — sesto editor dedicato: l'Agenda delle Idee):
   su `feature/content-editor`. La raccolta più delicata migrata finora — alcune delle 77 voci
   hanno un `private_text` (12) visibile solo dopo la risposta corretta alla domanda segreta in
   `cose-insieme.html`, un meccanismo distinto dal permesso `content.read` che l'API deve
@@ -1226,7 +1232,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Il file resta fuori da git (`backups/` in `.gitignore`): contiene anche il testo NSFW privato
   dell'Agenda, non ha senso concentrarlo in un unico file facilmente individuabile in un
   repository, anche se lo stesso contenuto era già in chiaro nella cronologia di `_data.js`.
-- [x] Decisioni #2-#6 dell'inventario (`inventario contenuti CMS.md`) prese da Rory/Codex:
+- [x] Decisioni #2-#6 dell'inventario (`documentazione/cms/inventario-contenuti.md`) prese da Rory/Codex:
   separare contenuto e navigazione nelle card del Mondo Bianco; Mappamondo modificabile con
   editor strutturato; GDR ampliabile ma con editor dedicato futuro (non il semplice editor di
   paragrafi), Messaggio Criptato invece concluso e permanentemente nel codice;
@@ -1235,7 +1241,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   (introduzione + scene), card del Mondo Bianco (nome/descrizione), playlist/parole
   rubate/`songsIntroduction` delle Cuffiette (dopo il supporto ai link), Bacheca. Restano fuori
   scope: GDR e Linguaggio Segreto (nessun editor dedicato ancora costruito).
-- [x] CMS (`planning editor contenuti.md`, Fase 7 — settimo editor dedicato: il Mappamondo,
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 7 — settimo editor dedicato: il Mappamondo,
   decisione #3 dell'inventario): su `feature/content-editor`. La collezione più delicata sul
   piano della fedeltà del testo: non un elenco di paragrafi come Storie/Mappa, ma dialoghi con
   tag "R:"/"D:" a volte incorporati nello **stesso paragrafo** insieme alla narrazione (scena
@@ -1274,7 +1280,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `stolenWords.items`). Verificato in browser: il link renderizza come `<a href="/ponti">🌈 I
   Ponti</a>` vero (non più testo con parentesi quadre), tutte e 3 le introduzioni visibili.
   **Restano da fare**: card del Mondo Bianco, Cruciverba, Bacheca.
-- [x] CMS (`planning editor contenuti.md`, Fase 7 — card del Mondo Bianco, decisione #2
+- [x] CMS (`documentazione/cms/planning-editor-contenuti.md`, Fase 7 — card del Mondo Bianco, decisione #2
   dell'inventario): su `feature/content-editor`. A differenza delle altre raccolte, qui
   l'insieme delle card è fisso — emoji, rotta, ordine e disponibilità restano hardcoded in
   `mondo-bianco.ts` (`PLACES`, un array readonly), solo nome e descrizione sono contenuto
@@ -1288,45 +1294,3 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `routerLink` verso `/bacheca` ancora funzionante dopo la modifica — la rotta non passa mai
   dall'editor, resta quella hardcoded nell'array `PLACES`.
   **Restano da fare**: solo Cruciverba e Bacheca, le ultime due raccolte del piano.
-
----
-
-## Backlog dettagliato
-
-1. Implementare i temi in modo coerente anche nel resto del mondo bianco (grande)
-    1. Il selettore c'è già su tutte le 17 pagine (09/08/2026) e cambia `--focus-color` e il tint del cielo stellato, ma i colori di ogni pagina (`web/src/styles/pages/*.css`) restano perlopiù hardcoded invece di usare le variabili di `themes.css` — quindi cambiando tema oggi si vede poco. È il refactoring pagina per pagina di cui sopra.
-2. implementare una piccola pagina "profilo" dove poter cambiare il nick e password
-    1. fare in modo che se c'è un cambio password, la precedente venga loggata per memoria
-3. la bacheca dei ricordi è ancora totalmente da rivedere
-5. capire se il mappamondo si può migliorare
-6. i ponti allo stato attuale è una pagina un po' inutile, un po' "cimitero", potrebbe diventare leggermente più piccola o non mettere il focus su i ponti ma sulle lettere
-7. rivedere la parte della traccia bonus nelle cuffiette, fa un po' schifo
-8. rivedere il selettore dei temi, non mi piace molto in questo momento, non mostra il nome ne le icone dei temi
-9. capire come centralizzare un po' di più le lettere
-10. aggiungere la lettera finale alla fine del cruciverba
-11. capire come ottimizzare le pagine dei gdr, perché attualmente sono tante pagine e ci si perde un po', per tornare indietro ci vuole una vita. Attualmente il percorso è il mondom bianco->tavolo da gioco->giochi di ruolo->il prezzo della verità->le 3 pagine dell'avventura. Veramente troppi passaggi
-12. c'è ancora quel bug che il colore del bottone inizialmente è rosso, poi diventa verde
-13. Tutto il sito non sembra avere uno stile unificato, come card, bottoni, stili, in generale. Ovvio non è che tutte le pagine devono essere uguali, ma almeno avere un design riconoscibile tra loro. 
-Portati qui dalla vecchia `CHECKLIST_MIGRAZIONE_MONDO_BIANCO.md` (ora eliminata, cronologia completa nella storia di git):
-
-16. Aggiungere la seconda avventura del Gioco di Ruolo. Rory ha già pronta una seconda storia giocabile, con un regolamento diverso da "Il Prezzo della Verità" (non condividono lo stesso sistema di regole). Struttura già pronta ad accoglierla: `tavolo-da-gioco/gdr/index.html` elenca le avventure in `.tavolo-games-grid-compact` (oggi solo IPDV), ognuna con pagina propria (`tavolo-da-gioco/gdr/<slug>/index.html`) sul modello di `tavolo-da-gioco/gdr/il-prezzo-della-verita/`. Non condividere il regolamento tra le due: ognuna tiene il proprio. Aspettare titolo, testo e regole da Rory prima di crearla.
-17. Progettare la navigazione responsive: rendere raggiungibili luoghi e ritorno alla home su desktop e telefono mantenendo orientamento e accessibilità.
-20. Sostituire l'embed SoundCloud delle Cuffiette con un player audio proprio del sito, quando i nove brani saranno ospitati direttamente (R2 o storage posseduto) invece che su SoundCloud.
-21. Aggiungere anche il messaggio criptato ai giochi.
-22. Aggiungere il nostro linguaggio segreto da qualche parte (magari introducendo qualcosa di speciale per i 5 cuori e per il cerchio).
-23. Aggiungere una zona dei giochi da fare insieme, con didascalia sotto. Come se fosse la lista delle mie note sul telefono ma qui, condivisa, magari anche lei può suggerire giochi o cosa da fare (capire se solo giochi o cose da fare insieme o se farle entrambe in modo diviso). https://www.youtube.com/shorts/4jmIPLqo7Hc
-24. Ricerca globale protetta: cercare per parola dentro titoli, date, storie, canzoni, mete e ricordi tutti insieme, invece di aprire ogni pagina a cercare a occhio. Deve restare autenticata (nessun contenuto indicizzabile o raggiungibile da chi non ha fatto login). Rimandata: più un'idea per quando il sito avrà più contenuto da cercare, che una necessità adesso.
-25. La Mappa — aggiungere la Sicilia tra le mete (è la terra di Rory, tanti posti bellissimi). Posti già in mente: il fiume Amenano sotto l'ostello (a Catania), le Gole dell'Alcantara, i laghetti di Avola (probabilmente Cavagrande del Cassibile, le piscine naturali vicino Avola — da confermare). Isola Bella a Taormina. Da scrivere insieme quando Rory ha i testi pronti, stesso trattamento delle altre mete (non un posto "originale" preesistente, va segnato come aggiunta).
-26. La Mappa — completare Roma: nel contenuto attuale (`web/public/content/map.json`) è ancora un segnaposto quasi vuoto ("roma roma", nessuna immagine) — fedele all'originale Notion, che la lasciava incompleta apposta. Serve il testo vero da Rory prima di poterla scrivere.
-
-27. Rendere le scritte più personali/romantiche, alla fine il sito "sono io" mentre l'utilizzatrice è lei. Quidni il sito bene o male è tutto "parlato" come se parlassi a lei, mentre per alcuni testi è stato scelto di renderli generici. Individuali e renderli personali
-
-28. Una pagina per le mie domande, a cui vorrei che rispondesse, quindi deve essere tipo "domanda" e tipo text box dove lei potrebbe rispondere alle domande. Ovviamente richiede un salvataggio in DB
-
-29. Aggiungere al calendario 20 maggio, la rinascia di fuochetto
-
-30. Rivedere la favicon
-
-31. Aggiungere un occhiolino "mostra password" nei campi password del Portone, sia nel login che nella registrazione.
-
-32. Aggiungere l'1 luglio, il giorno del suo esame di maturità, e il giorno che le ho mandato il mazzo di rosa con la lettera

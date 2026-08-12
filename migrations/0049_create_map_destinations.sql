@@ -1,4 +1,4 @@
--- Fase 7 del CMS (planning editor contenuti.md): quinto editor dedicato, la Mappa. Paragrafi e
+-- Fase 7 del CMS (documentazione/cms/planning-editor-contenuti.md): quinto editor dedicato, la Mappa. Paragrafi e
 -- immagini restano JSON in colonna di testo: le immagini sono legate a un indice di paragrafo
 -- specifico (beforeParagraph) e a una posizione (before/after), una relazione troppo fine per
 -- una lista "semplice" — l'editor le tratta come un blocco JSON unico invece di un repeater

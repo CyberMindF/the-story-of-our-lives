@@ -3,7 +3,7 @@ import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { normalizeCategory, normalizeDateLabel, normalizeOptionalText } from "./_activities-shared.js";
 
-// Editor dedicato dell'Agenda delle Idee (planning editor contenuti.md, Fase 7). A differenza di
+// Editor dedicato dell'Agenda delle Idee (documentazione/cms/planning-editor-contenuti.md, Fase 7). A differenza di
 // GET /api/together (pubblico), questo endpoint richiede content.edit e include private_text:
 // serve per la modalità admin, non per la lista che vede chiunque. Nessun 'position'/riordino:
 // l'ordine resta quello dell'id, together_activity_status lo referenzia come identità stabile.

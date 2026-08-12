@@ -47,7 +47,7 @@ function toDraft(entry: AdminWord): AdminWordDraft {
 // Porting fedele di tavolo-da-gioco/cruciverba/index.html + assets/js/crossword/main.js.
 // La logica del gioco è nel servizio scoped alla pagina; qui restano shell, lifecycle e i
 // listener globali che dipendono dall'esistenza reale della vista (pagehide, viewport mobile).
-// L'editor delle 100 definizioni (planning editor contenuti.md, Fase 7) vive invece qui, non nel
+// L'editor delle 100 definizioni (documentazione/cms/planning-editor-contenuti.md, Fase 7) vive invece qui, non nel
 // servizio del gioco: stesso pattern CRUD + posizione esplicita di Mappa/Storie/Cuffiette, letto
 // dalla stessa /api/crossword-words che alimenta la griglia — un secondo fetch indipendente,
 // come mappa.ts fa per la propria lista amministrativa.

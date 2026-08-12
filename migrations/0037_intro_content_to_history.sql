@@ -1,4 +1,4 @@
--- Fase 4 del CMS (planning editor contenuti.md): l'inventario in "inventario contenuti CMS.md"
+-- Fase 4 del CMS (documentazione/cms/planning-editor-contenuti.md): l'inventario in "documentazione/cms/inventario-contenuti.md"
 -- raccomanda 'history' per i messaggi personali legati a un momento preciso — la migrazione
 -- 0036 li aveva seedati come 'replace' per assunzione, non per una scelta esplicita. Converte
 -- le 4 chiavi già migrate: crea la prima versione a partire dal body attuale e libera

@@ -50,7 +50,7 @@ const ACCESS_UNLOCK_IDLE_TIMEOUT_MS = 60 * 60 * 1000;
 export class AuthService {
   private readonly api = inject(ApiService);
   readonly currentUser = signal<AuthUser | null>(null);
-  // Dura per la sessione (planning editor contenuti.md, Fase 2): la sorgente di verità resta
+  // Dura per la sessione (documentazione/cms/planning-editor-contenuti.md, Fase 2): la sorgente di verità resta
   // il backend, questo signal riflette solo l'ultima risposta nota per pilotare la UI.
   readonly adminModeEnabled = signal(false);
   readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');

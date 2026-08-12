@@ -1,4 +1,4 @@
--- CMS: gli ultimi due testi rimasti del Cruciverba (planning editor contenuti.md), spostati
+-- CMS: gli ultimi due testi rimasti del Cruciverba (documentazione/cms/planning-editor-contenuti.md), spostati
 -- come costanti in crossword.service.ts quando data.json è stato eliminato (12/08/2026) — ora
 -- diventano content_entries come tutto il resto.
 INSERT INTO content_entries (content_key, label, content_type, versioning_mode, body, created_by, created_at, updated_at)

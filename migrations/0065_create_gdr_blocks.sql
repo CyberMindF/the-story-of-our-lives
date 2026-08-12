@@ -1,5 +1,5 @@
--- CMS: editor dedicato del GDR "Il Prezzo della Verità" (planning editor contenuti.md,
--- Fase 7; inventario contenuti CMS.md, decisione #4 — "deve poter essere ampliato dal sito...
+-- CMS: editor dedicato del GDR "Il Prezzo della Verità" (documentazione/cms/planning-editor-contenuti.md,
+-- Fase 7; documentazione/cms/inventario-contenuti.md, decisione #4 — "deve poter essere ampliato dal sito...
 -- capace di gestire almeno testo, immagini e blocchi/ordine"). Un'unica tabella per entrambi
 -- i documenti (avventura, maga-regole): ogni riga è un blocco tipizzato con `data` come JSON
 -- grezzo (stesso principio "editor senza fronzoli" già usato per le immagini di

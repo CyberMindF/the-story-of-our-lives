@@ -1,4 +1,4 @@
--- Fase 7 del CMS (planning editor contenuti.md): editor dedicato dell'Agenda delle Idee. La più
+-- Fase 7 del CMS (documentazione/cms/planning-editor-contenuti.md): editor dedicato dell'Agenda delle Idee. La più
 -- delicata delle raccolte migrate finora — alcune voci hanno un testo privato (`private_text`)
 -- visibile solo dopo la risposta corretta alla domanda segreta in cose-insieme.html, un
 -- meccanismo distinto dal permesso content.read e che l'API deve continuare a rispettare: la

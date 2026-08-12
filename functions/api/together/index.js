@@ -1,6 +1,6 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 
-// GET pubblico (planning editor contenuti.md, Fase 7): non deve MAI restituire private_text,
+// GET pubblico (documentazione/cms/planning-editor-contenuti.md, Fase 7): non deve MAI restituire private_text,
 // indipendentemente dal ruolo di chi chiama — quel campo esce solo da /api/together/activities
 // (content.edit) o da /api/together/unlock dopo la risposta corretta. La lista ora legge da
 // together_activities invece dell'array fisso in _data.js, ma la forma della risposta resta

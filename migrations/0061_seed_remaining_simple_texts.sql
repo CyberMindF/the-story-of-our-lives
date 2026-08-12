@@ -1,4 +1,4 @@
--- CMS: chiusura dei testi semplici rimasti "Da migrare" (inventario contenuti CMS.md), in
+-- CMS: chiusura dei testi semplici rimasti "Da migrare" (documentazione/cms/inventario-contenuti.md), in
 -- ordine prima delle collezioni strutturate ancora aperte (Linguaggio Segreto, GDR, Bacheca).
 -- portone.* e not-found.messaggio restano fuori: sono pagine raggiungibili prima del login,
 -- e /api/content richiede sempre una sessione autenticata — migrarli richiederebbe un percorso

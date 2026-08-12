@@ -1,7 +1,7 @@
 import { recordEvent } from "../_shared/events.js";
 import { getAuthenticatedSession, json, readJson } from "./_shared.js";
 
-// Attiva/disattiva la Modalità admin per la sessione corrente (planning editor contenuti.md,
+// Attiva/disattiva la Modalità admin per la sessione corrente (documentazione/cms/planning-editor-contenuti.md,
 // Fase 2). Non è un permesso a sé: solo chi ha già role "admin" può accenderla, e vive sulla
 // sessione (non sull'utente) così un nuovo login riparte spenta di default.
 export async function onRequestPost(context) {

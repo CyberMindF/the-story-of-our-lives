@@ -3,7 +3,7 @@
 > **Stato:** documento storico preparatorio alla migrazione, completata il 9 agosto 2026.
 > Percorsi, architettura proposta e fasi descritte qui fotografano il piano iniziale e non
 > costituiscono la roadmap corrente. Per lo stato del porting vedere
-> `ANGULAR_MIGRATION_PROGRESS.md`; per le attivita' future vedere `prossimi sviluppi.md`.
+> La migrazione Angular è conclusa; per le attività future vedere `prossimi sviluppi.md`.
 
 ## 1. Scopo e perimetro
 

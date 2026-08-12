@@ -1,4 +1,4 @@
--- Fase 7 del CMS (planning editor contenuti.md): editor dedicato del Mappamondo (decisione #3
+-- Fase 7 del CMS (documentazione/cms/planning-editor-contenuti.md): editor dedicato del Mappamondo (decisione #3
 -- dell'inventario: deve diventare modificabile tramite un editor strutturato). Ogni scena è una
 -- lista di righe (`lines`, JSON), ognuna a sua volta una lista di segmenti {speaker, text}: la
 -- maggior parte delle righe ha un solo segmento (narrazione pura o battuta pura), ma almeno una

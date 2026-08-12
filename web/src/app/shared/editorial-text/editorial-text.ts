@@ -6,7 +6,7 @@ import { renderInlineLinks } from '../inline-text';
 import { FormStatus } from '../form-status/form-status';
 
 // Componente di visualizzazione (e, in modalità admin, modifica) condiviso per i testi
-// editoriali del CMS (planning editor contenuti.md, Fase 5). Mostra il valore corrente di un
+// editoriali del CMS (documentazione/cms/planning-editor-contenuti.md, Fase 5). Mostra il valore corrente di un
 // content_entries e, sui contenuti "history", il selettore delle versioni; il pulsante
 // "Modifica" compare solo con isAdmin() && adminModeEnabled(), ma la sicurezza vera resta
 // sempre sul backend (403 su ogni endpoint /api/content senza il permesso richiesto).
@@ -37,7 +37,7 @@ export class EditorialText implements OnChanges {
     return !entry || entry.versionId === entry.currentVersionId;
   });
 
-  // Supporto minimo e controllato ai link interni (inventario contenuti CMS.md, decisione #6):
+  // Supporto minimo e controllato ai link interni (documentazione/cms/inventario-contenuti.md, decisione #6):
   // solo la sintassi esplicita [etichetta](/rotta), mai HTML libero o URL esterni — sostituisce
   // il caso speciale che le Cuffiette gestivano a mano per il link verso "I Ponti". La stessa
   // funzione è riusata dai blocchi del GDR (shared/inline-text.ts), non duplicata.

@@ -1,4 +1,4 @@
-/* Rendering dei blocchi del GDR (planning editor contenuti.md, Fase 7): stesse regole visive
+/* Rendering dei blocchi del GDR (documentazione/cms/planning-editor-contenuti.md, Fase 7): stesse regole visive
    che prima vivevano in tavolo.css, spostate qui perché ora renderizzate da un componente
    figlio — l'incapsulamento di Angular non farebbe arrivare stili scoped al genitore fino a
    qui. Margini invece di grid-gap: prima ogni gruppo "avventura-section" aveva il proprio

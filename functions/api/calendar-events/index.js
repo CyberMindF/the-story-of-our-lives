@@ -3,7 +3,7 @@ import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { isValidDate, normalizeBody, normalizeLabel } from "./_shared.js";
 
-// Editor dedicato del Calendario (planning editor contenuti.md, Fase 7): primo di una serie di
+// Editor dedicato del Calendario (documentazione/cms/planning-editor-contenuti.md, Fase 7): primo di una serie di
 // raccolte strutturate, ognuna con la propria tabella invece di forzarle dentro
 // content_entries/content_versions, che restano per i testi generici.
 export async function onRequestGet(context) {

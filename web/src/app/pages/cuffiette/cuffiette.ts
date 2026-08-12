@@ -49,7 +49,7 @@ interface MusicData {
   stolenWords: { items: StolenWordItem[] };
 }
 
-// Editor dedicato delle canzoni delle Cuffiette (planning editor contenuti.md, Fase 7). Porting
+// Editor dedicato delle canzoni delle Cuffiette (documentazione/cms/planning-editor-contenuti.md, Fase 7). Porting
 // di assets/js/music/main.js per la parte ancora statica; le canzoni vivono ora in
 // cuffiette_songs, non più nell'array songs di content/music.json.
 @Component({

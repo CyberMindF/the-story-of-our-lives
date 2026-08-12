@@ -89,7 +89,7 @@ function toExampleDraft(example: ExampleRow): ExampleDraft {
   return { code: example.code, meaning: example.meaning };
 }
 
-// Editor dedicato del Linguaggio Segreto (planning editor contenuti.md, Fase 7; inventario
+// Editor dedicato del Linguaggio Segreto (documentazione/cms/planning-editor-contenuti.md, Fase 7; inventario
 // contenuti CMS.md, decisione #4): tre collezioni indipendenti — categorie (lista piatta),
 // simboli (annidati sotto una categoria, con riordino su/giù dentro la categoria più un
 // comando "Sposta" per cambiare categoria/posizione senza N pressioni), esempi (lista piatta).

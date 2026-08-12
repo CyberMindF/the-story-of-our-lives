@@ -5,7 +5,7 @@ import { recordEvent } from "../_shared/events.js";
 const DEFAULT_PAGE_SIZE = 25;
 const MAX_PAGE_SIZE = 100;
 
-// Pagina amministrativa dei log (planning editor contenuti.md, Fase 6): nessun dato precaricato
+// Pagina amministrativa dei log (documentazione/cms/planning-editor-contenuti.md, Fase 6): nessun dato precaricato
 // nel bundle, l'endpoint verifica events.view a ogni chiamata — il frontend nasconde solo il
 // collegamento in modalità admin, non è lui la barriera.
 export async function onRequestGet(context) {

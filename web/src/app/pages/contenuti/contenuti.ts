@@ -12,7 +12,7 @@ interface ContentIndexEntry {
   updatedAt: string;
 }
 
-// Indice dei contenuti modificabili (planning editor contenuti.md, Fase 6): sola lettura, il
+// Indice dei contenuti modificabili (documentazione/cms/planning-editor-contenuti.md, Fase 6): sola lettura, il
 // salvataggio vero e proprio resta sulla pagina dove il contenuto vive (EditorialText) — questo
 // elenco serve solo a trovarli, con ricerca per etichetta/chiave e filtro per tipo.
 @Component({

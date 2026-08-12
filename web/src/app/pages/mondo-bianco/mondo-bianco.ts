@@ -7,7 +7,7 @@ import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 
-// Emoji, rotta, disponibilità e ordine restano nel codice (planning editor contenuti.md,
+// Emoji, rotta, disponibilità e ordine restano nel codice (documentazione/cms/planning-editor-contenuti.md,
 // decisione #2 dell'inventario): solo nome e descrizione sono contenuto editoriale, letti da
 // /api/mondo-bianco-cards e sovrascrivibili in modalità admin. L'elenco e l'ordine delle card
 // non cambiano dall'editor — aggiungerne o toglierne una è comunque una modifica di codice.

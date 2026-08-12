@@ -3,7 +3,7 @@ import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { normalizeCoordinate, normalizeImages, normalizeName, normalizeParagraphs } from "./_shared.js";
 
-// Editor dedicato della Mappa (planning editor contenuti.md, Fase 7). Stesso pattern CRUD +
+// Editor dedicato della Mappa (documentazione/cms/planning-editor-contenuti.md, Fase 7). Stesso pattern CRUD +
 // move.js di Ricettario/Storie/Cuffiette.
 export async function onRequestGet(context) {
   try {

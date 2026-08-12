@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 
-// Nomi/descrizioni delle card del Mondo Bianco (planning editor contenuti.md, Fase 7, decisione
+// Nomi/descrizioni delle card del Mondo Bianco (documentazione/cms/planning-editor-contenuti.md, Fase 7, decisione
 // #2 dell'inventario). Solo GET qui: l'insieme delle 14 card è fisso (rotta/emoji/ordine
 // restano nel codice), la modifica del singolo campo vive in [id].js.
 export async function onRequestGet(context) {

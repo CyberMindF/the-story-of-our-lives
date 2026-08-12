@@ -1,4 +1,4 @@
--- Fase 3 del CMS (planning editor contenuti.md): fondamenta generiche per i contenuti
+-- Fase 3 del CMS (documentazione/cms/planning-editor-contenuti.md): fondamenta generiche per i contenuti
 -- editoriali. content_entries rappresenta il valore corrente di ogni testo; content_versions
 -- serve soltanto ai contenuti con versioning_mode = 'history', dove il valore corrente va letto
 -- da current_version_id invece che da un campo dedicato.

@@ -1,4 +1,4 @@
--- Fase 7 del CMS (planning editor contenuti.md): sesto editor dedicato, il Cruciverba. Le 100
+-- Fase 7 del CMS (documentazione/cms/planning-editor-contenuti.md): sesto editor dedicato, il Cruciverba. Le 100
 -- definizioni vivono qui con le loro coordinate (grid_row/grid_col + direction), stesso schema
 -- "posizione esplicita + riordino su/giù" di Mappa/Storie/Ricettario/Cuffiette. L'id resta un
 -- intero stabile (1..100 nell'origine, coerente con "ID stabile" dell'inventario contenuti):

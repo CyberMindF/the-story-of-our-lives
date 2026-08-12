@@ -51,7 +51,7 @@ function toDraft(scene: Scene): SceneDraft {
   };
 }
 
-// Editor dedicato del Mappamondo (planning editor contenuti.md, Fase 7, decisione #3
+// Editor dedicato del Mappamondo (documentazione/cms/planning-editor-contenuti.md, Fase 7, decisione #3
 // dell'inventario). Ogni scena vive ora in mappamondo_scenes via /api/mappamondo-scenes: le
 // righe sono liste di segmenti {speaker, text} per preservare i (rari) paragrafi che mescolano
 // narrazione e battuta nello stesso testo, invece di appiattirli in paragrafi semplici.

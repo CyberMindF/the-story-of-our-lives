@@ -34,7 +34,7 @@ const STORAGE_KEY = `noi-crossword-progress-${STORAGE_VERSION}`;
 const LEGACY_ACCESS_STORAGE_KEY = 'noi-crossword-access';
 const WORD_ATTEMPT_DEBOUNCE_MS = 1000;
 const RESETTABLE_STORAGE_PREFIXES = ['noi-crossword-progress-', 'noi-crossword-theme-'];
-// Le 100 definizioni vivono ora in crossword_words (planning editor contenuti.md, Fase 7),
+// Le 100 definizioni vivono ora in crossword_words (documentazione/cms/planning-editor-contenuti.md, Fase 7),
 // stesso pattern di /api/map-destinations. Titolo e sottotitolo sono content_entries a sé
 // (`cruciverba.titolo`/`cruciverba.sottotitolo`), renderizzati direttamente nel template con
 // <app-editorial-text> come ogni altro testo editoriale — non passano da questo servizio.

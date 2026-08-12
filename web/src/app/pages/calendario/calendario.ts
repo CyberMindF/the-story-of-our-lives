@@ -28,7 +28,7 @@ interface YearGroup {
 
 const MONTH_FORMATTER = new Intl.DateTimeFormat('it-IT', { month: 'long', timeZone: 'UTC' });
 
-// Editor dedicato del Calendario (planning editor contenuti.md, Fase 7): gli eventi vivono ora
+// Editor dedicato del Calendario (documentazione/cms/planning-editor-contenuti.md, Fase 7): gli eventi vivono ora
 // in calendar_events via /api/calendar-events, non più in content/calendar.json — niente più
 // vincolo "esattamente 29 date" (aveva senso solo per uno snapshot statico, non per una
 // raccolta che l'admin può far crescere). L'ordine resta sempre cronologico: qui non serve un

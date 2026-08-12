@@ -4,7 +4,7 @@ import { recordEvent } from "../../_shared/events.js";
 
 // Scambio "prima/dopo" per le correzioni vicine, sempre dentro la stessa categoria (per
 // spostare un simbolo in un'altra categoria o a una posizione lontana c'è move-to.js: vedi
-// inventario contenuti CMS.md, decisione #4).
+// documentazione/cms/inventario-contenuti.md, decisione #4).
 export async function onRequestPost(context) {
   const { request, env, params } = context;
   try {

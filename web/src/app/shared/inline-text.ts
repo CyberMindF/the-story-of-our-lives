@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
-// Supporto minimo e controllato ai link interni (inventario contenuti CMS.md, decisione #6):
+// Supporto minimo e controllato ai link interni (documentazione/cms/inventario-contenuti.md, decisione #6):
 // solo la sintassi esplicita [etichetta](/rotta), mai HTML libero o URL esterni. Estratto da
 // EditorialText per essere riusato anche dai blocchi del GDR (paragrafi/callout), invece di
 // duplicare la stessa regex in due posti.

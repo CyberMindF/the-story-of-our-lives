@@ -1,4 +1,4 @@
--- Fase 7 del CMS (planning editor contenuti.md): quarto editor dedicato, le canzoni delle
+-- Fase 7 del CMS (documentazione/cms/planning-editor-contenuti.md): quarto editor dedicato, le canzoni delle
 -- Cuffiette. Chiamata 'cuffiette_songs' (non 'songs') per restare inequivocabile: playlist,
 -- bonus e parole rubate restano per ora in web/public/content/music.json, non sono ancora
 -- migrati (songsIntroduction ha un rendering HTML speciale — link inline verso /ponti — che

@@ -22,7 +22,7 @@ export async function authenticateCrosswordRequest(context, options = {}) {
 }
 
 // Carica da crossword_words la definizione usando l'ID progressivo che il client assegna per
-// posizione (planning editor contenuti.md, Fase 7): la griglia non usa più l'id stabile della
+// posizione (documentazione/cms/planning-editor-contenuti.md, Fase 7): la griglia non usa più l'id stabile della
 // riga DB come identificativo di parola, ma l'indice 1-based nell'ordine di `position` — lo
 // stesso schema di data.json quando era un array ordinato a mano.
 export async function loadWordDefinition(context, wordId) {

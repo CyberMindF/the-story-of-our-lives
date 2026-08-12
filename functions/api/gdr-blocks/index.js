@@ -3,7 +3,7 @@ import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { normalizeData, normalizeDocumentKey, normalizeType } from "./_shared.js";
 
-// Editor dedicato del GDR (planning editor contenuti.md, Fase 7; inventario contenuti CMS.md,
+// Editor dedicato del GDR (documentazione/cms/planning-editor-contenuti.md, Fase 7; documentazione/cms/inventario-contenuti.md,
 // decisione #4). Un'unica collezione per entrambi i documenti (avventura, maga-regole):
 // `document_key` scoping la posizione, stesso pattern di category_id per i simboli del
 // Linguaggio Segreto. Nessun comando "Sposta…" qui: i blocchi non si spostano da un documento

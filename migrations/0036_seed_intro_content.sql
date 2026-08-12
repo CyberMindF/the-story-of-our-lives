@@ -1,4 +1,4 @@
--- Fase 4 del CMS (planning editor contenuti.md): prima fetta di migrazione, limitata alle
+-- Fase 4 del CMS (documentazione/cms/planning-editor-contenuti.md): prima fetta di migrazione, limitata alle
 -- introduzioni testuali richieste dalla prima milestone. Tutte 'replace' (nessuna storia di
 -- versioni preesistente da conservare) e created_by risolto dinamicamente sull'email di Rory,
 -- così la migrazione resta valida sia in locale sia in remoto senza id hardcoded.

@@ -1,4 +1,4 @@
--- Fase 7 del CMS (planning editor contenuti.md): secondo editor dedicato, il Ricettario.
+-- Fase 7 del CMS (documentazione/cms/planning-editor-contenuti.md): secondo editor dedicato, il Ricettario.
 -- Ingredienti e passaggi sono liste ordinate di stringhe senza bisogno di un ID proprio per
 -- riga (a differenza delle ricette stesse): restano un array JSON in una colonna di testo
 -- invece di due tabelle figlie, coerente con "editor semplice" del piano (niente drag and

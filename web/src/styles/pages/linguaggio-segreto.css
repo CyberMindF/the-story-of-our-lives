@@ -67,7 +67,7 @@
 .linguaggio-message-hint { margin: 0 0 1rem; color: #7a7061; font-size: .82rem; letter-spacing: .06em; text-transform: uppercase; }
 .linguaggio-message-code { margin: 0; color: #2b2620; font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 1.8rem; letter-spacing: .3rem; }
 
-/* Editor amministrativo (planning editor contenuti.md, Fase 7). */
+/* Editor amministrativo (documentazione/cms/planning-editor-contenuti.md, Fase 7). */
 .linguaggio-admin-section { width: min(100%, 64rem); margin: 0 auto clamp(3rem, 6vw, 4rem); display: grid; gap: 1.4rem; }
 .linguaggio-admin-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; }
 .linguaggio-admin-block { display: grid; gap: 1rem; padding-top: 1.2rem; border-top: 1px solid var(--panel-border-color); }

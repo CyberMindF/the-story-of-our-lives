@@ -593,7 +593,7 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
   }
 }
 
-/* Editor amministrativo delle definizioni (planning editor contenuti.md, Fase 7). */
+/* Editor amministrativo delle definizioni (documentazione/cms/planning-editor-contenuti.md, Fase 7). */
 .word-admin-section { margin-top: 2rem; display: grid; gap: 1rem; }
 .word-admin-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; }
 .word-admin-form { display: grid; gap: 1rem; padding: 1.4rem; }

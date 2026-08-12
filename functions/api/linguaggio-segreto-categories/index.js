@@ -3,7 +3,7 @@ import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { normalizeIcon, normalizeNote, normalizeTitle } from "./_shared.js";
 
-// Editor dedicato del Linguaggio Segreto (planning editor contenuti.md, Fase 7). Le categorie
+// Editor dedicato del Linguaggio Segreto (documentazione/cms/planning-editor-contenuti.md, Fase 7). Le categorie
 // sono una lista piatta, stesso pattern CRUD + move.js di Mappa/Storie/Cruciverba; i simboli
 // annidati sotto ognuna vivono nella collezione a sé `linguaggio-segreto-symbols`.
 export async function onRequestGet(context) {

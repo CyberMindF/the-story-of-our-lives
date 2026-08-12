@@ -1,4 +1,4 @@
--- Fase 4 del CMS (planning editor contenuti.md): terzo lotto, i testi 'history' ancora
+-- Fase 4 del CMS (documentazione/cms/planning-editor-contenuti.md): terzo lotto, i testi 'history' ancora
 
 -- hardcoded nei template tra quelli raccomandati history dall'inventario. Ogni chiave crea
 

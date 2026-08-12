@@ -1,6 +1,6 @@
--- Fase 4 del CMS (planning editor contenuti.md): secondo lotto, limitato ai testi
+-- Fase 4 del CMS (documentazione/cms/planning-editor-contenuti.md): secondo lotto, limitato ai testi
 
--- 'chiaramente replace' individuati da "inventario contenuti CMS.md" — esclusi i testi
+-- 'chiaramente replace' individuati da "documentazione/cms/inventario-contenuti.md" — esclusi i testi
 
 -- marcati 'history' (in sospeso, non ancora confermati), quelli con link o interruzioni di
 

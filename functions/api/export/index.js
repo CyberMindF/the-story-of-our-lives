@@ -2,7 +2,7 @@ import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 
-// Esportazione di sicurezza (planning editor contenuti.md, Fase 8): un backup scaricabile di
+// Esportazione di sicurezza (documentazione/cms/planning-editor-contenuti.md, Fase 8): un backup scaricabile di
 // tutti i contenuti editoriali del CMS, richiesto dal piano prima di eliminare ogni vecchia
 // fonte JSON. Include private_text delle attività dell'Agenda — è un backup per Rory, che ne è
 // l'autore, non un endpoint pubblico: resta dietro content.edit come ogni altra azione admin.

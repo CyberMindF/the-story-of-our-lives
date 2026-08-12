@@ -57,7 +57,7 @@ export class LaTuaMaga implements OnInit {
 
   // Abilità/tabella effetti/incantesimi (gdr.prezzo-verita.maga-regole): la scheda del
   // personaggio sopra (nome, statistiche, inventario) resta invece dati utente dinamici, non
-  // tocca questa collezione — coerente con inventario contenuti CMS.md. I primi 3 blocchi
+  // tocca questa collezione — coerente con documentazione/cms/inventario-contenuti.md. I primi 3 blocchi
   // (intro abilità + lista + tabella) vanno sotto "Abilità speciali", il resto sotto
   // "Incantesimi": lo spacco è per conteggio, non per un campo esplicito nel blocco, perché i
   // due titoli restano intestazioni strutturali fisse nel template.

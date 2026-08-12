@@ -30,8 +30,8 @@ function toDraft(block: GdrBlockRow): BlockDraft {
   return { type: block.type, dataJson: JSON.stringify(block.data, null, 2) };
 }
 
-// Editor amministrativo condiviso dei documenti del GDR (planning editor contenuti.md, Fase 7;
-// inventario contenuti CMS.md, decisione #4): un blocco = un tipo + un blob JSON, "editor senza
+// Editor amministrativo condiviso dei documenti del GDR (documentazione/cms/planning-editor-contenuti.md, Fase 7;
+// documentazione/cms/inventario-contenuti.md, decisione #4): un blocco = un tipo + un blob JSON, "editor senza
 // fronzoli" come le immagini di Mappa — niente builder visuale per 7 forme di dati diverse.
 // Usato identico da Avventura e La Tua Maga, cambia solo `documentKey`.
 @Component({

@@ -1,4 +1,4 @@
--- CMS: editor "ibrido" della Bacheca dei Ricordi (planning editor contenuti.md, Fase 7;
+-- CMS: editor "ibrido" della Bacheca dei Ricordi (documentazione/cms/planning-editor-contenuti.md, Fase 7;
 -- concordato con Rory il 12/08/2026 come opzione D — editor visuale per giorno con
 -- salvataggio JSON, non un CRUD granulare a 5 livelli). Due tabelle: i periodi sono una
 -- lista piatta (come le categorie del Linguaggio Segreto), i giorni sono annidati sotto un

@@ -78,7 +78,7 @@ function toDraft(destination: Destination): DestinationDraft {
   };
 }
 
-// Editor dedicato della Mappa (planning editor contenuti.md, Fase 7): le destinazioni vivono ora
+// Editor dedicato della Mappa (documentazione/cms/planning-editor-contenuti.md, Fase 7): le destinazioni vivono ora
 // in map_destinations via /api/map-destinations, stesso pattern di posizione esplicita e
 // riordino "su/giù" di Ricettario/Storie/Cuffiette. Le immagini restano un campo JSON grezzo in
 // modifica (sono legate a un indice di paragrafo specifico, non un semplice elenco) — editor

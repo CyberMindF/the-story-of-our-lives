@@ -3,7 +3,7 @@ import { hasPermission } from "../../_shared/permissions.js";
 import { recordEvent } from "../../_shared/events.js";
 import { categoryExists } from "../_shared.js";
 
-// Comando "Sposta…" (inventario contenuti CMS.md, decisione #4): sceglie direttamente la
+// Comando "Sposta…" (documentazione/cms/inventario-contenuti.md, decisione #4): sceglie direttamente la
 // categoria di destinazione e l'elemento dopo cui inserire il simbolo (o "in cima" se
 // `afterId` è assente), invece di richiedere N pressioni di su/giù — uno spostamento dalla
 // posizione 1 alla 70 resta una sola operazione. move.js resta per le correzioni vicine.

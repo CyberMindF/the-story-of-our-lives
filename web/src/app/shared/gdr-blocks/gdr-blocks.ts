@@ -14,7 +14,7 @@ import {
 
 // Rendering pubblico dei documenti del GDR "Il Prezzo della Verità" (Avventura, La Tua Maga —
 // solo le sezioni Abilità/Effetti/Incantesimi). Componente condiviso invece di duplicare lo
-// stesso @switch in due pagine (planning editor contenuti.md, Fase 7). I nomi di classe
+// stesso @switch in due pagine (documentazione/cms/planning-editor-contenuti.md, Fase 7). I nomi di classe
 // riprendono quelli storici di avventura.html/tavolo.css (avventura-figure, npc-grid,
 // npc-card, avventura-callout, maga-list, wild-table) ma vivono nel CSS di questo componente,
 // non più in tavolo.css: l'incapsulamento di Angular non farebbe comunque arrivare stili

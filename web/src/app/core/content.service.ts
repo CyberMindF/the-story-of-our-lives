@@ -21,7 +21,7 @@ export interface ContentSaveResult {
   updatedAt: string;
 }
 
-// Legge i contenuti editoriali del CMS (planning editor contenuti.md, Fase 4+) da
+// Legge i contenuti editoriali del CMS (documentazione/cms/planning-editor-contenuti.md, Fase 4+) da
 // content_entries/content_versions via API, sostituendo i testi finora hardcoded nei template.
 @Injectable({ providedIn: 'root' })
 export class ContentService {

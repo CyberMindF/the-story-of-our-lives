@@ -1,5 +1,5 @@
--- CMS: editor dedicato del Linguaggio Segreto (planning editor contenuti.md, Fase 7;
--- inventario contenuti CMS.md, "Decisioni da confermare" #4). Tre tabelle: le categorie sono
+-- CMS: editor dedicato del Linguaggio Segreto (documentazione/cms/planning-editor-contenuti.md, Fase 7;
+-- documentazione/cms/inventario-contenuti.md, "Decisioni da confermare" #4). Tre tabelle: le categorie sono
 -- una lista piatta (id slug, come map_destinations), i simboli sono annidati sotto una
 -- categoria (category_id + position scoped alla categoria: due simboli di categorie diverse
 -- possono avere la stessa position), gli esempi restano una lista piatta indipendente.

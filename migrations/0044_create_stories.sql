@@ -1,4 +1,4 @@
--- Fase 7 del CMS (planning editor contenuti.md): terzo editor dedicato, le Storie. 'position'
+-- Fase 7 del CMS (documentazione/cms/planning-editor-contenuti.md): terzo editor dedicato, le Storie. 'position'
 -- esplicito come nel Ricettario (l'ordine non è deducibile dalla data: le storie non sono per
 -- forza in ordine cronologico). Media (audio_key/image) restano campi di testo che puntano a
 -- una risorsa già esistente (R2 o assets statici) — nessun upload qui, coerente con l'editor

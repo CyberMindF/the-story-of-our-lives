@@ -52,7 +52,7 @@ function toDraft(recipe: Recipe): RecipeDraft {
   };
 }
 
-// Editor dedicato del Ricettario (planning editor contenuti.md, Fase 7): le ricette vivono ora
+// Editor dedicato del Ricettario (documentazione/cms/planning-editor-contenuti.md, Fase 7): le ricette vivono ora
 // in recipes via /api/recipes, non più in content/recipes.json. A differenza del Calendario,
 // l'ordine (position) è significativo: "prima/dopo" invece del drag and drop, come richiesto
 // dal piano.

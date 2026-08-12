@@ -1,4 +1,4 @@
-// Fase 2 del CMS (planning editor contenuti.md): i ruoli assegnano permessi espliciti nel
+// Fase 2 del CMS (documentazione/cms/planning-editor-contenuti.md): i ruoli assegnano permessi espliciti nel
 // codice, non c'è ancora un editor visuale — ma ogni endpoint controlla il singolo permesso,
 // non il ruolo direttamente, così domani si potrà cambiare l'associazione senza toccare le API.
 const ROLE_PERMISSIONS = {

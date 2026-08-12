@@ -24,7 +24,7 @@ interface EventsResponse {
 
 const PAGE_SIZE = 25;
 
-// Pagina amministrativa dei log (planning editor contenuti.md, Fase 6). Protetta da
+// Pagina amministrativa dei log (documentazione/cms/planning-editor-contenuti.md, Fase 6). Protetta da
 // authGuard + adminGuard sulla rotta; l'endpoint /api/events verifica comunque events.view a
 // ogni chiamata, questa pagina non ha nessun dato precaricato nel bundle.
 @Component({

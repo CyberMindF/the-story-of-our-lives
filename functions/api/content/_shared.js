@@ -1,4 +1,4 @@
-// Fase 3 del CMS (planning editor contenuti.md): regole di validazione condivise tra gli
+// Fase 3 del CMS (documentazione/cms/planning-editor-contenuti.md): regole di validazione condivise tra gli
 // endpoint di content_entries/content_versions. La sicurezza vive solo qui e nel backend: il
 // frontend non deve mai essere l'unico a controllare tipo, chiave o dimensione del contenuto.
 export const CONTENT_TYPES = ["plain_text", "paragraphs"];

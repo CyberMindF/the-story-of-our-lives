@@ -62,7 +62,7 @@ function toDraft(story: Story): StoryDraft {
   };
 }
 
-// Editor dedicato delle Storie (planning editor contenuti.md, Fase 7): le storie vivono ora in
+// Editor dedicato delle Storie (documentazione/cms/planning-editor-contenuti.md, Fase 7): le storie vivono ora in
 // stories via /api/stories, non più in content/stories.json. Stesso pattern del Ricettario
 // (position esplicito, riordino "su/giù"). Niente più vincolo "esattamente 4 storie": era
 // pensato per uno snapshot statico, avrebbe rotto la pagina alla prima storia aggiunta

@@ -3,7 +3,7 @@ import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { isValidKind, normalizeList, normalizeNote, normalizeSource, normalizeTitle } from "./_shared.js";
 
-// Editor dedicato del Ricettario (planning editor contenuti.md, Fase 7). A differenza del
+// Editor dedicato del Ricettario (documentazione/cms/planning-editor-contenuti.md, Fase 7). A differenza del
 // Calendario, qui l'ordine (position) è significativo e va gestito esplicitamente.
 export async function onRequestGet(context) {
   try {

@@ -3,7 +3,7 @@ import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { normalizeLines, normalizeTitle } from "./_shared.js";
 
-// Editor dedicato del Mappamondo (planning editor contenuti.md, Fase 7, decisione #3
+// Editor dedicato del Mappamondo (documentazione/cms/planning-editor-contenuti.md, Fase 7, decisione #3
 // dell'inventario). Stesso pattern CRUD + move.js delle altre raccolte.
 export async function onRequestGet(context) {
   try {

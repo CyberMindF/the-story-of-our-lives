@@ -1,4 +1,4 @@
--- Fase 7 del CMS (planning editor contenuti.md): primo editor dedicato a una raccolta
+-- Fase 7 del CMS (documentazione/cms/planning-editor-contenuti.md): primo editor dedicato a una raccolta
 -- strutturata, scelto per primo perché piccola e regolare (29 elementi, ID già stabile — la
 -- data stessa). Nessun campo 'position': l'ordine è sempre quello cronologico delle date, un
 -- riordino manuale non avrebbe senso qui (a differenza di raccolte come la Bacheca).

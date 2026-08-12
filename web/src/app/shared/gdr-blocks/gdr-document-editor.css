@@ -1,4 +1,4 @@
-/* Editor amministrativo condiviso del GDR (planning editor contenuti.md, Fase 7). */
+/* Editor amministrativo condiviso del GDR (documentazione/cms/planning-editor-contenuti.md, Fase 7). */
 :host { display: block; }
 .gdr-admin-section { width: min(100%, 60rem); margin: clamp(3rem, 6vw, 4rem) auto 0; display: grid; gap: 1rem; }
 .gdr-admin-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; }

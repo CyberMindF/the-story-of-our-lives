@@ -3,7 +3,7 @@ import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { isValidDate, normalizeBody, normalizeOptionalText, normalizeTitle } from "./_shared.js";
 
-// Editor dedicato delle Storie (planning editor contenuti.md, Fase 7). Stesso pattern del
+// Editor dedicato delle Storie (documentazione/cms/planning-editor-contenuti.md, Fase 7). Stesso pattern del
 // Ricettario: 'position' esplicito, riordino su un endpoint separato (move.js).
 export async function onRequestGet(context) {
   try {
