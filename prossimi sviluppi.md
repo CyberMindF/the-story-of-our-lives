@@ -867,6 +867,32 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   marcava per la cancellazione 10 file mp3 sotto `Nuovi media/` (aggiunta di recente al
   `.gitignore` da Rory, restavano nell'indice) — annullato lo staging prima di committare,
   poi rimossi dal tracking con `git rm --cached` una volta chiarita l'intenzione.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — secondo editor dedicato: il Ricettario): su
+  `feature/content-editor`. Tabella `recipes` (migrazione 0042) con `position` esplicito — a
+  differenza del Calendario, qui l'ordine non è deducibile da nessun altro campo, quindi serve
+  davvero. Ingredienti e passaggi restano un array JSON in una colonna di testo (non due tabelle
+  figlie): sono liste ordinate senza bisogno di un ID proprio per riga, coerente con l'editor
+  "semplice" richiesto dal piano — textarea multi-riga in modifica, una riga per elemento.
+  13 ricette importate da `web/public/content/recipes.json` (migrazione 0043, verificate:
+  `placeholder` corretto sulle 2 attese, posizioni sequenziali 0–12). API in
+  `functions/api/recipes/`: CRUD standard su `index.js`/`[id].js`, più `[id]/move.js` per il
+  riordino "prima/dopo" richiesto dal piano (niente drag and drop) — scambia la posizione con il
+  vicino usando `env.DB.batch()` per una vera transazione atomica, mai due ricette sulla stessa
+  posizione. Editor inline in `ricettario.ts`/`.html` con lo stesso pattern del Calendario
+  (creazione, modifica, eliminazione con conferma, frecce su/giù), visibile solo in modalità
+  admin. `recipes.json` rimosso dopo la verifica dell'importazione.
+  **Verificato interamente in browser con Playwright** (non solo `tsc`): creazione, modifica del
+  titolo, riordino ed eliminazione con conferma testati con click reali, tornato esattamente a
+  13/13 ricette a fine test. Due bug trovati **negli script di test**, non nell'app — lasciati
+  qui perché istruttivi: (1) `.recipe-hero button` matchava anche i pulsanti "Modifica" di
+  `EditorialText` annidati nell'eyebrow/introduzione della stessa sezione, cliccando quello
+  sbagliato; risolto puntando al testo esatto del pulsante. (2) un click Playwright con
+  `{force:true}` sul toggle Modalità admin non ha attivato lo stato atteso in un run (causa non
+  isolata: probabile timing prima che Angular finisse di idratare `/profilo`) — bypassato
+  attivando `admin_mode_enabled` via chiamata diretta a `/api/auth/admin-mode` e verificando che
+  `authGuard` la sincronizzasse correttamente alla navigazione successiva, cosa che ha
+  funzionato. **Account di test lasciato attivo** (non richiesto ripulirlo: sono dati locali che
+  non arrivano mai in produzione, restano utili per le prossime verifiche).
 
 ---
 
