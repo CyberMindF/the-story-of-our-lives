@@ -128,9 +128,8 @@ body[data-theme="green-of-me"] {
   --shadow: 0 22px 48px rgba(7, 16, 10, 0.4);
 }
 
-/* Non selezionabile dallo switcher: è il tema fisso del cruciverba dopo la normalizzazione
-   stilistica del 09/08/2026, calibrato sugli stessi colori (già tutti hardcoded) delle altre
-   pagine del Mondo Bianco — non un quinto tema tra pari, ma l'aspetto unico della pagina. */
+/* L'id storico "the-white-world" oggi corrisponde a Night Sky. Resta il default per
+   compatibilità con preferenze e dati già salvati; il nuovo tema chiaro usa "white-world". */
 body[data-theme="the-white-world"] {
   --bg-color: #141f32;
   --panel-color: rgba(255, 255, 255, 0.05);
@@ -152,6 +151,52 @@ body[data-theme="the-white-world"] {
   --clue-bg: rgba(255, 255, 255, 0.04);
   --drawer-bg: rgba(8, 16, 30, 0.6);
   --shadow: 0 24px 52px rgba(0, 0, 0, 0.4);
+}
+
+body[data-theme="white-world"] {
+  --bg-color: #f1ede5;
+  --panel-color: rgba(255, 255, 255, 0.68);
+  --panel-border-color: rgba(113, 101, 91, 0.18);
+  --text-color: #383431;
+  --muted-color: #716b65;
+  --border-color: #d5cdc2;
+  --selection-color: #e7dfd5;
+  --active-color: #d8cec2;
+  --correct-color: #dbe8dd;
+  --error-color: #eed9d7;
+  --focus-color: #907b6c;
+  --complete-clue-bg: #e2ece3;
+  --complete-clue-border: #809b84;
+  --button-bg: rgba(255, 255, 255, 0.88);
+  --button-hover-bg: #fff;
+  --grid-scroll-bg: linear-gradient(180deg, rgba(255,255,255,.86), rgba(233,227,218,.96));
+  --cell-bg: rgba(255, 255, 255, 0.9);
+  --clue-bg: rgba(255, 255, 255, 0.52);
+  --drawer-bg: rgba(248, 245, 239, 0.88);
+  --shadow: 0 18px 44px rgba(91, 78, 66, 0.14);
+}
+
+body[data-theme="love"] {
+  --bg-color: #f2cbd2;
+  --panel-color: rgba(255, 247, 245, 0.62);
+  --panel-border-color: rgba(127, 54, 75, 0.2);
+  --text-color: #552f39;
+  --muted-color: #845b65;
+  --border-color: #dba8b3;
+  --selection-color: #f4dce0;
+  --active-color: #e8b7c1;
+  --correct-color: #d8e7da;
+  --error-color: #edc2c7;
+  --focus-color: #a84663;
+  --complete-clue-bg: #e2ebdf;
+  --complete-clue-border: #7b9a7d;
+  --button-bg: rgba(255, 249, 247, 0.82);
+  --button-hover-bg: rgba(255, 255, 255, 0.98);
+  --grid-scroll-bg: linear-gradient(180deg, rgba(255,244,242,.92), rgba(235,186,198,.96));
+  --cell-bg: rgba(255, 248, 246, 0.86);
+  --clue-bg: rgba(255, 247, 245, 0.46);
+  --drawer-bg: rgba(250, 225, 229, 0.9);
+  --shadow: 0 20px 48px rgba(112, 47, 67, 0.17);
 }
 
 * {

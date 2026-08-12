@@ -1,6 +1,6 @@
 /*
  * Il cielo di "the-white-world" (il tema di default/notte) resta quello storico del Mondo
- * Bianco. Gli altri 4 temi hanno un cielo proprio (gradienti già scritti in precedenza in
+ * Bianco. Gli altri temi hanno un cielo proprio (gradienti già scritti in precedenza in
  * themes.css ma mai visti — vinceva sempre questa regola: spostati qui per essere davvero
  * applicati, vedi prossimi sviluppi.md #1).
  */
@@ -220,6 +220,26 @@ body.world-atmosphere[data-theme="red-of-you"] {
 body.world-atmosphere[data-theme="green-of-me"] {
   --world-star: rgba(225, 238, 225, 0.7);
   background: linear-gradient(180deg, #304a37 0%, var(--bg-color) 54%, #152118 100%);
+  background-attachment: fixed;
+}
+
+/* White World non è un cielo bianco piatto: sovrapposizioni perlacee molto larghe simulano
+   il riflesso morbido del raso senza introdurre texture o decorazioni estranee al tema. */
+body.world-atmosphere[data-theme="white-world"] {
+  --world-star: rgba(111, 99, 89, 0.25);
+  background:
+    radial-gradient(ellipse at 18% 8%, rgba(255,255,255,.98) 0%, transparent 36%),
+    radial-gradient(ellipse at 88% 72%, rgba(218,209,198,.58) 0%, transparent 42%),
+    linear-gradient(145deg, #fffefa 0%, var(--bg-color) 48%, #e4ddd3 100%);
+  background-attachment: fixed;
+}
+
+body.world-atmosphere[data-theme="love"] {
+  --world-star: rgba(139, 64, 85, 0.28);
+  background:
+    radial-gradient(ellipse at 16% 8%, rgba(255,250,245,.9) 0%, transparent 34%),
+    radial-gradient(ellipse at 88% 78%, rgba(205,91,120,.22) 0%, transparent 38%),
+    linear-gradient(155deg, #f9e7e5 0%, var(--bg-color) 52%, #dfa2b1 100%);
   background-attachment: fixed;
 }
 

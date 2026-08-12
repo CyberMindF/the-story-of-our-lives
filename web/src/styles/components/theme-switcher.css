@@ -75,6 +75,20 @@
   background: radial-gradient(circle at 20% 12%, rgba(216,234,218,.18), transparent 30%), linear-gradient(145deg, #52745b, #1b3023 72%);
 }
 
+.theme-chip[data-theme-id='white-world'] .theme-chip-preview {
+  color: #88796d;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.98), transparent 25%),
+    linear-gradient(145deg, #fffefa, #e7dfd3 70%, #d5c9bb);
+}
+
+.theme-chip[data-theme-id='love'] .theme-chip-preview {
+  color: #fff8f6;
+  background:
+    radial-gradient(circle at 24% 16%, rgba(255,250,245,.72), transparent 27%),
+    linear-gradient(145deg, #efb7bf, #d46f87 58%, #93465d);
+}
+
 .theme-chip-icon {
   display: grid;
   place-items: center;
@@ -96,6 +110,12 @@
 
 .theme-icon-spark {
   opacity: .88;
+}
+
+.theme-icon-pearl {
+  fill: #fffdf8;
+  stroke: rgba(124, 108, 96, .32);
+  stroke-width: 1;
 }
 
 .theme-icon-stroke,

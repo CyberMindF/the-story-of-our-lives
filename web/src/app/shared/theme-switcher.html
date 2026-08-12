@@ -25,6 +25,12 @@
             @case ('letter') {
               <span class="theme-icon-letter">{{ theme.iconText }}</span>
             }
+            @case ('pearl') {
+              <svg viewBox="0 0 64 64"><circle class="theme-icon-stroke is-soft" cx="32" cy="32" r="21"/><circle class="theme-icon-fill theme-icon-pearl" cx="32" cy="32" r="16"/><path class="theme-icon-spark" d="m47 10 1.4 4 4.1 1.5-4.1 1.5-1.4 4-1.5-4-4-1.5 4-1.5 1.5-4Z"/></svg>
+            }
+            @case ('heart') {
+              <svg viewBox="0 0 64 64"><path class="theme-icon-fill" d="M32 53S9 40 9 23.5C9 15.8 14.3 11 21 11c5.1 0 8.8 2.8 11 6.3C34.2 13.8 37.9 11 43 11c6.7 0 12 4.8 12 12.5C55 40 32 53 32 53Z"/><path class="theme-icon-spark" d="m51 7 .9 2.7 2.8.9-2.8 1-.9 2.7-1-2.7-2.7-1 2.7-.9L51 7Z"/></svg>
+            }
           }
         </span>
       </span>

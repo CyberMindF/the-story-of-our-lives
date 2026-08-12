@@ -21,14 +21,19 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   ricostruire ingredienti/procedimento dei biscotti di pasta frolla.
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
 - #e1 - Aggiungere qualcosa a "le cuffiette", per creare insieme una playlist su spotify, in modo che lei possa proporne di nuove e pure io. Magari devono essere accettate dall'altro per poter dire "si inseriamole"?
-- #e2 - Tema love, molto "rosa" tipo fragola e panna
+- [x] #e2 - Tema **Love**: palette chiara fragola e panna, pannelli rosati traslucidi,
+  contrasto scuro e cielo con luce crema. Ha una propria anteprima e icona a cuore nel
+  selettore; il preset usa i petali già esistenti.
 - #e3 - Animazione sfondi stickers, con immagini piccolina e stupide come stickers per l'appunto tipo arcobaleni, unicorni, gelati, soli, lune, orsetti, cuori, caramelle, cose così. Però non penso che voglio delle emoji e nemmeno svg o css plain, se deve essere un svg devono essere carini come disegnini. Nel pannello delle impostazioni del mondo, puoi decidere quali stickers vuoi che si vefano "cadere"
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
 - #e7 - Animazione bolle di sapone, che vagano un po' per lo schermo e poi scoppiano
 - #e8 - Animazione cuori possono essere molto piccoli e molto grandi, vagano un po' per lo schermo in modo legiadro e poi fanno un piccolo fadeout leggero
-- #e9 - tema white-world deve dare la sensazione di bianco "puro" come una comperta di raso, perla biaanca, colori bianchi di quel tipo deve essere un bel colore ovviamente, non troppo giallo, però un po' "avorio" credo che abbiamo capito
+- [x] #e9 - Tema **White World**: bianco perla e avorio freddo, con riflessi larghi che
+  ricordano il raso senza usare texture decorative. Pannelli bianchi leggibili, ombre calde
+  leggere, testo antracite e icona a perla. È distinto dall'id storico `the-white-world`, che
+  continua a rappresentare Night Sky per compatibilità.
 - #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
 - #e11 - Trasformare il finale del Mappamondo in un vero atlante per orientarsi nel sito,
   senza sostituire né interrompere la storia esistente. Dopo l'ultima scena aggiungere la

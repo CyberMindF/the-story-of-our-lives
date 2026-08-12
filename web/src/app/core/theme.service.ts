@@ -5,7 +5,7 @@ export interface ThemeDefinition {
   id: string;
   label: string;
   swatch: string;
-  icon: 'night' | 'ocean' | 'velvet' | 'letter';
+  icon: 'night' | 'ocean' | 'velvet' | 'letter' | 'pearl' | 'heart';
   iconText?: string;
   description: string;
 }
@@ -24,12 +24,13 @@ const THEME_PRESET: Record<string, WorldSettingKey[]> = {
   'red-of-you': ['sparkles'],
   'green-of-me': ['leaves'],
   sea: ['waves', 'fish'],
-  velvet: ['petals']
+  velvet: ['petals'],
+  'white-world': [],
+  love: ['petals']
 };
 
-// Stessi 5 temi, stessa storageKey di assets/js/shared/theme.js — condivisa con tutte le
-// pagine vecchie e nuove finché la migrazione non è completa, per non perdere la scelta
-// dell'utente durante il passaggio.
+// Unico registro dei temi mostrati dal selettore; la storageKey resta invariata per non
+// perdere la scelta già salvata quando vengono aggiunti nuovi temi.
 const THEMES: ThemeDefinition[] = [
   {
     id: 'the-white-world',
@@ -67,6 +68,20 @@ const THEMES: ThemeDefinition[] = [
     icon: 'letter',
     iconText: 'R',
     description: 'Il mio verde, calmo e profondo.'
+  },
+  {
+    id: 'white-world',
+    label: 'White World',
+    swatch: '#eee9df',
+    icon: 'pearl',
+    description: 'Bianco perla, avorio e luce morbida.'
+  },
+  {
+    id: 'love',
+    label: 'Love',
+    swatch: '#dc8294',
+    icon: 'heart',
+    description: 'Fragola, panna e rosa delicato.'
   }
 ];
 
