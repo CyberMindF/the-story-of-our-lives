@@ -28,6 +28,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e6 - Test generalee fix finali mobile
 - #e7 - Animazione bolle di sapone, che vagano un po' per lo schermo e poi scoppiano
 - #e8 - Animazione cuori possono essere molto piccoli e molto grandi, vagano un po' per lo schermo in modo legiadro e poi fanno un piccolo fadeout leggero
+- #e9 - team white-world deve dare la sensazione di bianco "puro" come una comperta di raso, perla biaanca, colori bianchi di quel tipo deve essere un bel colore ovviamente, non troppo giallo, però un po' "avorio" credo che abbiamo capito
 ---
 
 ## Da non fare
@@ -986,6 +987,30 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Restano da fare**: Cruciverba (100 definizioni con coordinate, zero margine di errore) e
   Bacheca (la più complessa, due fonti JSON da unificare prima) sono le ultime due raccolte
   strutturate del piano.
+- [x] Fix: gap trovato rileggendo il piano — avevo eliminato `calendar.json`, `recipes.json`,
+  `stories.json`, `map.json` e `_data.js` senza mai creare l'"export di sicurezza" che il piano
+  richiede esplicitamente prima di rimuovere una vecchia fonte (criterio di completamento della
+  prima milestone, Fase 8). I dati restavano recuperabili dalla cronologia git, ma la procedura
+  del piano non era stata seguita. Aggiunto `GET /api/export` (`functions/api/export/`, dietro
+  `content.edit`): dump JSON di tutte le tabelle CMS (`content_entries`/`content_versions`,
+  `calendar_events`, `recipes`, `stories`, `cuffiette_songs`, `map_destinations`,
+  `together_activities` — quest'ultima **con** `private_text`, è un backup per l'autore, non un
+  endpoint pubblico, resta comunque dietro lo stesso permesso admin di ogni altra azione). Link
+  "⬇️ Esporta backup di sicurezza" in `/contenuti`. Prodotto un export reale per colmare
+  retroattivamente il gap (29 content_entries, 29 eventi calendario, 13 ricette, 4 storie, 9
+  canzoni, 7 destinazioni, 77 attività — tutti i conteggi coincidono con quanto migrato finora).
+  Il file resta fuori da git (`backups/` in `.gitignore`): contiene anche il testo NSFW privato
+  dell'Agenda, non ha senso concentrarlo in un unico file facilmente individuabile in un
+  repository, anche se lo stesso contenuto era già in chiaro nella cronologia di `_data.js`.
+- [x] Decisioni #2-#6 dell'inventario (`inventario contenuti CMS.md`) prese da Rory/Codex:
+  separare contenuto e navigazione nelle card del Mondo Bianco; Mappamondo modificabile con
+  editor strutturato; GDR ampliabile ma con editor dedicato futuro (non il semplice editor di
+  paragrafi), Messaggio Criptato invece concluso e permanentemente nel codice;
+  `bacheca-layout.json` confermato come sola fonte strutturale; supporto minimo a link interni
+  da aggiungere a `EditorialText` prima di migrare `songsIntroduction`. Sbloccano: Mappamondo
+  (introduzione + scene), card del Mondo Bianco (nome/descrizione), playlist/parole
+  rubate/`songsIntroduction` delle Cuffiette (dopo il supporto ai link), Bacheca. Restano fuori
+  scope: GDR e Linguaggio Segreto (nessun editor dedicato ancora costruito).
 
 ---
 
