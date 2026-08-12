@@ -6,12 +6,12 @@ compatibility_date = "2026-08-07"
 [[d1_databases]]
 database_id = "88ced79e-291f-42d0-a114-68473edbc5e7"
 binding = "DB"
-database_name = "DB"
+database_name = "the-white-world-db"
 
 [[env.production.d1_databases]]
 database_id = "88ced79e-291f-42d0-a114-68473edbc5e7"
 binding = "DB"
-database_name = "DB"
+database_name = "the-white-world-db"
 
 [[r2_buckets]]
 binding = "MEDIA"
