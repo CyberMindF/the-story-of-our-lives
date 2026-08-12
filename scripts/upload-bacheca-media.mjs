@@ -3,8 +3,8 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Carica i 130 media della Bacheca sul bucket R2 remoto reale, secondo il manifest
-// generato da build-bacheca-content.mjs. Idempotente: puoi rilanciarlo se si interrompe,
+// Utility legacy di recupero: carica sul bucket R2 i media elencati in uno dei manifest
+// storici già presenti. Non genera né modifica i contenuti della Bacheca. È idempotente:
 // wrangler sovrascrive semplicemente l'oggetto già caricato con lo stesso contenuto.
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");

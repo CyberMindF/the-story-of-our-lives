@@ -200,7 +200,7 @@ Non devono diventare record CMS:
    and drop: usare frecce su/giù per le correzioni vicine e un comando `Sposta…` per scegliere
    direttamente categoria e posizione (oppure l'elemento prima/dopo cui inserirlo), così anche
    uno spostamento dalla posizione 1 alla 70 richiede una sola operazione.
-5. **Deciso:** `bacheca-layout.json` è la sola fonte strutturale della pagina attiva;
-   `bacheca.json` serve soltanto a recuperare l'introduzione prima di diventare legacy.
+5. **Completato:** la Bacheca usa ora D1 come unica fonte strutturale; i due JSON precedenti
+   sono stati eliminati dopo la migrazione e non devono più essere rigenerati.
 6. **Deciso:** migrare `songsIntroduction` delle Cuffiette dopo aver aggiunto il supporto minimo
    e sicuro ai link interni nell'editor generico; niente editor rich-text completo per questo.

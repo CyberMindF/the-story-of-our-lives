@@ -84,11 +84,11 @@ npx wrangler r2 object put the-white-world-media/<percorso> --local --file <file
 
 ## La Bacheca dei Ricordi
 
-`web/public/content/bacheca.json` (periodi → giorni → foto/testo/link esterni, nell'ordine originale) è ricostruito da `scripts/build-bacheca-content.mjs`, che legge l'HTML congelato dell'export invece del testo semplificato: solo così si recupera l'abbinamento reale tra ogni foto e la sua didascalia (il `<figcaption>` di Notion quando esiste). Lo script assegna anche la chiave R2 definitiva a ogni foto e scrive un manifest locale non pubblicato (`sources/manifests/bacheca-media-manifest.json`) con la mappa file-sorgente → chiave.
-
-`scripts/upload-bacheca-media.mjs` carica gli originali secondo il manifest (`--local` per l'emulazione di sviluppo, `--remote` di default per il bucket vero). `scripts/build-bacheca-thumbnails.mjs` genera con `sharp` una miniatura da 480px per ogni foto e la carica sotto `.../thumb/`, aggiungendo `thumbKey` a ogni voce di `web/public/content/bacheca.json`. Entrambi sono idempotenti: si possono rilanciare in sicurezza.
-
-La pagina `bacheca/` raggruppa le foto consecutive in una griglia con lightbox accessibile (tastiera, swipe, `<dialog>` nativo); i link a video/immagini esterne su Drive restano collegamenti esterni, non embed.
+Periodi e giorni vivono in D1 (`bacheca_periods` e `bacheca_days`). Ogni giorno conserva il
+proprio layout validato come JSON, mentre l'interfaccia amministrativa espone soltanto un editor
+visuale per righe, colonne e blocchi. Foto, video e audio vengono caricati direttamente nel
+bucket R2 privato tramite uno stream autenticato; le miniature fotografiche sono generate nel
+browser. La pagina mantiene il lightbox accessibile con tastiera e swipe.
 
 ## Database
 
@@ -123,9 +123,9 @@ Il frontend usa `TelemetryService` in `web/src/app/core/telemetry.service.ts`:
 - Cuffiette: `song_played` al click che carica il player SoundCloud (è un iframe di terze parti, non possiamo leggere play/pausa/fine reali — il click è il segnale più vicino disponibile); la traccia bonus, essendo audio nativo, usa invece `play`/`ended` veri per `song_played`/`song_completed`; `playlist_link_clicked` sul link alla playlist esterna.
 - Lettere, GDR, Suggerimenti: `letter_sent`, `gdr_turn_submitted`, `gdr_character_saved`, `suggestion_sent` sono registrati lato server subito dopo il salvataggio riuscito, con metadata minimi (es. lunghezza del testo o nome dell'avventura) — mai il testo scritto. Gli appunti GDR restano esclusi apposta: si autosalvano a ogni pausa di scrittura, tracciarli sarebbe rumoroso quanto tracciare i tasti.
 
-I tentativi sono separati in `crossword_word_attempts`. Ogni parola usa come `word_id` il proprio numero progressivo nell'array di `data.json`, partendo da 1; non esiste un secondo ordinamento. Le celle interne ancora vuote sono rappresentate da `_`; le celle vuote finali vengono omesse. Il frontend evita richieste duplicate e il backend impedisce comunque inserimenti consecutivi identici per utente e parola.
+I tentativi sono separati in `crossword_word_attempts`. Ogni parola usa come `word_id` il proprio ID nella tabella `crossword_words`. Le celle interne ancora vuote sono rappresentate da `_`; le celle vuote finali vengono omesse. Il frontend evita richieste duplicate e il backend impedisce comunque inserimenti consecutivi identici per utente e parola.
 
-Il backend legge la soluzione direttamente da `data.json` e calcola accuratezza posizionale, similarità di modifica, completezza e compatibilità complessiva. Un prefisso corretto può quindi avere compatibilità 100% ma completezza inferiore: per esempio `AFFET` rispetto ad `AFFETTO` ha compatibilità 100% e completezza 71,43%.
+Il backend legge la soluzione da `crossword_words` e calcola accuratezza posizionale, similarità di modifica, completezza e compatibilità complessiva. Un prefisso corretto può quindi avere compatibilità 100% ma completezza inferiore: per esempio `AFFET` rispetto ad `AFFETTO` ha compatibilità 100% ma completezza 71,43%.
 
 La tabella `sessions` resta la fonte ufficiale per autenticazione, scadenza e logout. La cronologia permanente registra invece in `events` le azioni `register`, `login_success`, `world_unlocked` e `logout`; `session_id` viene conservato come riferimento storico senza vincolo esterno, quindi gli eventi sopravvivono anche a una futura rimozione delle sessioni. I metadata auth contengono IP, user agent e, quando applicabile, i 7 giorni di validità.
 
@@ -145,12 +145,12 @@ Il selettore tema (Night Sky/Ocean/Velvet/Red of You/Green of Me) vive in Impost
 
 ## Progresso persistente
 
-Ogni parola in `data.json` possiede un `id` stabile, indipendente dall'ordine dell'array. Il database conserva esclusivamente lo stato dell'utente nella tabella `crossword_answers`, senza duplicare soluzione, definizione o coordinate.
+Ogni parola vive in `crossword_words` con ID, soluzione, definizione, coordinate, direzione e posizione. Lo stato del singolo utente resta separato in `crossword_answers`.
 
 - `GET /api/crossword/answers`: recupera tutte le risposte dell'utente autenticato.
 - `PUT /api/crossword/answers/:wordId`: aggiorna una singola risposta tramite UPSERT.
 
-Il backend legge la soluzione da `data.json` e calcola autonomamente `is_completed` e `completed_at`. Il frontend sincronizza dopo un secondo di pausa, evita valori duplicati e mantiene `localStorage` come fallback. Se il database è ancora vuoto, il progresso locale esistente viene trasferito automaticamente al primo caricamento.
+Il backend legge la soluzione da `crossword_words` e calcola autonomamente `is_completed` e `completed_at`. Il frontend sincronizza dopo un secondo di pausa, evita valori duplicati e mantiene `localStorage` come fallback. Se il database è ancora vuoto, il progresso locale esistente viene trasferito automaticamente al primo caricamento.
 
 ## Proposte per Le Storie
 
@@ -212,7 +212,7 @@ I testi puliti delle pagine vengono salvati e versionati in `sources/notion-orig
 
 ## File principali
 
-- `web/public/data.json`: parole, definizioni, coordinate e ordine narrativo.
+- `functions/api/crossword-words/`: gestione amministrativa di parole, definizioni, coordinate e ordine del Cruciverba.
 - `web/src/app/portone/`: Portone e interfaccia di autenticazione.
 - `web/src/app/pages/`: pagine lazy del Mondo Bianco.
 - `web/src/styles/themes.css`: variabili e temi condivisi dalla piattaforma.
@@ -234,8 +234,7 @@ I testi puliti delle pagine vengono salvati e versionati in `sources/notion-orig
 - `functions/api/gdr/turns.js`: lettura/scrittura del thread di gioco condiviso (i turni del play-by-chat).
 - `web/src/app/pages/{gdr,il-prezzo-della-verita,avventura,la-tua-maga,i-tuoi-appunti}/`: hub e pagine dell'avventura.
 - `functions/api/media/[[path]].js`: accesso autenticato ai media privati conservati in R2.
-- `web/public/content/bacheca.json`: struttura della Bacheca dei Ricordi, con chiavi R2 di foto e miniature.
-- `scripts/build-bacheca-content.mjs`, `scripts/upload-bacheca-media.mjs`, `scripts/build-bacheca-thumbnails.mjs`: ricostruzione della struttura, import degli originali e generazione miniature per la Bacheca.
+- `functions/api/bacheca-periods/`, `functions/api/bacheca-days/`, `functions/api/bacheca-media/`: contenuti modificabili e upload R2 della Bacheca.
 - `scripts/optimize-world-images.mjs`: converte in WebP (qualità 82, tramite `sharp`) le immagini hero/decorative pubbliche (`web/public/assets/images/world/`, `web/public/assets/images/gdr/`), lasciando intatti gli originali PNG/JPG accanto al file ottimizzato. Idempotente: si può rilanciare in sicurezza dopo aver aggiunto nuove immagini in quelle cartelle.
 - `legacy-archive/`: frontend vanilla congelato e non pubblicato, mantenuto temporaneamente per confronti e rollback.
 - `web/public/_redirects`: alias verso le nuove route per i vecchi short link controllabili.

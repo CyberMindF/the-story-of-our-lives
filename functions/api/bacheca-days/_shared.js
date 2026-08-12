@@ -159,3 +159,14 @@ export async function periodExists(env, periodId) {
   const row = await env.DB.prepare("SELECT id FROM bacheca_periods WHERE id = ?").bind(periodId).first();
   return Boolean(row);
 }
+
+export async function daySlugExists(env, periodId, slug, excludedId = null) {
+  const query = excludedId === null
+    ? "SELECT id FROM bacheca_days WHERE period_id = ? AND slug = ? LIMIT 1"
+    : "SELECT id FROM bacheca_days WHERE period_id = ? AND slug = ? AND id != ? LIMIT 1";
+  const statement = env.DB.prepare(query);
+  const row = excludedId === null
+    ? await statement.bind(periodId, slug).first()
+    : await statement.bind(periodId, slug, excludedId).first();
+  return Boolean(row);
+}

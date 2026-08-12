@@ -262,21 +262,22 @@ export class BachecaDayEditor {
     this.uploading.set(true);
     this.uploadError.set('');
     try {
-      const form = new FormData();
-      form.append('type', mediaType);
-      form.append('file', file);
-      if (mediaType === 'photo') {
-        form.append('thumbnail', await createThumbnail(file));
-      }
-
-      const response = await fetch('/api/bacheca-media/upload', { method: 'POST', credentials: 'same-origin', body: form });
-      const result = (await response.json().catch(() => ({}))) as { key?: string; thumbKey?: string; error?: string };
-      if (!response.ok || !result.key) {
+      const result = await this.uploadBlob(file, mediaType);
+      if (!result.key) {
         this.uploadError.set(result.error || 'Upload non riuscito.');
         return;
       }
+      let thumbKey: string | undefined;
+      if (mediaType === 'photo') {
+        const thumbnailResult = await this.uploadBlob(await createThumbnail(file), 'thumbnail');
+        if (!thumbnailResult.key) {
+          this.uploadError.set(thumbnailResult.error || 'La foto è stata caricata, ma la miniatura no. Riprova selezionando di nuovo il file.');
+          return;
+        }
+        thumbKey = thumbnailResult.key;
+      }
 
-      this.updateBlockForm({ key: result.key, ...(result.thumbKey ? { thumbKey: result.thumbKey } : {}) });
+      this.updateBlockForm({ key: result.key, ...(thumbKey ? { thumbKey } : {}) });
     } catch (error) {
       console.error('Errore durante il caricamento:', error);
       this.uploadError.set('Upload non riuscito. Controlla la connessione e riprova.');
@@ -284,6 +285,18 @@ export class BachecaDayEditor {
       this.uploading.set(false);
       input.value = '';
     }
+  }
+
+  private async uploadBlob(blob: Blob, mediaType: 'photo' | 'video' | 'audio' | 'thumbnail'):
+    Promise<{ key?: string; error?: string }> {
+    const response = await fetch(`/api/bacheca-media/upload?type=${mediaType}`, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': blob.type },
+      body: blob
+    });
+    const result = (await response.json().catch(() => ({}))) as { key?: string; error?: string };
+    return response.ok ? result : { error: result.error || 'Upload non riuscito.' };
   }
 
   protected updateBlockForm(patch: Partial<BlockFormState>): void {

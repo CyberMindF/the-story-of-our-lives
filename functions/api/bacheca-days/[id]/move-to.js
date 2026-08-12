@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json, readJson } from "../../auth/_shared.js";
 import { hasPermission } from "../../_shared/permissions.js";
 import { recordEvent } from "../../_shared/events.js";
-import { periodExists } from "../_shared.js";
+import { daySlugExists, periodExists } from "../_shared.js";
 
 // Comando "Sposta…" (requisito esplicito di Rory per "Aggiungi giorno"/riordino grande):
 // sceglie periodo di destinazione ed elemento dopo cui inserire (o "in cima" se `afterId` è
@@ -23,9 +23,12 @@ export async function onRequestPost(context) {
       return json({ error: "Periodo di destinazione non valido." }, 400);
     }
 
-    const current = await env.DB.prepare("SELECT id, period_id, position FROM bacheca_days WHERE id = ?").bind(params.id).first();
+    const current = await env.DB.prepare("SELECT id, period_id, slug, position FROM bacheca_days WHERE id = ?").bind(params.id).first();
     if (!current) {
       return json({ error: "Giorno non trovato." }, 404);
+    }
+    if (current.period_id !== periodId && await daySlugExists(env, periodId, current.slug, current.id)) {
+      return json({ error: "Nel periodo di destinazione esiste già un giorno con questo slug." }, 409);
     }
 
     if (afterId !== null && afterId === String(current.id)) {

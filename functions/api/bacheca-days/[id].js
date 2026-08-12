@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
-import { normalizeSlug, normalizeTitle, validateContent } from "./_shared.js";
+import { daySlugExists, normalizeSlug, normalizeTitle, validateContent } from "./_shared.js";
 import { toDayView } from "./index.js";
 
 // Modifica slug/titolo/contenuto (periodo e posizione restano invariati: per spostarlo ci
@@ -15,7 +15,7 @@ export async function onRequestPut(context) {
       return json({ error: "Non autorizzato." }, 403);
     }
 
-    const existing = await env.DB.prepare("SELECT id FROM bacheca_days WHERE id = ?").bind(params.id).first();
+    const existing = await env.DB.prepare("SELECT id, period_id FROM bacheca_days WHERE id = ?").bind(params.id).first();
     if (!existing) {
       return json({ error: "Giorno non trovato." }, 404);
     }
@@ -26,6 +26,9 @@ export async function onRequestPut(context) {
     const content = validateContent(payload?.content);
 
     if (!slug) return json({ error: "Slug non valido." }, 400);
+    if (await daySlugExists(env, existing.period_id, slug, params.id)) {
+      return json({ error: "Esiste già un giorno con questo slug nel periodo." }, 409);
+    }
     if (title === undefined) return json({ error: "Titolo non valido." }, 400);
     if (!content) return json({ error: "Contenuto del giorno non valido." }, 400);
 

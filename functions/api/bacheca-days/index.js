@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
-import { normalizeSlug, normalizeTitle, periodExists, validateContent } from "./_shared.js";
+import { daySlugExists, normalizeSlug, normalizeTitle, periodExists, validateContent } from "./_shared.js";
 
 // Editor "ibrido" della Bacheca (opzione D concordata il 12/08/2026): un giorno = un record
 // con l'intero layout (righe/colonne/blocchi) come JSON validato rigorosamente, non 5 livelli
@@ -43,6 +43,9 @@ export async function onRequestPost(context) {
 
     if (!(await periodExists(env, periodId))) return json({ error: "Periodo non valido." }, 400);
     if (!slug) return json({ error: "Slug non valido." }, 400);
+    if (await daySlugExists(env, periodId, slug)) {
+      return json({ error: "Esiste già un giorno con questo slug nel periodo scelto." }, 409);
+    }
     if (title === undefined) return json({ error: "Titolo non valido." }, 400);
     if (!content) return json({ error: "Contenuto del giorno non valido." }, 400);
 
