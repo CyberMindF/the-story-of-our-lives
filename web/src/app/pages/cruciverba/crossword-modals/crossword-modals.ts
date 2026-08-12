@@ -7,6 +7,7 @@ import { CrosswordService } from '../crossword.service';
   standalone: true,
   imports: [ConfirmationDialog],
   host: { style: 'display: contents' },
+  styleUrls: ['../../../../styles/components/modal.css'],
   templateUrl: './crossword-modals.html'
 })
 export class CrosswordModals {

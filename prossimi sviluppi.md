@@ -840,6 +840,33 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Verificato che gli altri endpoint che restituiscono `user` (`register.js`, `login.js`,
   `_shared.js` della sessione) includessero già questi campi — solo `nickname.js` ne era privo.
   `tsc --noEmit` pulito.
+- [x] Prima verifica visiva reale del CMS in browser (Playwright, non solo `tsc`), e un terzo bug
+  trovato e sistemato di conseguenza. Il limite di Node segnalato per tutta la sessione era in
+  realtà superabile: la shell aveva `PATH`/`NVM_BIN` fissati su v24.14.1 fin dall'avvio (variabili
+  d'ambiente lette una sola volta, non per ogni comando), ma sulla macchina era già installata
+  v24.19.0 (compatibile, prelevata da `.nvmrc` presumibilmente da `scripts/dev.sh` in una sessione
+  precedente) — bastava `nvm use` esplicito. `ng build`/`ng serve --port 4202` e
+  `wrangler pages dev --port 8788` (porte separate da quelle del terminale dell'utente, come da
+  README) hanno funzionato subito. Login bypassato via Playwright con cookie `noi_session` +
+  `sessionStorage` (metodo già in memoria di progetto), account di test promosso admin solo in
+  locale e ripulito a fine verifica (utente, sessioni, eventi). Screenshot reali hanno confermato:
+  testo migrato visibile su `/mondo-bianco`, toggle Modalità admin funzionante con comparsa dei
+  link "Indice dei contenuti"/"Log degli eventi", editor di `EditorialText` che si apre con
+  anteprima e i pulsanti corretti, `/log` e `/contenuti` popolati con dati reali, CRUD completo
+  del Calendario testato via click reali (aggiungi → modifica → elimina, tornato a 29/29).
+  **Bug reale trovato**: su `/calendario` la finestra di conferma eliminazione
+  (`ConfirmationDialog`, riusata per la prima volta fuori dal Cruciverba) restava visibile anche
+  con `[open]="false"` — le regole `.modal`/`.modal.hidden`/`.modal-card`/`.modal-actions`
+  vivevano solo in `styles/pages/crossword.css`, caricato sulla pagina Cruciverba, che sul suo
+  bundle/chunk lazy le rendeva disponibili anche al componente condiviso ma non su un chunk
+  diverso come quello del Calendario. Spostate in `styles/components/modal.css` e referenziate
+  via `styleUrls` sia su `ConfirmationDialog` sia su `CrosswordModals` (per l'hint-modal, markup
+  grezzo non passa dal componente condiviso); rimossa la copia da `crossword.css`. Verificato con
+  Playwright che il modale sia `visible=false` con `.hidden` sia su Calendario sia su Cruciverba.
+  Trovata e corretta anche una falsa partenza mia in questa stessa verifica: `git add -A`
+  marcava per la cancellazione 10 file mp3 sotto `Nuovi media/` (aggiunta di recente al
+  `.gitignore` da Rory, restavano nell'indice) — annullato lo staging prima di committare,
+  poi rimossi dal tracking con `git rm --cached` una volta chiarita l'intenzione.
 
 ---
 
