@@ -893,6 +893,24 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `authGuard` la sincronizzasse correttamente alla navigazione successiva, cosa che ha
   funzionato. **Account di test lasciato attivo** (non richiesto ripulirlo: sono dati locali che
   non arrivano mai in produzione, restano utili per le prossime verifiche).
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — terzo editor dedicato: le Storie): su
+  `feature/content-editor`. Tabella `stories` (migrazione 0044) con `position` esplicito come nel
+  Ricettario. Media (`audio_key`, `image`, ecc.) restano campi di testo che puntano a una risorsa
+  già esistente (R2 o assets statici): niente upload in questo giro, editor "semplice" coerente
+  col resto della Fase 7. 4 storie importate (migrazione 0045) e `storie.introduzione` migrata
+  insieme come `content_entries` `history` (migrazione 0046) — era rimasta apposta fuori dai lotti
+  precedenti perché viveva nello stesso JSON della raccolta: migrarla da sola avrebbe richiesto
+  toccare `stories.json` due volte, contro la regola di zero duplicazione. API in
+  `functions/api/stories/` (accanto alla già esistente `suggestions.js`, nessuna collisione:
+  path diversi), stesso pattern CRUD + `move.js` del Ricettario. Rimossa anche qui la validazione
+  "esattamente 4 storie" (stesso bug già corretto nel Calendario, presente per lo stesso motivo:
+  pensata per uno snapshot statico). `stories.json` rimosso dopo la verifica dell'importazione.
+  Verificato in browser: introduzione e pulsante "Modifica" di `EditorialText` visibili, elenco
+  numerato corretto, creazione ed eliminazione confermate (quest'ultima via chiamata diretta
+  all'API dopo che lo script di Playwright è incappato in un problema di `<details>` che si
+  richiude a ogni ricaricamento dati — bug dello script, non dell'app, ma non ho perso altro
+  tempo a inseguirlo avendo già la conferma dal livello API).
+  **Restano da fare**: Cuffiette e Mappa (prossime, piccole), poi il resto della Fase 7.
 
 ---
 

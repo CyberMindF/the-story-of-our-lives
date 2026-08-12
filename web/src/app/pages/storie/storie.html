@@ -5,14 +5,70 @@
     </figure>
     <div class="stories-title-block">
       <h1 id="stories-title"><span aria-hidden="true">📖</span> Le Storie</h1>
-      <p class="stories-introduction">{{ introduction() }}</p>
+      <div class="stories-introduction"><app-editorial-text contentKey="storie.introduzione" /></div>
     </div>
   </section>
 
   <section class="stories-collection" aria-label="Raccolta delle storie">
     <p class="stories-eyebrow stories-collection-label">La raccolta</p>
+
+    @if (canEdit() && editingId() === null) {
+      <button type="button" class="btn" (click)="startCreate()">➕ Aggiungi storia</button>
+    }
+
+    @if (editingId() !== null) {
+      <form class="story-form card" (ngSubmit)="submitEdit()">
+        <h2>{{ editingId() === '__new__' ? 'Nuova storia' : 'Modifica storia' }}</h2>
+
+        @if (editingId() === '__new__') {
+          <label class="form-field">
+            <span>ID (slug)</span>
+            <input type="text" required [ngModel]="draft().id" (ngModelChange)="updateDraft({ id: $event })" name="id" />
+          </label>
+        }
+        <label class="form-field">
+          <span>Titolo</span>
+          <input type="text" required [ngModel]="draft().title" (ngModelChange)="updateDraft({ title: $event })" name="title" />
+        </label>
+        <label class="form-field">
+          <span>Data</span>
+          <input type="date" required [ngModel]="draft().date" (ngModelChange)="updateDraft({ date: $event })" name="date" />
+        </label>
+        <label class="form-field">
+          <span>Testo</span>
+          <textarea rows="8" [ngModel]="draft().body" (ngModelChange)="updateDraft({ body: $event })" name="body"></textarea>
+        </label>
+        <label class="form-field">
+          <span>Chiave media audio <small>facoltativa, es. storie/id/audio/file.mp3</small></span>
+          <input type="text" [ngModel]="draft().audioKey" (ngModelChange)="updateDraft({ audioKey: $event })" name="audioKey" />
+        </label>
+        <label class="form-field">
+          <span>Etichetta audio <small>facoltativa</small></span>
+          <input type="text" [ngModel]="draft().audioLabel" (ngModelChange)="updateDraft({ audioLabel: $event })" name="audioLabel" />
+        </label>
+        <label class="form-field">
+          <span>URL video <small>facoltativo, alternativo all'audio</small></span>
+          <input type="text" [ngModel]="draft().videoUrl" (ngModelChange)="updateDraft({ videoUrl: $event })" name="videoUrl" />
+        </label>
+        <label class="form-field">
+          <span>Immagine <small>facoltativa, percorso o URL</small></span>
+          <input type="text" [ngModel]="draft().image" (ngModelChange)="updateDraft({ image: $event })" name="image" />
+        </label>
+        <label class="form-field">
+          <span>Testo alternativo immagine <small>facoltativo</small></span>
+          <input type="text" [ngModel]="draft().imageAlt" (ngModelChange)="updateDraft({ imageAlt: $event })" name="imageAlt" />
+        </label>
+
+        <p class="story-form-error">{{ formError() }}</p>
+        <div class="story-form-actions">
+          <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
+          <button type="submit" class="btn btn-submit">Salva</button>
+        </div>
+      </form>
+    }
+
     <div class="stories-list" aria-live="polite">
-      @for (view of stories(); track view.story.id) {
+      @for (view of storyViews(); track view.story.id) {
         <details [id]="'story-' + view.story.id" class="story-entry">
           <summary>
             <span class="story-number">{{ (view.position + 1).toString().padStart(2, '0') }}</span>
@@ -44,6 +100,14 @@
               <figure>
                 <img [src]="view.story.image" [alt]="view.story.imageAlt" loading="lazy" />
               </figure>
+            }
+            @if (canEdit()) {
+              <div class="story-admin-actions">
+                <button type="button" class="btn" (click)="move(view.story.id, 'up')">⬆️</button>
+                <button type="button" class="btn" (click)="move(view.story.id, 'down')">⬇️</button>
+                <button type="button" class="btn" (click)="startEdit(view.story)">✏️ Modifica</button>
+                <button type="button" class="btn" (click)="requestDelete(view.story.id)">🗑️ Elimina</button>
+              </div>
             }
           </div>
         </details>
@@ -94,4 +158,14 @@
     </div>
   </details>
 
+  <app-confirmation-dialog
+    dialogId="delete-story"
+    title="Eliminare questa storia?"
+    description="La storia verrà rimossa definitivamente dalla raccolta."
+    confirmLabel="Elimina"
+    cancelLabel="Annulla"
+    [open]="deleteTargetId() !== null"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
 </app-shell>
