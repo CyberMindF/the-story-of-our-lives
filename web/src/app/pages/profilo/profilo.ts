@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService } from '../../core/auth.service';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { SubmissionStatus } from '../../shared/form-submission/form-submission';
 import { PasswordField } from '../../shared/password-field/password-field';
@@ -13,7 +14,7 @@ import { PasswordField } from '../../shared/password-field/password-field';
 @Component({
   selector: 'app-profilo',
   standalone: true,
-  imports: [AppShell, FormsModule, FormStatus, PasswordField, RouterLink],
+  imports: [AppShell, FormsModule, FormStatus, PasswordField, RouterLink, EditorialText],
   styleUrls: ['../../../styles/pages/profilo.css'],
   templateUrl: './profilo.html'
 })

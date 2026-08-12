@@ -28,8 +28,43 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e6 - Test generalee fix finali mobile
 - #e7 - Animazione bolle di sapone, che vagano un po' per lo schermo e poi scoppiano
 - #e8 - Animazione cuori possono essere molto piccoli e molto grandi, vagano un po' per lo schermo in modo legiadro e poi fanno un piccolo fadeout leggero
-- #e9 - team white-world deve dare la sensazione di bianco "puro" come una comperta di raso, perla biaanca, colori bianchi di quel tipo deve essere un bel colore ovviamente, non troppo giallo, però un po' "avorio" credo che abbiamo capito
+- #e9 - tema white-world deve dare la sensazione di bianco "puro" come una comperta di raso, perla biaanca, colori bianchi di quel tipo deve essere un bel colore ovviamente, non troppo giallo, però un po' "avorio" credo che abbiamo capito
 - #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
+- #e11 - Trasformare il finale del Mappamondo in un vero atlante per orientarsi nel sito,
+  senza sostituire né interrompere la storia esistente. Dopo l'ultima scena aggiungere la
+  sezione **“Ora, dove vuoi andare?”**, che includa ogni pagina raggiungibile e non soltanto i
+  luoghi principali già presenti nella home. Ogni destinazione deve avere nome, icona, link e
+  una spiegazione molto breve in forma “se cerchi questo, lo trovi qui”; non deve duplicare
+  l'introduzione completa della pagina. Per i contenuti non ancora disponibili mostrare
+  soltanto “Arriverà presto”. Direzione visiva consigliata: un piccolo atlante illustrato del
+  Mondo Bianco, con il mondo al centro e luoghi/oggetti raggruppati e collegati, invece di una
+  cartina geografica arbitraria o di una semplice griglia identica alla home. Le destinazioni
+  devono provenire da un unico registro condiviso/estensibile, così aggiungere una pagina in
+  futuro aggiorna automaticamente anche l'atlante; route e disponibilità restano dati
+  funzionali, mentre le brevi descrizioni possono essere contenuti editoriali modificabili.
+- #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”,
+  “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire
+  piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che
+  amo di lei o messaggi “da aprire quando…”. Evitare una normale lista o un feed: mostrare un
+  barattolo/insieme di bigliettini e un gesto semplice di pesca, seguito da una breve animazione
+  di apertura del foglietto. La scelta può essere casuale, eventualmente preceduta da una
+  categoria o da “Come ti senti?” (`A caso`, `Mi manchi`, `Giornata difficile`, `Hai bisogno di
+  sorridere`, `Un nostro ricordo`); non mostrare anteprime che rovinino la sorpresa. Tenere per
+  per ciascun utente una coda mobile delle ultime 10 estrazioni: quei biglietti sono esclusi
+  temporaneamente, e all'undicesima pesca il primo estratto rientra in circolo, poi il secondo
+  alla dodicesima e così via. Tra i biglietti disponibili usare una casualità pesata che dia
+  una probabilità leggermente maggiore a quelli usciti meno volte, senza rendere mai la scelta
+  deterministica e senza mostrare quali sono già usciti. Se una categoria contiene meno di 11
+  biglietti, ridurre automaticamente la coda quanto basta per lasciare sempre almeno un
+  candidato disponibile. Dopo l'apertura permettere soltanto `Rimetti nel barattolo` e `Pesca ancora`:
+  niente preferiti, archivio personale o lista dei biglietti letti, perché renderebbero la
+  raccolta prevedibile e toglierebbero valore alla sorpresa. Nessun limite giornaliero
+  artificiale. I biglietti devono vivere nel DB ed essere amministrabili con un editor a lista
+  semplice (testo, categoria/stato d'animo, eventuale titolo “Apri quando…”, attivo/non attivo,
+  posizione), senza drag and drop: frecce e comando `Sposta…`. Lei può proporre un nuovo
+  biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi
+  del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il
+  testo del messaggio.
 ---
 
 ## Da non fare
@@ -45,6 +80,183 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ### Extra (fuori scaletta, chiesti il 12/08/2026)
 
+- [x] CMS Fase 7 — editor della Bacheca dei Ricordi, ultima e più grande collezione del piano
+  (302 blocchi su 142 righe, 19 giorni, 5 periodi — un ordine di grandezza sopra tutto il
+  resto fatto in questa sessione). Rory ha chiesto esplicitamente un'opzione ibrida ("opzione
+  D") invece del CRUD granulare a 5 livelli usato per le altre collezioni: un giorno è un solo
+  record con l'intero layout (righe→colonne→blocchi) come JSON, ma l'admin non vede mai quel
+  JSON — solo un editor visuale con controlli semplici sui blocchi reali. Fatta in 5 fasi
+  come richiesto:
+  1. **Migrazione struttura**: `bacheca_periods` (lista piatta) + `bacheca_days` (annidati per
+     periodo, `content` come blob JSON), migrazioni 0067/0068, dati importati da
+     `bacheca-layout.json` con `external`→`link` rinominato e `devId` tolto (serviva solo per
+     il vecchio riferimento incrociato nel JSON grezzo, superato ora che si modifica in loco).
+     Verificato byte-per-byte: zero differenze su tutti i 302 blocchi.
+  2. **Editor visuale** (`BachecaDayEditor`, componente dedicato): righe con 5 preset
+     (larghezza intera / due colonne / tre colonne / foto+testo / testo+foto — gli ultimi due
+     strutturalmente uguali a "due colonne", esistono solo per farli riconoscere subito nel
+     picker), blocchi tipizzati (testo/foto/video/audio/link) con un vero modulo per tipo, non
+     JSON. Riordino senza drag&drop come richiesto: frecce su/giù per le righe e i blocchi
+     nella stessa colonna, comando "Sposta…" con destinazione "dopo la riga #" per i salti
+     lunghi. Tutta la modifica avviene su una copia in memoria; "Salva" invia l'intero
+     `content` del giorno in un colpo solo.
+  3. **Pannello admin periodi/giorni** integrato direttamente nella pagina reale (non un
+     pannello separato sotto): CRUD+riordino per i periodi, CRUD+riordino+comando "Sposta…"
+     (periodo di destinazione + "dopo quale giorno") per i giorni — "Aggiungi giorno" crea un
+     giorno vuoto con un blocco di testo segnaposto e mostra subito "Aggiungi blocco".
+  4. **Upload media verso R2** (`/api/bacheca-media/upload`): l'admin non scrive mai una
+     chiave a mano, viene generata dal server; per le foto la miniatura è generata **nel
+     browser** (Canvas, ridimensionata a 480px) prima dell'upload — Cloudflare Workers non può
+     eseguire una libreria di resize nativa come `sharp` (usata invece dallo script Node
+     esistente per le foto già migrate), quindi il ridimensionamento lato server non era
+     un'opzione. Validazione rigorosa di formato/dimensione per tipo (foto ≤15MB
+     jpeg/png/webp, video ≤200MB mp4/webm/mov, audio ≤50MB). Il file originale non viene mai
+     eliminato automaticamente alla rimozione di un blocco (solo il riferimento sparisce dal
+     layout), come richiesto esplicitamente per non rischiare perdite.
+  5. **Verifica finale e pulizia**: `bacheca-layout.json`, `bacheca.json` e la vecchia
+     implementazione `pages/bacheca/bacheca.*` (mai instradata, tenuta in vita solo perché
+     `BachecaPreview` ne ereditava lightbox/utility media) eliminati — la logica del lightbox
+     è stata prima portata direttamente in `BachecaPreview`, così l'eredità da un componente
+     morto non bloccasse la rimozione del JSON da cui quel componente dipendeva.
+
+  **Bug trovato e corretto durante la verifica**: il validatore backend del contenuto di un
+  giorno limitava le didascalie a 300 caratteri, ma nella Bacheca reale sono spesso paragrafi
+  narrativi (la più lunga esistente è 736 caratteri) — il primo tentativo di salvare un giorno
+  reale falliva sempre con 400, scoperto testando in browser (non dal solo build), isolato con
+  un confronto diretto tra un payload rifiutato e il validatore eseguito fuori dal Worker.
+  Portato il limite a 4000 caratteri. Rifatta la verifica byte-per-byte dopo il fix: tutti i
+  19 giorni ora superano la validazione.
+
+  Testato con Playwright end-to-end su un account admin di prova (poi ripulito dal DB, incluso
+  il file di test caricato su R2): resa pubblica identica all'originale (237 foto, 25 video, 2
+  audio, 38 testi), editor con creazione/modifica/eliminazione/spostamento di righe e blocchi,
+  creazione/eliminazione di un periodo di prova, upload reale di una foto con generazione
+  della miniatura (verificato che entrambi i file esistano davvero su R2 scaricandoli),
+  lightbox (apertura/navigazione/chiusura) ancora funzionante dopo la rimozione del componente
+  legacy da cui dipendeva. Verifica byte-per-byte finale ripetuta a fine sessione: zero
+  differenze.
+
+- [x] CMS Fase 7 — editor del GDR "Il Prezzo della Verità" (punto 6 dell'ordine di
+  migrazione consigliato, il più corposo rimasto): il testo narrativo di `avventura.html`
+  (41 blocchi: titoli, paragrafi, callout, immagini, la griglia dei 4 NPC) e le sezioni
+  editoriali di `la-tua-maga.html` (Abilità speciali, tabella Effetti Selvaggi, Incantesimi —
+  4 blocchi; la scheda utente Aspetto/Statistiche/Inventario resta dati dinamici come deciso
+  nell'inventario) sono migrati in un'unica tabella D1 `gdr_blocks`
+  (`document_key` + `position` scoped al documento, migrazioni 0065/0066). Estratti in modo
+  programmatico con un parser HTML (BeautifulSoup) dal markup esistente, non ritrascritti a
+  mano, per la stessa fedeltà byte-per-byte delle altre migrazioni di questa sessione — poi
+  verificato con un confronto automatico che conferma zero differenze sui 45 blocchi totali.
+  Un blocco è `{ type, data }` con 7 tipi possibili (`heading`, `paragraph`, `callout`,
+  `image`, `npc_grid`, `list`, `table`): editor "senza fronzoli" con selettore del tipo e un
+  campo JSON grezzo per `data` (stesso principio già usato per le immagini di Mappa), non un
+  builder visuale per 7 forme di dati diverse. Endpoint `/api/gdr-blocks` con CRUD + `move.js`
+  (su/giù dentro lo stesso documento); nessun comando "Sposta…" qui, a differenza del
+  Linguaggio Segreto — i blocchi non si spostano tra Avventura e La Tua Maga, sono due pagine
+  diverse. Costruiti due componenti condivisi riusati identici dalle due pagine (zero
+  duplicazione): `GdrBlocks` (rendering pubblico, un `@switch` sui 7 tipi) e
+  `GdrDocumentEditor` (pannello admin, parametrizzato solo da `documentKey`). Estratta anche
+  la funzione di rendering dei link interni `[etichetta](/rotta)` da `EditorialText` in
+  un'utility condivisa (`shared/inline-text.ts`), riusata ora anche dai paragrafi del GDR
+  invece di duplicare la stessa regex. Le regole CSS specifiche (sezioni, figure, griglia NPC,
+  callout, liste, tabella) spostate da `tavolo.css` (page-scoped, non avrebbe raggiunto un
+  componente figlio per via dell'incapsulamento di Angular) al CSS proprio di `GdrBlocks`.
+  Verificato con Playwright su un account admin di prova (poi ripulito dal DB): conteggi
+  titoli/paragrafi/figure/NPC/callout corretti su Avventura, link interno verso "La Tua Maga"
+  funzionante, tabella Effetti Selvaggi e liste Abilità/Incantesimi corrette su La Tua Maga,
+  editor admin con creazione/spostamento/eliminazione di un blocco di prova verificati
+  end-to-end. Trovato e corretto un piccolo problema di stile in corsa (le voci delle liste
+  Abilità/Incantesimi apparivano senza il riquadro previsto in un primo screenshot — risolto,
+  verificato di nuovo che il riquadro (bordo + sfondo) sia presente).
+
+- [x] CMS — `cruciverba.titolo`/`cruciverba.sottotitolo` migrati a `content_entries`
+  (migrazione 0064): erano rimasti come costanti nel codice quando `data.json` è stato
+  eliminato. Ora `<h1 id="title">`/`<p id="subtitle">` in `cruciverba.html` usano
+  `<app-editorial-text>` come ogni altro testo editoriale, con pulsante "Modifica" per
+  l'admin. Rimossi di conseguenza i signal `title`/`subtitle` e le costanti hardcoded da
+  `crossword.service.ts` (non più letti da nessuno). Verificato con Playwright: testo
+  corretto, modifica e ripristino funzionanti. **Deciso anche** (chiarito da Rory):
+  `portone.*` e `not-found.messaggio` restano nel codice — non sono testi personali ma testi
+  del software (istruzioni di accesso), quindi non richiedono un percorso di lettura pubblico
+  su `/api/content` né alcuna migrazione futura.
+
+- [x] CMS Fase 7 — editor del Linguaggio Segreto (punto 6 dell'ordine di migrazione
+  consigliato in `inventario contenuti CMS.md`): le 6 categorie, i 25 simboli annidati e i 12
+  esempi sono migrati da `linguaggio-segreto.ts` (array TypeScript inline) a tre tabelle D1
+  dedicate — `linguaggio_segreto_categories`, `linguaggio_segreto_symbols` (con `category_id`,
+  annidati sotto una categoria) e `linguaggio_segreto_examples` (lista piatta indipendente),
+  migrazioni 0062/0063. Tre collezioni di endpoint CRUD+move
+  (`/api/linguaggio-segreto-categories`, `-symbols`, `-examples`), stesso schema di
+  Mappa/Cruciverba. Per i simboli, oltre al su/giù tra vicini nella stessa categoria
+  (`move.js`), aggiunto anche il comando "Sposta…" richiesto esplicitamente
+  dall'inventario (decisione #4): sceglie categoria di destinazione ed elemento dopo cui
+  inserire (o "in cima" alla categoria) in una sola operazione, senza dover premere giù N
+  volte per spostamenti lontani — mai esistito prima nel codebase, progettato da zero
+  (`move-to.js`, ricalcola le posizioni chiudendo il vuoto nella categoria di origine e
+  aprendone uno in quella di destinazione). Verificato byte-per-byte con un confronto
+  automatico contro l'array TypeScript originale (categorie, icone, note, ogni simbolo con
+  significato/spiegazione, ogni esempio): nessuna differenza. Testato con Playwright su un
+  account admin di prova (poi ripulito dal DB): le 6 schede pubbliche mostrano i conteggi
+  corretti (9+2+4+4+4+2 simboli, 12 esempi), creazione/spostamento cross-categoria/
+  eliminazione di un simbolo di prova verificati end-to-end (Urgenza 2→3→2, Soggetti 2→3→2,
+  ordine di inserimento rispettato), screenshot dell'editor admin confrontato con lo stile del
+  resto del sito. Notato e lasciato invariato (coerente con tutte le altre collezioni
+  esistenti): un `DELETE` non rinumera le posizioni rimaste, lascia un "buco" nella sequenza —
+  l'ordinamento resta comunque corretto perché si legge sempre `ORDER BY position`, solo i
+  valori non restano contigui.
+
+- [x] CMS — chiusura dei testi semplici rimasti "Da migrare" (punto 1 dell'ordine di
+  migrazione consigliato in `inventario contenuti CMS.md`, mai completato del tutto).
+  Scoperto per prima cosa che l'inventario era rimasto fermo al 09/08: quasi tutti i content
+  key elencati come "Da migrare" erano in realtà già migrati nelle sessioni precedenti
+  (migrazioni 0038/0039/0046) senza che il documento venisse aggiornato — verificato ogni riga
+  sul codice reale invece di fidarsi del documento, e corretto lo stato di tutte. I pochi
+  davvero ancora da fare: `mondo-bianco.canzone.citazione`, `storie.suggerimento.eyebrow`,
+  `storie.suggerimento.titolo`, `bacheca.introduzione`, `linguaggio-segreto.messaggio-codice`,
+  `profilo.introduzione` (migrazione 0061). Tre restano volutamente **bloccati**: `portone.*`
+  e `not-found.messaggio` perché sono pagine raggiungibili prima del login e `/api/content`
+  richiede sempre una sessione autenticata (servirebbe un percorso di lettura pubblico, una
+  decisione non presa qui); `messaggio-criptato.istruzioni` perché il testo contiene un link a
+  un sito esterno e la sintassi link di `EditorialText` supporta solo rotte interne — coerente
+  con la decisione già presa che il Messaggio Criptato non ha un editor CMS dedicato.
+  `ponti.solo.introduzione` non era applicabile: la card non ha oggi un corpo separato.
+  Aggiunto anche un supporto minimo mai esistito prima in `EditorialText`: gli a-capo singoli
+  dentro un paragrafo diventano `<br>` (necessario per i 4 versi della canzone, che devono
+  restare un unico blocco compatto e non diventare paragrafi separati con la spaziatura
+  normale). Durante la migrazione di Storie trovato un bug non ovvio: i contenitori grid/flex
+  non "collassano" il margine di default dei `<p>` dei loro figli come farebbe il normale
+  flusso a blocchi, quindi il riquadro del suggerimento cresceva ben oltre l'altezza prevista
+  (112px attesi, 211px ottenuti) — risolto alla radice nel componente condiviso
+  (`:host p { margin: 0 } :host p + p { margin-top: 1em }`), non con un CSS specifico per quella
+  sola pagina, così qualunque altro contesto grid/flex futuro non ripete lo stesso bug.
+  Verificato con Playwright su un account di prova (poi ripulito dal DB) ogni pagina toccata:
+  testo letterale e HTML renderizzato confrontati con l'originale, dimensioni del riquadro di
+  Storie prima/dopo il fix, screenshot di Mondo Bianco/Storie/Linguaggio Segreto/Profilo/Bacheca.
+
+- [x] CMS Fase 7 — editor del Cruciverba: le 100 definizioni (soluzione, definizione,
+  coordinate riga/colonna, direzione) sono migrate da `data.json` alla tabella dedicata
+  `crossword_words` (migrazioni 0059/0060), stesso pattern posizione esplicita + riordino
+  su/giù di Mappa/Storie/Ricettario/Cuffiette (`/api/crossword-words`, CRUD + `move.js`).
+  L'id resta un intero progressivo (non uno slug testuale come le altre collezioni): non è
+  mai stato un identificativo leggibile, solo il numero mostrato in griglia. Verificato
+  byte-per-byte che le 100 righe importate corrispondano esattamente all'originale (id,
+  soluzione, definizione, riga, colonna, direzione, posizione). Aggiunto un editor
+  amministrativo dedicato nella pagina del gioco stesso (pannello richiudibile "Modifica
+  definizioni", sotto la griglia, non mescolato al gioco) con lo stesso schema
+  aggiungi/modifica/elimina/sposta delle altre collezioni. Aggiornati anche i due punti del
+  backend che leggevano `data.json` server-side per validare le risposte
+  (`functions/api/crossword/_shared.js`, `functions/api/telemetry/word-attempts.js`): ora
+  interrogano `crossword_words` ordinata per `position`, mantenendo lo stesso indice 1-based
+  che il client assegna per ordine (non l'id stabile della riga), coerente con come
+  `data.json` era sempre stato un array ordinato a mano. Titolo e sottotitolo del gioco
+  (`cruciverba.titolo`/`cruciverba.sottotitolo`, content key distinti non ancora migrati)
+  spostati come costanti in `crossword.service.ts`, non più letti da `data.json`. Testato con
+  Playwright end-to-end su un account admin di prova (poi ripulito dal DB): caricamento della
+  griglia da 100 parole, inserimento di una risposta corretta con "Controlla" (completamento
+  registrato), editor admin con creazione/modifica/eliminazione/riordino di una definizione di
+  prova, e le due chiamate server-side (`PUT /api/crossword/answers/:wordId`,
+  `POST /api/telemetry/word-attempts`) verificate via curl dopo la rimozione di `data.json`
+  dal disco. `web/public/data.json` eliminato: non c'è più nessun consumatore, né client né
+  server.
 - [x] #c1 — verifica generale della telemetria completata. Le aperture di tutte le pagine e
   le principali scritture erano già registrate; aggiunti gli eventi mancanti per cambio di
   tema/impostazioni del mondo, cambio nickname, lettura di una nuova lettera, proposta di una

@@ -1,6 +1,20 @@
 /* Componente condiviso EditorialText (planning editor contenuti.md, Fase 5): selettore
    versioni, pulsante "Modifica" e editor inline, usati identici su tutte le pagine che
    mostrano un content_entries — vedi CLAUDE.md, zero duplicazione. */
+
+/* Margine esplicito invece di affidarsi a quello di default del browser sui <p>: in un
+   contenitore che è un grid/flex item (es. l'eyebrow dei suggerimenti in Storie) il margine
+   di default non si "collassa" come nel normale flusso a blocchi e gonfia il contenitore
+   ospite in modo silenzioso. Lo spazio tra paragrafi consecutivi resta identico a prima
+   (il valore di default del browser per <p>), solo esplicito invece che implicito. */
+:host p {
+  margin: 0;
+}
+
+:host p + p {
+  margin-top: 1em;
+}
+
 .editorial-versions {
   display: flex;
   flex-wrap: wrap;

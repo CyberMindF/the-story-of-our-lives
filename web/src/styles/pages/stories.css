@@ -229,12 +229,13 @@
   margin: 0;
 }
 
-.suggestion-trigger strong {
+.suggestion-trigger .suggestion-title {
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.7rem, 3.5vw, 2.6rem);
   font-weight: 400;
   line-height: 1.1;
 }
+
 
 .suggestion-toggle {
   color: var(--muted-color);
