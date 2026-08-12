@@ -3,7 +3,7 @@ import { recordEvent } from "./_shared/events.js";
 
 // Chiavi note: allowlist esplicita invece di accettare qualunque stringa dal client, per non
 // lasciare che "world_settings" accumuli righe arbitrarie mai lette da nessuna UI.
-const KNOWN_KEYS = new Set(["lanterns", "stars", "moon", "theme", "sparkles", "leaves", "waves", "petals", "fish", "bubbles", "hearts", "pearlShimmers", "silk"]);
+const KNOWN_KEYS = new Set(["lanterns", "stars", "shootingStars", "moon", "theme", "sparkles", "leaves", "waves", "petals", "fish", "bubbles", "hearts", "pearlShimmers", "silk"]);
 
 // Solo alcune chiavi accettano anche un "value" oltre a enabled (es. la luna: la fase scelta,
 // "auto" o un indice 0-7; il tema: quale dei 5; i fiori: quale forma o "mix") — allowlist dei

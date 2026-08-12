@@ -34,10 +34,12 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   ricordano il raso senza usare texture decorative. Pannelli bianchi leggibili, ombre calde
   leggere, testo antracite e icona a perla. È distinto dall'id storico `the-white-world`, che
   continua a rappresentare Night Sky per compatibilità.
-  L'effetto bianco è stato separato come **Seta**, indipendente e senza varianti; la resa
-  definitiva della seta resta da rifinire. L'**Aurora** è ora un effetto distinto, senza
-  bianco, con colori verde/azzurro/magenta/misti e due stili confrontabili: veli morbidi e
-  raggi nordici.
+  L'effetto **Seta** è indipendente, trasparente e senza varianti: modifica soltanto luci e
+  ombre, conservando la palette del tema. L'**Aurora** è un effetto distinto, con raggi
+  nordici nei colori verde/azzurro/magenta/misti ed è consigliata per Night Sky.
+- [x] #e13 - Animazione **Stelle cadenti** per Night Sky: scie rare con posizione, lunghezza,
+  luminosità e tempi differenti. Effetto indipendente e disattivabile dalla Stanza dei
+  bottoni; fa parte del preset Night Sky e rispetta `prefers-reduced-motion`.
 - #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
 - #e11 - Trasformare il finale del Mappamondo in un vero atlante per orientarsi nel sito,
   senza sostituire né interrompere la storia esistente. Dopo l'ultima scena aggiungere la

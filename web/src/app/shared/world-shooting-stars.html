@@ -1,0 +1,15 @@
+@if (worldSettingsService.settings().shootingStars) {
+  <div class="world-shooting-stars" aria-hidden="true">
+    @for (star of shootingStars; track $index) {
+      <span
+        class="world-shooting-star"
+        [style.--shooting-x]="star.x + 'vw'"
+        [style.--shooting-y]="star.y + 'vh'"
+        [style.--shooting-length]="star.length + 'rem'"
+        [style.--shooting-duration]="star.duration + 's'"
+        [style.--shooting-delay]="star.delay + 's'"
+        [style.--shooting-opacity]="star.opacity"
+      ></span>
+    }
+  </div>
+}

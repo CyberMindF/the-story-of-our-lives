@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiService } from './api.service';
 
-export type WorldSettingKey = 'lanterns' | 'stars' | 'moon' | 'theme' | 'sparkles' | 'leaves' | 'waves' | 'petals' | 'fish' | 'bubbles' | 'hearts' | 'pearlShimmers' | 'silk';
+export type WorldSettingKey = 'lanterns' | 'stars' | 'shootingStars' | 'moon' | 'theme' | 'sparkles' | 'leaves' | 'waves' | 'petals' | 'fish' | 'bubbles' | 'hearts' | 'pearlShimmers' | 'silk';
 
 interface WorldSettingsResponse {
   settings?: Record<string, boolean>;
@@ -22,6 +22,7 @@ export class WorldSettingsService {
   readonly settings = signal<Record<WorldSettingKey, boolean>>({
     lanterns: true,
     stars: true,
+    shootingStars: true,
     moon: true,
     theme: true,
     sparkles: true,

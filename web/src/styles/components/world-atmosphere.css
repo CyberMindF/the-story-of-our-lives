@@ -249,6 +249,41 @@ body.world-atmosphere[data-theme="love"] {
 .world-hearts,
 .world-pearl-shimmers,
 .world-silk { position: fixed; z-index: 0; inset: 0; overflow: hidden; pointer-events: none; }
+
+.world-shooting-stars { position: fixed; z-index: 0; inset: 0; overflow: hidden; pointer-events: none; }
+.world-shooting-star {
+  position: absolute;
+  top: var(--shooting-y);
+  left: var(--shooting-x);
+  width: var(--shooting-length);
+  height: 1px;
+  border-radius: 999px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--world-star, #fff) 48%, transparent) 48%, var(--world-star, #fff));
+  filter: drop-shadow(0 0 .25rem var(--world-star, #fff));
+  transform: rotate(35deg) translateX(0) scaleX(.15);
+  transform-origin: right center;
+  animation: shooting-star var(--shooting-duration) cubic-bezier(.2,.55,.35,1) var(--shooting-delay) infinite;
+}
+.world-shooting-star::after {
+  content: '';
+  position: absolute;
+  right: -.12rem;
+  top: 50%;
+  width: .22rem;
+  height: .22rem;
+  border-radius: 50%;
+  background: var(--world-star, #fff);
+  box-shadow: 0 0 .45rem var(--world-star, #fff);
+  translate: 0 -50%;
+}
+@keyframes shooting-star {
+  0%, 90% { opacity: 0; transform: rotate(35deg) translateX(0) scaleX(.15); }
+  91% { opacity: 0; }
+  92% { opacity: var(--shooting-opacity); transform: rotate(35deg) translateX(8vw) scaleX(.75); }
+  97% { opacity: var(--shooting-opacity); }
+  100% { opacity: 0; transform: rotate(35deg) translateX(48vw) scaleX(1); }
+}
 .world-pearl-shimmers:not([data-aurora="white"]) { filter: saturate(.82); }
 
 .world-bubble { position: absolute; top: var(--bubble-y); left: var(--bubble-x); width: var(--bubble-size); height: var(--bubble-size); border: 1px solid rgba(255,255,255,.92); border-radius: 50%; opacity: 0; background: radial-gradient(circle at 27% 21%, rgba(255,255,255,.98) 0 4%, transparent 8%), radial-gradient(circle at 70% 76%, rgba(255,255,255,.5), transparent 18%), linear-gradient(135deg, rgba(235,179,225,.2), rgba(255,255,255,.035) 34%, rgba(92,181,194,.18) 68%, rgba(255,238,164,.2)); box-shadow: inset -.22rem -.26rem .75rem rgba(45,126,145,.18), inset .28rem .32rem .7rem rgba(255,255,255,.62), 0 0 .3rem rgba(255,255,255,.48); backdrop-filter: blur(1.5px); animation: bubble-wander var(--bubble-duration) ease-in-out var(--bubble-delay) infinite; }
@@ -273,7 +308,7 @@ body[data-theme="the-white-world"] .northern-aurora { mix-blend-mode: screen; }
 .world-silk-canvas.is-fallback { background: radial-gradient(ellipse at 24% 18%, #fff 0%, transparent 34%), linear-gradient(145deg, #faf8f4, #b8b2bd 48%, #f5f0e9); }
 
 @media (prefers-reduced-motion: reduce) {
-  .world-bubble, .world-heart, .world-pearl-shimmers span, .northern-light { display: none; }
+  .world-bubble, .world-heart, .world-pearl-shimmers span, .northern-light, .world-shooting-star { display: none; }
 }
 
 /* Brillantini di Red of You (#b3-a): primo di quattro effetti pensati uno per tema (non le
