@@ -1,4 +1,5 @@
 import { getAuthenticatedSession, json, readJson } from "./auth/_shared.js";
+import { recordEvent } from "./_shared/events.js";
 
 // Chiavi note: allowlist esplicita invece di accettare qualunque stringa dal client, per non
 // lasciare che "world_settings" accumuli righe arbitrarie mai lette da nessuna UI.
@@ -78,6 +79,16 @@ export async function onRequestPost(context) {
       `)
       .bind(key, enabled, value, session.user.id, updatedAt, value)
       .run();
+
+    context.waitUntil(recordEvent(
+      context.env,
+      { userId: session.user.id, sessionId: session.sessionId },
+      {
+        section: "impostazioni-mondo",
+        eventType: key === "theme" ? "theme_changed" : "world_setting_changed",
+        metadata: { key, enabled: enabled === 1, ...(value === null ? {} : { value }) }
+      }
+    ));
 
     return json({ key, enabled: enabled === 1, value });
   } catch (error) {

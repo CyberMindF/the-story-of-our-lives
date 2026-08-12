@@ -1,4 +1,5 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
+import { recordEvent } from "../_shared/events.js";
 
 // Segna una lettera come letta, solo se chi la apre non è chi l'ha scritta.
 export async function onRequestPost(context) {
@@ -30,6 +31,12 @@ export async function onRequestPost(context) {
       .prepare("UPDATE letters SET read_at = ? WHERE id = ?")
       .bind(readAt, letterId)
       .run();
+
+    context.waitUntil(recordEvent(
+      context.env,
+      { userId: session.user.id, sessionId: session.sessionId },
+      { section: "lettere", eventType: "letter_read", metadata: { letterId } }
+    ));
 
     return json({ readAt });
   } catch (error) {

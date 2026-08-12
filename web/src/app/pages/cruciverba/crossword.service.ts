@@ -854,6 +854,7 @@ export class CrosswordService implements OnDestroy {
     const requests = availableRequests.length > 0 ? availableRequests : this.hintRequests;
     this.hintRequest.set(requests[Math.floor(Math.random() * requests.length)]);
     this.hintModalOpen.set(true);
+    void this.trackEvent('crossword_hint_requested');
   }
 
   closeHintModal(): void {

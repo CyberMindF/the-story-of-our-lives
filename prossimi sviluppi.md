@@ -20,7 +20,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   sostituire la ricetta placeholder del pollo al curry con la loro versione definitiva e
   ricostruire ingredienti/procedimento dei biscotti di pasta frolla.
 - #b1 - Finire di implementare tutte le foto nella bacheca e sistemare la visualizzazione
-- #c1 - Verifica generale che tutti gli eventi siano presenti
 ---
 
 ## Da non fare
@@ -36,6 +35,11 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ### Extra (fuori scaletta, chiesti il 12/08/2026)
 
+- [x] #c1 — verifica generale della telemetria completata. Le aperture di tutte le pagine e
+  le principali scritture erano già registrate; aggiunti gli eventi mancanti per cambio di
+  tema/impostazioni del mondo, cambio nickname, lettura di una nuova lettera, proposta di una
+  Storia e richiesta di un suggerimento nel cruciverba. Gli autosalvataggi degli appunti GDR
+  restano volutamente esclusi per non creare un evento a ogni pausa di scrittura.
 - [x] #16 — seconda avventura GDR: “La casa che trattiene il respiro” è visibile soltanto
   come card “Coming soon”, senza esporre testo o sistemi incompleti.
 - [x] #33 — “Cose da fare insieme” è diventata **L'Agenda delle Idee**: tutte le attività

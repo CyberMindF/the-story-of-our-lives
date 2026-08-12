@@ -14,6 +14,7 @@ const ALLOWED_EVENTS = new Set([
   "song_played",
   "song_completed",
   "playlist_link_clicked",
+  "crossword_hint_requested",
   // Azioni esplicite registrate lato server, subito dopo la scrittura riuscita in D1.
   // Gli appunti (autosalvati a ogni pausa di scrittura) restano esclusi: sarebbero rumorosi
   // quanto tracciare i tasti, l'apertura della pagina è già coperta da world_page_opened.
@@ -27,7 +28,11 @@ const ALLOWED_EVENTS = new Set([
   "question_edited",
   "answer_edited",
   "together_status_changed",
-  "together_nsfw_attempt"
+  "together_nsfw_attempt",
+  "letter_read",
+  "nickname_changed",
+  "story_suggestion_sent",
+  "world_setting_changed"
 ]);
 const MAX_METADATA_LENGTH = 4096;
 

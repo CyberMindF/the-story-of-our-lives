@@ -80,6 +80,7 @@
       "id": "salsiccia-patate",
       "title": "Salsiccia e patate",
       "kind": "Fatta insieme",
+      "note": "La nostra prima ricetta fatta insieme.",
       "ingredients": ["Salsiccia", "Patate", "Olio", "Sale e pepe", "Rosmarino"],
       "steps": ["Tagliare le patate a pezzi simili e condirle con olio, sale, pepe e rosmarino.", "Infornarle a 200 °C.", "Dopo circa 20 minuti aggiungere la salsiccia a pezzi.", "Proseguire la cottura finché le patate sono dorate e la salsiccia è ben cotta, girando tutto a metà cottura."]
     },

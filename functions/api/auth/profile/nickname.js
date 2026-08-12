@@ -1,7 +1,9 @@
 import { getAuthenticatedSession, json, normalizeNickname, readJson } from "../_shared.js";
+import { recordEvent } from "../../_shared/events.js";
 
 // Aggiorna il nickname dell'utente autenticato. Nessun vincolo di unicità (come in register.js).
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost(context) {
+  const { request, env } = context;
   try {
     const session = await getAuthenticatedSession(request, env);
     if (!session) {
@@ -18,10 +20,25 @@ export async function onRequestPost({ request, env }) {
       return json({ error: "Il nome non può essere vuoto." }, 400);
     }
 
+    const currentUser = await env.DB
+      .prepare("SELECT nickname FROM users WHERE id = ?")
+      .bind(session.user.id)
+      .first();
+
     await env.DB
       .prepare("UPDATE users SET nickname = ?, updated_at = ? WHERE id = ?")
       .bind(nickname, new Date().toISOString(), session.user.id)
       .run();
+
+    context.waitUntil(recordEvent(
+      env,
+      { userId: session.user.id, sessionId: session.sessionId },
+      {
+        section: "profilo",
+        eventType: "nickname_changed",
+        metadata: { previousNickname: currentUser?.nickname || null, nickname }
+      }
+    ));
 
     return json({ user: { id: session.user.id, email: session.user.email, nickname } });
   } catch (error) {

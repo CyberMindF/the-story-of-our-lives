@@ -1,4 +1,5 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
+import { recordEvent } from "../_shared/events.js";
 
 const MAX_TITLE_LENGTH = 160;
 const MAX_STORY_LENGTH = 50000;
@@ -31,6 +32,16 @@ export async function onRequestPost(context) {
       .bind(session.user.id, title, storyText, musicNotes, imageNotes, createdAt, createdAt)
       .run();
     const suggestionId = result.meta.last_row_id;
+
+    context.waitUntil(recordEvent(
+      context.env,
+      { userId: session.user.id, sessionId: session.sessionId },
+      {
+        section: "storie",
+        eventType: "story_suggestion_sent",
+        metadata: { suggestionId, hasTitle: Boolean(title), bodyLength: storyText.length }
+      }
+    ));
 
     return json(
       {
