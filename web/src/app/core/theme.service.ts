@@ -36,21 +36,21 @@ const THEMES: ThemeDefinition[] = [
     label: 'Night Sky',
     swatch: '#141f32',
     icon: 'night',
-    description: 'Blu profondo, luna e stelle.'
+    description: 'Blu profondo e cielo notturno.'
   },
   {
     id: 'sea',
     label: 'Ocean',
     swatch: '#467d77',
     icon: 'ocean',
-    description: 'Luce chiara e colori del mare.'
+    description: 'Luce chiara e colori marini.'
   },
   {
     id: 'velvet',
     label: 'Velvet',
     swatch: '#5d4452',
     icon: 'velvet',
-    description: 'Viola scuro, morbido e raccolto.'
+    description: 'Viola scuro, tranquillo e notturno.'
   },
   {
     id: 'red-of-you',
@@ -66,7 +66,7 @@ const THEMES: ThemeDefinition[] = [
     swatch: '#486a53',
     icon: 'letter',
     iconText: 'R',
-    description: 'Il mio verde, quieto e profondo.'
+    description: 'Il mio verde, calmo e profondo.'
   }
 ];
 

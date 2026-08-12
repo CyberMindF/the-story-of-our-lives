@@ -46,7 +46,7 @@ export class Calendario implements OnInit {
       const data = await this.staticContent.load<{ events: CalendarEvent[] }>('/content/calendar.json');
       this.validateCalendar(data);
       this.yearGroups.set(this.groupByYear(data.events));
-      this.countLabel.set(`${data.events.length} date custodite`);
+      this.countLabel.set(`${data.events.length} date da ricordare`);
     } catch (error) {
       console.error('Impossibile caricare il Calendario.', error);
       this.countLabel.set('Le date non sono disponibili in questo momento.');

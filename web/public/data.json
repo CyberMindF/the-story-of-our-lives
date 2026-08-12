@@ -1,6 +1,6 @@
 {
   "title": "The Story of Our Lives",
-  "subtitle": "Un posto dove racchiudere i nostri ricordi, in qualcosa di nostro, un gioco",
+  "subtitle": "I nostri ricordi racchiusi in qualcosa di altrettanto nostro, un gioco",
   "words": [
     { "id": 1, "word": "DESY", "clue": "La \"lei\" del nostro \"noi\"", "row": 18, "col": 18, "direction": "O" },
     { "id": 2, "word": "RORY", "clue": "Il \"lui\" del nostro \"noi\"", "row": 15, "col": 21, "direction": "V" },
