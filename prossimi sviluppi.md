@@ -654,6 +654,24 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   non ne risente. **Restano da fare, non toccate in questo giro**: Fase 1 (inventario di tutti
   i contenuti), Fase 3 (tabelle `content_entries`/`content_versions` e le loro API), Fase 5+
   (editor vero e proprio, versionamento, pagina dei log). Migrazioni applicate solo in locale.
+- [x] CMS (`planning editor contenuti.md`, Fase 3 — fondamenta del CMS): su
+  `feature/content-editor`. Migrazione 0035 con `content_entries` (valore corrente, letto da
+  `body` per i contenuti `replace` o da `current_version_id` per quelli `history`) e
+  `content_versions` (cronologia, popolata solo per `history`). API in `functions/api/content/`:
+  `GET/POST /api/content` (lista per il futuro pannello e creazione, `content.edit`/
+  `content.create`), `GET/PUT/DELETE /api/content/:key` (lettura con elenco versioni leggero e
+  `?versionId=` per una versione specifica, modifica, eliminazione — `content.read`/
+  `content.edit`/`content.delete`). `PUT` distingue esplicitamente "Salva modifica" (corregge il
+  testo in vigore, sulla versione corrente se `history`) da "Aggiungi nuova versione"
+  (`createVersion: true`, inserisce una riga in più lasciando intatta la cronologia) come deciso
+  nel piano. Primo uso reale di `hasPermission()` da `functions/api/_shared/permissions.js`,
+  finora definito ma non richiamato da nessun endpoint. Validazione (chiave, etichetta, tipo,
+  modalità, lunghezza del testo) solo lato backend in `functions/api/content/_shared.js`. Nuovi
+  tipi di evento (`content_created`, `content_updated`, `content_version_added`,
+  `content_deleted`) in `_shared/events.js`. Migrazione applicata e verificata solo in locale.
+  **Restano da fare**: Fase 1 (inventario completo), Fase 4 (migrazione effettiva dei JSON/testi
+  Angular nel database — per ora le tabelle sono vuote), Fase 5+ (editor frontend, pannello,
+  pagina dei log).
 
 ---
 
