@@ -111,7 +111,7 @@
   line-height: 1.05;
 }
 
-.world-welcome p:not(.world-eyebrow) {
+.world-welcome app-editorial-text {
   color: var(--muted-color);
   font-size: clamp(1rem, 1.7vw, 1.12rem);
   line-height: 1.8;

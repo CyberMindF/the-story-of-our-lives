@@ -10,7 +10,7 @@
 .tavolo-hero-text-only .tavolo-eyebrow { width: min(100%, 58rem); margin: 0 auto .65rem; }
 
 .tavolo-intro { display: grid; gap: 1.25rem; width: min(100%, 46rem); margin: 0 auto clamp(2.5rem, 6vw, 4rem); }
-.tavolo-intro p { margin: 0; color: var(--muted-color); font-size: clamp(1.05rem, 1.6vw, 1.18rem); line-height: 1.85; }
+.tavolo-intro app-editorial-text { --editorial-paragraph-margin: 0; color: var(--muted-color); font-size: clamp(1.05rem, 1.6vw, 1.18rem); line-height: 1.85; }
 
 .tavolo-quote { width: min(100%, 46rem); margin: 0 auto clamp(2.5rem, 6vw, 4rem); padding-left: 1.5rem; border-left: 1px solid rgba(255,255,255,.24); }
 .tavolo-quote p { margin: 0; color: var(--muted-color); font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: clamp(1.15rem, 2vw, 1.35rem); line-height: 1.6; }
@@ -38,7 +38,7 @@
 .outcome-list strong, .ability-list strong { color: var(--text-color); }
 
 .tavolo-campaign { width: min(100%, 46rem); margin: 0 auto clamp(3.5rem, 8vw, 6rem); display: grid; gap: 1.25rem; justify-items: start; }
-.tavolo-campaign p { margin: 0; color: var(--muted-color); font-size: clamp(1.05rem, 1.6vw, 1.18rem); line-height: 1.85; }
+.tavolo-campaign app-editorial-text { --editorial-paragraph-margin: 0; color: var(--muted-color); font-size: clamp(1.05rem, 1.6vw, 1.18rem); line-height: 1.85; }
 
 .tavolo-games { padding-bottom: clamp(3rem, 7vw, 5rem); }
 .tavolo-section-heading { margin-bottom: 2rem; }
@@ -69,7 +69,9 @@
 /* Pagina "L'Avventura" (incipit di Il Prezzo della Verità): lettura in stile Storie, dentro il Tavolo. */
 .avventura-hero, .maga-hero, .appunti-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(1.5rem, 5vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
 .avventura-hero h1, .maga-hero h1, .appunti-hero h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 400; line-height: 1; letter-spacing: -.03em; }
-.avventura-hero p, .maga-hero p, .appunti-hero p { margin: 1rem auto 0; max-width: 34rem; color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
+.avventura-hero p, .maga-hero app-editorial-text, .appunti-hero app-editorial-text { color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
+.avventura-hero p { margin: 1rem auto 0; max-width: 34rem; }
+.maga-hero app-editorial-text, .appunti-hero app-editorial-text { --editorial-paragraph-margin: 1rem auto 0; --editorial-paragraph-max-width: 34rem; }
 
 .avventura-body { width: min(100%, 46rem); margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); }
 /* Il testo narrativo (titoli, paragrafi, immagini, schede NPC, callout) è ora renderizzato da

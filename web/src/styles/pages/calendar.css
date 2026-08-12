@@ -73,8 +73,8 @@
   line-height: 1.05;
 }
 
-.calendar-introduction p {
-  margin: 0;
+.calendar-introduction app-editorial-text {
+  --editorial-paragraph-margin: 0;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.05rem, 1.8vw, 1.18rem);
   line-height: 1.8;

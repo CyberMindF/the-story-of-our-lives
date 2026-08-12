@@ -6,5 +6,15 @@
 .recipe-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
 .recipe-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
 .recipe-form-error:empty { display: none; }
+
+/* Il testo ora vive dentro EditorialText: la tipografia va applicata al suo host, così viene
+   ereditata dai paragrafi anche con l'incapsulamento CSS di Angular. */
+.recipe-hero > app-editorial-text {
+  --editorial-paragraph-max-width: 40rem;
+  --editorial-paragraph-margin: 1.25rem 0 0;
+  color: var(--muted-color);
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
 .recipe-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
 .recipe-admin-actions .btn { padding: .4rem .7rem; font-size: .82rem; }

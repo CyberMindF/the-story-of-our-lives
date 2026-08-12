@@ -8,11 +8,16 @@
    ospite in modo silenzioso. Lo spazio tra paragrafi consecutivi resta identico a prima
    (il valore di default del browser per <p>), solo esplicito invece che implicito. */
 :host p {
-  margin: 0;
+  max-width: var(--editorial-paragraph-max-width, none);
+  margin: var(--editorial-paragraph-margin, 0);
 }
 
 :host p + p {
-  margin-top: 1em;
+  margin-top: var(--editorial-paragraph-gap, 1em);
+}
+
+:host p:last-of-type {
+  margin-bottom: var(--editorial-last-paragraph-margin-bottom, 0);
 }
 
 .editorial-versions {
