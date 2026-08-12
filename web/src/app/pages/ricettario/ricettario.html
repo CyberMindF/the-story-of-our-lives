@@ -1,0 +1,65 @@
+<app-shell>
+  <main class="recipe-page">
+    <header class="recipe-hero">
+      <p class="recipe-eyebrow">Cose buone, fatte o immaginate insieme</p>
+      <h1>🍳 Il Ricettario</h1>
+      <p>Le ricette che abbiamo condiviso e quelle che prima o poi vogliamo provare, conservate qui per non doverle più cercare.</p>
+      <a class="recipe-suggest" routerLink="/suggerimenti" [queryParams]="{ category: 'ricettario' }">
+        <span aria-hidden="true">＋</span> Proponi una nuova ricetta
+      </a>
+    </header>
+
+    <nav class="recipe-filters card" aria-label="Filtra le ricette">
+      <button type="button" [class.is-active]="filter() === 'Tutte'" (click)="setFilter('Tutte')">Tutte</button>
+      <button type="button" [class.is-active]="filter() === 'Fatta insieme'" (click)="setFilter('Fatta insieme')">Fatte insieme</button>
+      <button type="button" [class.is-active]="filter() === 'Da provare'" (click)="setFilter('Da provare')">Da provare</button>
+    </nav>
+
+    @if (loading()) {
+      <p class="recipe-message">Sto aprendo il ricettario…</p>
+    } @else if (error()) {
+      <p class="recipe-message" role="alert">{{ error() }}</p>
+    } @else {
+      <section class="recipe-list" aria-label="Ricette">
+        @for (recipe of visibleRecipes(); track recipe.id) {
+          <article class="recipe-card card" [class.is-placeholder]="recipe.placeholder">
+            <header class="recipe-card-heading">
+              <div>
+                <div class="recipe-tags">
+                  <span>{{ recipe.kind }}</span>
+                  @if (recipe.placeholder) { <span class="placeholder-tag">Da personalizzare</span> }
+                </div>
+                <h2>{{ recipe.title }}</h2>
+                @if (recipe.note) { <p>{{ recipe.note }}</p> }
+              </div>
+              <span class="recipe-mark" aria-hidden="true">{{ recipe.kind === 'Fatta insieme' ? '✓' : '✦' }}</span>
+            </header>
+
+            <div class="recipe-body">
+              <section>
+                <h3>Ingredienti</h3>
+                <ul>
+                  @for (ingredient of recipe.ingredients; track $index) { <li>{{ ingredient }}</li> }
+                </ul>
+              </section>
+              <section>
+                <h3>Procedimento</h3>
+                <ol>
+                  @for (step of recipe.steps; track $index) { <li>{{ step }}</li> }
+                </ol>
+              </section>
+            </div>
+
+            @if (recipe.source) {
+              <a class="recipe-source" [href]="recipe.source.href" target="_blank" rel="noopener noreferrer">
+                {{ recipe.source.label }} ↗
+              </a>
+            }
+          </article>
+        } @empty {
+          <p class="recipe-message card">Non ci sono ancora ricette in questa categoria.</p>
+        }
+      </section>
+    }
+  </main>
+</app-shell>

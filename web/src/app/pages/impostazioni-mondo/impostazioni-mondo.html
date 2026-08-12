@@ -1,18 +1,13 @@
 <app-shell [showSuggestLink]="false">
   <section class="settings-hero" aria-labelledby="settings-title">
     <p class="settings-eyebrow">Il Mondo Bianco</p>
-    <h1 id="settings-title"><span aria-hidden="true">🕯️</span> Le impostazioni del mondo</h1>
-    <p class="settings-intro">
-      Effetti condivisi: quello che accendi o spegni qui lo vediamo entrambi, non è una
-      preferenza solo tua.
-    </p>
+    <h1 id="settings-title"><span aria-hidden="true">🎛️</span> La stanza dei bottoni</h1>
+    <p class="settings-intro">Quello che cambi qui appare nel mondo di entrambi.</p>
   </section>
 
   <section class="settings-theme-section" aria-labelledby="settings-theme-title">
     <h2 id="settings-theme-title">L'aspetto del mondo</h2>
-    <p class="settings-theme-intro">
-      Scegli il cielo in cui entrare. Il tema è condiviso: quando cambia, cambia per tutti e due.
-    </p>
+    <p class="settings-theme-intro">Scegli come vuoi che sia il cielo.</p>
     <div class="settings-theme-picker">
       <app-theme-switcher />
     </div>
@@ -20,17 +15,16 @@
 
   <section class="settings-effects" aria-labelledby="settings-effects-title">
     <h2 id="settings-effects-title">Cosa vive nel cielo</h2>
-    <p class="settings-effects-intro">Accendi o spegni gli elementi che abitano il mondo.</p>
-    <p class="settings-group-note">Ogni tema è un preset: sceglierlo qui sopra accende i suoi
-      effetti e spegne tutti gli altri. Restano comunque liberi da accendere o spegnere quando
-      vuoi, anche mescolati tra loro — il tema decide solo il punto di partenza.</p>
+    <p class="settings-effects-intro">
+      Ogni cielo parte dai suoi effetti consigliati, ma puoi mescolarli come vuoi.
+    </p>
 
     <h3 class="settings-group-title">Consigliato per Night Sky</h3>
     <div class="settings-list">
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
           <span class="settings-toggle-title"><span aria-hidden="true">🏮</span> Lanterne che salgono</span>
-          <span class="settings-toggle-description">Lanterne calde che salgono lente nel cielo del mondo.</span>
+          <span class="settings-toggle-description">Salgono lentamente verso il cielo.</span>
         </span>
         <input
           type="checkbox"
@@ -45,7 +39,7 @@
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
           <span class="settings-toggle-title"><span aria-hidden="true">✨</span> Stelle nel cielo</span>
-          <span class="settings-toggle-description">Le stelle che brillano nel cielo del mondo.</span>
+          <span class="settings-toggle-description">Piccoli punti di luce nel cielo.</span>
         </span>
         <input
           type="checkbox"
@@ -61,7 +55,7 @@
         <label class="settings-toggle">
           <span class="settings-toggle-info">
             <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
-            <span class="settings-toggle-description">La luna nel cielo del mondo, con la fase che scegli qui sotto.</span>
+            <span class="settings-toggle-description">Mostrala nella fase che preferisci.</span>
           </span>
           <input
             type="checkbox"
@@ -90,7 +84,7 @@
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
           <span class="settings-toggle-title"><span aria-hidden="true">💫</span> Brillantini</span>
-          <span class="settings-toggle-description">Piccoli lampi di luce nel cielo.</span>
+          <span class="settings-toggle-description">Piccoli lampi sparsi nel cielo.</span>
         </span>
         <input
           type="checkbox"
@@ -107,15 +101,15 @@
     <div class="settings-list">
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
-          <span class="settings-toggle-title"><span aria-hidden="true">🍂</span> Ombre di foglie</span>
-          <span class="settings-toggle-description">Foglie che cadono lente, portate da una brezza leggera.</span>
+          <span class="settings-toggle-title"><span aria-hidden="true">🍂</span> Foglie al vento</span>
+          <span class="settings-toggle-description">Cadono lente, portate da una brezza leggera.</span>
         </span>
         <input
           type="checkbox"
           class="settings-toggle-input"
           [checked]="worldSettingsService.settings().leaves"
           (change)="toggleSetting('leaves', $event)"
-          aria-label="Ombre di foglie"
+          aria-label="Foglie al vento"
         />
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </label>
@@ -126,7 +120,7 @@
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
           <span class="settings-toggle-title"><span aria-hidden="true">🌊</span> Onde del mare</span>
-          <span class="settings-toggle-description">Onde che scorrono in fondo al cielo.</span>
+          <span class="settings-toggle-description">Scorrono lungo il fondo della pagina.</span>
         </span>
         <input
           type="checkbox"
@@ -142,7 +136,7 @@
         <label class="settings-toggle">
           <span class="settings-toggle-info">
             <span class="settings-toggle-title"><span aria-hidden="true">🐙</span> Pesci che nuotano</span>
-            <span class="settings-toggle-description">Nuotano da un lato all'altro dello schermo, con la forma che scegli qui sotto.</span>
+            <span class="settings-toggle-description">Attraversano il mondo da un lato all'altro.</span>
           </span>
           <input
             type="checkbox"
@@ -172,7 +166,7 @@
         <label class="settings-toggle">
           <span class="settings-toggle-info">
             <span class="settings-toggle-title"><span aria-hidden="true">🌸</span> Fiori che cadono</span>
-            <span class="settings-toggle-description">Fiori che scendono lenti nel cielo, con la forma che scegli qui sotto.</span>
+            <span class="settings-toggle-description">Scendono lentamente dall'alto.</span>
           </span>
           <input
             type="checkbox"

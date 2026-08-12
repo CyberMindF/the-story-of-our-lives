@@ -9,6 +9,13 @@
   backdrop-filter: blur(12px);
 }
 
+/* Il backdrop-filter crea un contesto di sovrapposizione: quando una select è aperta,
+   la sua card deve stare sopra alle card sorelle successive. */
+.card:has(app-select.is-open) {
+  position: relative;
+  z-index: 100;
+}
+
 /* Variante più densa per righe di lista (voci di un elenco, non tessere autonome). */
 .card--compact {
   border-radius: 0.8rem;

@@ -28,12 +28,11 @@ export class Suggerimenti {
     { value: 'ponti', label: '🌈 I Ponti' },
     { value: 'lettere', label: '💌 Le Lettere' },
     { value: 'tavolo-da-gioco', label: '🎲 Il Tavolo da Gioco' },
-    { value: 'cose-da-fare-insieme', label: '📝 Cose da fare insieme' },
+    { value: 'cose-da-fare-insieme', label: "📔 L'Agenda delle Idee" },
+    { value: 'ricettario', label: '🍳 Il Ricettario' },
     { value: 'altro', label: '✨ Qualcos’altro / tutto il sito' }
   ];
-  protected readonly initialCategory = this.route.snapshot.queryParamMap.get('category') === 'cose-da-fare-insieme'
-    ? 'cose-da-fare-insieme'
-    : '';
+  protected readonly initialCategory = this.resolveInitialCategory();
 
   protected async submit(form: HTMLFormElement): Promise<void> {
     await this.submission.submit(form, {
@@ -41,5 +40,10 @@ export class Suggerimenti {
       pendingMessage: 'Sto conservando il tuo suggerimento...',
       successMessage: (result) => `Suggerimento ricevuto. Grazie, ${String(result['author'] || '')}.`
     });
+  }
+
+  private resolveInitialCategory(): string {
+    const requested = this.route.snapshot.queryParamMap.get('category') || '';
+    return this.categoryOptions.some((option) => option.value === requested) ? requested : '';
   }
 }

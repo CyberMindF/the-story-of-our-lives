@@ -13,6 +13,7 @@ const CATEGORIES = new Set([
   "lettere",
   "tavolo-da-gioco",
   "cose-da-fare-insieme",
+  "ricettario",
   "altro"
 ]);
 

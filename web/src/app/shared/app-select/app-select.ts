@@ -10,6 +10,9 @@ let nextSelectId = 0;
 @Component({
   selector: 'app-select',
   standalone: true,
+  host: {
+    '[class.is-open]': 'open()'
+  },
   styleUrls: ['../../../styles/components/app-select.css'],
   templateUrl: './app-select.html'
 })
@@ -84,4 +87,3 @@ export class AppSelect {
     this.dropUp.set(window.innerHeight - rect.bottom < estimatedMenuHeight && rect.top > estimatedMenuHeight);
   }
 }
-

@@ -150,12 +150,3 @@
   font-size: .8rem;
   font-weight: 600;
 }
-
-/* Nota che spiega "consigliato" non "esclusivo" (#b3-b): comparsa una sola volta, sopra il
-   primo dei quattro gruppi per-tema, non ripetuta su ognuno. */
-.settings-group-note {
-  margin: 0 0 .9rem;
-  color: var(--muted-color);
-  font-size: .85rem;
-  line-height: 1.5;
-}

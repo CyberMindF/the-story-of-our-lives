@@ -6,9 +6,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
-- [x] #16 — seconda avventura GDR: mantenuta visibile come card “Coming soon”. La storia
-  esiste, ma non viene presentata come giocabile finché non sarà adattata al play-by-chat;
-  nessun titolo, testo o sistema incompleto viene esposto.
 - [~] #25 — Mappa: Sicilia. Struttura pronta in `map.json` (destinazione tra Olanda e Roma,
   coordinate su Catania) con le 4 foto vere già al loro posto (fiume Amenano/Catania, Gole
   dell'Alcantara, laghetti di Cavagrande del Cassibile/Avola, Isola Bella a Taormina —
@@ -17,13 +14,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Aggiornata anche la validazione hardcoded in `mappa.ts` (si aspettava esattamente 6
   destinazioni, ora 7).
 - #26 — Mappa: completare Roma, aspetta il testo vero
-- [~] #33 — Cose da fare insieme: prima versione implementata con tutte le 77 idee nell'ordine
-  originale, filtri e stati condivisi “Da fare / Fatto / Da rifare”. Comprende anche la
-  vecchia #23 attraverso la categoria Giochi e usa il sistema di suggerimenti esistente per
-  proporre aggiunte. Le parti NSFW non vengono inviate al browser prima dello sblocco; la
-  risposta al prompt viene dichiaratamente registrata negli eventi e lo sblocco dura solo
-  fino a refresh/uscita. **Da rivedere con Rory**: classificazione delle voci normali/miste/
-  NSFW, testi ripuliti e mesi approssimativi da assegnare senza perdere l'ordine originale.
 - [~] #34 — “Il Ricettario”: pagina realizzata con card lunghe, ingredienti, procedimento,
   filtri “Fatta insieme / Da provare” e collegamento ai Suggerimenti già preselezionato.
   Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**:
@@ -43,6 +33,22 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ---
 
 ## Fatto
+
+### Extra (fuori scaletta, chiesti il 12/08/2026)
+
+- [x] #16 — seconda avventura GDR: “La casa che trattiene il respiro” è visibile soltanto
+  come card “Coming soon”, senza esporre testo o sistemi incompleti.
+- [x] #33 — “Cose da fare insieme” è diventata **L'Agenda delle Idee**: tutte le attività
+  sono mantenute nell'ordine originale con periodo approssimativo, categorie filtrabili e
+  stati condivisi “Da fare / Fatto / Da rifare”. Comprende la vecchia #23 nella categoria
+  Giochi e permette di proporre nuove idee attraverso i Suggerimenti. Le righe NSFW arrivano
+  dal server solo dopo lo sblocco temporaneo; il tentativo e la risposta vengono registrati
+  negli eventi come dichiarato nella modale.
+- [x] Uniformata la pagina **La Stanza dei Bottoni** (prima “Impostazioni del Mondo”): testi
+  meno ripetitivi, nome ed emoji aggiornati. Corretto il componente `app-select` condiviso:
+  menu opaco e leggibile e card portata davanti alle sorelle durante l'apertura. Uniformate
+  anche la freccia di ritorno delle pagine interne, il pulsante in fondo e la barra profilo
+  alle superfici e ai colori del tema.
 
 ### Extra (fuori scaletta, chiesto l'11/08/2026)
 
