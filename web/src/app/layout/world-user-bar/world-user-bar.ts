@@ -15,14 +15,30 @@ export class WorldUserBar {
   @Input() showHomeShortcut = true;
   @Input() beforeLogout: (() => Promise<void>) | null = null;
 
-  private readonly authService = inject(AuthService);
   private readonly navigationService = inject(NavigationService);
   private readonly router = inject(Router);
 
   protected readonly loggingOut = signal(false);
+  protected readonly changingAdminMode = signal(false);
+
+  protected readonly authService = inject(AuthService);
 
   protected userName(): string | null {
     return this.authService.currentUser()?.nickname ?? null;
+  }
+
+  protected async toggleAdminMode(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const enabled = input.checked;
+    const previous = this.authService.adminModeEnabled();
+    this.authService.adminModeEnabled.set(enabled);
+    this.changingAdminMode.set(true);
+    const saved = await this.authService.setAdminMode(enabled);
+    if (!saved) {
+      this.authService.adminModeEnabled.set(previous);
+      input.checked = previous;
+    }
+    this.changingAdminMode.set(false);
   }
 
   protected async onLogoutClick(): Promise<void> {

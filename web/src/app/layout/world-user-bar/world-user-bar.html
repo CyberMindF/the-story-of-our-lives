@@ -4,6 +4,19 @@
   } @else {
     <span class="user-greeting"></span>
   }
+  @if (authService.isAdmin()) {
+    <label class="userbar-admin-toggle" [class.is-active]="authService.adminModeEnabled()" title="Modalità admin">
+      <span>Admin</span>
+      <input
+        type="checkbox"
+        [checked]="authService.adminModeEnabled()"
+        [disabled]="changingAdminMode()"
+        (change)="toggleAdminMode($event)"
+        aria-label="Modalità admin"
+      />
+      <span class="userbar-admin-switch" aria-hidden="true"></span>
+    </label>
+  }
   @if (showHomeShortcut) {
     <a routerLink="/mondo-bianco" class="home-shortcut-link" aria-label="Vai a Il Mondo Bianco" title="Il Mondo Bianco">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9" /></svg>

@@ -1,0 +1,16 @@
+@if (worldSettingsService.settings().bubbles) {
+  <div class="world-bubbles" aria-hidden="true">
+    @for (bubble of bubbles; track $index) {
+      <span class="world-bubble"
+        [style.--bubble-x]="bubble.x + '%'"
+        [style.--bubble-y]="bubble.y + '%'"
+        [style.--bubble-size]="bubble.size + 'rem'"
+        [style.--bubble-opacity]="bubble.opacity"
+        [style.--bubble-drift-x]="bubble.driftX + 'px'"
+        [style.--bubble-drift-y]="bubble.driftY + 'px'"
+        [style.--bubble-duration]="bubble.duration + 's'"
+        [style.--bubble-delay]="bubble.delay + 's'">
+      </span>
+    }
+  </div>
+}

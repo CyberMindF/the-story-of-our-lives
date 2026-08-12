@@ -7,6 +7,8 @@ import { FISH_KIND_LABEL, FishKind } from '../../shared/world-fish';
 import { ThemeSwitcher } from '../../shared/theme-switcher';
 import { AppSelect, AppSelectOption } from '../../shared/app-select/app-select';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
+import { HEART_COLOR_LABEL, HeartColor } from '../../shared/world-hearts';
+import { ThemeService } from '../../core/theme.service';
 
 // Tutto ciò che si vede nel Mondo Bianco e che prima o poi è diventato condivisibile: gli
 // effetti del cielo (#a3/#a5/#a6) e, da #a8, anche il tema stesso — chi li cambia qui li
@@ -20,15 +22,34 @@ import { EditorialText } from '../../shared/editorial-text/editorial-text';
 })
 export class ImpostazioniMondo {
   protected readonly worldSettingsService = inject(WorldSettingsService);
+  protected readonly themeService = inject(ThemeService);
+  protected readonly themeOptions: readonly AppSelectOption[] = this.themeService.themes.map((theme) => ({
+    value: theme.id,
+    label: theme.label
+  }));
   // Stessa lista di fasi già riusata da #a4, convertita nel formato del selettore condiviso.
   protected readonly moonPhaseOptions: readonly AppSelectOption[] = [
     { value: 'auto', label: 'Fase reale di oggi (automatica)' },
     ...MOON_PHASE_LABEL.map((label, index) => ({ value: String(index), label }))
   ];
-  protected readonly petalKindOptions: readonly AppSelectOption[] = Object.entries(PETAL_KIND_LABEL)
-    .map(([value, label]) => ({ value: value as PetalKind, label }));
-  protected readonly fishKindOptions: readonly AppSelectOption[] = Object.entries(FISH_KIND_LABEL)
-    .map(([value, label]) => ({ value: value as FishKind, label }));
+  protected readonly petalKindOptions: readonly AppSelectOption[] = [
+    { value: 'mix', label: 'Fiori misti' },
+    ...Object.entries(PETAL_KIND_LABEL).map(([value, label]) => ({ value: value as PetalKind, label }))
+  ];
+  protected readonly fishKindOptions: readonly AppSelectOption[] = [
+    { value: 'mix', label: 'Pesci misti' },
+    ...Object.entries(FISH_KIND_LABEL).map(([value, label]) => ({ value: value as FishKind, label }))
+  ];
+  protected readonly heartColorOptions: readonly AppSelectOption[] = [
+    { value: 'mix', label: 'Cuori misti' },
+    ...Object.entries(HEART_COLOR_LABEL).map(([value, label]) => ({ value: value as HeartColor, label }))
+  ];
+  protected readonly auroraColorOptions: readonly AppSelectOption[] = [
+    { value: 'green', label: 'Verde' },
+    { value: 'blue', label: 'Azzurra' },
+    { value: 'magenta', label: 'Magenta' },
+    { value: 'mix', label: 'Colori misti' }
+  ];
 
   protected toggleSetting(key: WorldSettingKey, event: Event): void {
     const enabled = (event.target as HTMLInputElement).checked;
@@ -46,4 +67,13 @@ export class ImpostazioniMondo {
   protected setFishKind(value: string): void {
     void this.worldSettingsService.setValue('fish', value);
   }
+
+  protected setHeartColor(value: string): void {
+    void this.worldSettingsService.setValue('hearts', value);
+  }
+
+  protected setAuroraColor(value: string): void {
+    void this.worldSettingsService.setValue('pearlShimmers', value);
+  }
+
 }

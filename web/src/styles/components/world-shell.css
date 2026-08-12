@@ -48,6 +48,27 @@
   text-decoration: none;
 }
 
+.userbar-admin-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .32rem .5rem;
+  border-radius: 999px;
+  color: var(--muted-color);
+  font-size: .75rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: color .18s ease, background-color .18s ease;
+}
+
+.userbar-admin-toggle.is-active { color: var(--text-color); background: var(--button-bg); }
+.userbar-admin-toggle input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.userbar-admin-switch { position: relative; width: 1.8rem; height: 1rem; border: 1px solid var(--border-color); border-radius: 999px; background: var(--button-bg); }
+.userbar-admin-switch::before { content: ''; position: absolute; top: 2px; left: 2px; width: .65rem; height: .65rem; border-radius: 50%; background: var(--muted-color); transition: transform .18s ease, background-color .18s ease; }
+.userbar-admin-toggle input:checked + .userbar-admin-switch { background: var(--focus-color); border-color: var(--focus-color); }
+.userbar-admin-toggle input:checked + .userbar-admin-switch::before { transform: translateX(.78rem); background: var(--panel-color); }
+.userbar-admin-toggle input:focus-visible + .userbar-admin-switch { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+
 .place-userbar a.user-greeting:hover {
   color: var(--text-color);
 }

@@ -40,6 +40,7 @@
   font-weight: 600;
 }
 
+
 /* Il selettore ha un proprio foglio nel componente condiviso; qui restano soltanto ritmo e
    gerarchia della pagina. È intenzionalmente la prima sezione: il cielo viene scelto prima
    degli elementi che lo abitano. */
@@ -64,13 +65,34 @@
 }
 
 .settings-effects {
-  width: min(100%, 34rem);
+  width: min(100%, 58rem);
 }
+
+.settings-theme-only {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.35rem;
+  padding: 1rem 1.15rem;
+}
+
+.settings-theme-only-copy { display: grid; gap: .25rem; }
+.settings-theme-only-copy small { color: var(--muted-color); font-size: .82rem; line-height: 1.45; }
+
+.settings-effects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 1.25rem;
+}
+
+.settings-effect-group { min-width: 0; }
 
 /* Gruppi per tema (#b3-b): ogni titolo introduce la .settings-list che lo segue, tranne il
    primo (subito dopo l'intro della sezione, non serve altro spazio sopra). */
 .settings-group-title {
-  margin: clamp(1.75rem, 4vw, 2.25rem) 0 .75rem;
+  margin: 0 0 .65rem;
   color: var(--muted-color);
   font-size: .78rem;
   font-weight: 700;
@@ -78,8 +100,9 @@
   text-transform: uppercase;
 }
 
-.settings-group-title:first-of-type {
-  margin-top: 0;
+@media (max-width: 720px) {
+  .settings-effects-grid,
+  .settings-theme-only { grid-template-columns: 1fr; }
 }
 
 /* Avviso "poco adatto a questo tema" (es. luna/stelle su Ocean, l'unico cielo diurno): un

@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiService } from './api.service';
 
-export type WorldSettingKey = 'lanterns' | 'stars' | 'moon' | 'theme' | 'sparkles' | 'leaves' | 'waves' | 'petals' | 'fish';
+export type WorldSettingKey = 'lanterns' | 'stars' | 'moon' | 'theme' | 'sparkles' | 'leaves' | 'waves' | 'petals' | 'fish' | 'bubbles' | 'hearts' | 'pearlShimmers' | 'silk';
 
 interface WorldSettingsResponse {
   settings?: Record<string, boolean>;
@@ -28,11 +28,15 @@ export class WorldSettingsService {
     leaves: true,
     waves: true,
     petals: true,
-    fish: true
+    fish: true,
+    bubbles: true,
+    hearts: true,
+    pearlShimmers: true,
+    silk: true
   });
   // Solo alcune chiavi hanno un value (es. la fase della luna o la forma dei fiori, "auto"/
   // "mix" di default finché non arriva la risposta del server).
-  readonly values = signal<Partial<Record<WorldSettingKey, string>>>({ moon: 'auto', petals: 'mix', fish: 'mix' });
+  readonly values = signal<Partial<Record<WorldSettingKey, string>>>({ moon: 'auto', petals: 'mix', fish: 'mix', hearts: 'mix', pearlShimmers: 'green' });
 
   async load(): Promise<void> {
     try {

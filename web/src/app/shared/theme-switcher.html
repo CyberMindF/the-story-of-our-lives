@@ -1,4 +1,8 @@
-<div class="theme-switcher" role="group" aria-label="Scegli un tema">
+<div class="theme-preset-heading">
+  <strong>Preset del mondo</strong>
+  <span>Cambiano insieme tema e animazioni.</span>
+</div>
+<div class="theme-switcher" role="group" aria-label="Scegli un preset del mondo">
   @for (theme of themeService.themes; track theme.id) {
     <button
       type="button"
@@ -6,9 +10,9 @@
       [class.is-selected]="themeService.activeThemeId() === theme.id"
       [style.--chip-color]="theme.swatch"
       [attr.data-theme-id]="theme.id"
-      [attr.aria-label]="'Attiva il tema ' + theme.label"
+      [attr.aria-label]="'Attiva il preset ' + theme.label"
       [attr.aria-pressed]="themeService.activeThemeId() === theme.id"
-      (click)="themeService.applyTheme(theme.id)"
+      (click)="themeService.applyPreset(theme.id)"
     >
       <span class="theme-chip-preview" aria-hidden="true">
         <span class="theme-chip-icon">
@@ -39,7 +43,7 @@
         <small class="theme-chip-description">{{ theme.description }}</small>
       </span>
       @if (themeService.activeThemeId() === theme.id) {
-        <span class="theme-chip-selected" aria-hidden="true">Attivo</span>
+        <span class="theme-chip-selected" aria-hidden="true">Tema attivo</span>
       }
     </button>
   }

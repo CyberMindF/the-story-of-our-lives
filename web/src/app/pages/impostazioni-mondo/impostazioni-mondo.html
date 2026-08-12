@@ -14,9 +14,25 @@
   </section>
 
   <section class="settings-effects" aria-labelledby="settings-effects-title">
-    <h2 id="settings-effects-title">Cosa vive nel cielo</h2>
+    <h2 id="settings-effects-title">Personalizza il mondo</h2>
     <div class="settings-effects-intro"><app-editorial-text contentKey="impostazioni-mondo.effetti.introduzione" /></div>
 
+    <div class="settings-theme-only card">
+      <span class="settings-theme-only-copy">
+        <strong>Solo tema</strong>
+        <small>Cambia l’aspetto senza modificare le animazioni attive.</small>
+      </span>
+      <app-select
+        [options]="themeOptions"
+        [value]="themeService.activeThemeId()"
+        ariaLabel="Cambia soltanto il tema"
+        (valueChange)="themeService.applyTheme($event)"
+      />
+    </div>
+
+    <div class="settings-effects-grid">
+
+    <section class="settings-effect-group">
     <h3 class="settings-group-title">Consigliato per Night Sky</h3>
     <div class="settings-list">
       <label class="settings-toggle card">
@@ -75,8 +91,25 @@
           />
         </div>
       </div>
-    </div>
 
+      <div class="settings-toggle-card card">
+        <label class="settings-toggle">
+          <span class="settings-toggle-info">
+            <span class="settings-toggle-title"><span aria-hidden="true">🌌</span> Effetto aurora</span>
+            <span class="settings-toggle-description">Luci colorate attraversano lentamente tutto il mondo.</span>
+          </span>
+          <input type="checkbox" class="settings-toggle-input" [checked]="worldSettingsService.settings().pearlShimmers" (change)="toggleSetting('pearlShimmers', $event)" aria-label="Effetto aurora" />
+          <span class="settings-toggle-switch" aria-hidden="true"></span>
+        </label>
+        <div class="settings-phase-picker">
+          <label>Colore</label>
+          <app-select [options]="auroraColorOptions" [value]="worldSettingsService.values().pearlShimmers === 'white' ? 'green' : (worldSettingsService.values().pearlShimmers || 'green')" ariaLabel="Colore dell'aurora" (valueChange)="setAuroraColor($event)" />
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="settings-effect-group">
     <h3 class="settings-group-title">Consigliato per Red of You</h3>
     <div class="settings-list">
       <label class="settings-toggle card">
@@ -94,7 +127,9 @@
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </label>
     </div>
+    </section>
 
+    <section class="settings-effect-group">
     <h3 class="settings-group-title">Consigliato per Green of Me</h3>
     <div class="settings-list">
       <label class="settings-toggle card">
@@ -112,9 +147,19 @@
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </label>
     </div>
+    </section>
 
+    <section class="settings-effect-group">
     <h3 class="settings-group-title">Consigliato per Ocean</h3>
     <div class="settings-list">
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🫧</span> Bolle di sapone</span>
+          <span class="settings-toggle-description">Salgono leggere e riflettono i colori del mare.</span>
+        </span>
+        <input type="checkbox" class="settings-toggle-input" [checked]="worldSettingsService.settings().bubbles" (change)="toggleSetting('bubbles', $event)" aria-label="Bolle di sapone" />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
       <label class="settings-toggle card">
         <span class="settings-toggle-info">
           <span class="settings-toggle-title"><span aria-hidden="true">🌊</span> Onde del mare</span>
@@ -157,7 +202,48 @@
         </div>
       </div>
     </div>
+    </section>
 
+    <section class="settings-effect-group">
+    <h3 class="settings-group-title">Consigliato per White World</h3>
+    <div class="settings-list">
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🤍</span> Effetto seta</span>
+          <span class="settings-toggle-description">Riflessi bianchi morbidi attraversano il mondo.</span>
+        </span>
+        <input type="checkbox" class="settings-toggle-input" [checked]="worldSettingsService.settings().silk" (change)="toggleSetting('silk', $event)" aria-label="Effetto seta" />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
+    </div>
+    </section>
+
+    <section class="settings-effect-group">
+    <h3 class="settings-group-title">Consigliato per Love</h3>
+    <div class="settings-list">
+      <div class="settings-toggle-card card">
+        <label class="settings-toggle">
+          <span class="settings-toggle-info">
+            <span class="settings-toggle-title"><span aria-hidden="true">💕</span> Cuori leggeri</span>
+            <span class="settings-toggle-description">Cuori di varie dimensioni fluttuano sullo sfondo.</span>
+          </span>
+          <input type="checkbox" class="settings-toggle-input" [checked]="worldSettingsService.settings().hearts" (change)="toggleSetting('hearts', $event)" aria-label="Cuori leggeri" />
+          <span class="settings-toggle-switch" aria-hidden="true"></span>
+        </label>
+        <div class="settings-phase-picker">
+          <label>Colore</label>
+          <app-select
+            [options]="heartColorOptions"
+            [value]="worldSettingsService.values().hearts || 'mix'"
+            ariaLabel="Colore dei cuori"
+            (valueChange)="setHeartColor($event)"
+          />
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="settings-effect-group">
     <h3 class="settings-group-title">Consigliato per Velvet</h3>
     <div class="settings-list">
       <div class="settings-toggle-card card">
@@ -186,6 +272,8 @@
           />
         </div>
       </div>
+    </div>
+    </section>
     </div>
   </section>
 </app-shell>

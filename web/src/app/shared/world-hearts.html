@@ -1,0 +1,27 @@
+@if (worldSettingsService.settings().hearts) {
+  <div class="world-hearts" aria-hidden="true">
+    @for (heart of hearts; track $index) {
+      <span class="world-heart"
+        [class.world-heart-fire]="heartKind(heart.colorIndex) === 'fire'"
+        [class.world-heart-golden]="heartKind(heart.colorIndex) === 'gold'"
+        [style.--heart-x]="heart.x + '%'"
+        [style.--heart-y]="heart.y + '%'"
+        [style.--heart-size]="heart.size + 'rem'"
+        [style.--heart-opacity]="heart.opacity"
+        [style.--heart-drift-x]="heart.driftX + 'px'"
+        [style.--heart-drift-y]="heart.driftY + 'px'"
+        [style.--heart-rotation]="heart.rotation + 'deg'"
+        [style.--heart-duration]="heart.duration + 's'"
+        [style.--heart-delay]="heart.delay + 's'"
+        [style.--gold-shine-duration]="heart.shineDuration + 's'"
+        [style.--gold-shine-delay]="heart.shineDelay + 's'"
+        [style.color]="heartColor(heart.colorIndex)">
+        @if (heartKind(heart.colorIndex) === 'fire') {
+          ❤️‍🔥
+        } @else {
+          ♥
+        }
+      </span>
+    }
+  </div>
+}

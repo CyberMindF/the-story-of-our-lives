@@ -38,30 +38,15 @@
   </form>
 
   @if (authService.isAdmin()) {
-    <section class="profilo-form card" aria-labelledby="admin-mode-title">
-      <h2 id="admin-mode-title">Modalità admin</h2>
-      <p class="profilo-admin-note">
-        Mostra i controlli di modifica dei contenuti. Resta accesa solo per questa sessione.
-      </p>
-      <label class="settings-toggle">
-        <span class="settings-toggle-info">
-          <span class="settings-toggle-title">Modalità admin attiva</span>
-        </span>
-        <input
-          type="checkbox"
-          class="settings-toggle-input"
-          [checked]="authService.adminModeEnabled()"
-          (change)="toggleAdminMode($event)"
-          aria-label="Modalità admin attiva"
-        />
-        <span class="settings-toggle-switch" aria-hidden="true"></span>
-      </label>
-
+    <section class="profilo-form card" aria-labelledby="admin-tools-title">
+      <h2 id="admin-tools-title">Strumenti riservati</h2>
       @if (authService.adminModeEnabled()) {
         <div class="profilo-admin-links">
           <a class="btn" routerLink="/contenuti">📚 Indice dei contenuti</a>
           <a class="btn" routerLink="/log">🗂️ Log degli eventi</a>
         </div>
+      } @else {
+        <p class="profilo-admin-note">Attiva la modalità Admin dall’intestazione per accedere.</p>
       }
     </section>
   }

@@ -3,7 +3,7 @@ import { recordEvent } from "./_shared/events.js";
 
 // Chiavi note: allowlist esplicita invece di accettare qualunque stringa dal client, per non
 // lasciare che "world_settings" accumuli righe arbitrarie mai lette da nessuna UI.
-const KNOWN_KEYS = new Set(["lanterns", "stars", "moon", "theme", "sparkles", "leaves", "waves", "petals", "fish"]);
+const KNOWN_KEYS = new Set(["lanterns", "stars", "moon", "theme", "sparkles", "leaves", "waves", "petals", "fish", "bubbles", "hearts", "pearlShimmers", "silk"]);
 
 // Solo alcune chiavi accettano anche un "value" oltre a enabled (es. la luna: la fase scelta,
 // "auto" o un indice 0-7; il tema: quale dei 5; i fiori: quale forma o "mix") — allowlist dei
@@ -15,7 +15,9 @@ const VALID_VALUES = {
   moon: new Set(["auto", "0", "1", "2", "3", "4", "5", "6", "7"]),
   theme: new Set(["the-white-world", "sea", "velvet", "red-of-you", "green-of-me", "white-world", "love"]),
   petals: new Set(["mix", "daisy", "pink", "rose"]),
-  fish: new Set(["mix", "octopus", "goldfish"])
+  fish: new Set(["mix", "octopus", "goldfish"]),
+  hearts: new Set(["mix", "pink", "red", "yellow", "green", "gold", "fire"]),
+  pearlShimmers: new Set(["green", "blue", "magenta", "mix"])
 };
 
 // Interruttori condivisi degli effetti del Mondo Bianco (vedi migrations/0022): non uno per

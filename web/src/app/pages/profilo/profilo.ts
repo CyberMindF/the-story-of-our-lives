@@ -105,16 +105,4 @@ export class Profilo {
     }
   }
 
-  // Ottimistico come gli altri interruttori del sito (world-settings.service.ts): riflette
-  // subito il click, poi torna indietro solo se il backend rifiuta (sessione persa, ruolo
-  // cambiato altrove).
-  protected async toggleAdminMode(event: Event): Promise<void> {
-    const enabled = (event.target as HTMLInputElement).checked;
-    const previous = this.authService.adminModeEnabled();
-    this.authService.adminModeEnabled.set(enabled);
-    const saved = await this.authService.setAdminMode(enabled);
-    if (!saved) {
-      this.authService.adminModeEnabled.set(previous);
-    }
-  }
 }

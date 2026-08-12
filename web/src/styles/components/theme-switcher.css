@@ -8,6 +8,15 @@
   gap: 1rem;
 }
 
+.theme-preset-heading {
+  display: grid;
+  gap: .25rem;
+  margin-bottom: .8rem;
+}
+
+.theme-preset-heading strong { font-size: 1rem; }
+.theme-preset-heading span { color: var(--muted-color); font-size: .82rem; line-height: 1.45; }
+
 .theme-chip {
   position: relative;
   display: grid;

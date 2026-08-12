@@ -18,15 +18,15 @@ const DEFAULT_THEME_ID = 'the-white-world';
 // altri, luna/stelle/lanterne comprese — non solo "riaccende il proprio lasciando il resto
 // invariato" come nella prima versione. Restano comunque liberi da riaccendere a mano dopo,
 // il preset decide solo lo stato iniziale al momento della scelta.
-const ALL_EFFECT_KEYS: WorldSettingKey[] = ['lanterns', 'stars', 'moon', 'sparkles', 'leaves', 'waves', 'petals', 'fish'];
+const ALL_EFFECT_KEYS: WorldSettingKey[] = ['lanterns', 'stars', 'moon', 'sparkles', 'leaves', 'waves', 'petals', 'fish', 'bubbles', 'hearts', 'pearlShimmers', 'silk'];
 const THEME_PRESET: Record<string, WorldSettingKey[]> = {
   'the-white-world': ['lanterns', 'stars', 'moon'],
   'red-of-you': ['sparkles'],
   'green-of-me': ['leaves'],
-  sea: ['waves', 'fish'],
+  sea: ['waves', 'fish', 'bubbles'],
   velvet: ['petals'],
-  'white-world': [],
-  love: ['petals']
+  'white-world': ['silk'],
+  love: ['hearts']
 };
 
 // Unico registro dei temi mostrati dal selettore; la storageKey resta invariata per non
@@ -118,10 +118,8 @@ export class ThemeService {
     }
   }
 
-  // Applica un tema noto, usando il tema di default come fallback. Di default aggiorna sia la
-  // cache locale sia il valore condiviso sul server — è quello che deve succedere quando è la
-  // persona a scegliere un tema dal selettore, non le chiamate interne di sincronizzazione qui
-  // sopra (che passano opzioni più strette apposta).
+  // Applica soltanto la palette scelta. Gli effetti restano invariati: il selettore semplice
+  // usa questo metodo, mentre le card richiamano applyPreset subito sotto.
   applyTheme(themeId: string, options: { persistLocal?: boolean; persistRemote?: boolean } = {}): void {
     const theme =
       THEMES.find((entry) => entry.id === themeId) ??
@@ -136,13 +134,16 @@ export class ThemeService {
     }
     if (options.persistRemote !== false) {
       void this.worldSettingsService.setValue('theme', theme.id);
-      // Solo quando è davvero una scelta della persona (non la sincronizzazione dal server né
-      // l'applicazione della cache locale all'avvio, che passano persistRemote:false apposta):
-      // applica il preset completo, accendendo i suoi effetti e spegnendo tutti gli altri.
-      const preset = THEME_PRESET[theme.id] ?? [];
-      for (const key of ALL_EFFECT_KEYS) {
-        void this.worldSettingsService.set(key, preset.includes(key));
-      }
+    }
+  }
+
+  // Le card sono preset completi: cambiano la palette e riallineano tutti gli effetti alla
+  // configurazione consigliata. È volutamente distinto da applyTheme.
+  applyPreset(themeId: string): void {
+    this.applyTheme(themeId);
+    const preset = THEME_PRESET[this.activeThemeId()] ?? [];
+    for (const key of ALL_EFFECT_KEYS) {
+      void this.worldSettingsService.set(key, preset.includes(key));
     }
   }
 }

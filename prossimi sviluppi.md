@@ -28,12 +28,16 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
-- #e7 - Animazione bolle di sapone, che vagano un po' per lo schermo e poi scoppiano
-- #e8 - Animazione cuori possono essere molto piccoli e molto grandi, vagano un po' per lo schermo in modo legiadro e poi fanno un piccolo fadeout leggero
+- [x] #e7 - Animazione bolle di sapone per Ocean: salgono vagando leggermente e si dissolvono con un piccolo scoppio. Effetto indipendente e disattivabile dalla Stanza dei bottoni.
+- [x] #e8 - Animazione cuori per Love: dimensioni diverse, caduta leggera e dissolvenza. Effetto indipendente e disattivabile dalla Stanza dei bottoni.
 - [x] #e9 - Tema **White World**: bianco perla e avorio freddo, con riflessi larghi che
   ricordano il raso senza usare texture decorative. Pannelli bianchi leggibili, ombre calde
   leggere, testo antracite e icona a perla. È distinto dall'id storico `the-white-world`, che
   continua a rappresentare Night Sky per compatibilità.
+  L'effetto bianco è stato separato come **Seta**, indipendente e senza varianti; la resa
+  definitiva della seta resta da rifinire. L'**Aurora** è ora un effetto distinto, senza
+  bianco, con colori verde/azzurro/magenta/misti e due stili confrontabili: veli morbidi e
+  raggi nordici.
 - #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
 - #e11 - Trasformare il finale del Mappamondo in un vero atlante per orientarsi nel sito,
   senza sostituire né interrompere la storia esistente. Dopo l'ultima scena aggiungere la
