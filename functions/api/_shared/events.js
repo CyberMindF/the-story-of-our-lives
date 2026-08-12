@@ -38,7 +38,8 @@ const ALLOWED_EVENTS = new Set([
   "content_created",
   "content_updated",
   "content_version_added",
-  "content_deleted"
+  "content_deleted",
+  "admin_log_viewed"
 ]);
 const MAX_METADATA_LENGTH = 4096;
 

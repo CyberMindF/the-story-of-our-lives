@@ -752,6 +752,31 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Restano da fare**: le collezioni strutturate (Fase 4 prosegue con calendario/ricettario per
   primi secondo l'ordine consigliato dall'inventario), i testi `history` non ancora confermati,
   Fase 6/7.
+- [x] CMS (`planning editor contenuti.md`, Fase 6 — pannello e pagina log): su
+  `feature/content-editor`. Colmato un buco esplicitamente nei criteri di completamento della
+  prima milestone ("Un accesso diretto alla pagina log senza `events.view` restituisce 403") che
+  era rimasto del tutto assente finora. Nuovo endpoint `GET /api/events`
+  (`functions/api/events/`): filtri per identità/sezione/tipo evento/periodo, paginazione,
+  ordinamento dal più recente, un `JOIN` su `users` per esporre `identity`/`nickname` senza
+  duplicare quell'informazione nella tabella eventi. Ogni consultazione registra a sua volta un
+  evento `admin_log_viewed` (nuovo tipo in `_shared/events.js`) — non genera rumore perché è
+  un'azione singola per visita alla pagina, non per riga letta. Nuovo `adminGuard`
+  (`core/admin.guard.ts`), da usare dopo `authGuard` sulle rotte riservate: si affida al
+  `currentUser` già risolto da `authGuard` invece di rifare una chiamata di rete, così la pagina
+  non compare per un istante prima del controllo (stesso principio richiesto dal piano per il
+  resolver). La vera barriera resta comunque il backend — l'endpoint verifica `events.view`
+  indipendentemente da cosa fa il frontend. Due pagine nuove protette da `authGuard`+`adminGuard`:
+  `/log` (filtri, tabella, paginazione) e `/contenuti` (indice di sola lettura di
+  `content_entries`, riusa `GET /api/content` già esistente dalla Fase 3, con ricerca ed elenco
+  tipi lato client — il salvataggio resta sulla pagina dove il contenuto vive, questo è solo per
+  trovarli). Collegamenti a entrambe in `profilo.html`, visibili solo con
+  `adminModeEnabled()` acceso, accanto all'interruttore della modalità admin. `tsc --noEmit`
+  pulito; non verificato in browser (stesso limite di Node), e non ho potuto far girare
+  `wrangler pages dev` per un test end-to-end perché richiede una build Angular già pronta in
+  `web/dist/`, che qui non riesco a produrre.
+  **Restano da fare**: verifica visiva reale (serve Node aggiornato o farlo girare altrove),
+  applicare tutte le migrazioni al D1 di produzione (finora solo locale), le collezioni
+  strutturate, le decisioni aperte sull'inventario, Fase 8 (export/backup).
 
 ---
 

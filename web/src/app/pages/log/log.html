@@ -1,0 +1,81 @@
+<app-shell [showSuggestLink]="false">
+  <section class="log-hero" aria-labelledby="log-title">
+    <p class="log-eyebrow">Modalità admin</p>
+    <h1 id="log-title"><span aria-hidden="true">🗂️</span> Log degli eventi</h1>
+  </section>
+
+  <form class="log-filters card" aria-label="Filtra gli eventi" (ngSubmit)="applyFilters()">
+    <label class="form-field">
+      <span>Persona</span>
+      <select [(ngModel)]="identity" name="identity">
+        <option value="">Tutte</option>
+        <option value="lui">Lui</option>
+        <option value="lei">Lei</option>
+      </select>
+    </label>
+
+    <label class="form-field">
+      <span>Sezione</span>
+      <input type="text" name="section" [(ngModel)]="section" placeholder="es. content, admin, lettere…" />
+    </label>
+
+    <label class="form-field">
+      <span>Tipo evento</span>
+      <input type="text" name="eventType" [(ngModel)]="eventType" placeholder="es. content_updated…" />
+    </label>
+
+    <label class="form-field">
+      <span>Da</span>
+      <input type="date" name="from" [(ngModel)]="from" />
+    </label>
+
+    <label class="form-field">
+      <span>A</span>
+      <input type="date" name="to" [(ngModel)]="to" />
+    </label>
+
+    <div class="log-filters-actions">
+      <button type="submit" class="btn btn-submit">Filtra</button>
+      <button type="button" class="btn" (click)="resetFilters()">Azzera</button>
+    </div>
+  </form>
+
+  @if (error()) {
+    <p class="log-error">{{ error() }}</p>
+  } @else {
+    <div class="log-table-wrap card">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Quando</th>
+            <th>Chi</th>
+            <th>Sezione</th>
+            <th>Evento</th>
+            <th>Metadati</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (event of events(); track event.id) {
+            <tr>
+              <td>{{ event.createdAt }}</td>
+              <td>{{ event.nickname }} ({{ event.identity }})</td>
+              <td>{{ event.section }}</td>
+              <td>{{ event.eventType }}</td>
+              <td class="log-metadata">{{ event.metadata | json }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="log-empty">{{ loading() ? 'Caricamento…' : 'Nessun evento trovato.' }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (pageCount() > 1) {
+      <nav class="log-pagination" aria-label="Pagine dei log">
+        <button type="button" class="btn" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">‹ Precedente</button>
+        <span>Pagina {{ page() }} di {{ pageCount() }}</span>
+        <button type="button" class="btn" [disabled]="page() >= pageCount()" (click)="goToPage(page() + 1)">Successiva ›</button>
+      </nav>
+    }
+  }
+</app-shell>

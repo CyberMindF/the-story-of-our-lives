@@ -1,0 +1,18 @@
+:host { display: block; color: var(--text-color); }
+
+.log-hero { width: min(100%, 64rem); margin: auto; padding: clamp(2rem, 6vw, 4rem) 0 1.5rem; }
+.log-eyebrow { margin: 0 0 .5rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+
+.log-filters { width: min(100%, 64rem); margin: 0 auto 1.5rem; padding: 1.25rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; }
+.log-filters .form-field { min-width: 10rem; flex: 1 1 10rem; }
+.log-filters-actions { display: flex; gap: .6rem; }
+
+.log-error { width: min(100%, 64rem); margin: 0 auto; color: #ffb4b4; }
+
+.log-table-wrap { width: min(100%, 64rem); margin: 0 auto; padding: 0; overflow-x: auto; }
+.log-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.log-table th, .log-table td { padding: .7rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+.log-table td.log-metadata { white-space: normal; max-width: 24rem; color: var(--muted-color); font-family: monospace; font-size: .78rem; }
+.log-table .log-empty { text-align: center; color: var(--muted-color); white-space: normal; }
+
+.log-pagination { width: min(100%, 64rem); margin: 1rem auto 0; display: flex; align-items: center; justify-content: center; gap: 1rem; }

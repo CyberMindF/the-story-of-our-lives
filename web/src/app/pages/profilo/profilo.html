@@ -56,6 +56,13 @@
         />
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </label>
+
+      @if (authService.adminModeEnabled()) {
+        <div class="profilo-admin-links">
+          <a class="btn" routerLink="/contenuti">📚 Indice dei contenuti</a>
+          <a class="btn" routerLink="/log">🗂️ Log degli eventi</a>
+        </div>
+      }
     </section>
   }
 </app-shell>

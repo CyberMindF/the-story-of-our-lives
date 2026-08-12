@@ -15,3 +15,4 @@
 
 .profilo-admin-note { margin: 0; color: var(--muted-color); font-size: .88rem; line-height: 1.5; }
 .profilo-form .settings-toggle { padding: 0; }
+.profilo-admin-links { display: flex; flex-wrap: wrap; gap: .6rem; }

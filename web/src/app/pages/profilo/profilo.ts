@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService } from '../../core/auth.service';
 import { FormStatus } from '../../shared/form-status/form-status';
@@ -12,7 +13,7 @@ import { PasswordField } from '../../shared/password-field/password-field';
 @Component({
   selector: 'app-profilo',
   standalone: true,
-  imports: [AppShell, FormsModule, FormStatus, PasswordField],
+  imports: [AppShell, FormsModule, FormStatus, PasswordField, RouterLink],
   styleUrls: ['../../../styles/pages/profilo.css'],
   templateUrl: './profilo.html'
 })
