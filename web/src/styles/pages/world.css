@@ -177,6 +177,59 @@
   outline-offset: 4px;
 }
 
+.world-place-card-wrap {
+  position: relative;
+}
+
+.world-place-description {
+  grid-column: 2;
+  margin: 0.1rem 0 0;
+  color: var(--muted-color);
+  font-size: 0.78rem;
+}
+
+.world-place-edit-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.78rem;
+}
+
+.world-place-form {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.world-place-form h3 {
+  margin: 0;
+}
+
+.world-place-form small {
+  color: var(--muted-color);
+  font-weight: 500;
+}
+
+.world-place-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.world-place-form-error {
+  margin: 0;
+  color: #ffb4b4;
+  font-size: 0.85rem;
+}
+
+.world-place-form-error:empty {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .world-places-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

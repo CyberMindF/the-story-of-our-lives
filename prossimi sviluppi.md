@@ -1051,6 +1051,20 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `stolenWords.items`). Verificato in browser: il link renderizza come `<a href="/ponti">🌈 I
   Ponti</a>` vero (non più testo con parentesi quadre), tutte e 3 le introduzioni visibili.
   **Restano da fare**: card del Mondo Bianco, Cruciverba, Bacheca.
+- [x] CMS (`planning editor contenuti.md`, Fase 7 — card del Mondo Bianco, decisione #2
+  dell'inventario): su `feature/content-editor`. A differenza delle altre raccolte, qui
+  l'insieme delle card è fisso — emoji, rotta, ordine e disponibilità restano hardcoded in
+  `mondo-bianco.ts` (`PLACES`, un array readonly), solo nome e descrizione sono contenuto
+  editoriale. Per questo la tabella `mondo_bianco_cards` (migrazione 0057) e l'API
+  (`functions/api/mondo-bianco-cards/`) hanno solo GET e PUT — niente POST/DELETE/riordino, non
+  avrebbe senso: aggiungere o togliere una card è comunque una modifica di codice. 14 card
+  importate con il nome attuale (migrazione 0058, `description` parte `NULL`: non esisteva già
+  prima). Il template ora fa `@for` sull'array fisso arricchito dai nomi/descrizioni dal
+  server, con un pulsante ✏️ per card in modalità admin. **Verificato in browser**: 14 card, 14
+  pulsanti di modifica, salvataggio di nome+descrizione riflesso subito, e soprattutto il
+  `routerLink` verso `/bacheca` ancora funzionante dopo la modifica — la rotta non passa mai
+  dall'editor, resta quella hardcoded nell'array `PLACES`.
+  **Restano da fare**: solo Cruciverba e Bacheca, le ultime due raccolte del piano.
 
 ---
 
