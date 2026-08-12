@@ -2,6 +2,7 @@ import { Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AppSelect, AppSelectOption } from '../../shared/app-select/app-select';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 type ActivityStatus = 'todo' | 'done' | 'repeat' | 'unavailable';
 type ActivityFilter = 'all' | ActivityStatus;
@@ -45,7 +46,7 @@ const CATEGORY_LABEL: Record<string, string> = {
 @Component({
   selector: 'app-cose-insieme',
   standalone: true,
-  imports: [AppShell, AppSelect, RouterLink],
+  imports: [AppShell, AppSelect, RouterLink, EditorialText],
   styleUrls: ['../../../styles/pages/cose-insieme.css'],
   templateUrl: './cose-insieme.html'
 })

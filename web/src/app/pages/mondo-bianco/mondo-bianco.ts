@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AudioPlayer } from '../../shared/audio-player/audio-player';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 // Porting di templates/pages/mondo-bianco.content.html — pagina interamente statica
 // nell'originale (nessun assets/js/hub/*.js: la cartella esiste ma è vuota, confermato
@@ -9,7 +10,7 @@ import { AudioPlayer } from '../../shared/audio-player/audio-player';
 @Component({
   selector: 'app-mondo-bianco',
   standalone: true,
-  imports: [RouterLink, AppShell, AudioPlayer],
+  imports: [RouterLink, AppShell, AudioPlayer, EditorialText],
   styleUrls: ['../../../styles/pages/world.css'],
   templateUrl: './mondo-bianco.html'
 })

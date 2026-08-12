@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 type RecipeKind = 'Fatta insieme' | 'Da provare';
 type RecipeFilter = 'Tutte' | RecipeKind;
@@ -19,7 +20,7 @@ interface Recipe {
 @Component({
   selector: 'app-ricettario',
   standalone: true,
-  imports: [AppShell, RouterLink],
+  imports: [AppShell, RouterLink, EditorialText],
   styleUrls: ['../../../styles/pages/ricettario.css'],
   templateUrl: './ricettario.html'
 })

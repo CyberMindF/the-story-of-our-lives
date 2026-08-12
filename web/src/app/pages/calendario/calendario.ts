@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { StaticContentService } from '../../core/static-content.service';
 import { AppShell } from '../../shell/app-shell';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 
 interface CalendarEvent {
   id: string;
@@ -32,7 +33,7 @@ const MONTH_FORMATTER = new Intl.DateTimeFormat('it-IT', { month: 'long', timeZo
 @Component({
   selector: 'app-calendario',
   standalone: true,
-  imports: [AppShell],
+  imports: [AppShell, EditorialText],
   styleUrls: ['../../../styles/pages/calendar.css'],
   templateUrl: './calendario.html'
 })

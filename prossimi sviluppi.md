@@ -672,6 +672,28 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Restano da fare**: Fase 1 (inventario completo), Fase 4 (migrazione effettiva dei JSON/testi
   Angular nel database — per ora le tabelle sono vuote), Fase 5+ (editor frontend, pannello,
   pagina dei log).
+- [x] CMS (`planning editor contenuti.md`, Fase 4 ridotta + prima fetta di Fase 5 — migrazione
+  delle introduzioni testuali e componente di visualizzazione condiviso): su
+  `feature/content-editor`. Migrazione 0036: le 5 introduzioni testuali chiaramente hardcoded nei
+  template (non quelle già esternalizzate in `web/public/content/*.json` per mappa/bacheca/
+  storie/cuffiette, che restano JSON in attesa dei rispettivi editor dedicati di Fase 7, per non
+  confondere "migrazione al CMS generico" con "raccolta strutturata") — `mondo-bianco.benvenuta`,
+  `ricettario.introduzione`, `calendario.introduzione`, `cose-insieme.introduzione`,
+  `lettere.introduzione`, tutte `plain_text`/`replace`. `created_by` risolto con un `JOIN` su
+  `users.email` invece di un id hardcoded, così la migrazione resta valida sia in locale sia in
+  remoto. Nuovo `ContentService` (`web/src/app/core/content.service.ts`, stesso pattern a
+  `fetch`+`credentials: 'same-origin'` di `AuthService`, non `HttpClient`: il progetto non lo usa
+  da nessuna parte) e componente condiviso `EditorialText` (`web/src/app/shared/editorial-text/`)
+  che legge `body` da `GET /api/content/:key` e lo spacca in paragrafi — usato dalle 5 pagine al
+  posto del testo hardcoded, così la modifica di un solo file di componente vale per tutte
+  (regola di zero duplicazione). Nessun controllo di modifica in pagina ancora: `EditorialText` è
+  solo lettura, l'editor arriva con il resto della Fase 5. Verificato con una query diretta su D1
+  locale che le 5 righe siano state inserite con lunghezza attesa e `created_by` corretto;
+  `tsc --noEmit` pulito. **Non verificato in browser**: `ng build`/`ng serve` in questo ambiente
+  richiedono Node ≥22.22.3/24.15.0, qui è installato v24.14.1 — nessun bug noto, solo build non
+  eseguibile in locale in questo giro. **Restano da fare**: Fase 1 (inventario completo, incluse
+  le raccolte JSON), il resto della Fase 4 (raccolte strutturate), Fase 5 (editor vero e proprio,
+  versionamento selettivo, pulsante "Modifica" in modalità admin), Fase 6+ (pannello, log).
 
 ---
 
