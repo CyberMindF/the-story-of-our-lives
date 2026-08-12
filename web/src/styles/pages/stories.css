@@ -34,7 +34,7 @@
   display: block;
   width: 100%;
   max-height: 39rem;
-  border: 1px solid rgba(255, 255, 255, 0.17);
+  border: 1px solid var(--panel-border-color);
   border-radius: 48% 48% 1.5rem 1.5rem;
   object-fit: cover;
   box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.35);
@@ -82,12 +82,12 @@
 }
 
 .stories-list {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--border-color);
 }
 
 .story-entry {
   scroll-margin-top: 6rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .story-entry summary {
@@ -200,9 +200,9 @@
   width: min(100%, 64rem);
   margin: clamp(2rem, 7vw, 5rem) auto 0;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--panel-border-color);
   border-radius: 1.25rem;
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--panel-color);
   backdrop-filter: blur(16px);
 }
 
@@ -250,7 +250,7 @@
 
 .suggestion-panel {
   padding: 0 clamp(1rem, 2.5vw, 1.75rem) clamp(1.25rem, 3vw, 1.75rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid var(--border-color);
 }
 
 .suggestion-introduction {
@@ -332,7 +332,7 @@
 .story-form h2 { margin: 0; }
 .story-form small { color: var(--muted-color); font-weight: 500; }
 .story-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
-.story-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.story-form-error { margin: 0; color: var(--danger-text-color); font-size: .85rem; }
 .story-form-error:empty { display: none; }
 .story-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
 .story-admin-actions .btn { padding: .4rem .7rem; font-size: .82rem; }

@@ -1,7 +1,7 @@
 .question-card { display: grid; gap: .75rem; padding: clamp(1.2rem, 3vw, 1.6rem); }
 .question-card.needs-answer { border-color: color-mix(in srgb, var(--focus-color) 45%, var(--panel-border-color)); }
 
-.question-card-status { margin: 0; color: #f3dfb8; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+.question-card-status { margin: 0; color: var(--accent-color); font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
 .question-card-status:empty { display: none; }
 
 .question-card-author { margin: 0; color: var(--muted-color); font-size: .82rem; }

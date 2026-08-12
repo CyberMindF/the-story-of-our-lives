@@ -23,14 +23,14 @@
    "overflow-y: auto" da solo non basterebbe a farli scorrere davvero. */
 .linguaggio-rubrica { width: min(100%, 64rem); margin: 0 auto; display: flex; height: 27rem; border: 1px solid var(--panel-border-color); border-radius: 1.25rem; overflow: hidden; background: var(--panel-color); backdrop-filter: blur(12px); box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.22); }
 
-.linguaggio-rubrica-tabs { display: flex; flex-direction: column; flex: 0 0 13rem; min-height: 0; gap: .2rem; padding: .85rem; background: rgba(0, 0, 0, 0.16); overflow-y: auto; }
+.linguaggio-rubrica-tabs { display: flex; flex-direction: column; flex: 0 0 13rem; min-height: 0; gap: .2rem; padding: .85rem; background: color-mix(in srgb, var(--bg-color) 45%, transparent); overflow-y: auto; }
 .linguaggio-rubrica-tabs button { display: flex; align-items: center; gap: .65rem; padding: .7rem .9rem; border: 0; border-radius: .7rem; background: transparent; color: var(--muted-color); text-align: left; font-family: Georgia, "Times New Roman", serif; font-size: 1rem; cursor: pointer; transition: background 150ms ease, color 150ms ease; }
-.linguaggio-rubrica-tabs button:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-color); }
-.linguaggio-rubrica-tabs button.is-active { background: var(--panel-color); color: #f3dfb8; font-weight: 700; box-shadow: 0 .3rem .9rem rgba(0, 0, 0, 0.22); }
+.linguaggio-rubrica-tabs button:hover { background: var(--button-bg); color: var(--text-color); }
+.linguaggio-rubrica-tabs button.is-active { background: var(--panel-color); color: var(--accent-color); font-weight: 700; box-shadow: 0 .3rem .9rem rgba(0, 0, 0, 0.22); }
 .linguaggio-rubrica-icon { font-size: 1.05rem; }
 
 .linguaggio-rubrica-panel { flex: 1; min-width: 0; min-height: 0; padding: clamp(1.75rem, 4vw, 2.5rem); overflow-y: auto; }
-.linguaggio-rubrica-panel h2 { display: flex; align-items: center; gap: .65rem; margin: 0 0 1.1rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.7rem; font-weight: 400; color: #f3dfb8; }
+.linguaggio-rubrica-panel h2 { display: flex; align-items: center; gap: .65rem; margin: 0 0 1.1rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.7rem; font-weight: 400; color: var(--accent-color); }
 .linguaggio-category-note { margin: -.4rem 0 1.2rem; color: var(--muted-color); font-size: .88rem; line-height: 1.65; }
 
 @media (max-width: 640px) {
@@ -43,7 +43,7 @@
 .linguaggio-entries { display: grid; }
 .linguaggio-entry { display: grid; grid-template-columns: 11rem 1fr; column-gap: 1.5rem; align-items: baseline; padding: .65rem 0; border-top: 1px solid var(--panel-border-color); }
 .linguaggio-entry:first-child { border-top: 0; }
-.linguaggio-symbol { display: inline-flex; align-items: center; justify-content: center; width: fit-content; min-width: 2.2rem; padding: .3rem .6rem; border: 1px solid var(--panel-border-color); border-radius: .5rem; background: rgba(255,255,255,.045); box-shadow: 0 2px 0 rgba(255,255,255,.05); font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: .85rem; color: var(--focus-color); }
+.linguaggio-symbol { display: inline-flex; align-items: center; justify-content: center; width: fit-content; min-width: 2.2rem; padding: .3rem .6rem; border: 1px solid var(--panel-border-color); border-radius: .5rem; background: var(--button-bg); box-shadow: 0 2px 0 var(--panel-border-color); font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: .85rem; color: var(--focus-color); }
 .linguaggio-meaning { color: var(--muted-color); }
 .linguaggio-explanation { display: block; margin-top: .3rem; font-size: .82rem; line-height: 1.55; color: var(--muted-color); opacity: .75; }
 @media (max-width: 640px) {
@@ -51,7 +51,7 @@
 }
 
 .linguaggio-examples { width: min(100%, 50rem); margin: clamp(2.5rem, 6vw, 3.5rem) auto 0; padding: clamp(1.4rem, 4vw, 2.2rem); }
-.linguaggio-examples h2 { margin: 0 0 .5rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.4rem; font-weight: 400; color: #f3dfb8; }
+.linguaggio-examples h2 { margin: 0 0 .5rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.4rem; font-weight: 400; color: var(--accent-color); }
 .linguaggio-examples-intro { margin: 0 0 1.3rem; color: var(--muted-color); font-size: .9rem; line-height: 1.6; }
 .linguaggio-examples-list { margin: 0; padding: 0; list-style: none; display: grid; gap: .6rem; }
 .linguaggio-examples-list li { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem; padding-bottom: .6rem; border-bottom: 1px solid var(--panel-border-color); }
@@ -75,7 +75,7 @@
 .linguaggio-admin-category-group { display: grid; gap: .7rem; margin-top: .6rem; padding: 1rem; border: 1px solid var(--panel-border-color); border-radius: 1rem; }
 .linguaggio-admin-form { display: grid; gap: 1rem; padding: 1.4rem; }
 .linguaggio-admin-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
-.linguaggio-admin-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.linguaggio-admin-form-error { margin: 0; color: var(--danger-text-color); font-size: .85rem; }
 .linguaggio-admin-form-error:empty { display: none; }
 .linguaggio-admin-list { display: grid; gap: .7rem; }
 .linguaggio-admin-entry { border: 1px solid var(--panel-border-color); border-radius: .9rem; padding: .9rem 1.1rem; display: grid; gap: .5rem; }

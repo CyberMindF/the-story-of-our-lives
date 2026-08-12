@@ -1,7 +1,7 @@
 .ponti-page { min-height: 100dvh; color: var(--text-color); }
 .ponti-shell { --place-shell-width: 76rem; }
 .ponti-hero { padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 4rem); }
-.ponti-hero-figure { width: min(100%, 58rem); margin: 0 auto; overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: clamp(1.2rem, 3vw, 2rem); box-shadow: 0 2rem 6rem rgba(0,0,0,.32); }
+.ponti-hero-figure { width: min(100%, 58rem); margin: 0 auto; overflow: hidden; border: 1px solid var(--panel-border-color); border-radius: clamp(1.2rem, 3vw, 2rem); box-shadow: var(--shadow); }
 .ponti-hero-figure img { display: block; width: 100%; height: auto; }
 .ponti-hero h1 { width: min(100%, 58rem); margin: clamp(1.2rem, 3vw, 2rem) auto 0; font-size: var(--hero-size-lg); line-height: .95; letter-spacing: -.05em; }
 .ponti-hero h1 span { display: inline-block; font-family: system-ui, sans-serif; font-size: .42em; vertical-align: .2em; }

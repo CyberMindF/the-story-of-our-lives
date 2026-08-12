@@ -17,7 +17,7 @@
 
 .cifrato-sections { width: min(100%, 46rem); margin: 0 auto clamp(3rem, 7vw, 5rem); display: grid; gap: 1.5rem; }
 .cifrato-block { padding: clamp(1.4rem, 4vw, 2rem); }
-.cifrato-block h2 { margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; font-weight: 400; color: #f3dfb8; }
+.cifrato-block h2 { margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; font-weight: 400; color: var(--accent-color); }
 .cifrato-cipher { margin: 0; font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: .92rem; line-height: 1.9; }
 .cifrato-hint { margin: 1.25rem 0 0; padding-top: 1rem; border-top: 1px solid var(--panel-border-color); font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: .8rem; line-height: 1.7; color: var(--muted-color); word-break: break-all; }
 

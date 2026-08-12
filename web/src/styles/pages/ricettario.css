@@ -16,5 +16,18 @@
   font-size: 1.02rem;
   line-height: 1.8;
 }
+.recipe-eyebrow,
+.recipe-tags span,
+.recipe-mark,
+.recipe-body h3,
+.recipe-source,
+.recipe-body li::marker {
+  color: var(--accent-color);
+}
+.recipe-suggest:hover {
+  border-color: color-mix(in srgb, var(--accent-color) 53%, transparent);
+  color: var(--accent-color);
+}
+.recipe-form-error { color: var(--danger-text-color); }
 .recipe-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
 .recipe-admin-actions .btn { padding: .4rem .7rem; font-size: .82rem; }

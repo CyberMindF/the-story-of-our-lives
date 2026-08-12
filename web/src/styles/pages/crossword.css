@@ -598,7 +598,7 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
 .word-admin-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; }
 .word-admin-form { display: grid; gap: 1rem; padding: 1.4rem; }
 .word-admin-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
-.word-admin-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.word-admin-form-error { margin: 0; color: var(--danger-text-color); font-size: .85rem; }
 .word-admin-form-error:empty { display: none; }
 .word-admin-list { display: grid; gap: .8rem; }
 .word-admin-entry { border: 1px solid var(--border-color); border-radius: .9rem; padding: 1rem 1.2rem; display: grid; gap: .5rem; }

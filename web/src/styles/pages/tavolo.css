@@ -3,7 +3,7 @@
 .tavolo-eyebrow { margin: 0 0 .65rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 
 .tavolo-hero { padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 4rem); }
-.tavolo-hero-figure { width: min(100%, 58rem); margin: 0 auto; overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: clamp(1.2rem, 3vw, 2rem); box-shadow: 0 2rem 6rem rgba(0,0,0,.32); }
+.tavolo-hero-figure { width: min(100%, 58rem); margin: 0 auto; overflow: hidden; border: 1px solid var(--panel-border-color); border-radius: clamp(1.2rem, 3vw, 2rem); box-shadow: var(--shadow); }
 .tavolo-hero-figure img { display: block; width: 100%; height: auto; }
 .tavolo-hero h1 { width: min(100%, 58rem); margin: clamp(1.2rem, 3vw, 2rem) auto 0; font-size: var(--hero-size-lg); line-height: .95; letter-spacing: -.05em; }
 .tavolo-hero h1 span { display: inline-block; font-family: system-ui, sans-serif; font-size: .42em; vertical-align: .2em; }
@@ -12,12 +12,12 @@
 .tavolo-intro { display: grid; gap: 1.25rem; width: min(100%, 46rem); margin: 0 auto clamp(2.5rem, 6vw, 4rem); }
 .tavolo-intro app-editorial-text { --editorial-paragraph-margin: 0; color: var(--muted-color); font-size: clamp(1.05rem, 1.6vw, 1.18rem); line-height: 1.85; }
 
-.tavolo-quote { width: min(100%, 46rem); margin: 0 auto clamp(2.5rem, 6vw, 4rem); padding-left: 1.5rem; border-left: 1px solid rgba(255,255,255,.24); }
+.tavolo-quote { width: min(100%, 46rem); margin: 0 auto clamp(2.5rem, 6vw, 4rem); padding-left: 1.5rem; border-left: 1px solid var(--border-color); }
 .tavolo-quote p { margin: 0; color: var(--muted-color); font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: clamp(1.15rem, 2vw, 1.35rem); line-height: 1.6; }
 
 .tavolo-rules-section { padding-bottom: clamp(2.5rem, 6vw, 4rem); }
-.rules-toggle { width: min(100%, 52rem); margin: 0 auto; border-top: 1px solid rgba(255,255,255,.18); border-bottom: 1px solid rgba(255,255,255,.18); }
-.rules-toggle summary { display: flex; align-items: baseline; gap: .6rem; padding: 1.25rem 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.4rem; color: #f0dbb3; font-weight: 700; cursor: pointer; list-style: none; }
+.rules-toggle { width: min(100%, 52rem); margin: 0 auto; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+.rules-toggle summary { display: flex; align-items: baseline; gap: .6rem; padding: 1.25rem 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.4rem; color: var(--accent-color); font-weight: 700; cursor: pointer; list-style: none; }
 .rules-toggle summary::-webkit-details-marker { display: none; }
 .rules-eyebrow { font-family: system-ui, sans-serif; font-size: .8rem; color: var(--muted-color); font-weight: 400; }
 .rules-icon { margin-left: auto; }
@@ -30,7 +30,7 @@
 .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; margin: 1rem 0; }
 .stat-card { padding: 1rem 1.15rem; }
 .stat-card span { font-size: 1.3rem; }
-.stat-card strong { display: block; margin: .3rem 0 .2rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.1rem; font-weight: 400; color: #e9cf9d; }
+.stat-card strong { display: block; margin: .3rem 0 .2rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.1rem; font-weight: 400; color: var(--accent-color); }
 .stat-card p { margin: 0; color: var(--muted-color); font-size: .88rem; line-height: 1.5; }
 
 .outcome-list, .ability-list { margin: 0; padding: 0; list-style: none; display: grid; gap: .6rem; }
@@ -51,8 +51,8 @@
 .tavolo-game-card small { align-self: start; color: var(--muted-color); }
 .tavolo-game-card.is-pending { border-style: dashed; opacity: .72; }
 .tavolo-game-card.is-pending small { max-width: 23rem; line-height: 1.45; }
-.tavolo-game-card.is-available { border-color: color-mix(in srgb, var(--focus-color) 55%, rgba(255,255,255,.2)); background: color-mix(in srgb, var(--focus-color) 18%, rgba(255,255,255,.08)); }
-.tavolo-game-card.is-available:hover { background-color: rgba(255,255,255,.13); }
+.tavolo-game-card.is-available { border-color: color-mix(in srgb, var(--focus-color) 55%, var(--border-color)); background: color-mix(in srgb, var(--focus-color) 18%, var(--panel-color)); }
+.tavolo-game-card.is-available:hover { background-color: var(--button-hover-bg); }
 
 
 .rules-toggle summary:focus-visible, .tavolo-game-card:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
@@ -79,15 +79,15 @@
    (shared/gdr-blocks/gdr-blocks.css), non più qui. */
 
 /* Il turno: il vero scambio di gioco, salvato in D1 (gdr_turns) — non più un box statico. */
-.gdr-turn-section { padding-top: clamp(2rem, 5vw, 3rem); margin-top: clamp(1rem, 3vw, 1.5rem); border-top: 1px solid rgba(255,255,255,.16); }
+.gdr-turn-section { padding-top: clamp(2rem, 5vw, 3rem); margin-top: clamp(1rem, 3vw, 1.5rem); border-top: 1px solid var(--border-color); }
 .gdr-turn-section h2 { margin: 0 0 1.5rem; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 5vw, 2.6rem); font-weight: 400; letter-spacing: -.03em; }
 
 .gdr-thread { display: grid; gap: 1rem; margin-bottom: 1.5rem; }
 .gdr-thread-message { margin: 0 0 1.5rem; }
-.gdr-turn { padding: 1rem 1.25rem; border: 1px solid rgba(255,255,255,.14); border-radius: 1rem; background: rgba(255,255,255,.04); }
-.gdr-turn.is-mine { border-color: color-mix(in srgb, var(--focus-color) 45%, rgba(255,255,255,.2)); background: color-mix(in srgb, var(--focus-color) 14%, rgba(255,255,255,.05)); }
+.gdr-turn { padding: 1rem 1.25rem; border: 1px solid var(--panel-border-color); border-radius: 1rem; background: var(--panel-color); }
+.gdr-turn.is-mine { border-color: color-mix(in srgb, var(--focus-color) 45%, var(--border-color)); background: color-mix(in srgb, var(--focus-color) 14%, var(--panel-color)); }
 .gdr-turn-meta { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .5rem; font-size: .78rem; color: var(--muted-color); text-transform: uppercase; letter-spacing: .06em; }
-.gdr-turn-author { color: #f0dbb3; font-weight: 700; }
+.gdr-turn-author { color: var(--accent-color); font-weight: 700; }
 .gdr-turn-body { margin: 0; color: var(--text-color); line-height: 1.75; white-space: pre-wrap; }
 
 .gdr-turn-form { display: grid; gap: 1rem; }
@@ -97,7 +97,7 @@
 /* Pagina "La Tua Maga": la scheda personaggio, compilabile e salvata in D1 (gdr_characters).
    Le parti fisse del regolamento (abilità, incantesimi, tabella magia selvaggia) restano testo. */
 .maga-body { width: min(100%, 46rem); margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); display: grid; gap: clamp(2rem, 5vw, 3rem); }
-.maga-section h3 { margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.4rem; font-weight: 400; color: #f0dbb3; }
+.maga-section h3 { margin: 0 0 1rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.4rem; font-weight: 400; color: var(--accent-color); }
 .maga-section > p { margin: 0 0 1rem; color: var(--muted-color); line-height: 1.75; }
 .maga-fields { margin: 0; display: grid; gap: .85rem; }
 .maga-fields p { margin: 0; color: var(--muted-color); line-height: 1.6; }
@@ -114,8 +114,8 @@
 .stat-input-row { display: inline-flex; align-items: center; gap: .4rem; color: var(--muted-color); }
 .stat-card .stat-input-row { margin-top: .3rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.1rem; }
 .stat-input-row input[type="number"] { width: 3.4rem; padding: .4rem .5rem; border: 1px solid var(--border-color); border-radius: .5rem; background: var(--input-bg); color: var(--text-color); font: inherit; text-align: center; }
-.stat-total-hint { color: #a7dfbd; font-weight: 700; }
-.stat-total-hint.is-off { color: #f3dfb8; }
+.stat-total-hint { color: var(--success-text-color); font-weight: 700; }
+.stat-total-hint.is-off { color: var(--accent-color); }
 
 .maga-inventory { width: 100%; box-sizing: border-box; min-height: 8rem; padding: .9rem; border: 1px solid var(--border-color); border-radius: .8rem; background: var(--input-bg); color: var(--text-color); font: inherit; line-height: 1.6; resize: vertical; }
 

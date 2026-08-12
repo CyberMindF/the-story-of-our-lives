@@ -17,6 +17,10 @@
   --correct-color: rgba(167, 223, 189, 0.22);
   --error-color: #5a3a3a;
   --focus-color: #9fc6e0;
+  --accent-color: #e9cf9d;
+  --danger-text-color: #ffb4b4;
+  --success-text-color: #a7dfbd;
+  --input-bg: color-mix(in srgb, var(--bg-color) 82%, var(--text-color) 8%);
   --complete-clue-bg: rgba(167, 223, 189, 0.14);
   --complete-clue-border: rgba(167, 223, 189, 0.4);
   --button-bg: rgba(255, 255, 255, 0.08);
@@ -40,6 +44,9 @@ body[data-theme="velvet"] {
   --correct-color: #3d4b3a;
   --error-color: #5a2c39;
   --focus-color: #f0c7d4;
+  --accent-color: #f0c7d4;
+  --danger-text-color: #ffb8c8;
+  --success-text-color: #c5ddbd;
   --complete-clue-bg: rgba(102, 126, 98, 0.18);
   --complete-clue-border: rgba(186, 210, 176, 0.32);
   --button-bg: rgba(255, 255, 255, 0.08);
@@ -63,6 +70,9 @@ body[data-theme="sea"] {
   --correct-color: #c8e0d8;
   --error-color: #ead8cf;
   --focus-color: #467d77;
+  --accent-color: #356f6a;
+  --danger-text-color: #9b4050;
+  --success-text-color: #3f7559;
   --complete-clue-bg: #ddeee6;
   --complete-clue-border: #78a69a;
   --button-bg: rgba(236, 246, 243, 0.92);
@@ -86,6 +96,9 @@ body[data-theme="red-of-you"] {
   --correct-color: #5d4536;
   --error-color: #7a1730;
   --focus-color: #ffd5dd;
+  --accent-color: #ffd5dd;
+  --danger-text-color: #ffc0cb;
+  --success-text-color: #bdd8b9;
   --complete-clue-bg: rgba(126, 52, 67, 0.88);
   --complete-clue-border: rgba(255, 201, 211, 0.28);
   --button-bg: rgba(255, 255, 255, 0.08);
@@ -115,6 +128,9 @@ body[data-theme="green-of-me"] {
   --correct-color: #425f48;
   --error-color: #5d4a3d;
   --focus-color: #dce8db;
+  --accent-color: #dce8db;
+  --danger-text-color: #efb6b6;
+  --success-text-color: #c7e0cb;
   --complete-clue-bg: rgba(71, 96, 76, 0.86);
   --complete-clue-border: rgba(199, 219, 198, 0.22);
   --button-bg: rgba(255, 255, 255, 0.07);
@@ -142,6 +158,9 @@ body[data-theme="the-white-world"] {
   --correct-color: rgba(167, 223, 189, 0.22);
   --error-color: #5a3a3a;
   --focus-color: #9fc6e0;
+  --accent-color: #e9cf9d;
+  --danger-text-color: #ffb4b4;
+  --success-text-color: #a7dfbd;
   --complete-clue-bg: rgba(167, 223, 189, 0.14);
   --complete-clue-border: rgba(167, 223, 189, 0.4);
   --button-bg: rgba(255, 255, 255, 0.08);
@@ -165,6 +184,9 @@ body[data-theme="white-world"] {
   --correct-color: #dbe8dd;
   --error-color: #eed9d7;
   --focus-color: #907b6c;
+  --accent-color: #765f50;
+  --danger-text-color: #994351;
+  --success-text-color: #477557;
   --complete-clue-bg: #e2ece3;
   --complete-clue-border: #809b84;
   --button-bg: rgba(255, 255, 255, 0.88);
@@ -188,6 +210,9 @@ body[data-theme="love"] {
   --correct-color: #d8e7da;
   --error-color: #edc2c7;
   --focus-color: #a84663;
+  --accent-color: #9f3e5b;
+  --danger-text-color: #9f3549;
+  --success-text-color: #477557;
   --complete-clue-bg: #e2ebdf;
   --complete-clue-border: #7b9a7d;
   --button-bg: rgba(255, 249, 247, 0.82);

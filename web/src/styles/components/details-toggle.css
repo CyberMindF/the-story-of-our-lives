@@ -2,8 +2,8 @@
    "x" quando aperto. Stesso pattern già usato per il regolamento del gioco di ruolo
    (`tavolo.css`, `.rules-toggle`), estratto qui come condiviso invece di duplicarlo una
    terza volta per il Linguaggio Segreto. */
-.details-toggle { width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.18); border-bottom: 1px solid rgba(255, 255, 255, 0.18); }
-.details-toggle summary { display: flex; align-items: baseline; gap: 0.6rem; padding: 1.25rem 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.4rem; color: #f0dbb3; font-weight: 700; cursor: pointer; list-style: none; }
+.details-toggle { width: 100%; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+.details-toggle summary { display: flex; align-items: baseline; gap: 0.6rem; padding: 1.25rem 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.4rem; color: var(--accent-color); font-weight: 700; cursor: pointer; list-style: none; }
 .details-toggle summary::-webkit-details-marker { display: none; }
 .details-toggle-eyebrow { font-family: system-ui, sans-serif; font-size: 0.8rem; color: var(--muted-color); font-weight: 400; }
 .details-toggle-icon { margin-left: auto; transition: transform 200ms ease; }

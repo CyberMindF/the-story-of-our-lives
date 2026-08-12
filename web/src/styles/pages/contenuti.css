@@ -6,7 +6,7 @@
 .contenuti-filters { width: min(100%, 64rem); margin: 0 auto 1.5rem; padding: 1.25rem; display: flex; flex-wrap: wrap; gap: 1rem; }
 .contenuti-filters .form-field { min-width: 12rem; flex: 1 1 12rem; }
 
-.contenuti-error { width: min(100%, 64rem); margin: 0 auto; color: #ffb4b4; }
+.contenuti-error { width: min(100%, 64rem); margin: 0 auto; color: var(--danger-text-color); }
 
 .contenuti-table-wrap { width: min(100%, 64rem); margin: 0 auto; padding: 0; overflow-x: auto; }
 .contenuti-table { width: 100%; border-collapse: collapse; font-size: .88rem; }

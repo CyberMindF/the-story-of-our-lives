@@ -8,7 +8,7 @@
 .domande-form { width: min(100%, 46rem); margin: 0 auto; display: grid; gap: 1.15rem; padding-bottom: clamp(2.5rem, 6vw, 4rem); }
 .domande-form .form-field textarea { min-height: 8rem; }
 
-.domande-archive { width: min(100%, 46rem); margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); border-top: 1px solid rgba(255,255,255,.16); padding-top: clamp(2.5rem, 6vw, 4rem); }
+.domande-archive { width: min(100%, 46rem); margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); border-top: 1px solid var(--border-color); padding-top: clamp(2.5rem, 6vw, 4rem); }
 .domande-section-heading { margin-bottom: 2rem; }
 .domande-section-heading h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 400; letter-spacing: -.03em; }
 

@@ -6,12 +6,23 @@
   color: var(--muted-color);
   line-height: 1.85;
 }
+.memory-kicker,
+.memory-nav strong,
+.memory-dev-toolbar .is-active,
+.memory-inline-link,
+.memory-external {
+  color: var(--accent-color);
+}
+.memory-dev-toolbar .is-active { border-color: var(--accent-color); }
+.memory-day h3::before { background: var(--accent-color); }
+.memory-photo figcaption { border-left-color: var(--accent-color); }
+.bk-form-error { color: var(--danger-text-color); }
 .bk-admin-inline-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin: .75rem 0; }
 .bk-admin-inline-actions .btn { padding: .35rem .65rem; font-size: .78rem; }
 .bk-admin-section { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px dashed var(--panel-border-color); }
 .bk-admin-form { display: grid; gap: 1rem; padding: 1.4rem; max-width: 30rem; }
 .bk-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
-.bk-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.bk-form-error { margin: 0; color: var(--danger-text-color); font-size: .85rem; }
 .bk-form-error:empty { display: none; }
 .bk-move-form { display: grid; gap: .8rem; padding: 1rem; margin-bottom: 1rem; max-width: 26rem; }
 .bk-day-meta-form { width: min(100%, 64rem); margin: 0 auto 3rem; }

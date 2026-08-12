@@ -12,7 +12,7 @@
 }
 .together-eyebrow {
   margin: 0 0 0.75rem;
-  color: #e9cf9d;
+  color: var(--accent-color);
   font-size: 0.72rem;
   font-weight: 750;
   letter-spacing: 0.17em;
@@ -45,8 +45,8 @@
   text-decoration: none;
 }
 .suggest-activity-link:hover {
-  border-color: #e9cf9d88;
-  color: #e9cf9d;
+  border-color: color-mix(in srgb, var(--accent-color) 53%, transparent);
+  color: var(--accent-color);
 }
 .together-tools {
   display: flex;
@@ -78,7 +78,7 @@
   font-size: 0.78rem;
 }
 .category-filters button.is-active {
-  border-color: #e9cf9d99;
+  border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
   background: var(--panel-color);
   color: var(--text-color);
 }
@@ -102,7 +102,7 @@
 }
 .private-unlocked {
   padding: 0.65rem 0.85rem;
-  color: #e9cf9d;
+  color: var(--accent-color);
 }
 .unlock-panel {
   display: grid;
@@ -115,7 +115,7 @@
   font-size: 1.3rem;
 }
 .unlock-panel .unlock-kicker {
-  color: #e9cf9d;
+  color: var(--accent-color);
   font-size: 0.78rem;
   font-weight: 750;
   letter-spacing: 0.08em;
@@ -147,7 +147,7 @@
   color: var(--text-color);
 }
 .unlock-panel .form-message {
-  color: #e5a4a4;
+  color: var(--danger-text-color);
 }
 .page-message {
   text-align: center;
@@ -184,10 +184,10 @@
 .activity-card.is-complete .activity-number {
   border-color: rgba(111, 207, 151, 0.68);
   background: rgba(111, 207, 151, 0.12);
-  color: #a7dfbd;
+  color: var(--success-text-color);
 }
 .activity-card.is-repeat {
-  border-color: #e9cf9d66;
+  border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 .activity-card.is-unavailable {
   opacity: 0.55;
@@ -224,7 +224,7 @@
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
   margin-bottom: 0.35rem;
-  color: #e9cf9d;
+  color: var(--accent-color);
   font-size: 0.68rem;
   font-weight: 750;
   letter-spacing: 0.08em;
@@ -244,12 +244,12 @@
 .activity-content a {
   display: inline-block;
   margin-top: 0.65rem;
-  color: #e9cf9d;
+  color: var(--accent-color);
   font-size: 0.85rem;
   font-weight: 700;
 }
 .activity-card.is-private-locked {
-  border-color: #e9cf9d38;
+  border-color: color-mix(in srgb, var(--accent-color) 22%, transparent);
   overflow: hidden;
   min-height: 7rem;
 }
@@ -290,9 +290,9 @@
   display: inline-block;
   margin-right: 0.35rem;
   padding: 0.16rem 0.35rem;
-  border: 1px solid #e9cf9d66;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
   border-radius: 0.35rem;
-  color: #e9cf9d;
+  color: var(--accent-color);
   font-size: 0.65rem;
   font-weight: 800;
 }
@@ -328,7 +328,7 @@
 .activity-form h2 { margin: 0; }
 .activity-form small { color: var(--muted-color); font-weight: 500; }
 .activity-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
-.activity-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.activity-form-error { margin: 0; color: var(--danger-text-color); font-size: .85rem; }
 .activity-form-error:empty { display: none; }
 .activity-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .75rem; }
 .activity-admin-actions .btn { padding: .35rem .6rem; font-size: .78rem; }

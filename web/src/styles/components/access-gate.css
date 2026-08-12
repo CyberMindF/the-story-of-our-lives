@@ -143,7 +143,7 @@ body.access-locked .app-shell {
 .access-error {
   min-height: 1.25rem;
   margin: 0.65rem 0 0;
-  color: #b63b52;
+  color: var(--danger-text-color);
   font-size: 0.9rem;
 }
 

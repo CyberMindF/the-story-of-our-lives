@@ -86,7 +86,7 @@
    accenno visivo, non un blocco allarmante — l'effetto resta comunque attivabile, è solo
    un suggerimento. */
 .settings-toggle-warning {
-  color: #e0b34a;
+  color: var(--accent-color);
   font-size: .8rem;
   font-weight: 600;
 }

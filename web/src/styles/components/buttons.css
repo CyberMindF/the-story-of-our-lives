@@ -26,11 +26,8 @@
   outline-offset: 4px;
 }
 
-/* Colore oro già ripetuto identico e hardcoded in più pagine (link/pillole in rilievo).
-   Non varia per tema oggi: renderlo dipendente da una var di tema è fuori dal perimetro
-   di questa normalizzazione (vedi punto 1 di "prossimi sviluppi.md"). */
 .btn-accent {
-  color: #f3dfb8;
+  color: var(--accent-color);
 }
 
 /* Variante per bottoni submit reali nei form: stessa pillola, bordo/sfondo più marcati e
@@ -39,16 +36,16 @@
 .btn-submit {
   min-height: 2.9rem;
   padding: 0.7rem 1.15rem;
-  border-color: rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  border-color: color-mix(in srgb, var(--focus-color) 48%, var(--border-color));
+  background: var(--button-bg);
+  color: var(--text-color);
   font: inherit;
   font-weight: 750;
 }
 
 .btn-submit:hover {
-  border-color: rgba(255, 255, 255, 0.42);
-  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--focus-color);
+  background: var(--button-hover-bg);
 }
 
 .btn-submit:disabled {

@@ -95,17 +95,17 @@
    inventati: il verde è lo stesso rgb(167,223,189) già usato come --correct-color di
    :root/the-white-world; il rosso è lo stesso --active-color del tema "red-of-you". */
 .speaker-r {
-  color: #a7dfbd;
+  color: var(--success-text-color);
 }
 
 .speaker-d {
-  color: #bf3553;
+  color: var(--danger-text-color);
 }
 
 .globe-figure {
   margin: clamp(1rem, 4vw, 3rem) 0;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--panel-border-color);
   border-radius: clamp(1.2rem, 3vw, 2rem);
   box-shadow: 0 2rem 6rem rgba(0, 0, 0, 0.32);
 }
@@ -148,7 +148,7 @@
 .scene-line-actions { display: flex; flex-wrap: wrap; gap: .4rem; }
 .scene-line-actions .btn { padding: .3rem .6rem; font-size: .76rem; }
 .scene-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
-.scene-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.scene-form-error { margin: 0; color: var(--danger-text-color); font-size: .85rem; }
 .scene-form-error:empty { display: none; }
 .scene-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
 .scene-admin-actions .btn { padding: .35rem .6rem; font-size: .8rem; }

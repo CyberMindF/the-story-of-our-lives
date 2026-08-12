@@ -12,7 +12,7 @@
   justify-content: space-between;
   align-items: center;
   min-height: 4.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .place-home-link {

@@ -107,7 +107,7 @@
   background: color-mix(in srgb, var(--text-color) 9%, transparent);
 }
 .app-select-menu button.is-selected {
-  color: #e9cf9d;
+  color: var(--accent-color);
 }
 .app-select-menu svg {
   flex: none;

@@ -13,7 +13,7 @@
 
 .letter-submit-row { display: flex; justify-content: flex-end; }
 
-.lettere-archive { padding-bottom: clamp(3rem, 7vw, 5rem); border-top: 1px solid rgba(255,255,255,.16); padding-top: clamp(2.5rem, 6vw, 4rem); }
+.lettere-archive { padding-bottom: clamp(3rem, 7vw, 5rem); border-top: 1px solid var(--border-color); padding-top: clamp(2.5rem, 6vw, 4rem); }
 .lettere-section-heading { margin-bottom: 4.5rem; }
 .lettere-section-heading h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 400; letter-spacing: -.03em; }
 
@@ -61,9 +61,9 @@
 .letter-card:not(.is-unread) .envelope-seal::before { color: #d8d2c4; }
 
 .letter-card-label { display: grid; gap: .15rem; }
-.letter-card-author { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 1.1rem; color: #e9cf9d; }
+.letter-card-author { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 1.1rem; color: var(--accent-color); }
 .letter-card-date { color: var(--muted-color); font-size: .8rem; }
-.letter-card-status { color: #f3dfb8; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+.letter-card-status { color: var(--accent-color); font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
 .letter-card-status:empty { display: none; }
 
 /* La lettera aperta si legge su un foglio chiaro, come un momento a parte dal resto del sito.

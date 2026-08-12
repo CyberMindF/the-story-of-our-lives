@@ -86,7 +86,7 @@
 .world-figure {
   margin: 0;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--panel-border-color);
   border-radius: clamp(1.2rem, 3vw, 2rem);
   box-shadow: 0 2rem 6rem rgba(0, 0, 0, 0.38);
 }
@@ -222,7 +222,7 @@
 
 .world-place-form-error {
   margin: 0;
-  color: #ffb4b4;
+  color: var(--danger-text-color);
   font-size: 0.85rem;
 }
 
