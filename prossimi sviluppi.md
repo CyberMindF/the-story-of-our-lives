@@ -6,17 +6,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
-- [~] #25 — Mappa: Sicilia. Struttura pronta in `map.json` (destinazione tra Olanda e Roma,
-  coordinate su Catania) con le 4 foto vere già al loro posto (fiume Amenano/Catania, Gole
-  dell'Alcantara, laghetti di Cavagrande del Cassibile/Avola, Isola Bella a Taormina —
-  scaricate e convertite in webp, la foto di Avola croppata del 15% sopra/sotto su richiesta).
-  **Resta solo il testo**: i 4 paragrafi sono ancora segnaposto (`[... testo da scrivere]`).
-  Aggiornata anche la validazione hardcoded in `mappa.ts` (si aspettava esattamente 6
-  destinazioni, ora 7).
-- [~] #26 — Mappa: Roma. Prime due foto messe (Fontana di Trevi e Colosseo, affiancate nella
-  stessa riga come Sharm el-Sheikh, `beforeParagraph: 0`), convertite in webp in
-  `web/public/assets/images/world/map/`. **Resta il testo**: il paragrafo è ancora il
-  placeholder "roma roma".
 - [~] #34 — “Il Ricettario”: pagina realizzata con card lunghe, ingredienti, procedimento,
   filtri “Fatta insieme / Da provare” e collegamento ai Suggerimenti già preselezionato.
   Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**:
@@ -31,11 +20,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
 - #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
-- #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”,
-  “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire
-  piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che
-  amo di lei o messaggi “da aprire quando…”. Evitare una normale lista o un feed: mostrare un
-  barattolo/insieme di bigliettini e un gesto semplice di pesca, seguito da una breve animazione
+- #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”, “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che amo di lei o messaggi “da aprire quando…”. Evitare una normale lista o un feed: mostrare un barattolo/insieme di bigliettini e un gesto semplice di pesca, seguito da una breve animazione
   di apertura del foglietto. La scelta può essere casuale, eventualmente preceduta da una
   categoria o da “Come ti senti?” (`A caso`, `Mi manchi`, `Giornata difficile`, `Hai bisogno di
   sorridere`, `Un nostro ricordo`); non mostrare anteprime che rovinino la sorpresa. Tenere per
@@ -69,6 +54,18 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ## Fatto
 
 ### Extra (fuori scaletta, chiesto il 13/08/2026)
+
+- [x] #25 — Mappa: Sicilia completata. I 4 paragrafi veri sono stati scritti (fiume
+  Amenano/Catania, Gole dell'Alcantara, laghetti di Cavagrande/Avola, Isola Bella a Taormina),
+  foto già a posto da prima.
+
+- [x] #26 — Mappa: Roma completata. Paragrafo vero scritto, foto (Fontana di Trevi e
+  Colosseo) con layout "stacked" forzato (vedi voce sotto sull'override manuale). Nota per la
+  prossima volta: il modulo di modifica carica i dati al momento dell'apertura, non del
+  salvataggio — se si lascia la pagina di modifica aperta a lungo mentre nel frattempo cambia
+  qualcos'altro sulla stessa destinazione (es. le immagini), salvare il testo sovrascrive
+  anche quello con la versione vecchia. Successo una volta con "stacked": true su Roma,
+  risolto correggendo il DB a mano.
 
 - [x] #e3 — "Emoji che cadono": 18 tipi (arcobaleno, unicorno, gelato, sole, luna, orsetto,
   cuore, caramella, stella, ciambella, lecca-lecca, fiocco, farfalla, biscotto, cioccolato,
