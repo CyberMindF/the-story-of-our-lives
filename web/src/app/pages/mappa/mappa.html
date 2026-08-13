@@ -96,7 +96,7 @@
           <textarea rows="8" [ngModel]="draft().paragraphs" (ngModelChange)="updateDraft({ paragraphs: $event })" name="paragraphs"></textarea>
         </label>
         <label class="form-field">
-          <span>Immagini <small>JSON: [&#123; "src": "...", "alt": "...", "beforeParagraph": 0, "position": "before" &#125;]</small></span>
+          <span>Immagini <small>JSON: [&#123; "src": "...", "alt": "...", "beforeParagraph": 0, "position": "before", "stacked": false &#125;] — "stacked": true forza le immagini sopra a tutta larghezza col testo sotto anche se il paragrafo è breve (di norma solo oltre i 900 caratteri)</small></span>
           <textarea rows="6" [ngModel]="draft().imagesJson" (ngModelChange)="updateDraft({ imagesJson: $event })" name="imagesJson"></textarea>
         </label>
         <p class="destination-form-error">{{ formError() }}</p>

@@ -19,6 +19,12 @@ interface DestinationImage {
   alt: string;
   beforeParagraph?: number;
   position?: 'before' | 'after';
+  // Forza il layout "immagini sopra a tutta larghezza, testo sotto" (di norma quello dei
+  // paragrafi lunghi, isLong sotto) anche con un testo breve — non tutti i paragrafi
+  // arriveranno ai 900 caratteri della soglia automatica, ma con 2 foto affiancate un testo
+  // corto a fianco resta comunque stretto e schiacciato. Basta impostarlo sulla prima
+  // immagine del gruppo (stesso beforeParagraph), come già "position".
+  stacked?: boolean;
 }
 
 interface Destination {
@@ -169,7 +175,8 @@ export class Mappa {
     const passages = destination.paragraphs.map((text, paragraphIndex) => {
       const images = destination.images.filter((image) => image.beforeParagraph === paragraphIndex);
       const imagePosition = images[0]?.position ?? 'before';
-      return { images, text, isLong: images.length > 0 && text.length > 900, imagePosition };
+      const isLong = images.length > 0 && (text.length > 900 || images[0]?.stacked === true);
+      return { images, text, isLong, imagePosition };
     });
     return { destination, index, passages, hasImages: destination.images.length > 0 };
   }
