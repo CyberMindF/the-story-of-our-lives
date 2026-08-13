@@ -85,6 +85,14 @@ const THEMES: ThemeDefinition[] = [
   }
 ];
 
+// Temi chiari (#e13): sfondo/superfici chiare, non solo "White World" — anche Ocean e Love
+// hanno swatch chiari. Usato per decidere sole vs luna nell'angolo del cielo e in "Il Cielo".
+const LIGHT_THEME_IDS = new Set(['white-world', 'sea', 'love']);
+
+export function isLightTheme(themeId: string): boolean {
+  return LIGHT_THEME_IDS.has(themeId);
+}
+
 // Porting di assets/js/shared/theme.js: stessa applicazione (document.body.dataset.theme,
 // letto dalle custom properties in themes.css), stato esposto come signal.
 //

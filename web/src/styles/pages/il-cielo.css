@@ -38,6 +38,13 @@
     drop-shadow(0 0 48px rgba(210, 228, 245, 0.5));
 }
 
+/* #e13: bagliore caldo/dorato per il sole, non l'azzurrino argenteo della luna. */
+.sky-moon-frame.is-sun {
+  filter:
+    drop-shadow(0 0 18px rgba(255, 226, 150, 0.8))
+    drop-shadow(0 0 48px rgba(255, 196, 90, 0.5));
+}
+
 .sky-quote {
   margin: clamp(1.5rem, 4vw, 2.25rem) 0 0;
   color: var(--muted-color);

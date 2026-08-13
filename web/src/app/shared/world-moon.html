@@ -1,5 +1,5 @@
 @if (worldSettingsService.settings().moon) {
-  <div class="world-moon" [attr.aria-label]="label()" role="img">
+  <div class="world-moon" [class.is-sun]="isSun()" [attr.aria-label]="label()" role="img">
     <app-moon-disc [phaseFraction]="phaseFraction()" [isSun]="isSun()" />
   </div>
 }

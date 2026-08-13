@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
 import { WorldSettingKey, WorldSettingsService } from '../../core/world-settings.service';
 import { MOON_PHASE_LABEL } from '../../shared/moon-phase';
@@ -8,7 +8,7 @@ import { ThemeSwitcher } from '../../shared/theme-switcher';
 import { AppSelect, AppSelectOption } from '../../shared/app-select/app-select';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { HEART_COLOR_LABEL, HeartColor } from '../../shared/world-hearts';
-import { ThemeService } from '../../core/theme.service';
+import { isLightTheme, ThemeService } from '../../core/theme.service';
 
 // Tutto ciò che si vede nel Mondo Bianco e che prima o poi è diventato condivisibile: gli
 // effetti del cielo (#a3/#a5/#a6) e, da #a8, anche il tema stesso — chi li cambia qui li
@@ -27,6 +27,8 @@ export class ImpostazioniMondo {
     value: theme.id,
     label: theme.label
   }));
+  // #e13: nei temi chiari il toggle "luna" diventa "sole" (niente fasi, il sole non ne ha).
+  protected readonly isSun = computed(() => isLightTheme(this.themeService.activeThemeId()));
   // Stessa lista di fasi già riusata da #a4, convertita nel formato del selettore condiviso.
   protected readonly moonPhaseOptions: readonly AppSelectOption[] = [
     { value: 'auto', label: 'Fase reale di oggi (automatica)' },

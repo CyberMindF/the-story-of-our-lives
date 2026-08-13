@@ -83,28 +83,35 @@
       <div class="settings-toggle-card card">
         <label class="settings-toggle">
           <span class="settings-toggle-info">
-            <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
-            <span class="settings-toggle-description">Mostrala nella fase che preferisci.</span>
+            @if (isSun()) {
+              <span class="settings-toggle-title"><span aria-hidden="true">☀️</span> Il sole</span>
+              <span class="settings-toggle-description">Nei temi chiari, in un angolo del cielo.</span>
+            } @else {
+              <span class="settings-toggle-title"><span aria-hidden="true">🌙</span> La luna</span>
+              <span class="settings-toggle-description">Mostrala nella fase che preferisci.</span>
+            }
           </span>
           <input
             type="checkbox"
             class="settings-toggle-input"
             [checked]="worldSettingsService.settings().moon"
             (change)="toggleSetting('moon', $event)"
-            aria-label="La luna"
+            [attr.aria-label]="isSun() ? 'Il sole' : 'La luna'"
           />
           <span class="settings-toggle-switch" aria-hidden="true"></span>
         </label>
 
-        <div class="settings-phase-picker">
-          <label for="moon-phase-select">Fase</label>
-          <app-select
-            [options]="moonPhaseOptions"
-            [value]="worldSettingsService.values().moon || 'auto'"
-            ariaLabel="Fase della luna"
-            (valueChange)="setMoonPhase($event)"
-          />
-        </div>
+        @if (!isSun()) {
+          <div class="settings-phase-picker">
+            <label for="moon-phase-select">Fase</label>
+            <app-select
+              [options]="moonPhaseOptions"
+              [value]="worldSettingsService.values().moon || 'auto'"
+              ariaLabel="Fase della luna"
+              (valueChange)="setMoonPhase($event)"
+            />
+          </div>
+        }
       </div>
 
       <div class="settings-toggle-card card">

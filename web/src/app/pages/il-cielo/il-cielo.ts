@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
-import { ThemeService } from '../../core/theme.service';
+import { isLightTheme, ThemeService } from '../../core/theme.service';
 import { MoonDisc } from '../../shared/moon-disc';
 import { moonPhaseFraction } from '../../shared/moon-phase';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
@@ -20,6 +20,6 @@ export class IlCielo {
   private readonly themeService = inject(ThemeService);
 
   protected readonly phaseFraction = moonPhaseFraction(new Date());
-  // #e13: tema chiaro ("White World") mostra il sole al posto della luna.
-  protected readonly isSun = computed(() => this.themeService.activeThemeId() === 'white-world');
+  // #e13: nei temi chiari (White World, Ocean, Love) mostra il sole al posto della luna.
+  protected readonly isSun = computed(() => isLightTheme(this.themeService.activeThemeId()));
 }
