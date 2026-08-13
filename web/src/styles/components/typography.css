@@ -18,7 +18,9 @@
 .globe-hero h1,
 .stories-title-block h1,
 .music-hero h1,
-.map-hero h1 {
+.map-hero h1,
+.cifrato-hero h1,
+.pand-hero h1 {
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 400;
 }

@@ -1,0 +1,192 @@
+<app-shell [showSuggestLink]="false">
+  <div class="playground-header">
+    <h1 class="playground-title"><span aria-hidden="true">🧪</span> Playground Effetti "Prova a Dire No"</h1>
+    <p class="playground-subtitle">
+      Le 9 idee scelte dopo il primo giro (#f4). Seleziona un effetto e provalo col mouse o da mobile.
+    </p>
+  </div>
+
+  <div class="selector-card">
+    <div class="selector-nav">
+      <button type="button" class="nav-btn" [disabled]="selectedIndex() <= 0" (click)="prevProposal()">← Precedente</button>
+      <select class="effect-dropdown" [value]="selectedProposalId()" (change)="selectProposal($any($event.target).value)">
+        @for (item of proposals; track item.id) {
+          <option [value]="item.id">#{{ item.num }} {{ item.emoji }} {{ item.name }}</option>
+        }
+      </select>
+      <button type="button" class="nav-btn" [disabled]="selectedIndex() >= proposals.length - 1" (click)="nextProposal()">Successivo →</button>
+    </div>
+
+    @if (activeProposal(); as prop) {
+      <div class="effect-banner">
+        <h2 class="effect-title">#{{ prop.num }} {{ prop.emoji }} {{ prop.name }}</h2>
+        <p class="effect-desc">{{ prop.description }}</p>
+        <div class="effect-stats">
+          <span>Tentativi: <strong>{{ attemptCount() }}</strong></span>
+          <button type="button" class="reset-stage-btn" (click)="resetEffectState()">↺ Riavvia</button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div #pgStage class="pg-stage">
+    @if (yesClicked()) {
+      <div class="pg-success-banner">
+        <h2 class="pg-success-title">Hai detto Sì! ❤️</h2>
+        <div class="pg-success-actions">
+          <button type="button" class="btn btn-accent" (click)="resetEffectState()">Riprova</button>
+          <button type="button" class="btn" (click)="nextProposal()">Prossimo effetto →</button>
+        </div>
+      </div>
+    }
+
+    <h2 class="pg-question">{{ testQuestion() }}</h2>
+
+    @switch (activeProposal().id) {
+      @case ('yes-multiply') {
+        @if (yesPositions().length === 0) {
+          <!-- Prima del primo tentativo: un solo Sì, nella pagina accanto al No, stessa
+               taglia — non fisso a schermo (feedback di Rory). -->
+          <div class="pg-answers">
+            <button type="button" class="btn btn-accent pg-yes-btn" (click)="onYesClick()">Sì</button>
+            <button #pgNoBtn type="button" class="pg-no-btn btn pand-no" (pointerdown)="onNoInteract()">No</button>
+          </div>
+        } @else {
+          @for (pos of yesPositions(); track $index) {
+            <button
+              type="button"
+              class="btn btn-accent pg-yes-btn pg-yes-scattered"
+              [style.left]="pos.left"
+              [style.top]="pos.top"
+              (click)="onYesClick()"
+            >Sì</button>
+          }
+          <button
+            #pgNoBtn
+            type="button"
+            class="pg-no-btn btn pand-no"
+            [style.left]="noPos()?.left"
+            [style.top]="noPos()?.top"
+            [style.position]="noPos() ? 'fixed' : 'relative'"
+            (pointerdown)="onNoInteract()"
+          >No</button>
+        }
+      }
+
+      @case ('bubble') {
+        <div class="pg-answers">
+          <button type="button" class="btn btn-accent pg-yes-btn" (click)="onYesClick()">Sì</button>
+          @if (!bubblePopped()) {
+            <button
+              #pgNoBtn
+              type="button"
+              class="pg-no-btn btn pand-no bubble-style"
+              [class.bubble-pop-anim]="bubblePopping()"
+              (pointerdown)="onNoInteract()"
+            >No</button>
+          }
+        </div>
+        @if (poofOrigin(); as origin) {
+          @for (p of poofParticles(); track p.id) {
+            <span
+              class="poof-particle"
+              [style.left]="origin.left"
+              [style.top]="origin.top"
+              [style.--dx.px]="p.dx"
+              [style.--dy.px]="p.dy"
+            ></span>
+          }
+        }
+      }
+
+      @case ('yes-rain') {
+        @if (!noHiddenForRain()) {
+          <div class="pg-answers">
+            <button type="button" class="btn btn-accent pg-yes-btn" (click)="onYesClick()">Sì</button>
+            <button #pgNoBtn type="button" class="pg-no-btn btn pand-no" (pointerdown)="onNoInteract()">No</button>
+          </div>
+        }
+        <div class="rain-container">
+          @for (drop of rainDrops(); track drop.id) {
+            <button
+              type="button"
+              class="btn btn-accent rain-yes-drop"
+              [style.left.px]="drop.x"
+              [style.top.px]="drop.y"
+              [style.transform]="'translate(-50%, -50%) rotate(' + drop.rot + 'deg)'"
+              (click)="onYesClick()"
+            >Sì</button>
+          }
+        </div>
+      }
+
+      @case ('shell-game') {
+        <div class="pg-answers shell-answers">
+          @for (label of shellLabels(); track $index; let i = $index) {
+            <!-- Stesso elemento sempre, solo classe/transform che cambiano: se lo si
+                 ricrea (due rami @if/@else separati, versione precedente) la transizione
+                 CSS si perde perché parte da un elemento nuovo senza stato precedente —
+                 bug segnalato da Rory ("hai tolto l'animazione delle carte che girano"). -->
+            <button
+              type="button"
+              class="btn shell-card"
+              [class.is-flipped]="isShellCardCovered(i)"
+              [class.is-locked]="shellPhase() === 'waiting' && shellPicked() !== null && shellPicked() !== i"
+              [style.transform]="shellCardTransform(i)"
+              (click)="onShellCardClick(i)"
+            >
+              <span class="shell-card-front">{{ label }}</span>
+              <span class="shell-card-back">?</span>
+            </button>
+          }
+        </div>
+      }
+
+      @case ('drama-queen') {
+        <div class="pg-answers">
+          <button type="button" class="btn btn-accent pg-yes-btn" (click)="onYesClick()">Sì</button>
+          <button
+            #pgNoBtn
+            type="button"
+            class="pg-no-btn btn pand-no"
+            [class.is-fleeing]="dramaLeaving()"
+            [style.left]="noPos()?.left"
+            [style.top]="noPos()?.top"
+            [style.position]="noPos() ? 'fixed' : 'relative'"
+            (pointerdown)="onNoInteract()"
+          >{{ dramaText() }}</button>
+        </div>
+      }
+
+      @case ('fake-error') {
+        <div class="pg-answers">
+          <button type="button" class="btn btn-accent pg-yes-btn" (click)="onYesClick()">Sì</button>
+          <button type="button" class="pg-no-btn btn pand-no" (click)="onNoInteract()">No</button>
+        </div>
+        @if (fakeAlertOpen()) {
+          <div class="fake-dialog-overlay">
+            <div class="fake-dialog-box">
+              <h3>⚠️ Errore 404</h3>
+              <p>La risposta No è temporaneamente fuori servizio. Scegli Sì per continuare.</p>
+              <button type="button" class="btn btn-accent fake-dialog-confirm" (click)="closeFakeAlert()">Capito (Sì)</button>
+            </div>
+          </div>
+        }
+      }
+
+    }
+  </div>
+
+  <div class="all-effects-grid">
+    @for (item of proposals; track item.id) {
+      <div class="effect-grid-card" [class.is-active]="selectedProposalId() === item.id" (click)="selectProposal(item.id)">
+        <div class="grid-card-num">#{{ item.num }}</div>
+        <div class="grid-card-name">{{ item.emoji }} {{ item.name }}</div>
+      </div>
+    }
+  </div>
+
+  <div class="pg-back-link">
+    <a class="btn" routerLink="/tavolo-da-gioco/prova-a-dire-no">← Torna a Prova a dire no</a>
+  </div>
+</app-shell>

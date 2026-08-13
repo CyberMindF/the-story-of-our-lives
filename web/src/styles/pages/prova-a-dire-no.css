@@ -2,24 +2,35 @@
    — il CSS di pagina è scoped al componente da quando è uno styleUrl. */
 :host { display: block; min-height: 100dvh; color: var(--text-color); }
 
-.pand-title {
-  margin: clamp(1.25rem, 3vh, 2rem) 0 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-weight: 400;
-  font-size: clamp(1.3rem, 3vw, 1.7rem);
-  letter-spacing: -.01em;
+/* Stesso box hero delle pagine gemelle sotto Tavolo da Gioco (messaggio-criptato.css
+   .cifrato-hero, cruciverba, ecc.): centrato, larghezza 46rem, h1 con la dimensione
+   condivisa --hero-size-md (styles/components/typography.css) invece di un <p> con
+   dimensioni inventate — bug segnalato da Rory, il font non era allineato al resto del sito. */
+.pand-hero {
+  width: min(100%, 46rem);
+  margin: 0 auto;
+  padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem);
+  text-align: center;
+}
+
+.pand-hero h1 {
+  margin: 0;
+  font-size: var(--hero-size-md);
+  line-height: .95;
+  letter-spacing: -.04em;
 }
 
 .pand-intro {
   max-width: 34rem;
-  margin: .75rem 0 0;
+  margin: 1.25rem auto 0;
   color: var(--muted-color);
-  font-size: 1.02rem;
+  font-size: 1.05rem;
   line-height: 1.8;
 }
 
 .pand-progress {
   display: flex;
+  justify-content: center;
   gap: .5rem;
   margin: clamp(1.5rem, 4vh, 2.5rem) 0 0;
 }
@@ -37,6 +48,7 @@
 /* Tutto lo spazio restante della pagina è il "palco" del gioco: il bottone "No" ha bisogno
    di margine vero per scappare, non solo dello spazio di una card. */
 .pand-stage {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,6 +60,15 @@
 
 .pand-end { min-height: 50vh; }
 
+/* Comportamento 'rain': la domanda va ancorata in alto, non centrata verticalmente come
+   nel resto del gioco — altrimenti .pand-rain (che copre l'intero palco) ha spazio "libero"
+   anche sopra la domanda, e la pila di Sì può accumularsi lì invece che sotto (feedback di
+   Rory). */
+.pand-stage-rain {
+  justify-content: flex-start;
+  padding-top: clamp(1.5rem, 5vh, 3rem);
+}
+
 .pand-question {
   max-width: 34rem;
   margin: 0;
@@ -57,12 +78,30 @@
   line-height: 1.25;
 }
 
+/* Il passaggio "dates" ha una frase più lunga delle altre domande: più larga e con un
+   carattere più piccolo per restare su circa 2 righe invece di spezzarsi in 4-5. */
+.pand-question-compact {
+  max-width: 40rem;
+  font-size: clamp(1.3rem, 3.6vw, 1.8rem);
+}
+
 .pand-answers {
   position: relative;
   display: flex;
   gap: 1.5rem;
   justify-content: center;
   min-height: 3.5rem;
+}
+
+/* Stesso materiale "vetro" del pulsante "Torna al Mondo Bianco" (.place-bottom-link,
+   world-shell.css) su tutti i bottoni della pagina — feedback di Rory, allineare lo stile
+   invece di lasciare lo sfondo pieno di default di .btn. La versione a schermo intero di
+   'grow' (.is-fullscreen) resta esclusa apposta: lì serve un pieno vero e ben visibile, non
+   trasparente (vedi la nota su quella regola). */
+.pand-stage .btn:not(.is-fullscreen):not(.pand-bubble) {
+  background: var(--panel-color);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .pand-yes, .pand-no {
@@ -122,10 +161,130 @@
   animation: pand-pulse 320ms ease;
 }
 
-.pand-choices {
+/* Passaggio 'dates': niente più opzioni scherzose, due date vere e un bottone di conferma. */
+.pand-dates {
   display: grid;
-  gap: .9rem;
-  width: min(100%, 26rem);
+  gap: 1.1rem;
+  width: min(100%, 22rem);
 }
 
-.pand-choice { justify-content: center; text-align: center; }
+.pand-date-field {
+  display: grid;
+  gap: .4rem;
+  text-align: left;
+  font-size: .9rem;
+  color: var(--muted-color);
+}
+
+.pand-date-field input {
+  padding: .65rem .8rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: .6rem;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.pand-dates button[type="submit"] { justify-self: center; }
+.pand-dates button[disabled] { opacity: .5; cursor: default; }
+
+/* Comportamento 'multiply' (portato dal playground): sparsi su tutta la finestra, stessa
+   taglia di .pand-yes/.btn — non un chip piccolo, non un centro fisso a schermo prima del
+   primo tentativo (il singolo Sì iniziale resta nel flusso, vedi il template). */
+.pand-yes-scattered {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+/* Comportamento 'bubble': non ricompare più dopo lo scoppio, pop con particelle radiali dal
+   punto vero del bottone. */
+.pand-bubble {
+  border-color: color-mix(in srgb, var(--focus-color) 55%, transparent);
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, .55), rgba(255, 255, 255, .08) 70%);
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, .35), 0 0 10px rgba(255, 255, 255, .25);
+}
+
+.pand-bubble-pop {
+  animation: pand-bubble-pop 420ms cubic-bezier(.22, .61, .36, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes pand-bubble-pop {
+  0% { transform: scale(1); opacity: 1; }
+  40% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.pand-poof {
+  position: fixed;
+  z-index: 6;
+  width: .5rem;
+  height: .5rem;
+  margin: -.25rem 0 0 -.25rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, color-mix(in srgb, var(--focus-color) 70%, white));
+  pointer-events: none;
+  animation: pand-poof-burst 480ms ease-out forwards;
+}
+
+@keyframes pand-poof-burst {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; }
+}
+
+/* Comportamento 'rain': posizionamento imperativo via left/top in px, guidato dal loop a
+   gravità in TS (startRain) — niente keyframe qui. Bottoni Sì veri e cliccabili, stessa
+   taglia di .pand-yes: si accumulano in basso e si notano subito. */
+.pand-rain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pand-rain-drop {
+  position: absolute;
+  min-width: 8.75rem;
+  justify-content: center;
+  pointer-events: auto;
+  will-change: transform, top;
+}
+
+/* Comportamento 'shell': stessi bottoni .pand-no di sempre (niente markup a parte per una
+   "carta" con facce 3D — erano strutturalmente diversi dal resto della pagina, feedback di
+   Rory). Lo spostamento durante il mescolamento è solo un translateX via style inline; il
+   "giro" è il pulse condiviso con 'swap' (.is-pulsing/pand-pulse), non un'animazione nuova.
+   Dopo la prima scelta le altre due carte restano coperte e non cliccabili. */
+.pand-no.is-locked { opacity: .45; pointer-events: none; }
+
+/* Comportamento 'drama': transizione lunga e vera sulla fuga finale (non lo scatto secco di
+   default), altrimenti l'ultima frase non si legge mai — e comunque parte solo dopo una
+   pressione in più dopo il "Ciao!", non da sola. */
+.pand-no.pand-fleeing {
+  transition: left 650ms ease-in, top 650ms ease-in, opacity 650ms ease-in;
+  opacity: 0;
+}
+
+/* Comportamento 'error' */
+.pand-fake-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .55);
+}
+
+.pand-fake-box {
+  width: min(90vw, 24rem);
+  padding: 1.5rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 1rem;
+  background: var(--bg-color);
+  text-align: left;
+}
+
+.pand-fake-box h3 { margin: 0 0 .5rem; color: #f43f5e; }
+.pand-fake-box p { margin: 0 0 1rem; color: var(--muted-color); line-height: 1.6; }
+.pand-fake-confirm { display: flex; justify-content: center; margin: 0 auto; }

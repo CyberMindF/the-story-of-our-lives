@@ -1,0 +1,290 @@
+/* :host, non un selettore su <body>: stesso motivo già annotato in profilo.css/il-cielo.css. */
+:host { display: block; min-height: 100dvh; color: var(--text-color); }
+
+.playground-header { margin: clamp(1.25rem, 3vh, 2rem) 0 0; }
+
+.playground-title {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3.4vw, 1.9rem);
+  letter-spacing: -.01em;
+}
+
+.playground-subtitle {
+  margin: .5rem 0 0;
+  max-width: 40rem;
+  color: var(--muted-color);
+  line-height: 1.7;
+}
+
+.selector-card {
+  display: grid;
+  gap: 1rem;
+  margin: clamp(1.5rem, 4vh, 2.5rem) 0;
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  border: 1px solid var(--panel-border-color);
+  border-radius: 1rem;
+  background: var(--panel-color);
+  backdrop-filter: blur(12px);
+}
+
+.selector-nav { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+
+.nav-btn, .reset-stage-btn {
+  padding: .5rem .85rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 999px;
+  background: var(--button-bg);
+  color: var(--text-color);
+  font-size: .82rem;
+  font-weight: 600;
+}
+
+.nav-btn:disabled { opacity: .4; cursor: default; }
+.nav-btn:not(:disabled):hover, .reset-stage-btn:hover { background: var(--button-hover-bg); }
+
+.effect-dropdown {
+  flex: 1;
+  min-width: 12rem;
+  padding: .5rem .7rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: .6rem;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.effect-title { margin: 0; font-size: 1.15rem; }
+.effect-desc { margin: .5rem 0 0; color: var(--muted-color); line-height: 1.6; }
+
+.effect-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: .75rem;
+  font-size: .85rem;
+  color: var(--muted-color);
+}
+
+.pg-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 6vh, 3.5rem);
+  min-height: 60vh;
+  overflow: hidden;
+  border: 1px dashed var(--border-color);
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.pg-question {
+  max-width: 30rem;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+}
+
+.pg-success-banner {
+  position: fixed;
+  top: 6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  gap: .75rem;
+  justify-items: center;
+  z-index: 50;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  background: var(--bg-color);
+  border: 1px solid var(--panel-border-color);
+}
+
+.pg-success-title { margin: 0; font-size: 1.3rem; }
+.pg-success-actions { display: flex; gap: .75rem; }
+
+.pg-answers {
+  position: relative;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  min-height: 3.5rem;
+}
+
+.pg-yes-btn, .pg-no-btn { min-width: 8rem; justify-content: center; }
+
+.pg-yes-btn { position: relative; z-index: 5; transition: left 160ms ease, top 160ms ease; }
+.pg-no-btn { position: relative; z-index: 2; transition: transform 220ms ease, opacity 220ms ease; }
+
+/* 1. Il Sì che si moltiplica: sparsi su tutta la finestra, non in un wrap contenuto —
+   "occupare tutta la pagina senza limiti e poi sparsi" (feedback di Rory). */
+/* Stessa taglia di .pg-yes-btn/.btn (niente override di padding/font qui): solo
+   posizionamento sparso — feedback di Rory: "il Sì è molto più piccolo del No". */
+.pg-yes-scattered {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+/* 2. Bolla di sapone: non ricompare più dopo lo scoppio (feedback: "non deve ricomparire"),
+   pop più marcato con particelle radiali invece del semplice scale+fade "meh". */
+.bubble-style {
+  border-color: color-mix(in srgb, var(--focus-color) 55%, transparent);
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, .55), rgba(255, 255, 255, .08) 70%);
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, .35), 0 0 10px rgba(255, 255, 255, .25);
+}
+
+/* Una sola curva morbida e monotona per tutta la durata, non una "back" elastica (pensata
+   per un rimbalzo di ritorno, non per una scala che cresce e basta) spezzata su 4 tappe: la
+   combinazione dei due creava scatti innaturali (feedback di Rory: "un po' scattosa"). */
+.bubble-pop-anim {
+  animation: bubble-pop 420ms cubic-bezier(.22, .61, .36, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes bubble-pop {
+  0% { transform: scale(1); opacity: 1; }
+  40% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.poof-particle {
+  position: fixed;
+  z-index: 6;
+  width: .5rem;
+  height: .5rem;
+  margin: -.25rem 0 0 -.25rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, color-mix(in srgb, var(--focus-color) 70%, white));
+  pointer-events: none;
+  animation: poof-burst 480ms ease-out forwards;
+}
+
+@keyframes poof-burst {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; }
+}
+
+/* 3. Pioggia di Sì: posizionamento imperativo via left/top in px, guidato dal loop a
+   gravità in TS (onNoInteract -> startRain) — niente keyframe qui, l'animazione è il
+   risultato dei singoli frame calcolati, non una transizione dichiarativa a target fisso. */
+.rain-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Bottoni Sì veri (cliccabili, non decorazione — feedback di Rory) e della stessa taglia
+   del bottone classico .pg-yes-btn/.btn, non piccoli chip: così il mucchio si riempie prima
+   e si nota, invece di richiedere decine di gocce minuscole per diventare visibile. */
+.rain-yes-drop {
+  position: absolute;
+  min-width: 8rem;
+  justify-content: center;
+  pointer-events: auto;
+  will-change: transform, top;
+}
+
+/* 4. Il gioco delle tre carte: lo spostamento reale (traduzione slot -> px, calcolato in
+   TS con shellOffsetFor) sostituisce la proprietà "order" — order non è animabile dai
+   browser, ed era la causa per cui "le carte non si mescolano" restava vero anche col
+   codice che le riordinava. */
+.shell-answers { perspective: 60rem; }
+
+.shell-card {
+  position: relative;
+  width: 6rem;
+  height: 4rem;
+  min-width: 0;
+  padding: 0;
+  transform-style: preserve-3d;
+  transition: transform 320ms ease;
+}
+
+/* Dopo la prima scelta le altre due restano coperte e non si possono più toccare (feedback
+   di Rory: "non posso premerne altre"). */
+/* Non "opacity" sull'elemento 3D stesso: su un elemento con backface-visibility:hidden,
+   applicare opacity può rompere l'occultamento della faccia (bug noto di rendering 3D) e
+   far trasparire cosa c'era scritto sul davanti — esattamente il difetto segnalato da Rory.
+   L'attenuazione va sulla sola faccia posteriore, l'unica che deve davvero vedersi qui. */
+.shell-card.is-locked { pointer-events: none; }
+.shell-card.is-locked .shell-card-back { opacity: .45; }
+
+.shell-card-front, .shell-card-back {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  border-radius: .8rem;
+  font-weight: 700;
+}
+
+.shell-card-front { background: var(--button-bg); }
+.shell-card-back { background: var(--panel-color); transform: rotateY(180deg); color: var(--muted-color); }
+
+/* 5. Drama queen: transizione lunga e vera sulla fuga finale (non il default "scatto
+   secco" del resto del playground), altrimenti l'ultima frase non si legge mai prima che
+   sparisca (feedback di Rory) — e comunque parte solo dopo una pressione in più dopo il
+   "Ciao!", non da sola. */
+.pg-no-btn.is-fleeing {
+  transition: left 650ms ease-in, top 650ms ease-in, opacity 650ms ease-in;
+  opacity: 0;
+}
+
+/* 6. Falso errore di sistema */
+.fake-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .55);
+}
+
+.fake-dialog-box {
+  width: min(90vw, 24rem);
+  padding: 1.5rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 1rem;
+  background: var(--bg-color);
+  text-align: left;
+}
+
+.fake-dialog-box h3 { margin: 0 0 .5rem; color: #f43f5e; }
+.fake-dialog-box p { margin: 0 0 1rem; color: var(--muted-color); line-height: 1.6; }
+
+.fake-dialog-confirm { display: flex; justify-content: center; margin: 0 auto; }
+
+.all-effects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: .75rem;
+  margin-top: 2.5rem;
+}
+
+.effect-grid-card {
+  padding: .85rem 1rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: .8rem;
+  background: var(--panel-color);
+  cursor: pointer;
+}
+
+.effect-grid-card:hover { background: var(--button-hover-bg); }
+.effect-grid-card.is-active { border-color: var(--accent-color); }
+
+.grid-card-num { font-size: .72rem; color: var(--muted-color); font-weight: 700; }
+.grid-card-name { margin-top: .2rem; font-weight: 600; }
+
+.pg-back-link { margin: 2.5rem 0 1rem; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble-pop-anim, .poof-particle { animation: none; }
+}

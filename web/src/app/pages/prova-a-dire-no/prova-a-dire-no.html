@@ -1,6 +1,8 @@
 <app-shell [showSuggestLink]="false">
-  <p class="pand-title"><span aria-hidden="true">👀</span> Prova a dire no</p>
-  <div class="pand-intro"><app-editorial-text contentKey="prova-a-dire-no.introduzione" /></div>
+  <section class="pand-hero" aria-labelledby="pand-title">
+    <h1 id="pand-title"><span aria-hidden="true">👀</span> Prova a dire no</h1>
+    <div class="pand-intro"><app-editorial-text contentKey="prova-a-dire-no.introduzione" /></div>
+  </section>
 
   @if (!finished()) {
     <div class="pand-progress" aria-hidden="true">
@@ -9,61 +11,175 @@
       }
     </div>
 
-    <div #stage class="pand-stage" (window:mousemove)="onStageMouseMove($event)">
+    <div #stage class="pand-stage" [class.pand-stage-rain]="isRainQuestion()" (window:mousemove)="onStageMouseMove($event)">
       @if (currentQuestion(); as question) {
-        <p class="pand-question">{{ question.text }}</p>
+        <p class="pand-question" [class.pand-question-compact]="question.kind === 'dates'">{{ question.text }}</p>
 
         @switch (question.kind) {
           @case ('evasive') {
-            <div class="pand-answers">
-              <button
-                type="button"
-                class="btn btn-accent pand-yes"
-                [class.is-fullscreen]="yesFullscreen()"
-                [class.is-pulsing]="swapPulse()"
-                [style.order]="answersSwapped() ? 2 : 1"
-                [style.transform]="yesGrowStep() > 0 && !yesFullscreen() ? 'scale(' + yesScale() + ')' : null"
-                (click)="onYesClick()"
-              >Sì</button>
-              <button
-                #noBtn
-                type="button"
-                class="btn pand-no"
-                [class.is-hidden]="noButtonHidden()"
-                [class.is-pulsing]="swapPulse()"
-                [style.order]="answersSwapped() ? 1 : 2"
-                [style.left]="noButtonPosition()?.left"
-                [style.top]="noButtonPosition()?.top"
-                [style.position]="noButtonPosition() ? 'fixed' : null"
-                [style.transform]="yesGrowStep() > 0 ? 'scale(' + noScale() + ')' : null"
-                [style.opacity]="yesFullscreen() ? 0 : null"
-                [style.visibility]="yesFullscreen() ? 'hidden' : null"
-                [attr.aria-hidden]="yesFullscreen() ? 'true' : null"
-                [tabIndex]="yesFullscreen() ? -1 : 0"
-                (pointerdown)="onNoInteract()"
-                (click)="onNoClick($event)"
-              >No</button>
-            </div>
-          }
-          @case ('choice') {
-            <div class="pand-choices">
-              @for (option of question.options; track option; let i = $index) {
-                @if (i === question.evasiveOptionIndex) {
+            @switch (question.behavior) {
+              @case ('multiply') {
+                @if (yesPositions().length === 0) {
+                  <!-- Prima del primo tentativo: un solo Sì, in flusso accanto al No,
+                       stessa taglia — non fisso a schermo fin da subito. -->
+                  <div class="pand-answers">
+                    <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                    <button #noBtn type="button" class="btn pand-no" (pointerdown)="onNoInteract()">No</button>
+                  </div>
+                } @else {
+                  @for (pos of yesPositions(); track $index) {
+                    <button type="button" class="btn btn-accent pand-yes pand-yes-scattered" [style.left]="pos.left" [style.top]="pos.top" (click)="onYesClick()">Sì</button>
+                  }
                   <button
                     #noBtn
                     type="button"
-                    class="btn pand-choice pand-no"
+                    class="btn pand-no"
                     [style.left]="noButtonPosition()?.left"
                     [style.top]="noButtonPosition()?.top"
                     [style.position]="noButtonPosition() ? 'fixed' : null"
                     (pointerdown)="onNoInteract()"
-                    (click)="onNoClick($event)"
-                  >{{ option }}</button>
-                } @else {
-                  <button type="button" class="btn pand-choice" (click)="onChoiceClick(i)">{{ option }}</button>
+                  >No</button>
                 }
               }
-            </div>
+
+              @case ('bubble') {
+                <div class="pand-answers">
+                  <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                  @if (!bubblePopped()) {
+                    <button
+                      #noBtn
+                      type="button"
+                      class="btn pand-no pand-bubble"
+                      [class.pand-bubble-pop]="bubblePopping()"
+                      (pointerdown)="onNoInteract()"
+                    >No</button>
+                  }
+                </div>
+                @if (poofOrigin(); as origin) {
+                  @for (p of poofParticles(); track p.id) {
+                    <span class="pand-poof" [style.left]="origin.left" [style.top]="origin.top" [style.--dx.px]="p.dx" [style.--dy.px]="p.dy"></span>
+                  }
+                }
+              }
+
+              @case ('rain') {
+                @if (!rainActive()) {
+                  <div class="pand-answers">
+                    <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                    <button #noBtn type="button" class="btn pand-no" (pointerdown)="onNoInteract()">No</button>
+                  </div>
+                }
+                <div class="pand-rain">
+                  @for (drop of rainDrops(); track drop.id) {
+                    <button
+                      type="button"
+                      class="btn btn-accent pand-rain-drop"
+                      [style.left.px]="drop.x"
+                      [style.top.px]="drop.y"
+                      [style.transform]="'translate(-50%, -50%) rotate(' + drop.rot + 'deg)'"
+                      (click)="onYesClick()"
+                    >Sì</button>
+                  }
+                </div>
+              }
+
+              @case ('shell') {
+                <!-- Stessi bottoni .pand-no/.pand-yes di sempre, non una "carta" a parte con
+                     facce 3D: il "giro" è solo il testo che cambia insieme a un pulse, lo
+                     stesso già usato per 'swap' (feedback di Rory: dovevano essere identici
+                     agli altri bottoni della pagina). -->
+                <div class="pand-answers">
+                  @for (label of shellLabels(); track $index; let i = $index) {
+                    <button
+                      type="button"
+                      class="btn pand-no"
+                      [class.btn-accent]="!isShellCardCovered(i) && label === 'Sì'"
+                      [class.is-pulsing]="shellFlipPulse() || shellRevealPulse() === i"
+                      [class.is-locked]="shellPhase() === 'waiting' && shellPicked() !== null && shellPicked() !== i"
+                      [style.transform]="'translateX(' + shellOffsetFor(i) + 'px)'"
+                      (click)="onShellCardClick(i)"
+                    >{{ shellCardText(i) }}</button>
+                  }
+                </div>
+              }
+
+              @case ('drama') {
+                <div class="pand-answers">
+                  <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                  <button
+                    #noBtn
+                    type="button"
+                    class="btn pand-no"
+                    [class.pand-fleeing]="dramaLeaving()"
+                    [style.left]="noButtonPosition()?.left"
+                    [style.top]="noButtonPosition()?.top"
+                    [style.position]="noButtonPosition() ? 'fixed' : null"
+                    (pointerdown)="onNoInteract()"
+                  >{{ dramaText() }}</button>
+                </div>
+              }
+
+              @case ('error') {
+                <div class="pand-answers">
+                  <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                  <button type="button" class="btn pand-no" (click)="onNoInteract()">No</button>
+                </div>
+                @if (fakeAlertOpen()) {
+                  <div class="pand-fake-overlay">
+                    <div class="pand-fake-box">
+                      <h3>⚠️ Errore 404</h3>
+                      <p>La risposta No è temporaneamente fuori servizio. Scegli Sì per continuare.</p>
+                      <button type="button" class="btn btn-accent pand-fake-confirm" (click)="closeFakeAlert()">Capito (Sì)</button>
+                    </div>
+                  </div>
+                }
+              }
+
+              @default {
+                <div class="pand-answers">
+                  <button
+                    type="button"
+                    class="btn btn-accent pand-yes"
+                    [class.is-fullscreen]="yesFullscreen()"
+                    [class.is-pulsing]="swapPulse()"
+                    [style.order]="answersSwapped() ? 2 : 1"
+                    [style.transform]="yesGrowStep() > 0 && !yesFullscreen() ? 'scale(' + yesScale() + ')' : null"
+                    (click)="onYesClick()"
+                  >Sì</button>
+                  <button
+                    #noBtn
+                    type="button"
+                    class="btn pand-no"
+                    [class.is-hidden]="noButtonHidden()"
+                    [class.is-pulsing]="swapPulse()"
+                    [style.order]="answersSwapped() ? 1 : 2"
+                    [style.left]="noButtonPosition()?.left"
+                    [style.top]="noButtonPosition()?.top"
+                    [style.position]="noButtonPosition() ? 'fixed' : null"
+                    [style.transform]="yesGrowStep() > 0 ? 'scale(' + noScale() + ')' : null"
+                    [style.opacity]="yesFullscreen() ? 0 : null"
+                    [style.visibility]="yesFullscreen() ? 'hidden' : null"
+                    [attr.aria-hidden]="yesFullscreen() ? 'true' : null"
+                    [tabIndex]="yesFullscreen() ? -1 : 0"
+                    (pointerdown)="onNoInteract()"
+                    (click)="onNoClick($event)"
+                  >No</button>
+                </div>
+              }
+            }
+          }
+          @case ('dates') {
+            <form class="pand-dates" (ngSubmit)="onDatesSubmit()">
+              <label class="pand-date-field">
+                <span>Prossima volta che ci vediamo</span>
+                <input type="date" name="nextMeetingDate" required [ngModel]="nextMeetingDate()" (ngModelChange)="nextMeetingDate.set($event)" />
+              </label>
+              <label class="pand-date-field">
+                <span>Quando facciamo il viaggio</span>
+                <input type="date" name="tripDate" required [ngModel]="tripDate()" (ngModelChange)="tripDate.set($event)" />
+              </label>
+              <button type="submit" class="btn btn-accent" [disabled]="!nextMeetingDate() || !tripDate()">Fatto 🙄</button>
+            </form>
           }
         }
       }

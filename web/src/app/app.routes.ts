@@ -167,6 +167,13 @@ export const routes: Routes = [
         path: 'tavolo-da-gioco/prova-a-dire-no',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/prova-a-dire-no/prova-a-dire-no').then((m) => m.ProvaADireNo)
+      },
+      {
+        path: 'tavolo-da-gioco/prova-a-dire-no/playground',
+        canActivate: [adminGuard],
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () =>
+          import('./pages/prova-a-dire-no-playground/prova-a-dire-no-playground').then((m) => m.ProvaADireNoPlayground)
       }
     ]
   },
