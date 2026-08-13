@@ -55,7 +55,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi
   del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il
   testo del messaggio.
-- #e13 - Cambiare la luna in sole ne "il cielo" se il tema è chiaro
 ---
 
 ## Da non fare
@@ -70,6 +69,12 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ## Fatto
 
 ### Extra (fuori scaletta, chiesto il 13/08/2026)
+
+- [x] #e13 — Luna/Sole in base al tema: sia la luna piccola nell'angolo del cielo (sfondo
+  globale, `world-moon.ts`) sia quella grande della pagina "Il Cielo" mostrano il sole
+  (disco pieno dorato, senza fasi) quando il tema attivo è "White World" (l'unico tema
+  chiaro), la luna con le fasi negli altri temi. Aggiunto l'input `isSun` a `MoonDisc`
+  (condiviso dai due punti, zero duplicazione), letto da `ThemeService.activeThemeId()`.
 
 - [x] Atlante del Mappamondo: esteso per includere sia le destinazioni principali sia quelle secondarie annidate (es. le voci del Tavolo da Gioco: Cruciverba, Messaggio Criptato, Giochi di Ruolo, oltre a Suggerimenti, Linguaggio Segreto e Profilo). Creata la migrazione `0072_add_atlas_destinations.sql` per inserire i record in `mondo_bianco_cards` rendendo anche le destinazioni secondarie personalizzabili via CMS dal sito. Aggiunta la freccia indicatrice `→` e la regolazione del layout grid anche per le voci figlie.
 

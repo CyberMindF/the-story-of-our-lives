@@ -48,3 +48,9 @@
 .moon-disc-ellipse:not(.is-shadow) {
   background: #e7e9ea;
 }
+
+/* Tema chiaro (#e13): stesso disco, nessuna fase — solo un pieno dorato al posto del grigio
+   argenteo lunare. */
+.moon-disc.is-sun {
+  background: radial-gradient(circle at 38% 32%, #fff9e0 0%, #ffe8a3 45%, #ffc94d 78%, #f5a623 100%);
+}

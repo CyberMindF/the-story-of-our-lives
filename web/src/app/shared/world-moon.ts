@@ -1,4 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
+import { ThemeService } from '../core/theme.service';
 import { WorldSettingsService } from '../core/world-settings.service';
 import { MoonDisc } from './moon-disc';
 import { moonPhaseLabel, resolveMoonPhaseFraction } from './moon-phase';
@@ -15,7 +16,10 @@ import { moonPhaseLabel, resolveMoonPhaseFraction } from './moon-phase';
 })
 export class WorldMoon {
   protected readonly worldSettingsService = inject(WorldSettingsService);
+  private readonly themeService = inject(ThemeService);
 
   protected readonly phaseFraction = computed(() => resolveMoonPhaseFraction(this.worldSettingsService.values().moon));
-  protected readonly label = computed(() => moonPhaseLabel(this.phaseFraction()));
+  protected readonly label = computed(() => (this.isSun() ? 'Sole' : moonPhaseLabel(this.phaseFraction())));
+  // #e13: nell'angolo del cielo, tema chiaro ("White World") mostra il sole al posto della luna.
+  protected readonly isSun = computed(() => this.themeService.activeThemeId() === 'white-world');
 }

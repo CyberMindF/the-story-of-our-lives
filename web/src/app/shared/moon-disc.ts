@@ -13,6 +13,9 @@ import { MoonRenderParams, moonRenderParams } from './moon-phase';
 })
 export class MoonDisc {
   @Input({ required: true }) phaseFraction!: number;
+  // Tema chiaro (#e13): stesso posizionamento/dimensione della luna, ma disco pieno dorato
+  // senza fasi — il sole non ha fasi da mostrare.
+  @Input() isSun = false;
 
   protected render(): MoonRenderParams {
     return moonRenderParams(this.phaseFraction);
