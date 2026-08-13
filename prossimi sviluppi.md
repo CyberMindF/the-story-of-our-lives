@@ -22,7 +22,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”, “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che amo di lei o messaggi “da aprire quando…”. Evitare una normale lista o un feed: mostrare un barattolo/insieme di bigliettini e un gesto semplice di pesca, seguito da una breve animazione di apertura del foglietto. La scelta può essere casuale, eventualmente preceduta da una categoria o da “Come ti senti?” (`A caso`, `Mi manchi`, `Giornata difficile`, `Hai bisogno di sorridere`, `Un nostro ricordo`); non mostrare anteprime che rovinino la sorpresa. Tenere per ciascun utente una coda mobile delle ultime 10 estrazioni: quei biglietti sono esclusi temporaneamente, e all'undicesima pesca il primo estratto rientra in circolo, poi il secondo alla dodicesima e così via. Tra i biglietti disponibili usare una casualità pesata che dia una probabilità leggermente maggiore a quelli usciti meno volte, senza rendere mai la scelta deterministica e senza mostrare quali sono già usciti. Se una categoria contiene meno di 11 biglietti, ridurre automaticamente la coda quanto basta per lasciare sempre almeno un candidato disponibile. Dopo l'apertura permettere soltanto `Rimetti nel barattolo` e `Pesca ancora`: niente preferiti, archivio personale o lista dei biglietti letti, perché renderebbero la raccolta prevedibile e toglierebbero valore alla sorpresa. Nessun limite giornaliero artificiale. I biglietti devono vivere nel DB ed essere amministrabili con un editor a lista semplice (testo, categoria/stato d'animo, eventuale titolo “Apri quando…”, attivo/non attivo, posizione), senza drag and drop: frecce e comando `Sposta…`. Lei può proporre un nuovo biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il testo del messaggio. Fare in modo che ci siano 2 barattoli e che sia io che lei possiamo aggiungere al barattolo dell'altro e magari sopra il barattolo ci siano anche dei numeri con scritto quanti biglietti ci sono. Ovviamente "lui" può aggiungere solo al barattolo di "lei" e viceversa
 - #f2 - Animazione palloncini di varie forme e colori, che volano verso l'alto
 - #f3 - Animazione fuochi d'artificio (capire se possiamo prendere dei css già fatti da qualcuno)
-- [~] #f4 - Il giochino prova a dire no ha troppa poca varietà delle cose che succedono. Non si dovrebbe mai ripetere un effetto di bottone che scappa per domanda. **Documento proposte preparato**: create 35 proposte diverse in [`proposte_effetti_prova_a_dire_no.md`](file:///Users/rory.cannata/Desktop/cruciverba/proposte_effetti_prova_a_dire_no.md).
 ---
 
 ## Da non fare
@@ -71,6 +70,35 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `ALLOWED_EVENTS` in `functions/api/_shared/events.js` (la seconda mancava, l'evento
   falliva silenziosamente finché non l'ho trovata testando con curl). Migrazioni
   `0076_add_prova_a_dire_no_atlas.sql` e `0077_seed_prova_a_dire_no_intro.sql`.
+
+- [x] #f4 — "Prova a Dire No" doveva avere molta più varietà, mai un comportamento ripetuto
+  (seguito di #e10). Create **35 proposte diverse** in
+  `proposte_effetti_prova_a_dire_no.md`, poi un **playground** dedicato
+  (`/tavolo-da-gioco/prova-a-dire-no/playground`, dietro `adminGuard`, non linkato in
+  nessuna pagina pubblica) per provarle una a una prima di toccare il gioco vero. Rory ne ha
+  scelte 9, rifinite lì con vari giri di correzioni (fisica della pioggia, bug di
+  coordinate della calamita — poi eliminata —, animazione della bolla "scattosa", intercettore
+  eliminato, crollo in pezzi eliminato) prima di portare le 6 superstiti nel gioco vero,
+  insieme alle 4 già esistenti: **10 domande, 10 comportamenti diversi, mai ripetuti**
+  ("si sposta", "sparisce", "si scambia con Sì", "cresce/si restringe", "Sì si moltiplica"
+  sparso su tutta la finestra, "bolla di sapone" che scoppia per sempre, "pioggia di Sì" con
+  gravità vera via `requestAnimationFrame`, "gioco delle tre carte" a due tocchi — la prima
+  carta scoperta è la scelta finale, le altre due restano coperte —, "bottone permaloso" con
+  18 frasi, "falso errore di sistema").
+
+  Le vecchie 2 domande "a scelta" con opzioni scherzose sono state sostituite da un unico
+  passaggio subito dopo "Vuoi fare un viaggio con me?": due `<input type="date">` veri e un
+  bottone "Fatto 🙄", loggato in telemetria come le altre risposte (non salvato nel
+  Calendario del sito, su richiesta esplicita).
+
+  Bug strutturale trovato e corretto: il gioco delle tre carte usava un vero flip 3D con
+  facce separate (`position: absolute`, dimensioni fisse) — visivamente diverso dagli altri
+  bottoni della pagina. Semplificato per riusare gli stessi bottoni `.pand-no`/`.pand-yes` di
+  sempre: il "giro" è solo il testo che cambia insieme al pulse già condiviso con l'effetto
+  "si scambia con Sì", non un'animazione a parte. Anche l'effetto vetro (`--panel-color` +
+  `backdrop-filter`, stesso stile di "Torna al Mondo Bianco") esteso a tutti i bottoni della
+  pagina, e il titolo riportato al pattern hero condiviso (`--hero-size-md`,
+  `styles/components/typography.css`) invece di dimensioni inventate a mano.
 
 - [x] #25 — Mappa: Sicilia completata. I 4 paragrafi veri sono stati scritti (fiume
   Amenano/Catania, Gole dell'Alcantara, laghetti di Cavagrande/Avola, Isola Bella a Taormina),
