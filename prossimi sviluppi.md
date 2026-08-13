@@ -13,7 +13,10 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   **Resta solo il testo**: i 4 paragrafi sono ancora segnaposto (`[... testo da scrivere]`).
   Aggiornata anche la validazione hardcoded in `mappa.ts` (si aspettava esattamente 6
   destinazioni, ora 7).
-- #26 — Mappa: completare Roma, aspetta il testo vero
+- [~] #26 — Mappa: Roma. Prime due foto messe (Fontana di Trevi e Colosseo, affiancate nella
+  stessa riga come Sharm el-Sheikh, `beforeParagraph: 0`), convertite in webp in
+  `web/public/assets/images/world/map/`. **Resta il testo**: il paragrafo è ancora il
+  placeholder "roma roma".
 - [~] #34 — “Il Ricettario”: pagina realizzata con card lunghe, ingredienti, procedimento,
   filtri “Fatta insieme / Da provare” e collegamento ai Suggerimenti già preselezionato.
   Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**:
@@ -51,6 +54,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi
   del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il
   testo del messaggio.
+  Fare in modo che ci siano 2 barattoli e che sia io che lei possiamo aggiungere al barattolo dell'altro e magari sopra il barattolo ci siano anche dei numeri con scritto quanti biglietti ci sono. Ovviamente "lui" può aggiungere solo al barattolo di "lei" e viceversa
 ---
 
 ## Da non fare
