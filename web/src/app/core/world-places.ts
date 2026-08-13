@@ -39,7 +39,7 @@ export const WORLD_PLACES: readonly WorldPlace[] = [
   { id: 'cruciverba', emoji: '🧩', route: '/tavolo-da-gioco/cruciverba', fallbackName: 'Il Cruciverba', fallbackDescription: 'Cento definizioni che raccontano qualcosa di noi.', group: 'giochi', parentId: 'tavolo-da-gioco' },
   { id: 'messaggio-criptato', emoji: '🔐', route: '/tavolo-da-gioco/messaggio-criptato', fallbackName: 'Il Messaggio Criptato', fallbackDescription: 'Un messaggio da ricostruire un indizio alla volta.', group: 'giochi', parentId: 'tavolo-da-gioco' },
   { id: 'gdr', emoji: '🗝️', route: '/tavolo-da-gioco/gdr', fallbackName: 'I Giochi di Ruolo', fallbackDescription: 'Qui trovi Il Prezzo della Verità; La casa che trattiene il respiro arriverà presto.', group: 'giochi', parentId: 'tavolo-da-gioco' },
-  { id: 'prova-a-dire-no', emoji: '🙈', route: '/tavolo-da-gioco/prova-a-dire-no', fallbackName: 'Prova a Dire No', fallbackDescription: 'Domande a cui non riuscirai a rispondere "no".', group: 'giochi', parentId: 'tavolo-da-gioco' },
+  { id: 'prova-a-dire-no', emoji: '👀', route: '/tavolo-da-gioco/prova-a-dire-no', fallbackName: 'Prova a Dire No', fallbackDescription: 'Domande a cui non riuscirai a rispondere "no".', group: 'giochi', parentId: 'tavolo-da-gioco' },
   { id: 'linguaggio-segreto', emoji: '🔣', route: '/linguaggio-segreto', fallbackName: 'Il Linguaggio Segreto', fallbackDescription: 'I simboli e le parole che capiamo soltanto noi.', group: 'giochi' },
 
   { id: 'impostazioni-mondo', emoji: '🎛️', route: '/impostazioni-mondo', fallbackName: 'La Stanza dei Bottoni', fallbackDescription: 'Temi, cielo ed effetti con cui cambiare l’atmosfera del mondo.', group: 'mondo', primary: true },

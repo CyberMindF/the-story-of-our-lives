@@ -37,28 +37,39 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ### Extra (fuori scaletta, chiesto il 13/08/2026)
 
-- [x] #e10 — "Prova a Dire No": nuovo gioco nel Tavolo (`/tavolo-da-gioco/prova-a-dire-no`,
+- [x] #e10 / #f4 — "Prova a Dire No": nuovo gioco nel Tavolo (`/tavolo-da-gioco/prova-a-dire-no`,
   card e voce nell'Atlante del Mappamondo incluse). Introduzione in pagina (CMS,
   `prova-a-dire-no.introduzione`) che spiega perché esiste: ai video di TikTok con questo
   format Rory ha visto Cristina mettere like/ricondividerli. 8 domande in sequenza, una a
-  schermo alla volta con puntini di avanzamento: 6 a cui il bottone "No" si sottrae al
-  tocco/click (fisso per domanda, non casuale, 4 varianti) — "si sposta" altrove sullo
-  schermo, "sparisce" e ricompare altrove dopo una breve pausa, "diventa Sì" (due tocchi
-  separati: il primo trasforma, un secondo tocco distinto sul bottone ormai diventato "Sì"
-  conferma — un solo tocco che facesse le due cose insieme confondeva, capito da un test
-  reale), o fa crescere il bottone "Sì" a ogni tentativo finché non copre tutto lo schermo
-  (sfondo pieno e ben visibile, non la stessa pillola trasparente ingrandita — altrimenti a
-  schermo intero il colore quasi trasparente pensato per una pillola piccola diventava
-  invisibile) — e 2 domande "a scelta" senza fuga, dove ogni opzione è comunque una risposta
-  valida (per quando ci si vede la prossima volta / quando si fa il prossimo viaggio, con
-  opzioni scherzose non un vero selettore di data). La fuga funziona anche da mobile: si
-  attiva su `pointerdown`, prima che il tocco si completi, non su `hover`. Logga in silenzio
-  (stesso schema del resto del sito, solo ID domanda + numero di tentativi sbagliati, mai
-  testo) — richiesta doppia allowlist lato server: sia `CLIENT_EVENT_TYPES` in
-  `functions/api/telemetry/events.js` sia `ALLOWED_EVENTS` in `functions/api/_shared/events.js`
-  (la seconda mancava, l'evento falliva silenziosamente finché non l'ho trovata testando con
-  curl). Migrazioni `0076_add_prova_a_dire_no_atlas.sql` e
-  `0077_seed_prova_a_dire_no_intro.sql`.
+  schermo alla volta con puntini di avanzamento.
+
+  Prima versione con 3 comportamenti di fuga era "carina ma un po' meh" (feedback di Rory) —
+  cercati esempi veri (CodePen "runaway button", trend TikTok) per capire cosa li rende
+  divertenti sul serio: il bottone che scappa già mentre il cursore si avvicina, non solo al
+  click. Versione finale, 4 comportamenti fissi per domanda (non casuali a ogni apertura):
+  "si sposta" ora scappa in continuo mentre il mouse si avvicina entro un raggio (non solo al
+  click/tap — da touch, senza hover, resta il dodge al tocco); "sparisce" e ricompare altrove
+  dopo una breve pausa; "scambia posto" con "Sì" (ex "diventa Sì": cambiare etichetta nello
+  stesso tocco confondeva — un test reale mostrava che non si capiva cosa fosse successo — ora
+  i due bottoni si scambiano visibilmente posizione, con un piccolo rimbalzo); "cresce" fa
+  crescere "Sì" e restringere "No" in tandem a ogni tentativo, finché il primo non copre tutto
+  lo schermo (sfondo pieno e ben visibile, non la stessa pillola trasparente ingrandita —
+  altrimenti a schermo intero il colore quasi trasparente pensato per una pillola piccola
+  diventava invisibile).
+
+  Le 2 domande "a scelta" (quando ci si vede la prossima volta / quando si fa il prossimo
+  viaggio) inizialmente non avevano nessuna opzione negativa (osservazione di Rory) — aggiunta
+  un'opzione "Mai" per ciascuna che scappa con lo stesso trucco del "No" a comportamento
+  "si sposta", le altre restano scelte libere e valide (opzioni scherzose, non un vero
+  selettore di data).
+
+  La fuga funziona anche da mobile: si attiva su `pointerdown`, prima che il tocco si
+  completi, non su `hover`. Logga in silenzio (stesso schema del resto del sito, solo ID
+  domanda + numero di tentativi sbagliati, mai testo) — richiesta doppia allowlist lato
+  server: sia `CLIENT_EVENT_TYPES` in `functions/api/telemetry/events.js` sia
+  `ALLOWED_EVENTS` in `functions/api/_shared/events.js` (la seconda mancava, l'evento
+  falliva silenziosamente finché non l'ho trovata testando con curl). Migrazioni
+  `0076_add_prova_a_dire_no_atlas.sql` e `0077_seed_prova_a_dire_no_intro.sql`.
 
 - [x] #25 — Mappa: Sicilia completata. I 4 paragrafi veri sono stati scritti (fiume
   Amenano/Catania, Gole dell'Alcantara, laghetti di Cavagrande/Avola, Isola Bella a Taormina),

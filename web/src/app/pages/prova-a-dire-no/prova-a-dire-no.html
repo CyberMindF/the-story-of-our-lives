@@ -1,5 +1,5 @@
 <app-shell [showSuggestLink]="false">
-  <p class="pand-title"><span aria-hidden="true">🙈</span> Prova a dire no</p>
+  <p class="pand-title"><span aria-hidden="true">👀</span> Prova a dire no</p>
   <div class="pand-intro"><app-editorial-text contentKey="prova-a-dire-no.introduzione" /></div>
 
   @if (!finished()) {
@@ -9,7 +9,7 @@
       }
     </div>
 
-    <div class="pand-stage">
+    <div #stage class="pand-stage" (window:mousemove)="onStageMouseMove($event)">
       @if (currentQuestion(); as question) {
         <p class="pand-question">{{ question.text }}</p>
 
@@ -20,28 +20,48 @@
                 type="button"
                 class="btn btn-accent pand-yes"
                 [class.is-fullscreen]="yesFullscreen()"
+                [class.is-pulsing]="swapPulse()"
+                [style.order]="answersSwapped() ? 2 : 1"
                 [style.transform]="yesGrowStep() > 0 && !yesFullscreen() ? 'scale(' + yesScale() + ')' : null"
                 (click)="onYesClick()"
               >Sì</button>
               <button
+                #noBtn
                 type="button"
                 class="btn pand-no"
                 [class.is-hidden]="noButtonHidden()"
+                [class.is-pulsing]="swapPulse()"
+                [style.order]="answersSwapped() ? 1 : 2"
                 [style.left]="noButtonPosition()?.left"
                 [style.top]="noButtonPosition()?.top"
                 [style.position]="noButtonPosition() ? 'fixed' : null"
+                [style.transform]="yesGrowStep() > 0 ? 'scale(' + noScale() + ')' : null"
+                [style.opacity]="yesFullscreen() ? 0 : null"
                 [style.visibility]="yesFullscreen() ? 'hidden' : null"
                 [attr.aria-hidden]="yesFullscreen() ? 'true' : null"
                 [tabIndex]="yesFullscreen() ? -1 : 0"
                 (pointerdown)="onNoInteract()"
                 (click)="onNoClick($event)"
-              >{{ noButtonMorphed() ? 'Sì' : 'No' }}</button>
+              >No</button>
             </div>
           }
           @case ('choice') {
             <div class="pand-choices">
               @for (option of question.options; track option; let i = $index) {
-                <button type="button" class="btn pand-choice" (click)="onChoiceClick(i)">{{ option }}</button>
+                @if (i === question.evasiveOptionIndex) {
+                  <button
+                    #noBtn
+                    type="button"
+                    class="btn pand-choice pand-no"
+                    [style.left]="noButtonPosition()?.left"
+                    [style.top]="noButtonPosition()?.top"
+                    [style.position]="noButtonPosition() ? 'fixed' : null"
+                    (pointerdown)="onNoInteract()"
+                    (click)="onNoClick($event)"
+                  >{{ option }}</button>
+                } @else {
+                  <button type="button" class="btn pand-choice" (click)="onChoiceClick(i)">{{ option }}</button>
+                }
               }
             </div>
           }

@@ -95,7 +95,10 @@
 
 /* Posizione di default (in flusso, accanto a "Sì") finché non viene spostato via style
    inline — vedi prova-a-dire-no.ts, randomPosition(). */
-.pand-no { position: relative; }
+.pand-no {
+  position: relative;
+  transition: transform 220ms ease, opacity 220ms ease;
+}
 
 .pand-no.is-hidden {
   opacity: 0;
@@ -103,7 +106,21 @@
 }
 
 /* Quando è in position:fixed (comportamento "move"), niente transition sulla posizione: deve
-   scattare via, non scivolare — altrimenti da mobile il dito lo raggiunge comunque. */
+   scattare via, non scivolare — altrimenti da mobile il dito lo raggiunge comunque
+   (transform/opacity restano animati per 'grow', solo left/top scattano di netto). */
+
+/* Comportamento 'swap' (#e10, ex 'morph'): invece di cambiare etichetta nello stesso tocco
+   (confuso, un tocco faceva due cose insieme), i due bottoni si scambiano posto — un piccolo
+   rimbalzo li rende ben visibili nell'atto di scambiarsi, non solo un salto secco. */
+@keyframes pand-pulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.pand-yes.is-pulsing, .pand-no.is-pulsing {
+  animation: pand-pulse 320ms ease;
+}
 
 .pand-choices {
   display: grid;
