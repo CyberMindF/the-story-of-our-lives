@@ -10,6 +10,14 @@
   letter-spacing: -.01em;
 }
 
+.pand-intro {
+  max-width: 34rem;
+  margin: .75rem 0 0;
+  color: var(--muted-color);
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+
 .pand-progress {
   display: flex;
   gap: .5rem;
@@ -60,6 +68,29 @@
 .pand-yes, .pand-no {
   min-width: 8.75rem;
   justify-content: center;
+}
+
+/* Comportamento 'grow' (#e10): il "Sì" cresce a ogni tentativo di dire "no", morbido perché
+   qui non deve "scattare via" come il "No" — è l'opposto, si fa notare avvicinandosi. */
+.pand-yes {
+  transition: transform 220ms ease;
+  z-index: 1;
+}
+
+.pand-yes.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  width: 100vw;
+  height: 100dvh;
+  border-radius: 0;
+  border-color: transparent;
+  /* --button-bg è quasi trasparente (pensato per una pillola piccola sullo sfondo del
+     mondo): a schermo intero sparirebbe, restando solo la scritta al centro del nulla. Qui
+     serve un pieno vero, ben visibile, non la stessa pillola ingrandita. */
+  background: var(--accent-color);
+  color: var(--bg-color);
+  font-size: clamp(2rem, 8vw, 4rem);
 }
 
 /* Posizione di default (in flusso, accanto a "Sì") finché non viene spostato via style

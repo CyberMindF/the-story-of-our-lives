@@ -20,6 +20,8 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
 - #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”, “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che amo di lei o messaggi “da aprire quando…”. Evitare una normale lista o un feed: mostrare un barattolo/insieme di bigliettini e un gesto semplice di pesca, seguito da una breve animazione di apertura del foglietto. La scelta può essere casuale, eventualmente preceduta da una categoria o da “Come ti senti?” (`A caso`, `Mi manchi`, `Giornata difficile`, `Hai bisogno di sorridere`, `Un nostro ricordo`); non mostrare anteprime che rovinino la sorpresa. Tenere per ciascun utente una coda mobile delle ultime 10 estrazioni: quei biglietti sono esclusi temporaneamente, e all'undicesima pesca il primo estratto rientra in circolo, poi il secondo alla dodicesima e così via. Tra i biglietti disponibili usare una casualità pesata che dia una probabilità leggermente maggiore a quelli usciti meno volte, senza rendere mai la scelta deterministica e senza mostrare quali sono già usciti. Se una categoria contiene meno di 11 biglietti, ridurre automaticamente la coda quanto basta per lasciare sempre almeno un candidato disponibile. Dopo l'apertura permettere soltanto `Rimetti nel barattolo` e `Pesca ancora`: niente preferiti, archivio personale o lista dei biglietti letti, perché renderebbero la raccolta prevedibile e toglierebbero valore alla sorpresa. Nessun limite giornaliero artificiale. I biglietti devono vivere nel DB ed essere amministrabili con un editor a lista semplice (testo, categoria/stato d'animo, eventuale titolo “Apri quando…”, attivo/non attivo, posizione), senza drag and drop: frecce e comando `Sposta…`. Lei può proporre un nuovo biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il testo del messaggio. Fare in modo che ci siano 2 barattoli e che sia io che lei possiamo aggiungere al barattolo dell'altro e magari sopra il barattolo ci siano anche dei numeri con scritto quanti biglietti ci sono. Ovviamente "lui" può aggiungere solo al barattolo di "lei" e viceversa
+- #f2 - Animazione palloncini di varie forme e colori, che volano verso l'alto
+- #f3 - Animazione fuochi d'artificio (capire se possiamo prendere dei css già fatti da qualcuno)
 ---
 
 ## Da non fare
@@ -36,19 +38,27 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ### Extra (fuori scaletta, chiesto il 13/08/2026)
 
 - [x] #e10 — "Prova a Dire No": nuovo gioco nel Tavolo (`/tavolo-da-gioco/prova-a-dire-no`,
-  card e voce nell'Atlante del Mappamondo incluse). 8 domande in sequenza, una a schermo alla
-  volta con puntini di avanzamento: 6 a cui il bottone "No" si sottrae al tocco/click (fisso
-  per domanda, non casuale) — "si sposta" altrove sullo schermo, "sparisce" e ricompare
-  altrove dopo una breve pausa, o "diventa Sì" con un solo tap/click (il pointerdown lo
-  trasforma, il click che segue conferma) — e 2 domande "a scelta" senza fuga, dove ogni
-  opzione è comunque una risposta valida (per quando ci si vede la prossima volta / quando si
-  fa il prossimo viaggio, con opzioni scherzose non un vero selettore di data). La fuga
-  funziona anche da mobile: si attiva su `pointerdown`, prima che il tocco si completi, non
-  su `hover`. Logga in silenzio (stesso schema del resto del sito, solo ID domanda + numero
-  di tentativi sbagliati, mai testo) — richiesta doppia allowlist lato server: sia
-  `CLIENT_EVENT_TYPES` in `functions/api/telemetry/events.js` sia `ALLOWED_EVENTS` in
-  `functions/api/_shared/events.js` (la seconda mancava, l'evento falliva silenziosamente
-  finché non l'ho trovata testando con curl). Migrazione `0076_add_prova_a_dire_no_atlas.sql`.
+  card e voce nell'Atlante del Mappamondo incluse). Introduzione in pagina (CMS,
+  `prova-a-dire-no.introduzione`) che spiega perché esiste: ai video di TikTok con questo
+  format Rory ha visto Cristina mettere like/ricondividerli. 8 domande in sequenza, una a
+  schermo alla volta con puntini di avanzamento: 6 a cui il bottone "No" si sottrae al
+  tocco/click (fisso per domanda, non casuale, 4 varianti) — "si sposta" altrove sullo
+  schermo, "sparisce" e ricompare altrove dopo una breve pausa, "diventa Sì" (due tocchi
+  separati: il primo trasforma, un secondo tocco distinto sul bottone ormai diventato "Sì"
+  conferma — un solo tocco che facesse le due cose insieme confondeva, capito da un test
+  reale), o fa crescere il bottone "Sì" a ogni tentativo finché non copre tutto lo schermo
+  (sfondo pieno e ben visibile, non la stessa pillola trasparente ingrandita — altrimenti a
+  schermo intero il colore quasi trasparente pensato per una pillola piccola diventava
+  invisibile) — e 2 domande "a scelta" senza fuga, dove ogni opzione è comunque una risposta
+  valida (per quando ci si vede la prossima volta / quando si fa il prossimo viaggio, con
+  opzioni scherzose non un vero selettore di data). La fuga funziona anche da mobile: si
+  attiva su `pointerdown`, prima che il tocco si completi, non su `hover`. Logga in silenzio
+  (stesso schema del resto del sito, solo ID domanda + numero di tentativi sbagliati, mai
+  testo) — richiesta doppia allowlist lato server: sia `CLIENT_EVENT_TYPES` in
+  `functions/api/telemetry/events.js` sia `ALLOWED_EVENTS` in `functions/api/_shared/events.js`
+  (la seconda mancava, l'evento falliva silenziosamente finché non l'ho trovata testando con
+  curl). Migrazioni `0076_add_prova_a_dire_no_atlas.sql` e
+  `0077_seed_prova_a_dire_no_intro.sql`.
 
 - [x] #25 — Mappa: Sicilia completata. I 4 paragrafi veri sono stati scritti (fiume
   Amenano/Catania, Gole dell'Alcantara, laghetti di Cavagrande/Avola, Isola Bella a Taormina),

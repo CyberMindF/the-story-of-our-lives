@@ -1,5 +1,6 @@
 <app-shell [showSuggestLink]="false">
   <p class="pand-title"><span aria-hidden="true">🙈</span> Prova a dire no</p>
+  <div class="pand-intro"><app-editorial-text contentKey="prova-a-dire-no.introduzione" /></div>
 
   @if (!finished()) {
     <div class="pand-progress" aria-hidden="true">
@@ -15,7 +16,13 @@
         @switch (question.kind) {
           @case ('evasive') {
             <div class="pand-answers">
-              <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+              <button
+                type="button"
+                class="btn btn-accent pand-yes"
+                [class.is-fullscreen]="yesFullscreen()"
+                [style.transform]="yesGrowStep() > 0 && !yesFullscreen() ? 'scale(' + yesScale() + ')' : null"
+                (click)="onYesClick()"
+              >Sì</button>
               <button
                 type="button"
                 class="btn pand-no"
@@ -23,6 +30,9 @@
                 [style.left]="noButtonPosition()?.left"
                 [style.top]="noButtonPosition()?.top"
                 [style.position]="noButtonPosition() ? 'fixed' : null"
+                [style.visibility]="yesFullscreen() ? 'hidden' : null"
+                [attr.aria-hidden]="yesFullscreen() ? 'true' : null"
+                [tabIndex]="yesFullscreen() ? -1 : 0"
                 (pointerdown)="onNoInteract()"
                 (click)="onNoClick($event)"
               >{{ noButtonMorphed() ? 'Sì' : 'No' }}</button>

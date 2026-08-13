@@ -1,9 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { TelemetryService } from '../../core/telemetry.service';
 
-type EvasiveBehavior = 'move' | 'disappear' | 'morph';
+type EvasiveBehavior = 'move' | 'disappear' | 'morph' | 'grow';
 
 interface EvasiveQuestion {
   id: string;
@@ -22,13 +23,14 @@ interface ChoiceQuestion {
 type GameQuestion = EvasiveQuestion | ChoiceQuestion;
 
 // 8 domande (#e10): 6 a cui non si può rispondere "no" (bottone che scappa/sparisce/diventa
-// "Sì" a seconda della domanda, fisso per ciascuna su richiesta di Rory — non casuale a ogni
-// apertura) e 2 "a scelta" dove ogni opzione è comunque una risposta valida, senza fuga.
+// "Sì"/fa crescere il "Sì" a seconda della domanda, fisso per ciascuna su richiesta di Rory —
+// non casuale a ogni apertura) e 2 "a scelta" dove ogni opzione è comunque una risposta
+// valida, senza fuga.
 const QUESTIONS: readonly GameQuestion[] = [
   { id: 'mi-ami', kind: 'evasive', text: 'Mi ami?', behavior: 'move' },
   { id: 'sei-mia', kind: 'evasive', text: 'Sei mia?', behavior: 'disappear' },
   { id: 'ti-manco', kind: 'evasive', text: 'Ti manco quando non ci sono?', behavior: 'morph' },
-  { id: 'viaggio-insieme', kind: 'evasive', text: 'Vuoi fare un viaggio con me?', behavior: 'move' },
+  { id: 'viaggio-insieme', kind: 'evasive', text: 'Vuoi fare un viaggio con me?', behavior: 'grow' },
   { id: 'altro-appuntamento', kind: 'evasive', text: 'Vuoi un altro appuntamento?', behavior: 'disappear' },
   { id: 'preferita', kind: 'evasive', text: 'Sono il tuo preferito?', behavior: 'morph' },
   {
@@ -53,10 +55,16 @@ const SAFE_SIDE = 24;
 const BUTTON_WIDTH = 140;
 const BUTTON_HEIGHT = 56;
 
+// 'grow': ogni tentativo di dire "no" fa crescere il bottone "Sì" di un altro passo, finché
+// non copre tutto lo schermo (anche il "No", che a quel punto non si riesce più a raggiungere
+// né col mouse né col dito).
+const GROW_STEPS_TO_FULLSCREEN = 5;
+const GROW_SCALE_PER_STEP = 0.55;
+
 @Component({
   selector: 'app-prova-a-dire-no',
   standalone: true,
-  imports: [AppShell, RouterLink],
+  imports: [AppShell, RouterLink, EditorialText],
   styleUrls: ['../../../styles/pages/prova-a-dire-no.css'],
   templateUrl: './prova-a-dire-no.html'
 })
@@ -74,18 +82,30 @@ export class ProvaADireNo {
   protected readonly noButtonPosition = signal<{ left: string; top: string } | null>(null);
   protected readonly noButtonHidden = signal(false);
   protected readonly noButtonMorphed = signal(false);
+  protected readonly yesGrowStep = signal(0);
+  protected readonly yesFullscreen = computed(() => this.yesGrowStep() >= GROW_STEPS_TO_FULLSCREEN);
+  protected readonly yesScale = computed(() => 1 + this.yesGrowStep() * GROW_SCALE_PER_STEP);
+  // Il tocco che fa scattare il "morph" non deve anche confermarlo: altrimenti diventa "Sì" e
+  // sparisce nello stesso istante, e non si capisce cosa sia successo (feedback di Rory). Ne
+  // serve un secondo, separato, sul bottone ormai diventato "Sì".
+  private morphJustHappened = false;
 
   protected onNoInteract(): void {
     const question = this.currentQuestion();
     if (!question || question.kind !== 'evasive') return;
 
     if (question.behavior === 'morph') {
-      // Un solo tocco: il pointerdown lo trasforma subito in "Sì", e lo stesso click che
-      // segue lo conferma come risposta corretta — nessun secondo tentativo richiesto.
       if (!this.noButtonMorphed()) {
         this.wrongAttempts.update((n) => n + 1);
         this.noButtonMorphed.set(true);
+        this.morphJustHappened = true;
       }
+      return;
+    }
+
+    if (question.behavior === 'grow') {
+      this.wrongAttempts.update((n) => n + 1);
+      this.yesGrowStep.update((n) => Math.min(n + 1, GROW_STEPS_TO_FULLSCREEN));
       return;
     }
 
@@ -109,6 +129,13 @@ export class ProvaADireNo {
   protected onNoClick(event: Event): void {
     const question = this.currentQuestion();
     if (question?.kind === 'evasive' && question.behavior === 'morph' && this.noButtonMorphed()) {
+      if (this.morphJustHappened) {
+        // Questo è ancora il tocco che ha causato la trasformazione: non conta, serve un
+        // secondo tocco separato sul bottone ormai diventato "Sì".
+        this.morphJustHappened = false;
+        event.preventDefault();
+        return;
+      }
       this.answer(question.id, this.wrongAttempts());
       return;
     }
@@ -158,6 +185,8 @@ export class ProvaADireNo {
     this.noButtonPosition.set(null);
     this.noButtonHidden.set(false);
     this.noButtonMorphed.set(false);
+    this.yesGrowStep.set(0);
+    this.morphJustHappened = false;
   }
 
   private randomPosition(): { left: string; top: string } {
