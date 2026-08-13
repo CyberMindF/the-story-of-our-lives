@@ -1,0 +1,83 @@
+/* :host, non un selettore su <body>: stesso motivo già annotato in profilo.css/il-cielo.css
+   — il CSS di pagina è scoped al componente da quando è uno styleUrl. */
+:host { display: block; min-height: 100dvh; color: var(--text-color); }
+
+.pand-title {
+  margin: clamp(1.25rem, 3vh, 2rem) 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  letter-spacing: -.01em;
+}
+
+.pand-progress {
+  display: flex;
+  gap: .5rem;
+  margin: clamp(1.5rem, 4vh, 2.5rem) 0 0;
+}
+
+.pand-dot {
+  width: .5rem;
+  height: .5rem;
+  border-radius: 50%;
+  background: var(--border-color);
+}
+
+.pand-dot.is-done { background: var(--muted-color); }
+.pand-dot.is-current { background: var(--accent-color); }
+
+/* Tutto lo spazio restante della pagina è il "palco" del gioco: il bottone "No" ha bisogno
+   di margine vero per scappare, non solo dello spazio di una card. */
+.pand-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 6vh, 4rem);
+  min-height: 60vh;
+  text-align: center;
+}
+
+.pand-end { min-height: 50vh; }
+
+.pand-question {
+  max-width: 34rem;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  line-height: 1.25;
+}
+
+.pand-answers {
+  position: relative;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  min-height: 3.5rem;
+}
+
+.pand-yes, .pand-no {
+  min-width: 8.75rem;
+  justify-content: center;
+}
+
+/* Posizione di default (in flusso, accanto a "Sì") finché non viene spostato via style
+   inline — vedi prova-a-dire-no.ts, randomPosition(). */
+.pand-no { position: relative; }
+
+.pand-no.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Quando è in position:fixed (comportamento "move"), niente transition sulla posizione: deve
+   scattare via, non scivolare — altrimenti da mobile il dito lo raggiunge comunque. */
+
+.pand-choices {
+  display: grid;
+  gap: .9rem;
+  width: min(100%, 26rem);
+}
+
+.pand-choice { justify-content: center; text-align: center; }

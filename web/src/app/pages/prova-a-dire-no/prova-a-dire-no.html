@@ -1,0 +1,50 @@
+<app-shell [showSuggestLink]="false">
+  <p class="pand-title"><span aria-hidden="true">🙈</span> Prova a dire no</p>
+
+  @if (!finished()) {
+    <div class="pand-progress" aria-hidden="true">
+      @for (question of questions; track question.id; let i = $index) {
+        <span class="pand-dot" [class.is-current]="i === currentIndex()" [class.is-done]="i < currentIndex()"></span>
+      }
+    </div>
+
+    <div class="pand-stage">
+      @if (currentQuestion(); as question) {
+        <p class="pand-question">{{ question.text }}</p>
+
+        @switch (question.kind) {
+          @case ('evasive') {
+            <div class="pand-answers">
+              <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+              <button
+                type="button"
+                class="btn pand-no"
+                [class.is-hidden]="noButtonHidden()"
+                [style.left]="noButtonPosition()?.left"
+                [style.top]="noButtonPosition()?.top"
+                [style.position]="noButtonPosition() ? 'fixed' : null"
+                (pointerdown)="onNoInteract()"
+                (click)="onNoClick($event)"
+              >{{ noButtonMorphed() ? 'Sì' : 'No' }}</button>
+            </div>
+          }
+          @case ('choice') {
+            <div class="pand-choices">
+              @for (option of question.options; track option; let i = $index) {
+                <button type="button" class="btn pand-choice" (click)="onChoiceClick(i)">{{ option }}</button>
+              }
+            </div>
+          }
+        }
+      }
+    </div>
+  } @else {
+    <div class="pand-stage pand-end">
+      <p class="pand-question">Visto? Non riesci proprio a dirmi di no <span aria-hidden="true">😏</span></p>
+      <div class="pand-answers">
+        <button type="button" class="btn btn-accent" (click)="restart()">Ricomincia</button>
+        <a class="btn" routerLink="/tavolo-da-gioco">Torna al Tavolo</a>
+      </div>
+    </div>
+  }
+</app-shell>

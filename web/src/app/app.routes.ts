@@ -162,6 +162,11 @@ export const routes: Routes = [
         path: 'tavolo-da-gioco/messaggio-criptato',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/messaggio-criptato/messaggio-criptato').then((m) => m.MessaggioCriptato)
+      },
+      {
+        path: 'tavolo-da-gioco/prova-a-dire-no',
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () => import('./pages/prova-a-dire-no/prova-a-dire-no').then((m) => m.ProvaADireNo)
       }
     ]
   },

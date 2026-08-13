@@ -10,7 +10,8 @@ const CLIENT_EVENT_TYPES = new Set([
   "song_played",
   "song_completed",
   "playlist_link_clicked",
-  "crossword_hint_requested"
+  "crossword_hint_requested",
+  "prova_a_dire_no_answered"
 ]);
 
 // Registra un evento significativo associandolo sempre all'utente e alla sessione autenticati.

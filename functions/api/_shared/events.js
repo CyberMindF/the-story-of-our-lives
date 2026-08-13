@@ -15,6 +15,7 @@ const ALLOWED_EVENTS = new Set([
   "song_completed",
   "playlist_link_clicked",
   "crossword_hint_requested",
+  "prova_a_dire_no_answered",
   // Azioni esplicite registrate lato server, subito dopo la scrittura riuscita in D1.
   // Gli appunti (autosalvati a ogni pausa di scrittura) restano esclusi: sarebbero rumorosi
   // quanto tracciare i tasti, l'apertura della pagina è già coperta da world_page_opened.

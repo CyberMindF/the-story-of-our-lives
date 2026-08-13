@@ -19,27 +19,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
-- #e10 - Pagina come quelle dei tiktok con alcune domande a cui deve per forza risposndere giocosamente quello che voglio, con i bototni che si spostano e o che spariscono. Tipo "mi ami?" e il no va via in giro per la pagina, oppure sparisce, oppure cambia in "si", il problema però è da mobile, trovare varie soluzioni per non fare sempre la stessa cosa. Sarebbe carino però loggare se per le domande ha cliccato subito la cosa "giusta" o se ha provato a premere quella sbagliata (anche se non so se ha senso perché la pagina sarà volutamente e dichiaratamente scherzosa, quindi valutare se "dichiararlo"?)
-- #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”, “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che amo di lei o messaggi “da aprire quando…”. Evitare una normale lista o un feed: mostrare un barattolo/insieme di bigliettini e un gesto semplice di pesca, seguito da una breve animazione
-  di apertura del foglietto. La scelta può essere casuale, eventualmente preceduta da una
-  categoria o da “Come ti senti?” (`A caso`, `Mi manchi`, `Giornata difficile`, `Hai bisogno di
-  sorridere`, `Un nostro ricordo`); non mostrare anteprime che rovinino la sorpresa. Tenere per
-  per ciascun utente una coda mobile delle ultime 10 estrazioni: quei biglietti sono esclusi
-  temporaneamente, e all'undicesima pesca il primo estratto rientra in circolo, poi il secondo
-  alla dodicesima e così via. Tra i biglietti disponibili usare una casualità pesata che dia
-  una probabilità leggermente maggiore a quelli usciti meno volte, senza rendere mai la scelta
-  deterministica e senza mostrare quali sono già usciti. Se una categoria contiene meno di 11
-  biglietti, ridurre automaticamente la coda quanto basta per lasciare sempre almeno un
-  candidato disponibile. Dopo l'apertura permettere soltanto `Rimetti nel barattolo` e `Pesca ancora`:
-  niente preferiti, archivio personale o lista dei biglietti letti, perché renderebbero la
-  raccolta prevedibile e toglierebbero valore alla sorpresa. Nessun limite giornaliero
-  artificiale. I biglietti devono vivere nel DB ed essere amministrabili con un editor a lista
-  semplice (testo, categoria/stato d'animo, eventuale titolo “Apri quando…”, attivo/non attivo,
-  posizione), senza drag and drop: frecce e comando `Sposta…`. Lei può proporre un nuovo
-  biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi
-  del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il
-  testo del messaggio.
-  Fare in modo che ci siano 2 barattoli e che sia io che lei possiamo aggiungere al barattolo dell'altro e magari sopra il barattolo ci siano anche dei numeri con scritto quanti biglietti ci sono. Ovviamente "lui" può aggiungere solo al barattolo di "lei" e viceversa
+- #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”, “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che amo di lei o messaggi “da aprire quando…”. Evitare una normale lista o un feed: mostrare un barattolo/insieme di bigliettini e un gesto semplice di pesca, seguito da una breve animazione di apertura del foglietto. La scelta può essere casuale, eventualmente preceduta da una categoria o da “Come ti senti?” (`A caso`, `Mi manchi`, `Giornata difficile`, `Hai bisogno di sorridere`, `Un nostro ricordo`); non mostrare anteprime che rovinino la sorpresa. Tenere per ciascun utente una coda mobile delle ultime 10 estrazioni: quei biglietti sono esclusi temporaneamente, e all'undicesima pesca il primo estratto rientra in circolo, poi il secondo alla dodicesima e così via. Tra i biglietti disponibili usare una casualità pesata che dia una probabilità leggermente maggiore a quelli usciti meno volte, senza rendere mai la scelta deterministica e senza mostrare quali sono già usciti. Se una categoria contiene meno di 11 biglietti, ridurre automaticamente la coda quanto basta per lasciare sempre almeno un candidato disponibile. Dopo l'apertura permettere soltanto `Rimetti nel barattolo` e `Pesca ancora`: niente preferiti, archivio personale o lista dei biglietti letti, perché renderebbero la raccolta prevedibile e toglierebbero valore alla sorpresa. Nessun limite giornaliero artificiale. I biglietti devono vivere nel DB ed essere amministrabili con un editor a lista semplice (testo, categoria/stato d'animo, eventuale titolo “Apri quando…”, attivo/non attivo, posizione), senza drag and drop: frecce e comando `Sposta…`. Lei può proporre un nuovo biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il testo del messaggio. Fare in modo che ci siano 2 barattoli e che sia io che lei possiamo aggiungere al barattolo dell'altro e magari sopra il barattolo ci siano anche dei numeri con scritto quanti biglietti ci sono. Ovviamente "lui" può aggiungere solo al barattolo di "lei" e viceversa
 ---
 
 ## Da non fare
@@ -54,6 +34,21 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ## Fatto
 
 ### Extra (fuori scaletta, chiesto il 13/08/2026)
+
+- [x] #e10 — "Prova a Dire No": nuovo gioco nel Tavolo (`/tavolo-da-gioco/prova-a-dire-no`,
+  card e voce nell'Atlante del Mappamondo incluse). 8 domande in sequenza, una a schermo alla
+  volta con puntini di avanzamento: 6 a cui il bottone "No" si sottrae al tocco/click (fisso
+  per domanda, non casuale) — "si sposta" altrove sullo schermo, "sparisce" e ricompare
+  altrove dopo una breve pausa, o "diventa Sì" con un solo tap/click (il pointerdown lo
+  trasforma, il click che segue conferma) — e 2 domande "a scelta" senza fuga, dove ogni
+  opzione è comunque una risposta valida (per quando ci si vede la prossima volta / quando si
+  fa il prossimo viaggio, con opzioni scherzose non un vero selettore di data). La fuga
+  funziona anche da mobile: si attiva su `pointerdown`, prima che il tocco si completi, non
+  su `hover`. Logga in silenzio (stesso schema del resto del sito, solo ID domanda + numero
+  di tentativi sbagliati, mai testo) — richiesta doppia allowlist lato server: sia
+  `CLIENT_EVENT_TYPES` in `functions/api/telemetry/events.js` sia `ALLOWED_EVENTS` in
+  `functions/api/_shared/events.js` (la seconda mancava, l'evento falliva silenziosamente
+  finché non l'ho trovata testando con curl). Migrazione `0076_add_prova_a_dire_no_atlas.sql`.
 
 - [x] #25 — Mappa: Sicilia completata. I 4 paragrafi veri sono stati scritti (fiume
   Amenano/Catania, Gole dell'Alcantara, laghetti di Cavagrande/Avola, Isola Bella a Taormina),
