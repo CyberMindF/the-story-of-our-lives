@@ -55,6 +55,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi
   del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il
   testo del messaggio.
+- #e13 - Cambiare la luna in sole ne "il cielo" se il tema è chiaro
 ---
 
 ## Da non fare
@@ -67,6 +68,17 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ---
 
 ## Fatto
+
+### Extra (fuori scaletta, chiesto il 13/08/2026)
+
+- [x] Atlante del Mappamondo: esteso per includere sia le destinazioni principali sia quelle secondarie annidate (es. le voci del Tavolo da Gioco: Cruciverba, Messaggio Criptato, Giochi di Ruolo, oltre a Suggerimenti, Linguaggio Segreto e Profilo). Creata la migrazione `0072_add_atlas_destinations.sql` per inserire i record in `mondo_bianco_cards` rendendo anche le destinazioni secondarie personalizzabili via CMS dal sito. Aggiunta la freccia indicatrice `→` e la regolazione del layout grid anche per le voci figlie.
+
+- [x] Atlante del Mappamondo: rimossi i due stili alternativi "Costellazione" e "Scaffale"
+  (e il selettore per passarci sopra), tenuto solo "Sommario". Rimosso il signal `atlasView`
+  e ripulite le relative regole CSS non più usate in `mappamondo.css`. Verificato che la
+  pagina non abbia bisogno di un evento di telemetria al click: l'apertura di ogni pagina
+  (mappamondo compreso) è già tracciata automaticamente da `AppShell` al caricamento
+  (`world_page_opened`), come per la home — non serve nulla di aggiuntivo legato al click.
 
 ### Extra (fuori scaletta, chiesti il 12/08/2026)
 

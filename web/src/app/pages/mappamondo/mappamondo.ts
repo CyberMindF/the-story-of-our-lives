@@ -41,6 +41,7 @@ interface SceneDraft {
 interface AtlasPlace extends WorldPlace {
   name: string;
   description: string;
+  children: AtlasPlace[];
 }
 
 function emptyDraft(nextNumber: number): SceneDraft {
@@ -84,13 +85,23 @@ export class Mappamondo {
   protected readonly atlasGroups = computed(() => WORLD_PLACE_GROUPS.map((group) => ({
     ...group,
     places: WORLD_PLACES
-      .filter((place) => place.group === group.id && place.id !== 'mappamondo')
+      .filter((place) => place.group === group.id && place.id !== 'mappamondo' && !place.parentId)
       .map<AtlasPlace>((place) => {
         const override = this.placeOverrides().get(place.id);
+        const children = WORLD_PLACES.filter((candidate) => candidate.parentId === place.id).map<AtlasPlace>((child) => {
+          const childOverride = this.placeOverrides().get(child.id);
+          return {
+            ...child,
+            name: childOverride?.name ?? child.fallbackName,
+            description: childOverride?.description || child.fallbackDescription,
+            children: []
+          };
+        });
         return {
           ...place,
           name: override?.name ?? place.fallbackName,
-          description: override?.description || place.fallbackDescription
+          description: override?.description || place.fallbackDescription,
+          children
         };
       })
   })));
@@ -99,6 +110,10 @@ export class Mappamondo {
   protected readonly draft = signal<SceneDraft>(emptyDraft(1));
   protected readonly formError = signal('');
   protected readonly deleteTargetId = signal<string | null>(null);
+  protected readonly editingAtlasId = signal<string | null>(null);
+  protected readonly atlasDraftName = signal('');
+  protected readonly atlasDraftDescription = signal('');
+  protected readonly atlasFormError = signal('');
 
   constructor() {
     void this.load();
@@ -126,6 +141,34 @@ export class Mappamondo {
     } catch (error) {
       console.error('Errore nel caricamento delle destinazioni dell’atlante:', error);
     }
+  }
+
+  protected startAtlasEdit(place: AtlasPlace): void {
+    this.atlasDraftName.set(place.name);
+    this.atlasDraftDescription.set(place.description);
+    this.atlasFormError.set('');
+    this.editingAtlasId.set(place.id);
+  }
+
+  protected cancelAtlasEdit(): void {
+    this.editingAtlasId.set(null);
+  }
+
+  protected async submitAtlasEdit(): Promise<void> {
+    const id = this.editingAtlasId();
+    const name = this.atlasDraftName().trim();
+    const description = this.atlasDraftDescription().trim();
+    if (!id || !name || name.length > 60 || description.length > 200) {
+      this.atlasFormError.set('Il nome è obbligatorio; la descrizione può avere al massimo 200 caratteri.');
+      return;
+    }
+    const ok = await this.api.sendAuthenticatedJson(`/api/mondo-bianco-cards/${id}`, { name, description }, 'PUT');
+    if (!ok) {
+      this.atlasFormError.set('Non è stato possibile salvare questa tappa.');
+      return;
+    }
+    this.editingAtlasId.set(null);
+    await this.loadAtlas();
   }
 
   protected startCreate(): void {

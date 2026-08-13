@@ -113,47 +113,57 @@
       <p>Se cerchi qualcosa, qui puoi capire in quale angolo del nostro mondo trovarlo.</p>
     </div>
 
-    <div class="world-atlas-map">
-      <div class="world-atlas-center" aria-hidden="true">
-        <span>🌍</span>
-        <strong>Il Mondo Bianco</strong>
-      </div>
+    @if (editingAtlasId()) {
+      <form class="atlas-edit-form card" (ngSubmit)="submitAtlasEdit()">
+        <h3>Modifica la tappa</h3>
+        <label class="form-field">
+          <span>Nome</span>
+          <input type="text" required maxlength="60" [ngModel]="atlasDraftName()" (ngModelChange)="atlasDraftName.set($event)" name="atlas-name" />
+        </label>
+        <label class="form-field">
+          <span>Indicazione breve</span>
+          <textarea rows="3" maxlength="200" [ngModel]="atlasDraftDescription()" (ngModelChange)="atlasDraftDescription.set($event)" name="atlas-description"></textarea>
+        </label>
+        <p class="scene-form-error">{{ atlasFormError() }}</p>
+        <div class="scene-form-actions">
+          <button type="button" class="btn" (click)="cancelAtlasEdit()">Annulla</button>
+          <button type="submit" class="btn btn-submit">Salva</button>
+        </div>
+      </form>
+    }
 
-      @for (group of atlasGroups(); track group.id; let groupIndex = $index) {
-        <section class="atlas-region card" [class]="'atlas-region atlas-region-' + group.id + ' card'">
-          <header class="atlas-region-heading">
-            <span class="atlas-region-number">{{ (groupIndex + 1).toString().padStart(2, '0') }}</span>
-            <div>
-              <h3>{{ group.label }}</h3>
-              <p>{{ group.description }}</p>
-            </div>
-          </header>
-
-          <div class="atlas-destinations">
-            @for (place of group.places; track place.id) {
-              @if (place.route) {
-                <a class="atlas-destination" [routerLink]="place.route">
-                  <span class="atlas-destination-icon" aria-hidden="true">{{ place.emoji }}</span>
-                  <span>
-                    <strong>{{ place.name }}</strong>
-                    <small>{{ place.description }}</small>
-                  </span>
-                  <span class="atlas-destination-arrow" aria-hidden="true">→</span>
-                </a>
-              } @else {
-                <div class="atlas-destination is-coming-soon">
-                  <span class="atlas-destination-icon" aria-hidden="true">{{ place.emoji }}</span>
-                  <span>
-                    <strong>{{ place.name }}</strong>
-                    <small>Arriverà presto.</small>
-                  </span>
+      <div class="atlas-summary">
+        @for (group of atlasGroups(); track group.id; let groupIndex = $index) {
+          <section class="atlas-summary-group">
+            <header>
+              <span>{{ (groupIndex + 1).toString().padStart(2, '0') }}</span>
+              <div><h3>{{ group.label }}</h3><p>{{ group.description }}</p></div>
+            </header>
+            <div class="atlas-summary-places">
+              @for (place of group.places; track place.id) {
+                <div class="atlas-summary-entry">
+                  @if (place.route) {
+                    <a [routerLink]="place.route"><span aria-hidden="true">{{ place.emoji }}</span><strong>{{ place.name }}</strong><small>{{ place.description }}</small><i aria-hidden="true">→</i></a>
+                  } @else {
+                    <div class="is-coming-soon"><span aria-hidden="true">{{ place.emoji }}</span><strong>{{ place.name }}</strong><small>Arriverà presto.</small></div>
+                  }
+                  @if (canEdit()) { <button type="button" class="atlas-inline-edit" (click)="startAtlasEdit(place)">✏️</button> }
+                  @if (place.children.length) {
+                    <div class="atlas-summary-children">
+                      @for (child of place.children; track child.id) {
+                        <div class="atlas-summary-child">
+                          <a [routerLink]="child.route"><span aria-hidden="true">{{ child.emoji }}</span><strong>{{ child.name }}</strong><small>{{ child.description }}</small><i aria-hidden="true">→</i></a>
+                          @if (canEdit()) { <button type="button" class="atlas-inline-edit" (click)="startAtlasEdit(child)">✏️</button> }
+                        </div>
+                      }
+                    </div>
+                  }
                 </div>
               }
-            }
-          </div>
-        </section>
-      }
-    </div>
+            </div>
+          </section>
+        }
+      </div>
   </section>
 
   <app-confirmation-dialog
