@@ -1,0 +1,17 @@
+@if (worldSettingsService.settings().stickers) {
+  <div class="world-stickers" aria-hidden="true">
+    @for (sticker of stickers(); track $index) {
+      <span
+        class="world-sticker-item"
+        [style.--sticker-x]="sticker.x + '%'"
+        [style.--sticker-size]="sticker.size + 'rem'"
+        [style.--sticker-opacity]="sticker.opacity"
+        [style.--sticker-sway]="sticker.sway + 'px'"
+        [style.--sticker-rotate-start]="sticker.rotateStart + 'deg'"
+        [style.--sticker-rotate-end]="sticker.rotateEnd + 'deg'"
+        [style.--sticker-fall-duration]="sticker.fallDuration + 's'"
+        [style.--sticker-fall-delay]="sticker.fallDelay + 's'"
+      >{{ emoji(sticker.kind) }}</span>
+    }
+  </div>
+}

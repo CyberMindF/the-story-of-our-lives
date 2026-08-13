@@ -699,3 +699,52 @@ body[data-theme="the-white-world"] .northern-aurora { mix-blend-mode: screen; }
     opacity: 0;
   }
 }
+
+/* Stickerini che cadono (#e3): stessa meccanica di caduta dei fiori (petal-fall, qui
+   rinominata sticker-fall solo per chiarezza, valori diversi), ma sottoinsieme scelto a
+   piacere invece di forma singola/mix — vedi world-stickers.ts. Emoji semplici, non SVG
+   disegnati a mano. */
+.world-stickers {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.world-sticker-item {
+  position: absolute;
+  top: -10%;
+  left: var(--sticker-x);
+  font-size: var(--sticker-size);
+  opacity: 0;
+  filter: drop-shadow(0 0 0.2em rgba(0, 0, 0, 0.15));
+  animation: sticker-fall var(--sticker-fall-duration) linear var(--sticker-fall-delay) infinite;
+}
+
+@keyframes sticker-fall {
+  0% {
+    transform: translate(0, 0) rotate(var(--sticker-rotate-start));
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--sticker-opacity);
+  }
+  55% {
+    transform: translate(var(--sticker-sway), 60vh) rotate(calc((var(--sticker-rotate-start) + var(--sticker-rotate-end)) / 2));
+  }
+  94% {
+    opacity: var(--sticker-opacity);
+  }
+  100% {
+    transform: translate(calc(var(--sticker-sway) * 1.4), 115vh) rotate(var(--sticker-rotate-end));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-sticker-item {
+    animation: none;
+    opacity: 0;
+  }
+}

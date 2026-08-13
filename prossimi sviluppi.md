@@ -19,15 +19,11 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**:
   sostituire la ricetta placeholder del pollo al curry con la loro versione definitiva e
   ricostruire ingredienti/procedimento dei biscotti di pasta frolla.
-- Mappamondo: capire se si può migliorare — nessuna richiesta concreta ricevuta finora; il
-  contenuto (scene, dialoghi) è comunque già modificabile dal sito dal 12/08/2026 (editor CMS
-  dedicato), resta da vedere se serve altro oltre a quello.
 - #16 (continua) — seconda avventura del Gioco di Ruolo: la card "Coming soon" esiste già
   (vedi Fatto). Resta da scrivere l'avventura vera quando Rory ha titolo/testo/regole pronti
   — con l'editor GDR (12/08/2026) si può fare direttamente dal sito, un blocco alla volta,
   senza toccare codice.
 - #e1 - Aggiungere qualcosa a "le cuffiette", per creare insieme una playlist su spotify, in modo che lei possa proporne di nuove e pure io. Magari devono essere accettate dall'altro per poter dire "si inseriamole"?
-- #e3 - Animazione sfondi stickers, con immagini piccolina e stupide come stickers per l'appunto tipo arcobaleni, unicorni, gelati, soli, lune, orsetti, cuori, caramelle, cose così. Però non penso che voglio delle emoji e nemmeno svg o css plain, se deve essere un svg devono essere carini come disegnini. Nel pannello delle impostazioni del mondo, puoi decidere quali stickers vuoi che si vefano "cadere"
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
@@ -69,6 +65,24 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ## Fatto
 
 ### Extra (fuori scaletta, chiesto il 13/08/2026)
+
+- [x] #e3 — "Emoji che cadono": 18 tipi (arcobaleno, unicorno, gelato, sole, luna, orsetto,
+  cuore, caramella, stella, ciambella, lecca-lecca, fiocco, farfalla, biscotto, cioccolato,
+  torta, patatine, pizza), emoji invece di SVG disegnati a mano (Rory ha cambiato idea in
+  corsa — ok anche libreria open source/emoji). Stessa meccanica di caduta dei fiori
+  (`world-petals.ts`) ma sottoinsieme scelto a piacere invece di forma singola/mix: checkbox
+  indipendenti per ogni tipo nella card "Emoji che cadono" sotto "Consigliato per Love" nella
+  Stanza dei Bottoni, più un bottone "Tutte"/"Nessuna". Valore salvato "all", "none" o lista
+  separata da virgola; validazione lato server in `functions/api/world-settings.js` (nuova
+  chiave `stickers`, allowlist dei kind invece di un Set di stringhe fisse). Migrazione
+  `0073_add_stickers_world_setting.sql`. Trovato e sistemato anche un bug preesistente: nei
+  temi White World e Love `--panel-color` era quasi opaco invece che vetro-trasparente come
+  gli altri temi (`themes.css`), rendendo il pulsante "Torna al Mondo Bianco" (e tutte le
+  altre card) diverso dal resto del sito.
+
+- [x] #f1 — Mappamondo: done per adesso. Nessuna richiesta concreta ricevuta; il contenuto
+  (scene, dialoghi) è comunque già modificabile dal sito dal 12/08/2026 (editor CMS dedicato).
+  Da riaprire se emerge un'esigenza specifica.
 
 - [x] #e13 — Luna/Sole in base al tema: sia la luna piccola nell'angolo del cielo (sfondo
   globale, `world-moon.ts`) sia quella grande della pagina "Il Cielo" mostrano il sole

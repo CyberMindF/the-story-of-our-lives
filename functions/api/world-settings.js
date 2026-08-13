@@ -3,7 +3,19 @@ import { recordEvent } from "./_shared/events.js";
 
 // Chiavi note: allowlist esplicita invece di accettare qualunque stringa dal client, per non
 // lasciare che "world_settings" accumuli righe arbitrarie mai lette da nessuna UI.
-const KNOWN_KEYS = new Set(["lanterns", "stars", "shootingStars", "moon", "theme", "sparkles", "leaves", "waves", "petals", "fish", "bubbles", "hearts", "pearlShimmers", "silk"]);
+const KNOWN_KEYS = new Set(["lanterns", "stars", "shootingStars", "moon", "theme", "sparkles", "leaves", "waves", "petals", "fish", "bubbles", "hearts", "pearlShimmers", "silk", "stickers"]);
+
+// Stessi 8 kind di STICKER_KIND_LABEL in world-stickers.ts. A differenza degli altri effetti
+// (una forma singola o "mix"), qui si può scegliere un sottoinsieme qualunque: "all" per
+// tutti, altrimenti una lista separata da virgola di questi id, senza duplicati.
+const STICKER_KINDS = new Set(["rainbow", "unicorn", "icecream", "sun", "moon", "teddy", "heart", "candy", "star", "donut", "lollipop", "bow", "butterfly", "cookie", "chocolate", "cake", "fries", "pizza"]);
+
+function isValidStickerValue(value) {
+  if (value === "all" || value === "none") return true;
+  const parts = value.split(",");
+  if (parts.length === 0 || new Set(parts).size !== parts.length) return false;
+  return parts.every((part) => STICKER_KINDS.has(part));
+}
 
 // Solo alcune chiavi accettano anche un "value" oltre a enabled (es. la luna: la fase scelta,
 // "auto" o un indice 0-7; il tema: quale dei 5; i fiori: quale forma o "mix") — allowlist dei
@@ -58,9 +70,18 @@ export async function onRequestPost(context) {
 
     let value = null;
     if (body?.value !== undefined && body.value !== null) {
-      const allowedValues = VALID_VALUES[key];
-      if (!allowedValues || typeof body.value !== "string" || !allowedValues.has(body.value)) {
+      if (typeof body.value !== "string") {
         return json({ error: "Valore non valido per questa impostazione." }, 400);
+      }
+      if (key === "stickers") {
+        if (!isValidStickerValue(body.value)) {
+          return json({ error: "Valore non valido per questa impostazione." }, 400);
+        }
+      } else {
+        const allowedValues = VALID_VALUES[key];
+        if (!allowedValues || !allowedValues.has(body.value)) {
+          return json({ error: "Valore non valido per questa impostazione." }, 400);
+        }
       }
       value = body.value;
     }

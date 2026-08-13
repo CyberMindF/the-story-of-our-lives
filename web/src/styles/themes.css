@@ -174,7 +174,7 @@ body[data-theme="the-white-world"] {
 
 body[data-theme="white-world"] {
   --bg-color: #f1ede5;
-  --panel-color: rgba(255, 255, 255, 0.68);
+  --panel-color: rgba(255, 255, 255, 0.05);
   --panel-border-color: rgba(113, 101, 91, 0.18);
   --text-color: #383431;
   --muted-color: #716b65;
@@ -200,7 +200,7 @@ body[data-theme="white-world"] {
 
 body[data-theme="love"] {
   --bg-color: #f2cbd2;
-  --panel-color: rgba(255, 247, 245, 0.62);
+  --panel-color: rgba(255, 247, 245, 0.05);
   --panel-border-color: rgba(127, 54, 75, 0.2);
   --text-color: #552f39;
   --muted-color: #845b65;
