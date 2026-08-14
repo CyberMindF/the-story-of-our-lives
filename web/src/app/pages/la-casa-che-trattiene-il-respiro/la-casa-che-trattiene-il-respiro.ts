@@ -4,6 +4,7 @@ import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { GdrBlocks } from '../../shared/gdr-blocks/gdr-blocks';
+import { GdrDocumentEditor } from '../../shared/gdr-blocks/gdr-document-editor';
 import { GdrBlockRow } from '../../shared/gdr-blocks/gdr-block.types';
 import { GdrPanel } from '../../shared/gdr-panel/gdr-panel';
 import { ApiService } from '../../core/api.service';
@@ -32,7 +33,7 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
 @Component({
   selector: 'app-la-casa-che-trattiene-il-respiro',
   standalone: true,
-  imports: [AppShell, FormsModule, ContentMessage, GdrBlocks, GdrPanel],
+  imports: [AppShell, FormsModule, ContentMessage, GdrBlocks, GdrDocumentEditor, GdrPanel],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './la-casa-che-trattiene-il-respiro.html'
