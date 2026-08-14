@@ -1,7 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
-import { IpdvNavigation } from '../../shared/ipdv-navigation/ipdv-navigation';
 import { ContentMessage } from '../../shared/content-message/content-message';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { GdrBlocks } from '../../shared/gdr-blocks/gdr-blocks';
@@ -33,7 +32,7 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
 @Component({
   selector: 'app-avventura',
   standalone: true,
-  imports: [AppShell, FormsModule, IpdvNavigation, ContentMessage, GdrBlocks, GdrDocumentEditor, GdrPanel],
+  imports: [AppShell, FormsModule, ContentMessage, GdrBlocks, GdrDocumentEditor, GdrPanel],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './avventura.html'

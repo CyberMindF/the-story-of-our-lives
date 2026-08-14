@@ -43,11 +43,9 @@
 }
 
 /* Pagina "L'Avventura" (incipit di Il Prezzo della Verità): lettura in stile Storie, dentro il Tavolo. */
-.avventura-hero, .appunti-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(1.5rem, 5vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
-.avventura-hero h1, .appunti-hero h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 400; line-height: 1; letter-spacing: -.03em; }
-.avventura-hero p, .appunti-hero app-editorial-text { color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
-.avventura-hero p { margin: 1rem auto 0; max-width: 34rem; }
-.appunti-hero app-editorial-text { --editorial-paragraph-margin: 1rem auto 0; --editorial-paragraph-max-width: 34rem; }
+.avventura-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(1.5rem, 5vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+.avventura-hero h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 400; line-height: 1; letter-spacing: -.03em; }
+.avventura-hero p { margin: 1rem auto 0; max-width: 34rem; color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
 
 .avventura-body { width: min(100%, 46rem); margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); }
 /* Il testo narrativo (titoli, paragrafi, immagini, schede NPC, callout) è ora renderizzato da
@@ -70,8 +68,6 @@
 .gdr-turn-form textarea { width: 100%; box-sizing: border-box; min-height: 8rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: .9rem; background: var(--input-bg); color: var(--text-color); font: inherit; line-height: 1.6; resize: vertical; }
 .gdr-turn-submit-row { display: flex; justify-content: flex-end; }
 
-/* Pagina "I Tuoi Appunti": un vero blocco note, salvato in D1 (gdr_notes). */
-.appunti-body { width: min(100%, 46rem); margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); }
 .appunti-status { margin: .6rem 0 0; color: var(--muted-color); font-size: .85rem; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 

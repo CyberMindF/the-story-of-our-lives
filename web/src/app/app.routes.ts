@@ -138,20 +138,9 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/gdr/gdr').then((m) => m.Gdr)
       },
       {
-        path: 'tavolo-da-gioco/gdr/il-prezzo-della-verita',
-        data: { bodyClasses: ['tavolo-page'] },
-        loadComponent: () =>
-          import('./pages/il-prezzo-della-verita/il-prezzo-della-verita').then((m) => m.IlPrezzoDellaVerita)
-      },
-      {
         path: 'tavolo-da-gioco/gdr/il-prezzo-della-verita/avventura',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/avventura/avventura').then((m) => m.Avventura)
-      },
-      {
-        path: 'tavolo-da-gioco/gdr/il-prezzo-della-verita/i-tuoi-appunti',
-        data: { bodyClasses: ['tavolo-page'] },
-        loadComponent: () => import('./pages/i-tuoi-appunti/i-tuoi-appunti').then((m) => m.ITuoiAppunti)
       },
       {
         path: 'tavolo-da-gioco/gdr/la-casa-che-trattiene-il-respiro',
