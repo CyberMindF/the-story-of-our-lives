@@ -5,21 +5,29 @@ import { GdrDocumentEditor } from '../gdr-blocks/gdr-document-editor';
 import { GdrBlockRow, GdrDocumentKey } from '../gdr-blocks/gdr-block.types';
 import { GdrNotesEditor } from '../gdr-notes/gdr-notes-editor';
 import { ApiService } from '../../core/api.service';
+import { AuthService } from '../../core/auth.service';
 
-export interface GdrStatConfig {
+export interface GdrCharacterField {
   key: string;
   label: string;
-  min: number;
-  max: number;
+  type: 'text' | 'number';
+  min?: number;
+  max?: number;
+  long?: boolean;
+  default?: string | number;
 }
 
 type GdrPanelTab = 'personaggio' | 'regole' | 'appunti';
 
-// Pannello di gioco condiviso tra le avventure GDR: prima erano tre pagine separate ("La Tua
+// Pannello di gioco condiviso tra le avventure GDR: prima erano pagine separate ("La Tua
 // Maga", regole, "I Tuoi Appunti"), qui diventano tab di un bottom sheet consultabile senza
-// uscire dalla pagina dell'avventura. Scoped per avventura (adventure/rulesDocumentKey/
-// statsConfig come @Input): ogni avventura ha personaggi e regole diversi, ma lo stesso
-// meccanismo di apertura/tab/persistenza.
+// uscire dalla pagina dell'avventura. Scoped per avventura (adventure/rulesDocumentKey come
+// @Input), ma la STRUTTURA della scheda (quali campi, testo o numero) non è più fissata nel
+// codice come nella prima versione: arriva da gdr_character_schema, un JSON modificabile
+// dall'admin da qui stesso — così una nuova avventura non richiede toccare questo componente,
+// solo definire i suoi campi. I valori sono condivisi tra i due account, non più una copia
+// per utente (vale anche per "Il Prezzo della Verità", dove prima ognuno aveva la propria
+// scheda: da qui in poi è una sola, come voluto da Rory).
 @Component({
   selector: 'app-gdr-panel',
   standalone: true,
@@ -30,16 +38,23 @@ type GdrPanelTab = 'personaggio' | 'regole' | 'appunti';
 export class GdrPanel implements OnInit {
   @Input({ required: true }) adventure!: string;
   @Input({ required: true }) rulesDocumentKey!: GdrDocumentKey;
-  @Input({ required: true }) statsConfig!: GdrStatConfig[];
+  @Input() fieldsDocumentKey?: GdrDocumentKey;
 
   private readonly api = inject(ApiService);
+  protected readonly authService = inject(AuthService);
+  protected readonly canEditSchema = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
 
   protected readonly open = signal(false);
   protected readonly activeTab = signal<GdrPanelTab>('personaggio');
 
-  protected readonly statValues = signal<Record<string, number>>({});
-  protected readonly statsLoading = signal(true);
-  protected readonly statsStatus = signal('');
+  protected readonly schema = signal<GdrCharacterField[]>([]);
+  protected readonly fieldValues = signal<Record<string, string>>({});
+  protected readonly fieldsLoading = signal(true);
+  protected readonly fieldsStatus = signal('');
+
+  protected readonly schemaEditorOpen = signal(false);
+  protected readonly schemaDraft = signal('');
+  protected readonly schemaError = signal('');
 
   private readonly rawBlocks = signal<GdrBlockRow[]>([]);
   protected readonly rulesBlocks = computed(() =>
@@ -47,9 +62,16 @@ export class GdrPanel implements OnInit {
       .filter((block) => block.documentKey === this.rulesDocumentKey)
       .sort((a, b) => a.position - b.position)
   );
+  protected readonly portraitBlocks = computed(() =>
+    this.fieldsDocumentKey
+      ? this.rawBlocks()
+          .filter((block) => block.documentKey === this.fieldsDocumentKey)
+          .sort((a, b) => a.position - b.position)
+      : []
+  );
 
   async ngOnInit(): Promise<void> {
-    await Promise.all([this.loadStats(), this.loadRules()]);
+    await Promise.all([this.loadSchemaAndValues(), this.loadBlocks()]);
   }
 
   protected togglePanel(): void {
@@ -64,45 +86,83 @@ export class GdrPanel implements OnInit {
     this.activeTab.set(tab);
   }
 
-  private async loadStats(): Promise<void> {
-    this.statsLoading.set(true);
+  private async loadSchemaAndValues(): Promise<void> {
+    this.fieldsLoading.set(true);
     try {
-      const response = await fetch(`/api/gdr/character-stats?adventure=${this.adventure}`, { credentials: 'same-origin' });
-      if (!response.ok) throw new Error(`Errore ${response.status}`);
-      const result = await this.api.readApiResponse<{ stats?: Record<string, number> }>(response);
-      this.statValues.set(result.stats ?? {});
+      const schemaResponse = await fetch(`/api/gdr/character-schema?adventure=${this.adventure}`, { credentials: 'same-origin' });
+      if (!schemaResponse.ok) throw new Error(`Errore ${schemaResponse.status}`);
+      const schemaResult = await this.api.readApiResponse<{ fields?: GdrCharacterField[] }>(schemaResponse);
+      this.schema.set(schemaResult.fields ?? []);
+
+      const valuesResponse = await fetch(`/api/gdr/character-fields?adventure=${this.adventure}`, { credentials: 'same-origin' });
+      if (!valuesResponse.ok) throw new Error(`Errore ${valuesResponse.status}`);
+      const valuesResult = await this.api.readApiResponse<{ values?: Record<string, string> }>(valuesResponse);
+      this.fieldValues.set(valuesResult.values ?? {});
     } catch (error) {
-      console.error('Errore nel caricamento delle statistiche del personaggio:', error);
+      console.error('Errore nel caricamento della scheda del personaggio:', error);
     } finally {
-      this.statsLoading.set(false);
+      this.fieldsLoading.set(false);
     }
   }
 
-  private async loadRules(): Promise<void> {
+  private async loadBlocks(): Promise<void> {
     try {
       const response = await fetch('/api/gdr-blocks', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
       if (!response.ok) throw new Error(`Errore ${response.status}`);
       const result = await this.api.readApiResponse<{ blocks?: GdrBlockRow[] }>(response);
       this.rawBlocks.set(result.blocks ?? []);
     } catch (error) {
-      console.error('Errore nel caricamento delle regole:', error);
+      console.error('Errore nel caricamento dei contenuti della scheda:', error);
     }
   }
 
-  protected async setStat(key: string, value: number): Promise<void> {
-    this.statValues.update((values) => ({ ...values, [key]: value }));
-    this.statsStatus.set('Sto salvando...');
+  protected async setField(key: string, value: string): Promise<void> {
+    this.fieldValues.update((values) => ({ ...values, [key]: value }));
+    this.fieldsStatus.set('Sto salvando...');
     try {
       const formData = new FormData();
       formData.set('adventure', this.adventure);
-      formData.set('statKey', key);
-      formData.set('value', String(value));
-      const response = await fetch('/api/gdr/character-stats', { method: 'POST', credentials: 'same-origin', body: formData });
+      formData.set('fieldKey', key);
+      formData.set('value', value);
+      const response = await fetch('/api/gdr/character-fields', { method: 'POST', credentials: 'same-origin', body: formData });
       if (!response.ok) throw new Error(`Errore ${response.status}`);
-      this.statsStatus.set('Salvato.');
+      this.fieldsStatus.set('Salvato.');
     } catch (error) {
-      console.error('Errore nel salvataggio della statistica:', error);
-      this.statsStatus.set('Non è stato possibile salvare, riprova.');
+      console.error('Errore nel salvataggio del campo:', error);
+      this.fieldsStatus.set('Non è stato possibile salvare, riprova.');
     }
+  }
+
+  protected onTextInput(key: string, event: Event): void {
+    void this.setField(key, (event.target as HTMLInputElement | HTMLTextAreaElement).value);
+  }
+
+  protected openSchemaEditor(): void {
+    this.schemaDraft.set(JSON.stringify(this.schema(), null, 2));
+    this.schemaError.set('');
+    this.schemaEditorOpen.set(true);
+  }
+
+  protected closeSchemaEditor(): void {
+    this.schemaEditorOpen.set(false);
+  }
+
+  protected async saveSchema(): Promise<void> {
+    let fields: unknown;
+    try {
+      fields = JSON.parse(this.schemaDraft());
+    } catch {
+      this.schemaError.set('Il contenuto non è JSON valido.');
+      return;
+    }
+
+    const ok = await this.api.sendAuthenticatedJson('/api/gdr/character-schema', { adventure: this.adventure, fields }, 'POST');
+    if (!ok) {
+      this.schemaError.set('Non è stato possibile salvare la struttura.');
+      return;
+    }
+
+    this.schemaEditorOpen.set(false);
+    await this.loadSchemaAndValues();
   }
 }

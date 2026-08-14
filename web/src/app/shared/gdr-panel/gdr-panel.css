@@ -176,3 +176,83 @@
 }
 .gdr-stat-control button:disabled { opacity: .35; cursor: not-allowed; }
 .gdr-stat-value { min-width: 1.5rem; text-align: center; color: var(--text-color); font-variant-numeric: tabular-nums; font-size: 1.1rem; }
+
+.gdr-field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .8rem 0;
+  border-bottom: 1px solid rgba(240, 219, 179, .14);
+}
+.gdr-field-row:last-of-type { border-bottom: none; }
+.gdr-field-row-long { flex-direction: column; align-items: stretch; gap: .5rem; }
+.gdr-field-label { color: var(--text-color); font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; }
+
+.gdr-field-input {
+  box-sizing: border-box;
+  min-width: 0;
+  flex: 1;
+  max-width: 12rem;
+  padding: .5rem .7rem;
+  border-radius: .6rem;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
+  font: inherit;
+}
+
+.gdr-field-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: .7rem .9rem;
+  border-radius: .8rem;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
+  font: inherit;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.gdr-panel-link-btn {
+  display: inline-block;
+  margin: 0 0 .8rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #f0dbb3;
+  font: inherit;
+  font-size: .85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.gdr-schema-editor {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(240, 219, 179, .2);
+}
+
+.gdr-schema-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: .8rem;
+  border-radius: .6rem;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.gdr-schema-error { margin: .5rem 0 0; color: #e28b8b; font-size: .85rem; }
+
+.gdr-schema-actions {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  margin-top: .7rem;
+}

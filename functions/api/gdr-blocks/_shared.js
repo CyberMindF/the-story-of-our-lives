@@ -1,4 +1,4 @@
-const DOCUMENT_KEYS = ["avventura", "maga-regole", "casa-avventura", "casa-regole"];
+const DOCUMENT_KEYS = ["avventura", "maga-regole", "casa-avventura", "casa-regole", "casa-personaggio", "maga-personaggio"];
 const BLOCK_TYPES = ["heading", "paragraph", "callout", "image", "npc_grid", "list", "table"];
 const MAX_DATA_LENGTH = 20000;
 

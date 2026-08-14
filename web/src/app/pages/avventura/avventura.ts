@@ -6,6 +6,7 @@ import { ContentMessage } from '../../shared/content-message/content-message';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { GdrBlocks } from '../../shared/gdr-blocks/gdr-blocks';
 import { GdrDocumentEditor } from '../../shared/gdr-blocks/gdr-document-editor';
+import { GdrPanel } from '../../shared/gdr-panel/gdr-panel';
 import { GdrBlockRow } from '../../shared/gdr-blocks/gdr-block.types';
 import { ApiService } from '../../core/api.service';
 
@@ -32,7 +33,7 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
 @Component({
   selector: 'app-avventura',
   standalone: true,
-  imports: [AppShell, FormsModule, IpdvNavigation, ContentMessage, GdrBlocks, GdrDocumentEditor],
+  imports: [AppShell, FormsModule, IpdvNavigation, ContentMessage, GdrBlocks, GdrDocumentEditor, GdrPanel],
   providers: [FormSubmission],
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './avventura.html'

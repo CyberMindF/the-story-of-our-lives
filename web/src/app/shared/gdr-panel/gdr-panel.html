@@ -25,20 +25,50 @@
     <div class="gdr-panel-content">
       @switch (activeTab()) {
         @case ('personaggio') {
-          @if (statsLoading()) {
+          @if (portraitBlocks().length > 0) {
+            <app-gdr-blocks [blocks]="portraitBlocks()" />
+          }
+          @if (canEditSchema()) {
+            @if (fieldsDocumentKey) {
+              <app-gdr-document-editor [documentKey]="fieldsDocumentKey" />
+            }
+            <button type="button" class="gdr-panel-link-btn" (click)="openSchemaEditor()">Modifica struttura scheda (JSON)</button>
+          }
+
+          @if (fieldsLoading()) {
             <p class="gdr-panel-status">Sto caricando la scheda...</p>
           } @else {
-            @for (stat of statsConfig; track stat.key) {
-              <div class="gdr-stat-row">
-                <span class="gdr-stat-label">{{ stat.label }}</span>
-                <div class="gdr-stat-control">
-                  <button type="button" [disabled]="(statValues()[stat.key] ?? stat.min) <= stat.min" (click)="setStat(stat.key, (statValues()[stat.key] ?? stat.min) - 1)" aria-label="Diminuisci">−</button>
-                  <span class="gdr-stat-value">{{ statValues()[stat.key] ?? stat.min }}</span>
-                  <button type="button" [disabled]="(statValues()[stat.key] ?? stat.min) >= stat.max" (click)="setStat(stat.key, (statValues()[stat.key] ?? stat.min) + 1)" aria-label="Aumenta">+</button>
-                </div>
+            @for (field of schema(); track field.key) {
+              <div class="gdr-field-row" [class.gdr-field-row-long]="field.type === 'text' && field.long">
+                <span class="gdr-field-label">{{ field.label }}</span>
+                @if (field.type === 'number') {
+                  <div class="gdr-stat-control">
+                    <button type="button" [disabled]="(+(fieldValues()[field.key] ?? field.min!)) <= field.min!" (click)="setField(field.key, '' + ((+(fieldValues()[field.key] ?? field.min!)) - 1))" aria-label="Diminuisci">−</button>
+                    <span class="gdr-stat-value">{{ fieldValues()[field.key] ?? field.min }}</span>
+                    <button type="button" [disabled]="(+(fieldValues()[field.key] ?? field.min!)) >= field.max!" (click)="setField(field.key, '' + ((+(fieldValues()[field.key] ?? field.min!)) + 1))" aria-label="Aumenta">+</button>
+                  </div>
+                } @else if (field.long) {
+                  <textarea class="gdr-field-textarea" [value]="fieldValues()[field.key] ?? ''" (change)="onTextInput(field.key, $event)" rows="4"></textarea>
+                } @else {
+                  <input type="text" class="gdr-field-input" [value]="fieldValues()[field.key] ?? ''" (change)="onTextInput(field.key, $event)" />
+                }
               </div>
             }
-            <p class="gdr-panel-status" role="status" aria-live="polite">{{ statsStatus() }}</p>
+            <p class="gdr-panel-status" role="status" aria-live="polite">{{ fieldsStatus() }}</p>
+          }
+
+          @if (schemaEditorOpen()) {
+            <div class="gdr-schema-editor">
+              <label class="sr-only" for="gdr-schema-json">Struttura della scheda (JSON)</label>
+              <textarea id="gdr-schema-json" class="gdr-schema-textarea" [value]="schemaDraft()" (input)="schemaDraft.set($any($event.target).value)" rows="12"></textarea>
+              @if (schemaError()) {
+                <p class="gdr-schema-error">{{ schemaError() }}</p>
+              }
+              <div class="gdr-schema-actions">
+                <button type="button" class="btn" (click)="saveSchema()">Salva struttura</button>
+                <button type="button" class="gdr-panel-link-btn" (click)="closeSchemaEditor()">Annulla</button>
+              </div>
+            </div>
           }
         }
         @case ('regole') {

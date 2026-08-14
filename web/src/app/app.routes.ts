@@ -149,11 +149,6 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/avventura/avventura').then((m) => m.Avventura)
       },
       {
-        path: 'tavolo-da-gioco/gdr/il-prezzo-della-verita/la-tua-maga',
-        data: { bodyClasses: ['tavolo-page'] },
-        loadComponent: () => import('./pages/la-tua-maga/la-tua-maga').then((m) => m.LaTuaMaga)
-      },
-      {
         path: 'tavolo-da-gioco/gdr/il-prezzo-della-verita/i-tuoi-appunti',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/i-tuoi-appunti/i-tuoi-appunti').then((m) => m.ITuoiAppunti)

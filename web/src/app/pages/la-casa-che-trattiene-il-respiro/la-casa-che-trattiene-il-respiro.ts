@@ -5,12 +5,10 @@ import { ContentMessage } from '../../shared/content-message/content-message';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { GdrBlocks } from '../../shared/gdr-blocks/gdr-blocks';
 import { GdrBlockRow } from '../../shared/gdr-blocks/gdr-block.types';
-import { GdrPanel, GdrStatConfig } from '../../shared/gdr-panel/gdr-panel';
+import { GdrPanel } from '../../shared/gdr-panel/gdr-panel';
 import { ApiService } from '../../core/api.service';
 
 const ADVENTURE = 'la-casa-che-trattiene-il-respiro';
-
-const STATS_CONFIG: GdrStatConfig[] = [{ key: 'lucidita', label: 'Lucidità', min: 0, max: 3 }];
 
 interface Turn {
   isMine: boolean;
@@ -44,7 +42,6 @@ export class LaCasaCheTrattieneIlRespiro implements OnInit {
   protected readonly submission = inject(FormSubmission);
   protected readonly turns = signal<Turn[]>([]);
   protected readonly loadError = signal(false);
-  protected readonly statsConfig = STATS_CONFIG;
   protected readonly adventure = ADVENTURE;
 
   private readonly rawBlocks = signal<GdrBlockRow[]>([]);
