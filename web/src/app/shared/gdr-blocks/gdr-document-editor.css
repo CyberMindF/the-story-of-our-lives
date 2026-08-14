@@ -1,15 +1,44 @@
-/* Editor amministrativo condiviso del GDR (documentazione/cms/planning-editor-contenuti.md, Fase 7). */
+/* Editor amministrativo condiviso del GDR, stile Homebrewery: toolbar di snippet + split-view
+   testo/anteprima, invece della lista di form JSON precedente. */
 :host { display: block; }
-.gdr-admin-section { width: min(100%, 60rem); margin: clamp(3rem, 6vw, 4rem) auto 0; display: grid; gap: 1rem; }
+.gdr-admin-section { width: min(100%, 72rem); margin: clamp(3rem, 6vw, 4rem) auto 0; display: grid; gap: 1rem; }
 .gdr-admin-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; }
-.gdr-admin-form { display: grid; gap: 1rem; padding: 1.4rem; }
-.gdr-admin-form textarea { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: .85rem; }
-.gdr-admin-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
+
+.gdr-admin-toolbar { display: flex; flex-wrap: wrap; gap: .4rem; }
+.gdr-admin-toolbar .btn { padding: .4rem .7rem; font-size: .82rem; }
+
+.gdr-admin-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 32rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: .9rem;
+  overflow: hidden;
+}
+.gdr-admin-source {
+  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .85rem;
+  line-height: 1.6;
+  height: 100%;
+  resize: none;
+  border: none;
+  border-right: 1px solid var(--panel-border-color);
+  border-radius: 0;
+  padding: 1rem;
+  background: var(--panel-color);
+  color: var(--text-color);
+}
+.gdr-admin-preview {
+  height: 100%;
+  padding: 1.2rem 1.4rem;
+  overflow-y: auto;
+}
+
+.gdr-admin-errors { margin: 0; padding-left: 1.2rem; color: #ffb4b4; font-size: .85rem; display: grid; gap: .3rem; }
 .gdr-admin-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
 .gdr-admin-form-error:empty { display: none; }
-.gdr-admin-list { display: grid; gap: .7rem; }
-.gdr-admin-entry { border: 1px solid var(--panel-border-color); border-radius: .9rem; padding: .9rem 1.1rem; display: grid; gap: .5rem; }
-.gdr-admin-entry-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem; }
-.gdr-admin-type { padding: .15rem .55rem; border-radius: 999px; background: var(--button-bg); color: var(--muted-color); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
-.gdr-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .2rem; padding-top: .7rem; border-top: 1px solid var(--panel-border-color); }
-.gdr-admin-actions .btn { padding: .4rem .7rem; font-size: .82rem; }
+.gdr-admin-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
+
+@media (max-width: 860px) {
+  .gdr-admin-split { grid-template-columns: 1fr; }
+}

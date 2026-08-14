@@ -8,60 +8,48 @@
     </div>
 
     @if (panelOpen()) {
-      @if (editingId() === null) {
-        <button type="button" class="btn" (click)="startCreate()">➕ Aggiungi blocco</button>
-      }
-
-      @if (editingId() !== null) {
-        <form class="gdr-admin-form card" (ngSubmit)="submitEdit()">
-          <h3>{{ editingId() === '__new__' ? 'Nuovo blocco' : 'Modifica blocco' }}</h3>
-          <label class="form-field">
-            <span>Tipo</span>
-            <select required [ngModel]="draft().type" (ngModelChange)="onTypeChange($event)" name="blockType" [disabled]="editingId() !== '__new__'">
-              @for (type of blockTypes; track type) {
-                <option [value]="type">{{ type }}</option>
-              }
-            </select>
-          </label>
-          <label class="form-field">
-            <span>Contenuto <small>JSON, forma diversa per tipo</small></span>
-            <textarea rows="10" [ngModel]="draft().dataJson" (ngModelChange)="updateDraftJson($event)" name="blockData"></textarea>
-          </label>
-          <p class="gdr-admin-form-error">{{ formError() }}</p>
-          <div class="gdr-admin-form-actions">
-            <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
-            <button type="submit" class="btn btn-submit">Salva</button>
-          </div>
-        </form>
-      }
-
-      <div class="gdr-admin-list">
-        @for (block of blocks(); track block.id) {
-          <article class="gdr-admin-entry">
-            <header class="gdr-admin-entry-heading">
-              <span class="gdr-admin-type">{{ block.type }}</span>
-              <span>{{ summary(block) }}</span>
-            </header>
-            <div class="gdr-admin-actions">
-              <button type="button" class="btn" (click)="move(block.id, 'up')">⬆️</button>
-              <button type="button" class="btn" (click)="move(block.id, 'down')">⬇️</button>
-              <button type="button" class="btn" (click)="startEdit(block)">✏️ Modifica</button>
-              <button type="button" class="btn" (click)="requestDelete(block.id)">🗑️ Elimina</button>
-            </div>
-          </article>
+      <div class="gdr-admin-toolbar">
+        @for (type of blockTypes; track type) {
+          <button type="button" class="btn" (click)="insertSnippet(type, sourceTextarea)">{{ snippetLabels[type] }}</button>
         }
+      </div>
+
+      <div class="gdr-admin-split">
+        <textarea
+          #sourceTextarea
+          class="gdr-admin-source"
+          rows="20"
+          [ngModel]="sourceText()"
+          (ngModelChange)="updateSourceText($event)"
+          (scroll)="syncScroll(sourceTextarea, previewPane)"
+          name="sourceText"
+          placeholder="Scrivi qui il testo del documento..."
+        ></textarea>
+        <div #previewPane class="gdr-admin-preview" (scroll)="syncScroll(previewPane, sourceTextarea)">
+          <app-gdr-blocks [blocks]="previewBlocks()" />
+        </div>
+      </div>
+
+      @if (parseErrors().length > 0) {
+        <ul class="gdr-admin-errors">
+          @for (error of parseErrors(); track error.line + error.message) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+
+      <p class="gdr-admin-form-error">{{ saveError() }}</p>
+
+      <div class="gdr-admin-form-actions">
+        <button
+          type="button"
+          class="btn btn-submit"
+          [disabled]="parseErrors().length > 0 || saving()"
+          (click)="save()"
+        >
+          {{ saving() ? 'Salvataggio…' : 'Salva' }}
+        </button>
       </div>
     }
   </section>
-
-  <app-confirmation-dialog
-    dialogId="delete-gdr-block"
-    title="Eliminare questo blocco?"
-    description="L'operazione non può essere annullata."
-    confirmLabel="Elimina"
-    cancelLabel="Annulla"
-    [open]="deleteTargetId() !== null"
-    (confirm)="confirmDelete()"
-    (cancel)="cancelDelete()"
-  />
 }

@@ -1,67 +1,72 @@
 import { Component, Input, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 import { AuthService } from '../../core/auth.service';
-import { ApiService } from '../../core/api.service';
+import { GdrBlocksService } from '../../core/gdr-blocks.service';
+import { GdrBlocks } from './gdr-blocks';
 import { GdrBlockRow, GdrBlockType, GdrDocumentKey } from './gdr-block.types';
+import { GdrParseError, parseGdrMarkdown } from './gdr-markdown.parser';
+import { serializeGdrBlocks } from './gdr-markdown.serializer';
 
-interface BlockDraft {
-  type: GdrBlockType;
-  dataJson: string;
-}
+const SNIPPETS: Record<GdrBlockType, string> = {
+  heading: '## Titolo',
+  paragraph: 'Testo del paragrafo.',
+  callout: '::: callout Lead\nTesto del callout.\n:::',
+  image: '![Testo alternativo](/percorso/immagine.jpg "Didascalia opzionale")',
+  npc_grid: '::: npc\n- image: /percorso/immagine.jpg\n  alt: Ritratto di Nome\n  name: Nome\n  description: Descrizione.\n:::',
+  list: '- Primo elemento\n- Secondo elemento',
+  table: '| Intestazione 1 | Intestazione 2 |\n| --- | --- |\n| Cella A1 | Cella B1 |'
+};
+
+const SNIPPET_LABELS: Record<GdrBlockType, string> = {
+  heading: 'Titolo',
+  paragraph: 'Paragrafo',
+  callout: 'Callout',
+  image: 'Immagine',
+  npc_grid: 'Griglia PNG',
+  list: 'Elenco',
+  table: 'Tabella'
+};
 
 const BLOCK_TYPES: GdrBlockType[] = ['heading', 'paragraph', 'callout', 'image', 'npc_grid', 'list', 'table'];
 
-const BLOCK_TEMPLATES: Record<GdrBlockType, unknown> = {
-  heading: { level: 3, text: '' },
-  paragraph: { text: '' },
-  callout: { lead: '', text: '' },
-  image: { src: '', alt: '', caption: null },
-  npc_grid: { entries: [{ image: '', alt: '', name: '', description: '' }] },
-  list: { items: [''] },
-  table: { header: ['', ''], rows: [['', '']] }
-};
-
-function emptyDraft(): BlockDraft {
-  return { type: 'paragraph', dataJson: JSON.stringify(BLOCK_TEMPLATES.paragraph, null, 2) };
-}
-
-function toDraft(block: GdrBlockRow): BlockDraft {
-  return { type: block.type, dataJson: JSON.stringify(block.data, null, 2) };
-}
-
-// Editor amministrativo condiviso dei documenti del GDR (documentazione/cms/planning-editor-contenuti.md, Fase 7;
-// documentazione/cms/inventario-contenuti.md, decisione #4): un blocco = un tipo + un blob JSON, "editor senza
-// fronzoli" come le immagini di Mappa — niente builder visuale per 7 forme di dati diverse.
-// Usato identico da Avventura e La Tua Maga, cambia solo `documentKey`.
+// Editor amministrativo condiviso dei documenti del GDR, stile Homebrewery: un unico campo di
+// testo con sintassi leggera (gdr-markdown.parser.ts) invece di un blocco = un form JSON, con
+// anteprima live ottenuta riusando GdrBlocks (nessun renderer parallelo). Usato identico da
+// Avventura, La Tua Maga e La casa che trattiene il respiro, cambia solo `documentKey`.
 @Component({
   selector: 'app-gdr-document-editor',
   standalone: true,
-  imports: [FormsModule, ConfirmationDialog],
+  imports: [FormsModule, GdrBlocks],
   styleUrls: ['./gdr-document-editor.css'],
   templateUrl: './gdr-document-editor.html'
 })
 export class GdrDocumentEditor implements OnInit {
   @Input({ required: true }) documentKey!: GdrDocumentKey;
 
-  private readonly api = inject(ApiService);
+  private readonly gdrBlocks = inject(GdrBlocksService);
   protected readonly authService = inject(AuthService);
 
   protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
   protected readonly panelOpen = signal(false);
   protected readonly blockTypes = BLOCK_TYPES;
+  protected readonly snippetLabels = SNIPPET_LABELS;
 
   private readonly rawBlocks = signal<GdrBlockRow[]>([]);
-  protected readonly blocks = computed(() =>
-    this.rawBlocks()
-      .filter((block) => block.documentKey === this.documentKey)
-      .sort((a, b) => a.position - b.position)
-  );
+  protected readonly sourceText = signal('');
+  protected readonly saving = signal(false);
+  protected readonly saveError = signal('');
 
-  protected readonly editingId = signal<string | null>(null);
-  protected readonly draft = signal<BlockDraft>(emptyDraft());
-  protected readonly formError = signal('');
-  protected readonly deleteTargetId = signal<string | null>(null);
+  private readonly parsed = computed(() => parseGdrMarkdown(this.sourceText()));
+  protected readonly parseErrors = computed<GdrParseError[]>(() => this.parsed().errors);
+  protected readonly previewBlocks = computed<GdrBlockRow[]>(() =>
+    this.parsed().blocks.map((block, index) => ({
+      id: `preview-${index}`,
+      documentKey: this.documentKey,
+      type: block.type,
+      data: block.data as GdrBlockRow['data'],
+      position: index
+    }))
+  );
 
   ngOnInit(): void {
     // Non carica subito: il pannello parte chiuso, come Cruciverba/Mappa.
@@ -77,96 +82,80 @@ export class GdrDocumentEditor implements OnInit {
 
   private async load(): Promise<void> {
     try {
-      const response = await fetch('/api/gdr-blocks', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
-      if (!response.ok) throw new Error(`Errore ${response.status}`);
-      const result = await this.api.readApiResponse<{ blocks?: GdrBlockRow[] }>(response);
-      this.rawBlocks.set(result.blocks ?? []);
+      const blocks = await this.gdrBlocks.list();
+      this.rawBlocks.set(blocks);
+      const own = blocks.filter((block) => block.documentKey === this.documentKey).sort((a, b) => a.position - b.position);
+      this.sourceText.set(serializeGdrBlocks(own));
     } catch (error) {
       console.error('Errore nel caricamento dei blocchi del GDR:', error);
     }
   }
 
-  protected onTypeChange(type: GdrBlockType): void {
-    this.draft.set({ type, dataJson: JSON.stringify(BLOCK_TEMPLATES[type], null, 2) });
+  protected updateSourceText(value: string): void {
+    this.sourceText.set(value);
+    this.saveError.set('');
   }
 
-  protected startCreate(): void {
-    this.draft.set(emptyDraft());
-    this.formError.set('');
-    this.editingId.set('__new__');
+  // Scroll sincronizzato tra testo sorgente e anteprima (split-view stile Homebrewery): scorrono
+  // insieme in proporzione, non riga per riga (i due contenuti hanno lunghezze diverse). La
+  // guardia evita il loop infinito source→preview→source innescato dall'evento scroll che lo
+  // scorrimento programmatico stesso genera sull'altro elemento.
+  private syncingScroll = false;
+
+  protected syncScroll(source: HTMLElement, target: HTMLElement): void {
+    if (this.syncingScroll) return;
+    this.syncingScroll = true;
+    const sourceRange = source.scrollHeight - source.clientHeight;
+    const targetRange = target.scrollHeight - target.clientHeight;
+    if (sourceRange > 0 && targetRange > 0) {
+      target.scrollTop = (source.scrollTop / sourceRange) * targetRange;
+    }
+    requestAnimationFrame(() => {
+      this.syncingScroll = false;
+    });
   }
 
-  protected startEdit(block: GdrBlockRow): void {
-    this.draft.set(toDraft(block));
-    this.formError.set('');
-    this.editingId.set(block.id);
+  protected insertSnippet(type: GdrBlockType, textarea: HTMLTextAreaElement): void {
+    const snippet = SNIPPETS[type];
+    const current = this.sourceText();
+    const start = textarea.selectionStart ?? current.length;
+    const end = textarea.selectionEnd ?? current.length;
+    const needsLeadingBreak = start > 0 && current[start - 1] !== '\n';
+    const prefix = needsLeadingBreak ? '\n\n' : '';
+    const insertion = `${prefix}${snippet}`;
+    const next = current.slice(0, start) + insertion + current.slice(end);
+    this.sourceText.set(next);
+    this.saveError.set('');
+
+    const cursor = start + insertion.length;
+    queueMicrotask(() => {
+      textarea.focus();
+      textarea.setSelectionRange(cursor, cursor);
+    });
   }
 
-  protected cancelEdit(): void {
-    this.editingId.set(null);
-  }
+  protected async save(): Promise<void> {
+    if (this.parseErrors().length > 0 || this.saving()) return;
 
-  protected updateDraftJson(value: string): void {
-    this.draft.set({ ...this.draft(), dataJson: value });
-  }
-
-  protected async submitEdit(): Promise<void> {
-    const d = this.draft();
-    let data: unknown;
+    this.saving.set(true);
+    this.saveError.set('');
     try {
-      data = JSON.parse(d.dataJson);
-    } catch {
-      this.formError.set('Il contenuto non è JSON valido.');
-      return;
+      const existing = this.rawBlocks().filter((block) => block.documentKey === this.documentKey);
+      await Promise.all(existing.map((block) => this.gdrBlocks.remove(block.id)));
+
+      for (const block of this.parsed().blocks) {
+        const ok = await this.gdrBlocks.create(this.documentKey, block.type, block.data);
+        if (!ok) {
+          this.saveError.set('Salvataggio incompleto, alcuni blocchi potrebbero mancare. Ricarica per verificare.');
+          break;
+        }
+      }
+    } catch (error) {
+      console.error('Errore nel salvataggio dei blocchi del GDR:', error);
+      this.saveError.set('Salvataggio incompleto, alcuni blocchi potrebbero mancare. Ricarica per verificare.');
+    } finally {
+      await this.load();
+      this.saving.set(false);
     }
-    if (typeof data !== 'object' || data === null || Array.isArray(data)) {
-      this.formError.set('Il contenuto deve essere un oggetto JSON.');
-      return;
-    }
-
-    const isNew = this.editingId() === '__new__';
-    const payload: Record<string, unknown> = { type: d.type, data };
-    if (isNew) {
-      payload['documentKey'] = this.documentKey;
-    }
-
-    const endpoint = isNew ? '/api/gdr-blocks' : `/api/gdr-blocks/${this.editingId()}`;
-    const ok = await this.api.sendAuthenticatedJson(endpoint, payload, isNew ? 'POST' : 'PUT');
-    if (!ok) {
-      this.formError.set('Non è stato possibile salvare il blocco.');
-      return;
-    }
-
-    this.editingId.set(null);
-    await this.load();
-  }
-
-  protected requestDelete(id: string): void {
-    this.deleteTargetId.set(id);
-  }
-
-  protected cancelDelete(): void {
-    this.deleteTargetId.set(null);
-  }
-
-  protected async confirmDelete(): Promise<void> {
-    const id = this.deleteTargetId();
-    if (!id) return;
-    await this.api.sendAuthenticatedJson(`/api/gdr-blocks/${id}`, {}, 'DELETE');
-    this.deleteTargetId.set(null);
-    await this.load();
-  }
-
-  protected async move(id: string, direction: 'up' | 'down'): Promise<void> {
-    await this.api.sendAuthenticatedJson(`/api/gdr-blocks/${id}/move`, { direction }, 'POST');
-    await this.load();
-  }
-
-  // Etichetta breve del blocco per la lista admin: il primo campo testuale utile, troncato.
-  protected summary(block: GdrBlockRow): string {
-    const data = block.data as unknown as Record<string, unknown>;
-    const text = (data['text'] as string) ?? (data['name'] as string) ?? JSON.stringify(data);
-    const raw = typeof text === 'string' ? text : JSON.stringify(data);
-    return raw.length > 90 ? `${raw.slice(0, 90)}…` : raw;
   }
 }
