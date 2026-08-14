@@ -9,7 +9,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - [~] #34 — “Il Ricettario”: pagina realizzata con card lunghe, ingredienti, procedimento, filtri “Fatta insieme / Da provare” e collegamento ai Suggerimenti già preselezionato. Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**: sostituire la ricetta placeholder del pollo al curry con la loro versione definitiva e ricostruire ingredienti/procedimento dei biscotti di pasta frolla.
 - #16 (continua) — seconda avventura del Gioco di Ruolo: la card "Coming soon" esiste già(vedi Fatto). Resta da scrivere l'avventura vera quando Rory ha titolo/testo/regole pronti — con l'editor GDR (12/08/2026) si può fare direttamente dal sito, un blocco alla volta, senza toccare codice.
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
-- #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
 - [x] #e12 — **Il Barattolo dei Pensieri** (`/barattolo-dei-pensieri`, card e voce nell'Atlante del Mappamondo incluse, gruppo "ricordi"). Due barattoli (uno per "lui", uno per "lei"): ognuno vede il proprio con solo il bottone "Pesca", quello dell'altro con solo la form "Scrivi per…" — mai entrambe le azioni sullo stesso barattolo. Numeri sopra ciascun barattolo con il conteggio dei biglietti attivi. Rispetto alla descrizione iniziale, due semplificazioni concordate con Rory: **niente categorie/stati d'animo** (pesca sempre "a caso" su tutto il barattolo attivo) e **aggiunta diretta per entrambi** (chiunque abbia sessione valida può scrivere per il barattolo dell'altro — il vincolo "mai per il proprio" è strutturale lato server: `jarIdentity` è sempre derivato dall'identità opposta a quella della sessione, non arriva mai dal client, quindi non richiede validazione). Niente più canale via Suggerimenti, reso ridondante dall'aggiunta diretta. Coda mobile di esclusione delle ultime `min(10, attivi-1)` pesche per barattolo (si riduce da sola se il barattolo ha meno di 11 biglietti attivi) e casualità pesata verso i meno pescati (peso `1/√(draw_count+1)`), in `functions/api/pensieri-biglietti/pesca.js`. Dopo l'apertura solo `Rimetti nel barattolo` / `Pesca ancora`, nessun archivio. Telemetria solo con l'ID del biglietto, mai il testo (`barattolo_biglietto_pescato`). Il biglietto pescato appare in un modale con lo stesso stile "carta scritta a mano" delle Lettere (`card--handwritten` + `handwritten-text`, font Caveat) e la stessa leggera rotazione pseudo-casuale-ma-fissa per id (ora condivisa: `seededRotation()` in `web/src/app/shared/random.ts`, riusata anche da Lettere al posto della sua vecchia copia privata). **Niente animazione di apertura/chiusura**: dopo diversi tentativi (scale/clip-path, poi un vero foglio a 4 pannelli con cerniere 3D rotateX/rotateY) nessuno rendeva bene l'effetto "foglietto piegato in 4 che si spiega" voluto da Rory — il biglietto compare e scompare di scatto, vedi #f6 qui sotto per riprenderla in un secondo momento. Editor di gestione (modifica testo/titolo, attivo/non attivo, frecce + comando "Sposta…", cancellazione) **non** su una route admin separata come inizialmente pianificato, ma inline nella stessa pagina dietro `canEdit()` — scoperto durante l'implementazione che è il pattern dominante nel resto del sito (Linguaggio Segreto, card del Mondo Bianco), non la route dedicata usata invece per il playground di Prova a Dire No (quello è un sandbox per provare effetti, non un editor di contenuti). Tabelle `pensieri_biglietti` e `pensieri_estrazioni`, migrazione `0078_add_barattolo_dei_pensieri.sql`.
 - #f5 - Implementare invio di email per gli aggiornamenti che suppongo che non sarà automatico, oppure si chiedo all'AI: C'è un modo per mandarle in automatico quando aggiorniamo il sito? O aggiungiamo roba?
@@ -26,6 +25,35 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ## Fatto
 
 ### Extra (fuori scaletta, chiesto il 14/08/2026)
+
+- [x] #e5 — Chat asincrona nei Ponti: nuova pagina `/ponti-chat`, sostituisce il vecchio
+  documento Google Docs linkato dalla card "Chat" (che comunque resta raggiungibile, come
+  link secondario più piccolo nella stessa card, "nel dubbio" come richiesto). Messaggi
+  testuali e allegati foto/video, tabella `ponti_chat_messages` (migrazione
+  `0088_add_ponti_chat.sql`), `sender_identity` sempre derivato dalla sessione lato server
+  come nel Barattolo dei Pensieri (mai dal client). Upload media su R2 con lo stesso schema
+  stream-binario della Bacheca (niente multipart, per non bufferizzare video grossi in
+  memoria nel Worker). I media hanno una scadenza di 30 giorni ("non possono rimanere lì per
+  sempre"): prima vera cancellazione R2 del sito, con pulizia pigra ad ogni lettura della
+  chat invece di un Cloudflare Cron Trigger dedicato (nessun precedente esisteva, il volume
+  è basso). Eliminazione possibile solo dei propri messaggi (cancella anche il media da R2).
+  **Corretti in corsa due bug**: le bolle non seguivano lo stile vetro (`--panel-color` +
+  `backdrop-filter`) del resto del sito — usavano una variabile CSS inventata
+  (`--accent-color-soft`) mai definita nel progetto, che cadeva sul fallback opaco pieno,
+  risultando in un riquadro colorato a blocco invece che trasparente; e lo scroll automatico
+  in fondo alla chat non funzionava su conversazioni lunghe (`queueMicrotask` leggeva
+  `scrollHeight` prima che Angular avesse davvero aggiornato il DOM con i nuovi messaggi,
+  sostituito con `afterNextRender`). **Bug preesistente trovato e corretto nello stesso
+  giro** (non legato alla chat, notato durante la verifica del bootstrap dell'app): al
+  refresh di qualunque pagina, `WorldSettingsService` partiva da un default con tutti gli
+  effetti del mondo a `true` in attesa della risposta reale dal server, causando un flash
+  "tutti gli effetti accesi" per un istante ad ogni caricamento. Corretto con una cache in
+  `localStorage` (`noi-world-settings-cache-v1`, stesso schema già usato da `ThemeService`
+  per il tema): il primo paint parte dall'ultimo stato reale noto invece che dal default,
+  aggiornata ad ogni caricamento riuscito e ad ogni modifica salvata. Verificato con
+  Playwright end-to-end su account di prova (poi ripuliti da D1/R2 locali): invio testo,
+  upload foto, eliminazione messaggio proprio, scroll automatico su chat lunga (caricamento
+  e dopo invio), stile vetro coerente col resto del sito.
 
 - [x] #f2 — Animazione palloncini: salgono verso l'alto con lo stesso schema delle lanterne
   (`world-lanterns.ts`), ma disegnati in SVG invece che con un'unica emoji — 4 forme vere
