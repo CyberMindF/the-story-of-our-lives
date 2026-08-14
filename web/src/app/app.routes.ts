@@ -118,6 +118,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/barattolo-dei-pensieri/barattolo-dei-pensieri').then((m) => m.BarattoloDeiPensieri)
       },
       {
+        path: 'ponti-chat',
+        data: { bodyClasses: ['ponti-chat-page'] },
+        loadComponent: () => import('./pages/ponti-chat/ponti-chat').then((m) => m.PontiChat)
+      },
+      {
         path: 'cose-da-fare-insieme',
         data: { bodyClasses: ['together-page-view'] },
         loadComponent: () => import('./pages/cose-insieme/cose-insieme').then((m) => m.CoseInsieme)

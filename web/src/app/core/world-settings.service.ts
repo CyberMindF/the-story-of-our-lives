@@ -9,6 +9,34 @@ interface WorldSettingsResponse {
   error?: string;
 }
 
+const CACHE_KEY = 'noi-world-settings-cache-v1';
+
+interface SettingsCache {
+  settings: Partial<Record<WorldSettingKey, boolean>>;
+  values: Partial<Record<WorldSettingKey, string>>;
+}
+
+// Cache locale dell'ultimo stato noto (stesso principio di ThemeService.STORAGE_KEY): letta
+// una sola volta, all'avvio, per evitare che al refresh gli effetti "flashino" tutti accesi
+// per un istante (il default true di settings sotto) prima che arrivi la vera risposta dal
+// server. Non è mai la fonte di verità, solo un valore di partenza plausibile.
+function readCache(): SettingsCache | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? (JSON.parse(raw) as SettingsCache) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(cache: SettingsCache): void {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // Storage pieno o non disponibile: la cache resta solo un'ottimizzazione, non un requisito.
+  }
+}
+
 // Interruttori condivisi tra i due account (non per dispositivo come il tema, vedi
 // ThemeService): chi li accende/spegne li vede cambiare anche per l'altro, al prossimo
 // caricamento della pagina — nessun push in tempo reale, solo lettura al bootstrap dell'app
@@ -18,7 +46,8 @@ export class WorldSettingsService {
   private readonly api = inject(ApiService);
 
   // true finché non si dimostra il contrario: gli effetti restano visibili durante il primo
-  // caricamento invece di lampeggiare "spenti" mentre la richiesta è in volo.
+  // caricamento invece di lampeggiare "spenti" mentre la richiesta è in volo. Sovrascritto
+  // subito sotto dalla cache locale, se esiste, per non lampeggiare invece "tutti accesi".
   readonly settings = signal<Record<WorldSettingKey, boolean>>({
     lanterns: true,
     stars: true,
@@ -36,11 +65,20 @@ export class WorldSettingsService {
     silk: true,
     stickers: true,
     balloons: true,
-    fireworks: true
+    fireworks: true,
+    ...readCache()?.settings
   });
   // Solo alcune chiavi hanno un value (es. la fase della luna o la forma dei fiori, "auto"/
   // "mix" di default finché non arriva la risposta del server).
-  readonly values = signal<Partial<Record<WorldSettingKey, string>>>({ moon: 'auto', petals: 'mix', fish: 'mix', hearts: 'mix', pearlShimmers: 'green', stickers: 'all' });
+  readonly values = signal<Partial<Record<WorldSettingKey, string>>>({
+    moon: 'auto',
+    petals: 'mix',
+    fish: 'mix',
+    hearts: 'mix',
+    pearlShimmers: 'green',
+    stickers: 'all',
+    ...readCache()?.values
+  });
 
   async load(): Promise<void> {
     try {
@@ -58,6 +96,7 @@ export class WorldSettingsService {
       if (result.values) {
         this.values.set({ ...this.values(), ...result.values });
       }
+      writeCache({ settings: this.settings(), values: this.values() });
     } catch (error) {
       console.warn('Impossibile caricare le impostazioni del mondo:', error);
     }
@@ -72,6 +111,8 @@ export class WorldSettingsService {
     const saved = await this.api.sendAuthenticatedJson('/api/world-settings', { key, enabled });
     if (!saved) {
       this.settings.set(previous);
+    } else {
+      writeCache({ settings: this.settings(), values: this.values() });
     }
     return saved;
   }
@@ -90,6 +131,8 @@ export class WorldSettingsService {
     });
     if (!saved) {
       this.values.set(previous);
+    } else {
+      writeCache({ settings: this.settings(), values: this.values() });
     }
     return saved;
   }

@@ -1,0 +1,66 @@
+<app-shell>
+  <section class="chat-hero" aria-labelledby="chat-title">
+    <p class="chat-eyebrow">I Ponti</p>
+    <h1 id="chat-title"><span aria-hidden="true">📧</span> Chat</h1>
+    <p class="chat-intro">Uno spazio per scriversi quando serve, senza aspettare — anche una foto o un video, ma non
+      per sempre: i file allegati restano disponibili per 30 giorni.</p>
+  </section>
+
+  @if (loadError()) { <p class="content-message is-error" role="alert">Non sono riuscito a caricare la chat. Riprova più tardi.</p> }
+
+  @if (!loadError()) {
+  <section class="chat-panel card" aria-label="Conversazione">
+    <div class="chat-log" #log>
+      @if (loading()) { <p class="content-message">Caricamento…</p> }
+      @if (!loading() && messages().length === 0) { <p class="content-message">Ancora nessun messaggio.</p> }
+
+      @for (message of messages(); track message.id) {
+      <article class="chat-bubble" [class.chat-bubble--own]="message.senderIdentity === ownIdentity()">
+        @if (message.mediaType === 'photo' && message.mediaKey) {
+        <img class="chat-media chat-media--photo" [src]="mediaUrl(message)" alt="" />
+        }
+        @if (message.mediaType === 'video' && message.mediaKey) {
+        <video class="chat-media chat-media--video" [src]="mediaUrl(message)" controls></video>
+        }
+        @if (message.mediaKey === null && message.mediaType !== null) {
+        <p class="chat-media-expired">Il media allegato qui è scaduto.</p>
+        }
+        @if (message.body) { <p class="chat-bubble-text">{{ message.body }}</p> }
+        <div class="chat-bubble-meta">
+          <time>{{ message.createdAt | date: 'dd/MM HH:mm' }}</time>
+          @if (message.senderIdentity === ownIdentity()) {
+          <button type="button" class="chat-delete-btn" (click)="requestDelete(message.id)" aria-label="Elimina messaggio">🗑️</button>
+          }
+        </div>
+      </article>
+      }
+    </div>
+
+    <form class="chat-compose" (ngSubmit)="send()">
+      @if (pendingPreviewUrl()) {
+      <div class="chat-pending-preview">
+        @if (pendingFileType() === 'photo') { <img [src]="pendingPreviewUrl()" alt="" /> }
+        @if (pendingFileType() === 'video') { <video [src]="pendingPreviewUrl()" controls></video> }
+        <button type="button" class="btn" (click)="clearPendingFile()">Rimuovi allegato</button>
+      </div>
+      }
+      <div class="chat-compose-row">
+        <label class="btn chat-attach-btn" aria-label="Allega foto o video">
+          <span aria-hidden="true">📎</span>
+          <input #fileInput type="file" accept="image/*,video/*" (change)="onFileSelected($event)" hidden />
+        </label>
+        <textarea class="chat-compose-input" [ngModel]="composeText()" (ngModelChange)="composeText.set($event)"
+          name="composeText" maxlength="2000" placeholder="Scrivi un messaggio..."></textarea>
+        <button type="submit" class="btn btn-submit" [disabled]="sending() || (!composeText().trim() && !pendingFile())">
+          {{ uploading() ? 'Invio allegato…' : sending() ? 'Invio…' : 'Invia' }}
+        </button>
+      </div>
+      @if (sendError()) { <p class="content-message is-error" role="status">{{ sendError() }}</p> }
+    </form>
+  </section>
+  }
+
+  <app-confirmation-dialog dialogId="delete-chat-message" title="Eliminare questo messaggio?"
+    description="L'azione non si può annullare." confirmLabel="Elimina" cancelLabel="Annulla"
+    [open]="deleteTargetId() !== null" (confirm)="confirmDelete()" (cancel)="cancelDelete()" />
+</app-shell>

@@ -43,7 +43,9 @@ const ALLOWED_EVENTS = new Set([
   "content_deleted",
   "admin_log_viewed",
   "content_export_downloaded",
-  "barattolo_biglietto_pescato"
+  "barattolo_biglietto_pescato",
+  "chat_message_sent",
+  "chat_message_deleted"
 ]);
 const MAX_METADATA_LENGTH = 4096;
 
