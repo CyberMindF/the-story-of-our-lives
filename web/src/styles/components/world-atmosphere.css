@@ -185,6 +185,91 @@ body.sky-view-page .world-moon {
   }
 }
 
+/* Palloncini che salgono (vedi world-balloons.ts): a differenza delle lanterne (un'unica emoji)
+   qui il corpo è un SVG con 4 forme possibili (tondo, cuore, cane a palloncino, pinguino) e il
+   filo è un tracciato ondulato invece di una linea dritta. @keyframes balloon-rise usa lo
+   stesso zig-zag a 4 tratti delle lanterne (una vera curva sinusoidale è stata provata e
+   scartata, vedi world-balloons.ts) con `linear` invece di `ease-in-out`, per restare fluido
+   senza il doppio-easing che lo rendeva a scatti. */
+.world-balloons {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.world-balloon {
+  position: absolute;
+  bottom: -14%;
+  left: var(--balloon-x);
+  width: var(--balloon-size);
+  animation: balloon-rise var(--balloon-duration) linear var(--balloon-delay) infinite;
+}
+
+/* Corpo e filo sono nello stesso <svg>, nello stesso sistema di coordinate (vedi
+   world-balloons.html): prima erano due <svg> separati con scale indipendenti, e ogni forma
+   finiva a un'altezza diversa nel suo viewBox — il filo si "staccava" in modo diverso per
+   ognuna. Un solo sistema di coordinate garantisce che il filo parta esattamente dal punto più
+   basso di ciascuna forma, senza calcoli di margine da indovinare a occhio. */
+.world-balloon-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: var(--balloon-opacity);
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
+}
+
+.world-balloon-string {
+  fill: none;
+  stroke: rgba(80, 70, 60, 0.55);
+  stroke-width: 1;
+}
+
+/* La salita deve superare i 100vh: il palloncino parte già 14% più in basso del bordo
+   inferiore (bottom: -14%), quindi con soli 100vh di percorso il ciclo si interrompeva (e
+   ripartiva di scatto dal basso) mentre era ancora visibile a 14vh dal bordo superiore —
+   sembrava "sparire" invece di uscire davvero dallo schermo. 120vh lascia un margine di
+   sicurezza oltre il minimo necessario (114vh). */
+@keyframes balloon-rise {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(var(--balloon-sway), -30vh);
+  }
+  50% {
+    transform: translate(calc(var(--balloon-sway) * -1), -60vh);
+  }
+  75% {
+    transform: translate(var(--balloon-sway), -90vh);
+  }
+  100% {
+    transform: translate(0, -120vh);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-balloon {
+    display: none;
+  }
+}
+
+/* Fuochi d'artificio (vedi world-fireworks.ts): a differenza di tutti gli altri effetti del
+   sito (div/span animati in CSS) qui serve un vero <canvas> — gravità, attrito nell'aria e
+   scie che sfumano frame per frame non sono resi bene da poche @keyframes CSS. Il componente
+   stesso si avvia/ferma in base a `worldSettingsService.settings().fireworks` (vedi l'`effect`
+   in world-fireworks.ts) e rispetta `prefers-reduced-motion`, quindi qui serve solo il
+   posizionamento del canvas, non l'animazione. */
+.world-fireworks-canvas {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
 /* Ocean è un cielo chiaro (unico tema diurno): le stelle diventano piccoli riflessi scuri,
    altrimenti sparirebbero su uno sfondo così chiaro. I tre radial-gradient di riflessi che
    c'erano qui sono stati tolti insieme a quelli degli altri temi (vedi sopra) — con

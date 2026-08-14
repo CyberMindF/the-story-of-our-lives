@@ -334,6 +334,41 @@
       </div>
     </div>
     </section>
+
+    <section class="settings-effect-group">
+    <h3 class="settings-group-title">Festa</h3>
+    <div class="settings-list">
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🎈</span> Palloncini</span>
+          <span class="settings-toggle-description">Volano verso l'alto, di forme e colori diversi.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().balloons"
+          (change)="toggleSetting('balloons', $event)"
+          aria-label="Palloncini"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🎆</span> Fuochi d'artificio</span>
+          <span class="settings-toggle-description">Esplodono ogni tanto, sparsi nel cielo.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().fireworks"
+          (change)="toggleSetting('fireworks', $event)"
+          aria-label="Fuochi d'artificio"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
+    </div>
+    </section>
     </div>
   </section>
 </app-shell>

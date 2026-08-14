@@ -12,8 +12,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
 - [x] #e12 — **Il Barattolo dei Pensieri** (`/barattolo-dei-pensieri`, card e voce nell'Atlante del Mappamondo incluse, gruppo "ricordi"). Due barattoli (uno per "lui", uno per "lei"): ognuno vede il proprio con solo il bottone "Pesca", quello dell'altro con solo la form "Scrivi per…" — mai entrambe le azioni sullo stesso barattolo. Numeri sopra ciascun barattolo con il conteggio dei biglietti attivi. Rispetto alla descrizione iniziale, due semplificazioni concordate con Rory: **niente categorie/stati d'animo** (pesca sempre "a caso" su tutto il barattolo attivo) e **aggiunta diretta per entrambi** (chiunque abbia sessione valida può scrivere per il barattolo dell'altro — il vincolo "mai per il proprio" è strutturale lato server: `jarIdentity` è sempre derivato dall'identità opposta a quella della sessione, non arriva mai dal client, quindi non richiede validazione). Niente più canale via Suggerimenti, reso ridondante dall'aggiunta diretta. Coda mobile di esclusione delle ultime `min(10, attivi-1)` pesche per barattolo (si riduce da sola se il barattolo ha meno di 11 biglietti attivi) e casualità pesata verso i meno pescati (peso `1/√(draw_count+1)`), in `functions/api/pensieri-biglietti/pesca.js`. Dopo l'apertura solo `Rimetti nel barattolo` / `Pesca ancora`, nessun archivio. Telemetria solo con l'ID del biglietto, mai il testo (`barattolo_biglietto_pescato`). Il biglietto pescato appare in un modale con lo stesso stile "carta scritta a mano" delle Lettere (`card--handwritten` + `handwritten-text`, font Caveat) e la stessa leggera rotazione pseudo-casuale-ma-fissa per id (ora condivisa: `seededRotation()` in `web/src/app/shared/random.ts`, riusata anche da Lettere al posto della sua vecchia copia privata). **Niente animazione di apertura/chiusura**: dopo diversi tentativi (scale/clip-path, poi un vero foglio a 4 pannelli con cerniere 3D rotateX/rotateY) nessuno rendeva bene l'effetto "foglietto piegato in 4 che si spiega" voluto da Rory — il biglietto compare e scompare di scatto, vedi #f6 qui sotto per riprenderla in un secondo momento. Editor di gestione (modifica testo/titolo, attivo/non attivo, frecce + comando "Sposta…", cancellazione) **non** su una route admin separata come inizialmente pianificato, ma inline nella stessa pagina dietro `canEdit()` — scoperto durante l'implementazione che è il pattern dominante nel resto del sito (Linguaggio Segreto, card del Mondo Bianco), non la route dedicata usata invece per il playground di Prova a Dire No (quello è un sandbox per provare effetti, non un editor di contenuti). Tabelle `pensieri_biglietti` e `pensieri_estrazioni`, migrazione `0078_add_barattolo_dei_pensieri.sql`.
-- #f2 - Animazione palloncini di varie forme e colori, che volano verso l'alto
-- #f3 - Animazione fuochi d'artificio (capire se possiamo prendere dei css già fatti da qualcuno)
 - #f5 - Implementare invio di email per gli aggiornamenti che suppongo che non sarà automatico, oppure si chiedo all'AI: C'è un modo per mandarle in automatico quando aggiorniamo il sito? O aggiungiamo roba?
 - #f6 - Animazione di apertura/chiusura del biglietto nel Barattolo dei Pensieri (#e12): voluta come un vero foglietto piegato in 4 (due pieghe, orizzontale e verticale) che si spiega — tentativi fatti e scartati: scale()/clip-path (sembrava una copia in miniatura, non una piega), 4 pannelli reali con cerniere 3D rotateX/rotateY (geometricamente corretto ma troppo macchinoso/fragile da rifinire). Per ora il biglietto compare e scompare di scatto, senza animazione.
 ---
@@ -27,12 +25,126 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Fatto
 
+### Extra (fuori scaletta, chiesto il 14/08/2026)
+
+- [x] #f2 — Animazione palloncini: salgono verso l'alto con lo stesso schema delle lanterne
+  (`world-lanterns.ts`), ma disegnati in SVG invece che con un'unica emoji — 4 forme vere
+  (tondo classico, cuore, cane, pinguino), non solo variazioni di proporzioni, colore casuale
+  tra 6 tinte, filo ondulato invece di una linea dritta. Movimento sostituito dallo zig-zag a
+  scatti delle lanterne con una vera curva sinusoidale (`@keyframes balloon-rise`, 17 fermate,
+  due oscillazioni complete durante la salita), su richiesta di Rory dopo aver visto la prima
+  versione. Nuovo componente `world-balloons.ts`, stesso interruttore condiviso
+  (`world_settings`) degli altri effetti, gruppo "Festa" nella Stanza dei Bottoni (non legato a
+  nessun tema, come lanterne e brillantini). **Bug trovato dopo che Rory ha segnalato "non si
+  vedono"**: `.world-balloon` era rimasto con `opacity: 0` di base da una versione precedente,
+  ma le nuove keyframe sinusoidali animano solo `transform`, mai `opacity` — restavano
+  invisibili per l'intero volo. Tolto lo stato iniziale a 0 (non serve: i palloncini entrano ed
+  escono già fuori schermo, sopra/sotto il bordo, quindi non c'è bisogno di dissolvenza per
+  nascondere l'inizio/fine del ciclo).
+  **Secondo giro di feedback** (filo staccato, movimento a scatti non sinusoidale, cane con
+  faccia tagliata e coda staccata, cuore troppo allungato): (1) movimento a scatti — colpa di
+  `ease-in-out` applicato sopra keyframe già curve a mano in forma sinusoidale: la doppia
+  modulazione (curva del keyframe + accelerazione/decelerazione di `ease-in-out` a ogni
+  fermata) spezzettava quella che doveva essere un'unica curva continua. Cambiato in `linear`,
+  che interpola i punti già calcolati a velocità costante — la sinusoide ora è vera. (2) filo
+  staccato — ogni forma (tondo/cuore/cane/pinguino) finiva a un'altezza diversa dentro lo stesso
+  `viewBox`, quindi il filo (elemento separato, attaccato subito sotto) aveva uno spazio vuoto
+  diverso per ognuna. Uniformato il punto più basso di tutte le forme a circa la stessa
+  coordinata `y` nel `viewBox` (ora `0 0 28 32` per tutte, prima variava), più un piccolo
+  margine negativo sul filo per sovrapporlo leggermente al corpo. (3) cane tagliato — la testa
+  (cerchio) usciva dal bordo destro del `viewBox` originale (troppo stretto), letteralmente
+  ritagliata dal rendering SVG; allargato il `viewBox`. Zampe e coda ridisegnate per sovrapporsi
+  davvero al corpo invece di restare ellissi separate con uno spazio vuoto in mezzo (stesso
+  principio del filo: serve sovrapposizione esplicita, non solo vicinanza). Orecchie rifatte più
+  "floppy" (ruotate di lato) invece che dritte come un gatto. (4) cuore troppo allungato —
+  ridisegnato con proporzioni più equilibrate (larghezza quasi uguale all'altezza, prima era
+  molto più alto che largo). Verificato con screenshot reali isolati per ogni forma (Playwright,
+  account di prova poi ripulito dal DB locale).
+  **Terzo giro** (Rory: il cane ha ancora il filo staccato, il palloncino sparisce appena tocca
+  il tetto della pagina): due bug distinti, non varianti dello stesso problema. (1) filo del
+  cane ancora staccato — il vero difetto architetturale: corpo e filo erano due `<svg>`
+  separati con viewBox e scale indipendenti (`world-balloon-body` e `world-balloon-string`), e
+  ognuna delle 4 forme finiva a un'altezza leggermente diversa dentro il proprio viewBox — il
+  margine "a occhio" (`margin-top: -0.35em`) tra i due elementi funzionava quasi per caso per
+  le forme arrotondate ma non per il cane (zampe più basse e più larghe del resto). Risolto alla
+  radice fondendo corpo e filo in un unico `<svg>` con lo stesso sistema di coordinate: ogni
+  forma disegna il proprio filo a partire esattamente dal proprio punto più basso reale (stesse
+  coordinate, nessun margine da indovinare), quindi l'attacco è sempre esatto per costruzione,
+  non per approssimazione. (2) il palloncino "spariva" toccando il tetto — bug reale distinto:
+  il palloncino parte già 14% più in basso del bordo inferiore (`bottom: -14%`), ma le keyframe
+  della salita percorrevano solo 100vh in totale, quindi il ciclo si esauriva (e ripartiva di
+  scatto dal basso) mentre il palloncino era ancora visibile a 14vh dal bordo superiore — non uscendo
+  mai davvero dallo schermo prima di riapparire di colpo in basso. Percorso esteso a 120vh
+  (114vh il minimo per compensare il -14% di partenza, con un margine di sicurezza), stesso
+  principio già usato dalle lanterne (`world-lanterns.ts`, partono da -10% e salgono di 115vh)
+  mai applicato per errore ai palloncini. Verificato con screenshot reali (Playwright, account
+  di prova poi ripulito dal DB locale): filo attaccato per tutte e 4 le forme, cane compreso.
+  **Quarto giro** (Rory: il filo del cane sembra ancora staccato, il movimento non sembra
+  sinusoidale): campionata la trasformazione reale via Web Animations API
+  (`animation.currentTime` impostato a mano, `getComputedStyle().transform` letto a ogni
+  passo) invece di fidarsi dell'occhio — la curva è risultata matematicamente una sinusoide
+  corretta, ma con un'ampiezza di soli 20-48px su un percorso verticale di oltre 1000px: troppo
+  piccola per leggersi come un'onda, sembrava quasi una linea dritta. Ampiezza passata da px a
+  `vw` (6-14vw invece di 20-48px), quasi triplicata in proporzione allo schermo — verificato di
+  nuovo con lo stesso campionamento che l'oscillazione ora è ampia (~130px anche su una
+  variazione minima). Per il cane: il filo unificato nello stesso `<svg>` (terzo giro) partiva
+  comunque nel punto sbagliato, `x=14.5` — il centro geometrico della forma, ma anche lo spazio
+  vuoto esattamente **tra** due zampe (a x=12 e x=17), quindi non toccava nessuna delle due.
+  Spostato il punto di partenza del filo sulle coordinate esatte di una zampa reale (x=12,
+  y=30.4, la stessa ellisse della zampa) invece che sul centro della figura — attacco garantito
+  per costruzione, non per vicinanza. Verificato con screenshot reali.
+  **Quinto giro** (Rory: la sinusoide "fa cagare"): tornato allo zig-zag a 4 tratti originale
+  delle lanterne (0/25/50/75/100%, direzione alternata), tenendo solo `linear` al posto di
+  `ease-in-out` — leggero e fluido come richiesto, senza il doppio-easing che lo rendeva a
+  scatti nella primissima versione.
+  **Aumento della frequenza dei lanci**: intervallo tra un fuoco e l'altro dimezzato (0.6-1.6s
+  invece di 1.4-3.6s). Verificato di nuovo con lo stesso test Playwright sugli FPS: 60fps
+  stabili anche con più fuochi contemporanei.
+  **Quinta forma di esplosione — crepitante**: ogni stella (dorata o bianca) "scoppietta" una
+  volta durante il volo con un piccolo pop di 4-7 scintille in ogni direzione, in un istante
+  scelto a caso per stella (15-75% della sua vita) così il crepitio si sente diffuso nel tempo
+  invece che tutto insieme — non un effetto a parte ma una variante di `createStar` che riusa
+  l'array `glitters` già esistente per le scintille secondarie, zero duplicazione. Verificato
+  con screenshot reali (Playwright, account di prova poi ripulito dal DB locale) e di nuovo con
+  il test FPS: ancora 60fps stabili.
+- [x] #f3 — Animazione fuochi d'artificio. Primo tentativo in puro CSS (span + keyframes, come
+  tutti gli altri effetti del sito) bocciato da Rory dopo averlo visto: troppo povero rispetto
+  a un vero motore fireworks su `<canvas>` che aveva trovato online e passato come riferimento
+  (gravità, attrito nell'aria, scie che sfumano). Riscritto da zero come componente `<canvas>`
+  (`world-fireworks.ts`), ispirato a quell'idea ma non copiato — niente audio, menu
+  impostazioni, qualità regolabile o localStorage propri (avrebbero duplicato `world_settings`
+  e la Stanza dei Bottoni): un razzo con scia sale verso un punto casuale, esplode in una tra
+  tre forme (crisantemo pieno anche a due colori, ad anello, con pistillo centrale di un
+  secondo colore), le scintille cadono per gravità simulata e rallentano per attrito prima di
+  spegnersi. Lanci automatici ogni 1.4-3.6s, posizione/colori/forma casuali ogni volta. Il
+  componente si avvia/ferma da sé in base a `worldSettingsService.settings().fireworks` (un
+  `effect()` Angular, non un `@if` nel template) e rispetta `prefers-reduced-motion` disattivando
+  il loop invece di nascondere solo via CSS.
+  **Secondo giro** (Rory: "pochi giochi di luce" rispetto al riferimento): aggiunto bagliore via
+  `shadowBlur`/`shadowColor`, scia di ogni stella ridisegnata su più punti anziché un solo
+  segmento per fotogramma, nucleo più luminoso in testa, scintille "glitter" secondarie, lampo
+  bianco radiale al momento del botto.
+  **Terzo giro** (Rory: ora laggava): `shadowBlur` è un filtro ricalcolato per ogni forma
+  disegnata a ogni fotogramma — con centinaia di stelle attive era quello a far scattare la
+  pagina, non il canvas in sé. Il codice di riferimento di Rory infatti non lo usa mai: il suo
+  bagliore viene dal blend mode `lighten` tra due canvas sovrapposti, non da un blur per
+  singola forma. Tolto `shadowBlur` ovunque, sostituito con `globalCompositeOperation =
+  'lighter'` (economico, stesso principio "tanti tratti chiari che si sommano") e un solo
+  `stroke()` per stella per l'intera scia (prima erano 4 `beginPath`/`stroke` separati a
+  fotogramma per stella). Ridotto anche il numero di stelle per esplosione (~46-66 invece di
+  65-100) e la probabilità di scintille glitter (18% invece di 40%). Verificato con un test
+  Playwright che misura gli FPS reali per 8s durante più esplosioni consecutive: 60fps stabili,
+  zero fotogrammi lenti (prima del fix impossibile da misurare così, il lag era percepibile a
+  occhio). Nuovo componente `world-balloons.ts` per #f2 sopra, stesso schema di interruttore
+  condiviso, gruppo "Festa" nella Stanza dei Bottoni. Migrazione
+  `0082_add_balloons_fireworks_world_settings.sql`.
+
 ### Extra (fuori scaletta, chiesto il 13/08/2026)
 
 - [x] #e10 — "Prova a Dire No": nuovo gioco nel Tavolo (`/tavolo-da-gioco/prova-a-dire-no`,
   card e voce nell'Atlante del Mappamondo incluse). Introduzione in pagina (CMS,
   `prova-a-dire-no.introduzione`) che spiega perché esiste: ai video di TikTok con questo
-  format Rory ha visto Cristina mettere like/ricondividerli. 8 domande in sequenza, una a
+  format Rory ha visto lei mettere like/ricondividerli. 8 domande in sequenza, una a
   schermo alla volta con puntini di avanzamento.
 
   Prima versione con 3 comportamenti di fuga era "carina ma un po' meh" (feedback di Rory) —

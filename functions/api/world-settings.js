@@ -3,7 +3,7 @@ import { recordEvent } from "./_shared/events.js";
 
 // Chiavi note: allowlist esplicita invece di accettare qualunque stringa dal client, per non
 // lasciare che "world_settings" accumuli righe arbitrarie mai lette da nessuna UI.
-const KNOWN_KEYS = new Set(["lanterns", "stars", "shootingStars", "moon", "theme", "sparkles", "leaves", "waves", "petals", "fish", "bubbles", "hearts", "pearlShimmers", "silk", "stickers"]);
+const KNOWN_KEYS = new Set(["lanterns", "stars", "shootingStars", "moon", "theme", "sparkles", "leaves", "waves", "petals", "fish", "bubbles", "hearts", "pearlShimmers", "silk", "stickers", "balloons", "fireworks"]);
 
 // Stessi 8 kind di STICKER_KIND_LABEL in world-stickers.ts. A differenza degli altri effetti
 // (una forma singola o "mix"), qui si può scegliere un sottoinsieme qualunque: "all" per
