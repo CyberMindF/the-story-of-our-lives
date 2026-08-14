@@ -12,7 +12,7 @@
 
     <div class="gdr-panel-tabs" role="tablist">
       <button type="button" role="tab" [class.is-active]="activeTab() === 'personaggio'" (click)="setTab('personaggio')">
-        <span aria-hidden="true">🧍</span> Personaggio
+        <span aria-hidden="true">{{ personaggioIcon }}</span> {{ personaggioLabel }}
       </button>
       <button type="button" role="tab" [class.is-active]="activeTab() === 'regole'" (click)="setTab('regole')">
         <span aria-hidden="true">📖</span> Regole

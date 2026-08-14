@@ -39,6 +39,10 @@ export class GdrPanel implements OnInit {
   @Input({ required: true }) adventure!: string;
   @Input({ required: true }) rulesDocumentKey!: GdrDocumentKey;
   @Input() fieldsDocumentKey?: GdrDocumentKey;
+  // Il tab "Personaggio" si chiama così di default, ma ogni avventura può avere il proprio
+  // nome per il personaggio (es. "La Tua Maga" ne "Il Prezzo della Verità").
+  @Input() personaggioLabel = 'Personaggio';
+  @Input() personaggioIcon = '🧍';
 
   private readonly api = inject(ApiService);
   protected readonly authService = inject(AuthService);
