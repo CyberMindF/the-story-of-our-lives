@@ -114,6 +114,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/domande/domande').then((m) => m.Domande)
       },
       {
+        path: 'barattolo-dei-pensieri',
+        loadComponent: () => import('./pages/barattolo-dei-pensieri/barattolo-dei-pensieri').then((m) => m.BarattoloDeiPensieri)
+      },
+      {
         path: 'cose-da-fare-insieme',
         data: { bodyClasses: ['together-page-view'] },
         loadComponent: () => import('./pages/cose-insieme/cose-insieme').then((m) => m.CoseInsieme)

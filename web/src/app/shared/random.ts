@@ -10,3 +10,12 @@ export function randomBetween(minimum: number, maximum: number): number {
   }
   return minimum + value * (maximum - minimum);
 }
+
+// Rotazione pseudo-casuale ma deterministica (stesso id → sempre la stessa inclinazione, non
+// cambia a ogni render/reload): usata per far sembrare i fogli di carta appoggiati lì per
+// davvero (Lettere, Il Barattolo dei Pensieri), non tutti perfettamente dritti né instabili.
+export function seededRotation(seed: number, maxDegrees = 2.4): number {
+  const value = Math.sin(seed * 999.17) * 10000;
+  const fraction = value - Math.floor(value);
+  return (fraction * 2 - 1) * maxDegrees;
+}

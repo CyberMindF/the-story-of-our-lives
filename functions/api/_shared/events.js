@@ -30,6 +30,7 @@ const ALLOWED_EVENTS = new Set([
   "answer_edited",
   "together_status_changed",
   "together_nsfw_attempt",
+  "together_nsfw_panel_opened",
   "letter_read",
   "nickname_changed",
   "story_suggestion_sent",
@@ -41,7 +42,8 @@ const ALLOWED_EVENTS = new Set([
   "content_version_added",
   "content_deleted",
   "admin_log_viewed",
-  "content_export_downloaded"
+  "content_export_downloaded",
+  "barattolo_biglietto_pescato"
 ]);
 const MAX_METADATA_LENGTH = 4096;
 

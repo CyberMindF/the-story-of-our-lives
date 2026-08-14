@@ -5,6 +5,7 @@ import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { ContentMessage } from '../../shared/content-message/content-message';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
+import { seededRotation } from '../../shared/random';
 
 interface Letter {
   id: number;
@@ -75,9 +76,7 @@ export class Lettere implements OnInit, OnDestroy {
   }
 
   private letterRotation(id: number): number {
-    const seed = Math.sin(id * 999.17) * 10000;
-    const fraction = seed - Math.floor(seed);
-    return (fraction * 2 - 1) * 2.4;
+    return seededRotation(id);
   }
 
   // Un biglietto corto resta piccolo, una lettera lunga diventa un vero foglio.

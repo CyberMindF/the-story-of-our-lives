@@ -1,0 +1,103 @@
+.jars-eyebrow { margin: 0 0 .65rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+
+.jars-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+.jars-hero h1 { margin: 0; font-size: var(--hero-size-md); line-height: .95; letter-spacing: -.04em; }
+.jars-intro { margin: 1.25rem auto 0; max-width: 34rem; color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
+
+.jars-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 4vw, 2.5rem);
+  width: min(100%, 64rem);
+  margin: 0 auto;
+  padding-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.jar-card {
+  display: grid;
+  justify-items: center;
+  gap: .6rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  text-align: center;
+}
+
+.jar-count {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--muted-color);
+}
+
+.jar-emoji { font-size: 3rem; }
+
+.jar-card h2 { margin: 0 0 .5rem; font-size: 1.35rem; font-weight: 400; font-family: Georgia, "Times New Roman", serif; }
+
+.jar-card .btn-submit { min-height: 0; padding: .55rem 1.3rem; font-size: .9rem; }
+
+.write-form { width: 100%; display: grid; gap: 1rem; text-align: left; }
+.write-form textarea { min-height: 7rem; }
+
+/* Il biglietto pescato apre in un modale (.modal è lo stile condiviso di ConfirmationDialog,
+   styles/components/modal.css), come foglio di carta — stessa texture/font di Lettere
+   (card--handwritten + handwritten-text, styles/components/cards.css), niente animazione:
+   compare e basta, un biglietto piccolo non ha bisogno di un rituale d'apertura. */
+.jars-note-paper {
+  width: 100%;
+  max-width: 26rem;
+  padding: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+.drawn-note-title { margin: 0 0 .8rem; color: #7a7061; font-size: 1.1rem; }
+.drawn-note-text { margin: 0 0 1.5rem; color: #2b2620; font-size: clamp(1.3rem, 3vw, 1.6rem); line-height: 1.5; white-space: pre-wrap; }
+
+/* I bottoni del modal (styles/components/modal.css) sono pensati per lo sfondo scuro del
+   sito: su carta chiara servono toni scuri come il resto di .card--handwritten. */
+.jars-note-paper .modal-actions button {
+  border: 1px solid rgba(0, 0, 0, .18);
+  border-radius: 999px;
+  padding: .6rem 1.1rem;
+  background: rgba(0, 0, 0, .04);
+  color: #2b2620;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.jars-note-paper .modal-actions button:hover:not(:disabled) { background: rgba(0, 0, 0, .09); }
+.jars-note-paper .modal-actions button:disabled { opacity: .5; cursor: default; }
+
+.page-message { text-align: center; color: var(--muted-color); }
+.page-message[role='alert'] { color: var(--danger-text-color); }
+
+.jars-admin {
+  width: min(100%, 64rem);
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2.5rem, 6vw, 4rem);
+  border-top: 1px solid var(--panel-border-color);
+  display: grid;
+  gap: 1.5rem;
+}
+
+.jars-admin-heading { margin-bottom: .2rem; }
+.jars-admin-heading h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.8rem; font-weight: 400; }
+
+.jars-admin-group h3 { margin: 0 0 .8rem; font-size: 1.1rem; }
+
+.jars-admin-form { display: grid; gap: 1rem; padding: 1.4rem; }
+.jars-admin-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
+.jars-admin-form-error { margin: 0; color: var(--danger-text-color); font-size: .85rem; }
+.jars-admin-form-error:empty { display: none; }
+
+.jars-admin-list { display: grid; gap: .7rem; }
+.jars-admin-entry { border: 1px solid var(--panel-border-color); border-radius: .9rem; padding: .9rem 1.1rem; display: grid; gap: .4rem; }
+.jars-admin-entry.is-inactive { opacity: .6; }
+.jars-admin-entry-title { margin: 0; color: var(--muted-color); font-size: .82rem; font-style: italic; }
+.jars-admin-entry-text { margin: 0; }
+.jars-admin-entry-flag { margin: 0; color: var(--danger-text-color); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+
+.jars-admin-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .2rem; padding-top: .7rem; border-top: 1px solid var(--panel-border-color); }
+.jars-admin-actions .btn { padding: .4rem .7rem; font-size: .82rem; }
+.jars-admin-move-form { display: grid; gap: .8rem; margin-top: .4rem; padding-top: .8rem; border-top: 1px solid var(--panel-border-color); }
+
+@media (max-width: 720px) {
+  .jars-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,152 @@
+<app-shell>
+  <section class="jars-hero" aria-labelledby="jars-title">
+    <p class="jars-eyebrow">Il Mondo Bianco</p>
+    <h1 id="jars-title"><span aria-hidden="true">🫙</span> Il Barattolo dei Pensieri</h1>
+    <p class="jars-intro">Piccoli biglietti da pescare, scritti l'uno per l'altra: pensieri, ricordi, cose che amo di
+      te.</p>
+  </section>
+
+  @if (loadError()) { <p class="page-message" role="alert">Non sono riuscito a caricare i barattoli. Riprova più tardi.
+  </p> }
+
+  <div class="jars-grid">
+    <section class="jar-card card" aria-labelledby="own-jar-title">
+      <span class="jar-count">{{ counts()[ownIdentity()] }}</span>
+      <span class="jar-emoji" aria-hidden="true">🫙</span>
+      <h2 id="own-jar-title">Il tuo barattolo</h2>
+
+      <button type="button" class="btn btn-submit" [disabled]="drawing()" (click)="draw()">
+        {{ drawing() ? 'Sto pescando…' : 'Pesca un pensiero' }}
+      </button>
+      @if (drawError() && !drawnBiglietto()) { <p class="form-message is-error" role="status">{{ drawError() }}</p> }
+    </section>
+
+    <section class="jar-card card" aria-labelledby="other-jar-title">
+      <span class="jar-count">{{ counts()[otherIdentity()] }}</span>
+      <span class="jar-emoji" aria-hidden="true">🫙</span>
+      <h2 id="other-jar-title">Scrivi per {{ otherLabel() }}</h2>
+
+      <form class="write-form" (ngSubmit)="submitBiglietto()">
+        <label class="form-field">
+          <span>Il tuo pensiero</span>
+          <textarea [ngModel]="writeText()" (ngModelChange)="writeText.set($event)" name="text" required
+            maxlength="1000" placeholder="Scrivi qui..."></textarea>
+        </label>
+        <label class="form-field">
+          <span>"Per quando…" <small>facoltativo</small></span>
+          <input type="text" [ngModel]="writeTitle()" (ngModelChange)="writeTitle.set($event)" name="title"
+            maxlength="120" placeholder="es. hai bisogno di sorridere" />
+        </label>
+        <div class="form-submit-row">
+          <button type="submit" class="btn btn-submit" [disabled]="writing() || !writeText().trim()">
+            {{ writing() ? 'Sto aggiungendo…' : 'Metti nel barattolo' }}
+          </button>
+        </div>
+        @if (writeError()) { <p class="form-message is-error" role="status">{{ writeError() }}</p> }
+        @if (writeSuccess()) { <p class="form-message is-success" role="status">Aggiunto al barattolo di {{ otherLabel()
+          }}.</p> }
+      </form>
+    </section>
+  </div>
+
+  <div class="modal jars-note-modal" [class.hidden]="!drawnBiglietto()" role="dialog" aria-modal="true"
+    aria-label="Biglietto pescato" (click)="onModalBackdropClick($event)">
+    @if (drawnBiglietto(); as note) {
+    <div class="card--handwritten jars-note-paper" [style.transform]="'rotate(' + noteRotation() + 'deg)'">
+      @if (note.title) { <p class="drawn-note-title handwritten-text">{{ note.title }}</p> }
+      <p class="drawn-note-text handwritten-text">{{ note.text }}</p>
+      @if (drawError()) { <p class="form-message is-error" role="status">{{ drawError() }}</p> }
+      <div class="modal-actions">
+        <button type="button" (click)="putBack()">Rimetti nel barattolo</button>
+        <button type="button" [disabled]="drawing()" (click)="draw()">
+          {{ drawing() ? 'Sto pescando…' : 'Pesca ancora' }}
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+
+  @if (canEdit()) {
+  <section class="jars-admin" aria-labelledby="jars-admin-title">
+    <div class="jars-admin-heading">
+      <p class="jars-eyebrow">Gestione</p>
+      <h2 id="jars-admin-title">I biglietti</h2>
+    </div>
+    @if (adminLoadError()) { <p class="page-message" role="alert">Non sono riuscito a caricare l'elenco dei biglietti.
+    </p> }
+
+    @if (editingId()) {
+    <form class="jars-admin-form card" (ngSubmit)="saveEdit()">
+      <h3>Modifica biglietto</h3>
+      <label class="form-field">
+        <span>Testo</span>
+        <textarea required [ngModel]="draft().text" (ngModelChange)="updateDraft({ text: $event })"
+          name="draftText"></textarea>
+      </label>
+      <label class="form-field">
+        <span>"Per quando…" <small>facoltativo</small></span>
+        <input type="text" [ngModel]="draft().title" (ngModelChange)="updateDraft({ title: $event })"
+          name="draftTitle" />
+      </label>
+      <label class="form-field-inline">
+        <input type="checkbox" [ngModel]="draft().isActive" (ngModelChange)="updateDraft({ isActive: $event })"
+          name="draftActive" />
+        <span>Attivo (compare nelle pescate)</span>
+      </label>
+      <p class="jars-admin-form-error">{{ draftError() }}</p>
+      <div class="jars-admin-form-actions">
+        <button type="button" class="btn" (click)="cancelEdit()">Annulla</button>
+        <button type="submit" class="btn btn-submit">Salva</button>
+      </div>
+    </form>
+    }
+
+    @for (jarIdentity of [ownIdentity(), otherIdentity()]; track jarIdentity) {
+    <div class="jars-admin-group">
+      <h3>Barattolo di {{ jarIdentity === 'lui' ? 'lui' : 'lei' }}</h3>
+      <div class="jars-admin-list">
+        @for (row of adminByJar()[jarIdentity]; track row.id) {
+        <article class="jars-admin-entry" [class.is-inactive]="!row.isActive">
+          @if (row.title) { <p class="jars-admin-entry-title">{{ row.title }}</p> }
+          <p class="jars-admin-entry-text">{{ row.text }}</p>
+          @if (!row.isActive) { <p class="jars-admin-entry-flag">Non attivo</p> }
+
+          @if (movingId() === row.id) {
+          <div class="jars-admin-move-form">
+            <label class="form-field">
+              <span>Dopo quale biglietto</span>
+              <select [ngModel]="moveAfterId()" (ngModelChange)="moveAfterId.set($event)" name="moveAfter">
+                <option value="">In cima al barattolo</option>
+                @for (other of biglittiForMoveTarget(jarIdentity); track other.id) {
+                <option [value]="other.id">{{ other.text.slice(0, 40) }}{{ other.text.length > 40 ? '…' : '' }}</option>
+                }
+              </select>
+            </label>
+            <p class="jars-admin-form-error">{{ moveError() }}</p>
+            <div class="jars-admin-form-actions">
+              <button type="button" class="btn" (click)="cancelMove()">Annulla</button>
+              <button type="button" class="btn btn-submit" (click)="confirmMove()">Sposta</button>
+            </div>
+          </div>
+          } @else {
+          <div class="jars-admin-actions">
+            <button type="button" class="btn" (click)="moveBiglietto(row.id, 'up')">⬆️</button>
+            <button type="button" class="btn" (click)="moveBiglietto(row.id, 'down')">⬇️</button>
+            <button type="button" class="btn" (click)="startMove(row.id)">↔️ Sposta…</button>
+            <button type="button" class="btn" (click)="startEdit(row)">✏️ Modifica</button>
+            <button type="button" class="btn" (click)="requestDelete(row.id)">🗑️ Elimina</button>
+          </div>
+          }
+        </article>
+        }
+        @if (adminByJar()[jarIdentity].length === 0) { <p class="page-message">Ancora nessun biglietto.</p> }
+      </div>
+    </div>
+    }
+  </section>
+
+  <app-confirmation-dialog dialogId="delete-biglietto" title="Eliminare questo biglietto?"
+    description="L'azione non si può annullare." confirmLabel="Elimina" cancelLabel="Annulla"
+    [open]="deleteTargetId() !== null" (confirm)="confirmDelete()" (cancel)="cancelDelete()" />
+  }
+</app-shell>

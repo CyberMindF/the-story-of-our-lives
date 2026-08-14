@@ -60,7 +60,7 @@
       </div>
 
       @if (!unlocked()) {
-        <button class="private-trigger" type="button" (click)="unlockOpen.set(!unlockOpen())">
+        <button class="private-trigger" type="button" (click)="openUnlockPanel()">
           <span aria-hidden="true">🔒</span> Mostra le idee NSFW
         </button>
       } @else {

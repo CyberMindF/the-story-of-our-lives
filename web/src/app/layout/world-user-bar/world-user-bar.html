@@ -9,12 +9,13 @@
       <span>Admin</span>
       <input
         type="checkbox"
+        class="settings-toggle-input"
         [checked]="authService.adminModeEnabled()"
         [disabled]="changingAdminMode()"
         (change)="toggleAdminMode($event)"
         aria-label="Modalità admin"
       />
-      <span class="userbar-admin-switch" aria-hidden="true"></span>
+      <span class="settings-toggle-switch" aria-hidden="true"></span>
     </label>
   }
   @if (showHomeShortcut) {

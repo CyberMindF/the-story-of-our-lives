@@ -15,13 +15,52 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   (vedi Fatto). Resta da scrivere l'avventura vera quando Rory ha titolo/testo/regole pronti
   — con l'editor GDR (12/08/2026) si può fare direttamente dal sito, un blocco alla volta,
   senza toccare codice.
-- #e1 - Aggiungere qualcosa a "le cuffiette", per creare insieme una playlist su spotify, in modo che lei possa proporne di nuove e pure io. Magari devono essere accettate dall'altro per poter dire "si inseriamole"?
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
-- #e12 - **Il Barattolo dei Pensieri** (riferimenti utili: “love notes jar”, “message jar”, “affirmation jar”, “open when jar”): una pagina raccolta e intima in cui pescare e aprire piccoli biglietti piegati contenenti pensieri, ricordi, frasi dolci, incoraggiamenti, cose che amo di lei o messaggi “da aprire quando…”. Evitare una normale lista o un feed: mostrare un barattolo/insieme di bigliettini e un gesto semplice di pesca, seguito da una breve animazione di apertura del foglietto. La scelta può essere casuale, eventualmente preceduta da una categoria o da “Come ti senti?” (`A caso`, `Mi manchi`, `Giornata difficile`, `Hai bisogno di sorridere`, `Un nostro ricordo`); non mostrare anteprime che rovinino la sorpresa. Tenere per ciascun utente una coda mobile delle ultime 10 estrazioni: quei biglietti sono esclusi temporaneamente, e all'undicesima pesca il primo estratto rientra in circolo, poi il secondo alla dodicesima e così via. Tra i biglietti disponibili usare una casualità pesata che dia una probabilità leggermente maggiore a quelli usciti meno volte, senza rendere mai la scelta deterministica e senza mostrare quali sono già usciti. Se una categoria contiene meno di 11 biglietti, ridurre automaticamente la coda quanto basta per lasciare sempre almeno un candidato disponibile. Dopo l'apertura permettere soltanto `Rimetti nel barattolo` e `Pesca ancora`: niente preferiti, archivio personale o lista dei biglietti letti, perché renderebbero la raccolta prevedibile e toglierebbero valore alla sorpresa. Nessun limite giornaliero artificiale. I biglietti devono vivere nel DB ed essere amministrabili con un editor a lista semplice (testo, categoria/stato d'animo, eventuale titolo “Apri quando…”, attivo/non attivo, posizione), senza drag and drop: frecce e comando `Sposta…`. Lei può proporre un nuovo biglietto attraverso i Suggerimenti, mentre l'inserimento effettivo segue i normali permessi del sito. Registrare in telemetria la pesca/apertura usando solo l'ID del biglietto, mai il testo del messaggio. Fare in modo che ci siano 2 barattoli e che sia io che lei possiamo aggiungere al barattolo dell'altro e magari sopra il barattolo ci siano anche dei numeri con scritto quanti biglietti ci sono. Ovviamente "lui" può aggiungere solo al barattolo di "lei" e viceversa
+- [x] #e12 — **Il Barattolo dei Pensieri** (`/barattolo-dei-pensieri`, card e voce nell'Atlante
+  del Mappamondo incluse, gruppo "ricordi"). Due barattoli (uno per "lui", uno per "lei"): ognuno
+  vede il proprio con solo il bottone "Pesca", quello dell'altro con solo la form "Scrivi per…"
+  — mai entrambe le azioni sullo stesso barattolo. Numeri sopra ciascun barattolo con il
+  conteggio dei biglietti attivi. Rispetto alla descrizione iniziale, due semplificazioni
+  concordate con Rory: **niente categorie/stati d'animo** (pesca sempre "a caso" su tutto il
+  barattolo attivo) e **aggiunta diretta per entrambi** (chiunque abbia sessione valida può
+  scrivere per il barattolo dell'altro — il vincolo "mai per il proprio" è strutturale lato
+  server: `jarIdentity` è sempre derivato dall'identità opposta a quella della sessione, non
+  arriva mai dal client, quindi non richiede validazione). Niente più canale via Suggerimenti,
+  reso ridondante dall'aggiunta diretta.
+
+  Coda mobile di esclusione delle ultime `min(10, attivi-1)` pesche per barattolo (si riduce
+  da sola se il barattolo ha meno di 11 biglietti attivi) e casualità pesata verso i meno
+  pescati (peso `1/√(draw_count+1)`), in `functions/api/pensieri-biglietti/pesca.js`. Dopo
+  l'apertura solo `Rimetti nel barattolo` / `Pesca ancora`, nessun archivio. Telemetria solo
+  con l'ID del biglietto, mai il testo (`barattolo_biglietto_pescato`).
+
+  Il biglietto pescato appare in un modale con lo stesso stile "carta scritta a mano" delle
+  Lettere (`card--handwritten` + `handwritten-text`, font Caveat) e la stessa leggera
+  rotazione pseudo-casuale-ma-fissa per id (ora condivisa: `seededRotation()` in
+  `web/src/app/shared/random.ts`, riusata anche da Lettere al posto della sua vecchia copia
+  privata). **Niente animazione di apertura/chiusura**: dopo diversi tentativi (scale/clip-path,
+  poi un vero foglio a 4 pannelli con cerniere 3D rotateX/rotateY) nessuno rendeva bene
+  l'effetto "foglietto piegato in 4 che si spiega" voluto da Rory — il biglietto compare e
+  scompare di scatto, vedi #f6 qui sotto per riprenderla in un secondo momento.
+
+  Editor di gestione (modifica testo/titolo, attivo/non attivo, frecce + comando "Sposta…",
+  cancellazione) **non** su una route admin separata come inizialmente pianificato, ma inline
+  nella stessa pagina dietro `canEdit()` — scoperto durante l'implementazione che è il pattern
+  dominante nel resto del sito (Linguaggio Segreto, card del Mondo Bianco), non la route
+  dedicata usata invece per il playground di Prova a Dire No (quello è un sandbox per provare
+  effetti, non un editor di contenuti). Tabelle `pensieri_biglietti` e `pensieri_estrazioni`,
+  migrazione `0078_add_barattolo_dei_pensieri.sql`.
 - #f2 - Animazione palloncini di varie forme e colori, che volano verso l'alto
 - #f3 - Animazione fuochi d'artificio (capire se possiamo prendere dei css già fatti da qualcuno)
+- #f5 - Implementare invio di email per gli aggiornamenti che suppongo che non sarà automatico, oppure si chiedo all'AI: C'è un modo per mandarle in automatico quando aggiorniamo il sito? O aggiungiamo roba?
+- #f6 - Animazione di apertura/chiusura del biglietto nel Barattolo dei Pensieri (#e12): voluta
+  come un vero foglietto piegato in 4 (due pieghe, orizzontale e verticale) che si spiega —
+  tentativi fatti e scartati: scale()/clip-path (sembrava una copia in miniatura, non una
+  piega), 4 pannelli reali con cerniere 3D rotateX/rotateY (geometricamente corretto ma
+  troppo macchinoso/fragile da rifinire). Per ora il biglietto compare e scompare di scatto,
+  senza animazione.
 ---
 
 ## Da non fare
@@ -30,6 +69,8 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   indicizzare contenuti protetti e formati diversi aggiungerebbe complessità senza risolvere
   un bisogno emerso nell'uso reale. Da rivalutare solo se in futuro diventerà concretamente
   difficile ritrovare i contenuti.
+- [x] #e1 — playlist Spotify condivisa nelle Cuffiette: accantonata il 13/08/2026, Rory non
+  era convinto avesse senso. Da rivalutare se in futuro torna l'idea.
 
 ---
 

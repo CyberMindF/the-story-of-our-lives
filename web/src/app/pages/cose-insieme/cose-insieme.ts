@@ -7,6 +7,7 @@ import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
+import { TelemetryService } from '../../core/telemetry.service';
 
 type ActivityStatus = 'todo' | 'done' | 'repeat' | 'unavailable';
 type ActivityFilter = 'all' | ActivityStatus;
@@ -90,6 +91,7 @@ const CATEGORY_LABEL: Record<string, string> = {
 export class CoseInsieme {
   private readonly api = inject(ApiService);
   protected readonly authService = inject(AuthService);
+  private readonly telemetry = inject(TelemetryService);
 
   protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
 
@@ -156,6 +158,17 @@ export class CoseInsieme {
       this.error.set('Non sono riuscito a salvare la modifica. Riprova.');
     } finally {
       this.savingId.set(null);
+    }
+  }
+
+  // Logga l'apertura del pannello NSFW anche se poi non viene inviata nessuna risposta
+  // (annullata o abbandonata): il tentativo di sblocco vero e proprio resta loggato a parte
+  // da together/unlock.js con l'esito (together_nsfw_attempt).
+  protected openUnlockPanel(): void {
+    const willOpen = !this.unlockOpen();
+    this.unlockOpen.set(willOpen);
+    if (willOpen) {
+      void this.telemetry.trackEvent('cose-insieme', 'together_nsfw_panel_opened');
     }
   }
 

@@ -62,12 +62,15 @@
 }
 
 .userbar-admin-toggle.is-active { color: var(--text-color); background: var(--button-bg); }
-.userbar-admin-toggle input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-.userbar-admin-switch { position: relative; width: 1.8rem; height: 1rem; border: 1px solid var(--border-color); border-radius: 999px; background: var(--button-bg); }
-.userbar-admin-switch::before { content: ''; position: absolute; top: 2px; left: 2px; width: .65rem; height: .65rem; border-radius: 50%; background: var(--muted-color); transition: transform .18s ease, background-color .18s ease; }
-.userbar-admin-toggle input:checked + .userbar-admin-switch { background: var(--focus-color); border-color: var(--focus-color); }
-.userbar-admin-toggle input:checked + .userbar-admin-switch::before { transform: translateX(.78rem); background: var(--panel-color); }
-.userbar-admin-toggle input:focus-visible + .userbar-admin-switch { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+
+/* Taglia compatta per lo switch condiviso (.settings-toggle-switch, styles/components/
+   toggle-switch.css — stesso usato in Impostazioni del Mondo): qui serve piccolo per stare
+   nella barra utente, ma colori/stato-checked restano quelli del componente unico, non
+   duplicati — prima questa barra aveva un suo switch a parte e il pallino attivo (background:
+   var(--panel-color)) si confondeva con lo sfondo dorato del tema, quasi invisibile. */
+.userbar-admin-toggle .settings-toggle-switch { width: 1.8rem; height: 1rem; }
+.userbar-admin-toggle .settings-toggle-switch::before { width: .65rem; height: .65rem; top: 2px; left: 2px; }
+.userbar-admin-toggle .settings-toggle-input:checked + .settings-toggle-switch::before { transform: translateX(.78rem); }
 
 .place-userbar a.user-greeting:hover {
   color: var(--text-color);
