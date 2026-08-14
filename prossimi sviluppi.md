@@ -6,71 +6,22 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
-- [~] #34 — “Il Ricettario”: pagina realizzata con card lunghe, ingredienti, procedimento,
-  filtri “Fatta insieme / Da provare” e collegamento ai Suggerimenti già preselezionato.
-  Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**:
-  sostituire la ricetta placeholder del pollo al curry con la loro versione definitiva e
-  ricostruire ingredienti/procedimento dei biscotti di pasta frolla.
-- #16 (continua) — seconda avventura del Gioco di Ruolo: la card "Coming soon" esiste già
-  (vedi Fatto). Resta da scrivere l'avventura vera quando Rory ha titolo/testo/regole pronti
-  — con l'editor GDR (12/08/2026) si può fare direttamente dal sito, un blocco alla volta,
-  senza toccare codice.
+- [~] #34 — “Il Ricettario”: pagina realizzata con card lunghe, ingredienti, procedimento, filtri “Fatta insieme / Da provare” e collegamento ai Suggerimenti già preselezionato. Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**: sostituire la ricetta placeholder del pollo al curry con la loro versione definitiva e ricostruire ingredienti/procedimento dei biscotti di pasta frolla.
+- #16 (continua) — seconda avventura del Gioco di Ruolo: la card "Coming soon" esiste già(vedi Fatto). Resta da scrivere l'avventura vera quando Rory ha titolo/testo/regole pronti — con l'editor GDR (12/08/2026) si può fare direttamente dal sito, un blocco alla volta, senza toccare codice.
 - #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
 - #e5 - Aggiungere una chat asincrona, nei ponti, che sostituisce il vecchio documento di chat, anche se pure quello rimarrà disponibile nel dubbio. Ci sarà anche la possibilità di caricare delle foto o video, che non possono rimanere lì per sempre ovviamente, però il caricamento deve essere lì
 - #e6 - Test generalee fix finali mobile
-- [x] #e12 — **Il Barattolo dei Pensieri** (`/barattolo-dei-pensieri`, card e voce nell'Atlante
-  del Mappamondo incluse, gruppo "ricordi"). Due barattoli (uno per "lui", uno per "lei"): ognuno
-  vede il proprio con solo il bottone "Pesca", quello dell'altro con solo la form "Scrivi per…"
-  — mai entrambe le azioni sullo stesso barattolo. Numeri sopra ciascun barattolo con il
-  conteggio dei biglietti attivi. Rispetto alla descrizione iniziale, due semplificazioni
-  concordate con Rory: **niente categorie/stati d'animo** (pesca sempre "a caso" su tutto il
-  barattolo attivo) e **aggiunta diretta per entrambi** (chiunque abbia sessione valida può
-  scrivere per il barattolo dell'altro — il vincolo "mai per il proprio" è strutturale lato
-  server: `jarIdentity` è sempre derivato dall'identità opposta a quella della sessione, non
-  arriva mai dal client, quindi non richiede validazione). Niente più canale via Suggerimenti,
-  reso ridondante dall'aggiunta diretta.
-
-  Coda mobile di esclusione delle ultime `min(10, attivi-1)` pesche per barattolo (si riduce
-  da sola se il barattolo ha meno di 11 biglietti attivi) e casualità pesata verso i meno
-  pescati (peso `1/√(draw_count+1)`), in `functions/api/pensieri-biglietti/pesca.js`. Dopo
-  l'apertura solo `Rimetti nel barattolo` / `Pesca ancora`, nessun archivio. Telemetria solo
-  con l'ID del biglietto, mai il testo (`barattolo_biglietto_pescato`).
-
-  Il biglietto pescato appare in un modale con lo stesso stile "carta scritta a mano" delle
-  Lettere (`card--handwritten` + `handwritten-text`, font Caveat) e la stessa leggera
-  rotazione pseudo-casuale-ma-fissa per id (ora condivisa: `seededRotation()` in
-  `web/src/app/shared/random.ts`, riusata anche da Lettere al posto della sua vecchia copia
-  privata). **Niente animazione di apertura/chiusura**: dopo diversi tentativi (scale/clip-path,
-  poi un vero foglio a 4 pannelli con cerniere 3D rotateX/rotateY) nessuno rendeva bene
-  l'effetto "foglietto piegato in 4 che si spiega" voluto da Rory — il biglietto compare e
-  scompare di scatto, vedi #f6 qui sotto per riprenderla in un secondo momento.
-
-  Editor di gestione (modifica testo/titolo, attivo/non attivo, frecce + comando "Sposta…",
-  cancellazione) **non** su una route admin separata come inizialmente pianificato, ma inline
-  nella stessa pagina dietro `canEdit()` — scoperto durante l'implementazione che è il pattern
-  dominante nel resto del sito (Linguaggio Segreto, card del Mondo Bianco), non la route
-  dedicata usata invece per il playground di Prova a Dire No (quello è un sandbox per provare
-  effetti, non un editor di contenuti). Tabelle `pensieri_biglietti` e `pensieri_estrazioni`,
-  migrazione `0078_add_barattolo_dei_pensieri.sql`.
+- [x] #e12 — **Il Barattolo dei Pensieri** (`/barattolo-dei-pensieri`, card e voce nell'Atlante del Mappamondo incluse, gruppo "ricordi"). Due barattoli (uno per "lui", uno per "lei"): ognuno vede il proprio con solo il bottone "Pesca", quello dell'altro con solo la form "Scrivi per…" — mai entrambe le azioni sullo stesso barattolo. Numeri sopra ciascun barattolo con il conteggio dei biglietti attivi. Rispetto alla descrizione iniziale, due semplificazioni concordate con Rory: **niente categorie/stati d'animo** (pesca sempre "a caso" su tutto il barattolo attivo) e **aggiunta diretta per entrambi** (chiunque abbia sessione valida può scrivere per il barattolo dell'altro — il vincolo "mai per il proprio" è strutturale lato server: `jarIdentity` è sempre derivato dall'identità opposta a quella della sessione, non arriva mai dal client, quindi non richiede validazione). Niente più canale via Suggerimenti, reso ridondante dall'aggiunta diretta. Coda mobile di esclusione delle ultime `min(10, attivi-1)` pesche per barattolo (si riduce da sola se il barattolo ha meno di 11 biglietti attivi) e casualità pesata verso i meno pescati (peso `1/√(draw_count+1)`), in `functions/api/pensieri-biglietti/pesca.js`. Dopo l'apertura solo `Rimetti nel barattolo` / `Pesca ancora`, nessun archivio. Telemetria solo con l'ID del biglietto, mai il testo (`barattolo_biglietto_pescato`). Il biglietto pescato appare in un modale con lo stesso stile "carta scritta a mano" delle Lettere (`card--handwritten` + `handwritten-text`, font Caveat) e la stessa leggera rotazione pseudo-casuale-ma-fissa per id (ora condivisa: `seededRotation()` in `web/src/app/shared/random.ts`, riusata anche da Lettere al posto della sua vecchia copia privata). **Niente animazione di apertura/chiusura**: dopo diversi tentativi (scale/clip-path, poi un vero foglio a 4 pannelli con cerniere 3D rotateX/rotateY) nessuno rendeva bene l'effetto "foglietto piegato in 4 che si spiega" voluto da Rory — il biglietto compare e scompare di scatto, vedi #f6 qui sotto per riprenderla in un secondo momento. Editor di gestione (modifica testo/titolo, attivo/non attivo, frecce + comando "Sposta…", cancellazione) **non** su una route admin separata come inizialmente pianificato, ma inline nella stessa pagina dietro `canEdit()` — scoperto durante l'implementazione che è il pattern dominante nel resto del sito (Linguaggio Segreto, card del Mondo Bianco), non la route dedicata usata invece per il playground di Prova a Dire No (quello è un sandbox per provare effetti, non un editor di contenuti). Tabelle `pensieri_biglietti` e `pensieri_estrazioni`, migrazione `0078_add_barattolo_dei_pensieri.sql`.
 - #f2 - Animazione palloncini di varie forme e colori, che volano verso l'alto
 - #f3 - Animazione fuochi d'artificio (capire se possiamo prendere dei css già fatti da qualcuno)
 - #f5 - Implementare invio di email per gli aggiornamenti che suppongo che non sarà automatico, oppure si chiedo all'AI: C'è un modo per mandarle in automatico quando aggiorniamo il sito? O aggiungiamo roba?
-- #f6 - Animazione di apertura/chiusura del biglietto nel Barattolo dei Pensieri (#e12): voluta
-  come un vero foglietto piegato in 4 (due pieghe, orizzontale e verticale) che si spiega —
-  tentativi fatti e scartati: scale()/clip-path (sembrava una copia in miniatura, non una
-  piega), 4 pannelli reali con cerniere 3D rotateX/rotateY (geometricamente corretto ma
-  troppo macchinoso/fragile da rifinire). Per ora il biglietto compare e scompare di scatto,
-  senza animazione.
+- #f6 - Animazione di apertura/chiusura del biglietto nel Barattolo dei Pensieri (#e12): voluta come un vero foglietto piegato in 4 (due pieghe, orizzontale e verticale) che si spiega — tentativi fatti e scartati: scale()/clip-path (sembrava una copia in miniatura, non una piega), 4 pannelli reali con cerniere 3D rotateX/rotateY (geometricamente corretto ma troppo macchinoso/fragile da rifinire). Per ora il biglietto compare e scompare di scatto, senza animazione.
 ---
 
 ## Da non fare
 
-- [x] #24 — ricerca globale protetta: scartata. Le aree del sito sono poche e riconoscibili;
-  indicizzare contenuti protetti e formati diversi aggiungerebbe complessità senza risolvere
-  un bisogno emerso nell'uso reale. Da rivalutare solo se in futuro diventerà concretamente
-  difficile ritrovare i contenuti.
-- [x] #e1 — playlist Spotify condivisa nelle Cuffiette: accantonata il 13/08/2026, Rory non
-  era convinto avesse senso. Da rivalutare se in futuro torna l'idea.
+- [x] #24 — ricerca globale protetta: scartata. Le aree del sito sono poche e riconoscibili; indicizzare contenuti protetti e formati diversi aggiungerebbe complessità senza risolvere un bisogno emerso nell'uso reale. Da rivalutare solo se in futuro diventerà concretamente difficile ritrovare i contenuti.
+- [x] #e1 — playlist Spotify condivisa nelle Cuffiette: accantonata il 13/08/2026, Rory non era convinto avesse senso. Da rivalutare se in futuro torna l'idea.
 
 ---
 
