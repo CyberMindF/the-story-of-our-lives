@@ -1,0 +1,54 @@
+<button type="button" class="gdr-panel-trigger" (click)="togglePanel()" [attr.aria-expanded]="open()">
+  <span aria-hidden="true">📜</span> Scheda
+</button>
+
+@if (open()) {
+  <div class="gdr-panel-backdrop" (click)="closePanel()"></div>
+  <section class="gdr-panel-sheet" aria-label="Scheda di gioco">
+    <div class="gdr-panel-header">
+      <span class="gdr-panel-title">La tua scheda</span>
+      <button type="button" class="gdr-panel-close" (click)="closePanel()" aria-label="Chiudi la scheda">✕</button>
+    </div>
+
+    <div class="gdr-panel-tabs" role="tablist">
+      <button type="button" role="tab" [class.is-active]="activeTab() === 'personaggio'" (click)="setTab('personaggio')">
+        <span aria-hidden="true">🧍</span> Personaggio
+      </button>
+      <button type="button" role="tab" [class.is-active]="activeTab() === 'regole'" (click)="setTab('regole')">
+        <span aria-hidden="true">📖</span> Regole
+      </button>
+      <button type="button" role="tab" [class.is-active]="activeTab() === 'appunti'" (click)="setTab('appunti')">
+        <span aria-hidden="true">✏️</span> Appunti
+      </button>
+    </div>
+
+    <div class="gdr-panel-content">
+      @switch (activeTab()) {
+        @case ('personaggio') {
+          @if (statsLoading()) {
+            <p class="gdr-panel-status">Sto caricando la scheda...</p>
+          } @else {
+            @for (stat of statsConfig; track stat.key) {
+              <div class="gdr-stat-row">
+                <span class="gdr-stat-label">{{ stat.label }}</span>
+                <div class="gdr-stat-control">
+                  <button type="button" [disabled]="(statValues()[stat.key] ?? stat.min) <= stat.min" (click)="setStat(stat.key, (statValues()[stat.key] ?? stat.min) - 1)" aria-label="Diminuisci">−</button>
+                  <span class="gdr-stat-value">{{ statValues()[stat.key] ?? stat.min }}</span>
+                  <button type="button" [disabled]="(statValues()[stat.key] ?? stat.min) >= stat.max" (click)="setStat(stat.key, (statValues()[stat.key] ?? stat.min) + 1)" aria-label="Aumenta">+</button>
+                </div>
+              </div>
+            }
+            <p class="gdr-panel-status" role="status" aria-live="polite">{{ statsStatus() }}</p>
+          }
+        }
+        @case ('regole') {
+          <app-gdr-blocks [blocks]="rulesBlocks()" />
+          <app-gdr-document-editor [documentKey]="rulesDocumentKey" />
+        }
+        @case ('appunti') {
+          <app-gdr-notes-editor [adventure]="adventure" />
+        }
+      }
+    </div>
+  </section>
+}

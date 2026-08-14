@@ -1,0 +1,80 @@
+:host { display: block; }
+
+.gdr-notes-toolbar {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .6rem;
+}
+
+.gdr-notes-tool {
+  box-sizing: border-box;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  margin: 0;
+  border-radius: .5rem;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
+  font: inherit;
+  font-size: .95rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.gdr-notes-tool-bold { font-weight: 700; }
+.gdr-notes-tool-underline { text-decoration: underline; }
+.gdr-notes-tool:hover { border-color: var(--focus-color); }
+
+.gdr-notes-toolbar-sep {
+  width: 1px;
+  height: 1.4rem;
+  background: var(--border-color);
+  margin: 0 .2rem;
+}
+
+.gdr-notes-tool-color {
+  box-sizing: border-box;
+  width: 1.7rem;
+  height: 1.7rem;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  font-size: 1.1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.gdr-notes-tool-color:hover { border-color: var(--focus-color); }
+
+.gdr-notes-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 16rem;
+  padding: 1.1rem;
+  border: 1px solid var(--border-color);
+  border-radius: .9rem;
+  background: var(--input-bg);
+  color: var(--text-color);
+  font: inherit;
+  line-height: 1.7;
+  overflow-y: auto;
+}
+.gdr-notes-textarea:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 2px; }
+.gdr-notes-textarea:empty::before {
+  content: 'Scrivi qui i tuoi appunti...';
+  color: var(--muted-color);
+}
+
+.gdr-notes-status { margin: .6rem 0 0; color: var(--muted-color); font-size: .85rem; }

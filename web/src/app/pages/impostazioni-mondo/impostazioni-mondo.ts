@@ -47,6 +47,13 @@ export class ImpostazioniMondo {
     { value: 'mix', label: 'Cuori misti' },
     ...Object.entries(HEART_COLOR_LABEL).map(([value, label]) => ({ value: value as HeartColor, label }))
   ];
+  // Tutte le chiavi che sono un'animazione/effetto vero e proprio: esclude 'theme', che non è
+  // un toggle di questa pagina (il tema si cambia con ThemeSwitcher, non con toggleSetting).
+  private readonly effectKeys: readonly WorldSettingKey[] = [
+    'lanterns', 'stars', 'shootingStars', 'moon', 'sparkles', 'leaves', 'waves', 'petals',
+    'fish', 'bubbles', 'hearts', 'pearlShimmers', 'silk', 'stickers', 'balloons', 'fireworks'
+  ];
+
   protected readonly stickerKinds: readonly StickerKind[] = Object.keys(STICKER_KIND_LABEL) as StickerKind[];
   protected readonly stickerKindLabel = STICKER_KIND_LABEL;
   protected readonly auroraColorOptions: readonly AppSelectOption[] = [
@@ -55,6 +62,10 @@ export class ImpostazioniMondo {
     { value: 'magenta', label: 'Magenta' },
     { value: 'mix', label: 'Colori misti' }
   ];
+
+  protected async disableAllEffects(): Promise<void> {
+    await Promise.all(this.effectKeys.map((key) => this.worldSettingsService.set(key, false)));
+  }
 
   protected toggleSetting(key: WorldSettingKey, event: Event): void {
     const enabled = (event.target as HTMLInputElement).checked;

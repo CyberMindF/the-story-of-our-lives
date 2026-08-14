@@ -8,16 +8,7 @@
   </section>
 
   <div class="appunti-body">
-    <label for="appunti-textarea" class="sr-only">I tuoi appunti</label>
-    <textarea
-      id="appunti-textarea"
-      class="appunti-textarea"
-      placeholder="Scrivi qui i tuoi appunti..."
-      [(ngModel)]="body"
-      [disabled]="disabled()"
-      (input)="onInput()"
-    ></textarea>
-    <p class="appunti-status" role="status" aria-live="polite">{{ statusMessage() }}</p>
+    <app-gdr-notes-editor adventure="il-prezzo-della-verita" />
   </div>
 
 </app-shell>

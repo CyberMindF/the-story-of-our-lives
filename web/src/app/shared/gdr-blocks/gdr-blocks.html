@@ -13,7 +13,7 @@
     @case ('callout') {
       <p class="avventura-callout">
         @if (asCallout(block.data).lead) {
-          <strong>{{ asCallout(block.data).lead }}</strong>
+          <strong>{{ asCallout(block.data).lead }}</strong>&nbsp;
         }
         <span [innerHTML]="renderInline(asCallout(block.data).text)"></span>
       </p>

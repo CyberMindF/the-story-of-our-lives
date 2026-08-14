@@ -1,0 +1,178 @@
+:host { display: contents; }
+
+.gdr-panel-trigger {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 190;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .8rem 1.3rem;
+  border-radius: 999px;
+  border: 1px solid rgba(240, 219, 179, .45);
+  background: var(--panel-color);
+  backdrop-filter: blur(10px);
+  color: #f0dbb3;
+  font: inherit;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.02rem;
+  cursor: pointer;
+  box-shadow: 0 .8rem 2rem rgba(0,0,0,.4);
+  transition: transform .15s ease;
+}
+.gdr-panel-trigger:hover { transform: translateY(-2px); }
+
+/* Solo un livello invisibile per chiudere cliccando fuori — niente scurimento/sfocatura
+   della pagina: deve restare leggibile e utilizzabile mentre il pannello è aperto. */
+.gdr-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 195;
+}
+
+.gdr-panel-sheet {
+  position: fixed;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(12,22,38,.98), rgba(8,15,27,.98));
+  border: 1px solid rgba(240, 219, 179, .3);
+  box-shadow: 0 -.5rem 3rem rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.3) inset;
+
+  /* Desktop: card ancorata in basso a destra, non un foglio che taglia tutto lo schermo —
+     ancorata anche in alto (invece di un max-height percentuale) così si apre più alta. */
+  top: 5rem;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  left: auto;
+  width: min(92vw, 25rem);
+  border-radius: 1.1rem;
+  animation: gdr-panel-pop-in .18s ease-out;
+}
+
+@keyframes gdr-panel-pop-in {
+  from { opacity: 0; transform: translateY(1rem) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 640px) {
+  .gdr-panel-sheet {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    max-height: min(80vh, 42rem);
+    border-radius: 1.4rem 1.4rem 0 0;
+    animation: gdr-panel-slide-up .22s ease-out;
+  }
+}
+
+@keyframes gdr-panel-slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gdr-panel-sheet { animation: none; }
+}
+
+.gdr-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: 1rem 1.1rem .6rem;
+  flex: 0 0 auto;
+  border-bottom: 1px solid rgba(240, 219, 179, .16);
+}
+
+.gdr-panel-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: #f0dbb3;
+  letter-spacing: -.01em;
+}
+
+.gdr-panel-close {
+  border: none;
+  background: transparent;
+  color: var(--muted-color);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: .3rem .5rem;
+}
+.gdr-panel-close:hover { color: var(--text-color); }
+
+.gdr-panel-tabs {
+  display: flex;
+  gap: .4rem;
+  padding: .75rem 1.1rem 0;
+  flex: 0 0 auto;
+}
+.gdr-panel-tabs button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  padding: .55rem .5rem;
+  border-radius: .7rem .7rem 0 0;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted-color);
+  font: inherit;
+  font-size: .85rem;
+  cursor: pointer;
+}
+.gdr-panel-tabs button.is-active {
+  color: #f0dbb3;
+  border-bottom-color: #f0dbb3;
+  background: rgba(240, 219, 179, .06);
+}
+
+.gdr-panel-content {
+  overflow-y: auto;
+  padding: 1.5rem 1.1rem 1.4rem;
+}
+
+.gdr-panel-status { margin: .6rem 0 0; color: var(--muted-color); font-size: .85rem; }
+
+.gdr-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .8rem 0;
+  border-bottom: 1px solid rgba(240, 219, 179, .14);
+}
+.gdr-stat-row:last-of-type { border-bottom: none; }
+.gdr-stat-label { color: var(--text-color); font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; }
+.gdr-stat-control { display: flex; align-items: center; gap: .6rem; }
+.gdr-stat-control button {
+  box-sizing: border-box;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(240, 219, 179, .35);
+  background: rgba(240, 219, 179, .08);
+  color: #f0dbb3;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.gdr-stat-control button:disabled { opacity: .35; cursor: not-allowed; }
+.gdr-stat-value { min-width: 1.5rem; text-align: center; color: var(--text-color); font-variant-numeric: tabular-nums; font-size: 1.1rem; }

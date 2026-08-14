@@ -1,4 +1,4 @@
-export type GdrDocumentKey = 'avventura' | 'maga-regole';
+export type GdrDocumentKey = 'avventura' | 'maga-regole' | 'casa-avventura' | 'casa-regole';
 
 export type GdrBlockType = 'heading' | 'paragraph' | 'callout' | 'image' | 'npc_grid' | 'list' | 'table';
 

@@ -1,0 +1,41 @@
+<app-shell homeHref="/tavolo-da-gioco/gdr" homeAria="Torna al Gioco di Ruolo" homeLabel="Gioco di Ruolo">
+  <section class="avventura-hero" aria-labelledby="casa-title">
+    <p class="tavolo-eyebrow">La casa che trattiene il respiro</p>
+    <h1 id="casa-title"><span aria-hidden="true">📜</span> L'Avventura</h1>
+  </section>
+
+  <div class="avventura-body">
+    <app-gdr-blocks [blocks]="narrativeBlocks()" />
+
+    <section class="gdr-turn-section" aria-labelledby="turno-title">
+      <h2 id="turno-title">Il turno</h2>
+      <div class="gdr-thread">
+        @for (turn of turns(); track turn.createdAt) {
+          <article class="gdr-turn" [class.is-mine]="turn.isMine">
+            <div class="gdr-turn-meta">
+              <span class="gdr-turn-author">{{ turn.isMine ? 'Tu' : turn.author }}</span>
+              <span class="gdr-turn-date">{{ formatDate(turn.createdAt) }}</span>
+            </div>
+            <p class="gdr-turn-body">{{ turn.body }}</p>
+          </article>
+        }
+      </div>
+      @if (turns().length === 0 && !loadError()) {
+        <app-content-message message="Nessun turno ancora: scrivi tu il primo, cosa fa e cosa pensa il tuo personaggio." extraClass="gdr-thread-message" />
+      }
+      @if (loadError()) {
+        <app-content-message message="Non è stato possibile caricare il turno." tone="error" extraClass="gdr-thread-message" />
+      }
+      <form class="gdr-turn-form" aria-label="Scrivi il tuo turno" #turnForm (ngSubmit)="submitTurn(turnForm)">
+        <label class="sr-only" for="turn-body">Il tuo turno</label>
+        <textarea id="turn-body" name="body" required maxlength="20000" placeholder="Scrivi cosa fa o dice il tuo personaggio..."></textarea>
+        <div class="gdr-turn-submit-row">
+          <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Invia turno</button>
+        </div>
+        <p class="appunti-status" role="status" aria-live="polite">{{ submission.message() }}</p>
+      </form>
+    </section>
+  </div>
+
+  <app-gdr-panel [adventure]="adventure" rulesDocumentKey="casa-regole" [statsConfig]="statsConfig" />
+</app-shell>

@@ -159,6 +159,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/i-tuoi-appunti/i-tuoi-appunti').then((m) => m.ITuoiAppunti)
       },
       {
+        path: 'tavolo-da-gioco/gdr/la-casa-che-trattiene-il-respiro',
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () =>
+          import('./pages/la-casa-che-trattiene-il-respiro/la-casa-che-trattiene-il-respiro').then(
+            (m) => m.LaCasaCheTrattieneIlRespiro
+          )
+      },
+      {
         path: 'tavolo-da-gioco/cruciverba',
         loadComponent: () => import('./pages/cruciverba/cruciverba').then((m) => m.Cruciverba)
       },

@@ -1,0 +1,24 @@
+<div class="gdr-notes-toolbar" role="toolbar" aria-label="Formattazione">
+  <button type="button" class="gdr-notes-tool gdr-notes-tool-bold" (mousedown)="preserveSelection($event)" (click)="applyBold()" aria-label="Grassetto">B</button>
+  <button type="button" class="gdr-notes-tool gdr-notes-tool-underline" (mousedown)="preserveSelection($event)" (click)="applyUnderline()" aria-label="Sottolineato">S</button>
+  <span class="gdr-notes-toolbar-sep" aria-hidden="true"></span>
+  @for (color of colors; track color.value) {
+    <button
+      type="button"
+      class="gdr-notes-tool-color"
+      [style.color]="color.value"
+      (mousedown)="preserveSelection($event)"
+      (click)="applyColor(color.value)"
+      [attr.aria-label]="'Colore testo: ' + color.label"
+    >●</button>
+  }
+</div>
+
+<div
+  #editorEl
+  class="gdr-notes-textarea"
+  [attr.contenteditable]="!disabled()"
+  [attr.aria-label]="'I tuoi appunti'"
+  (input)="onInput()"
+></div>
+<p class="gdr-notes-status" role="status" aria-live="polite">{{ statusMessage() }}</p>
