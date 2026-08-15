@@ -1,4 +1,5 @@
 <div class="place-shell" [class]="shellClass">
+  @if (showHeader) {
   <app-world-header
     [homeHref]="homeHref"
     [homeAria]="homeAria"
@@ -12,6 +13,7 @@
     [userbarExtraClass]="userbarExtraClass"
     [beforeLogout]="beforeLogout"
   />
+  }
   <main>
     <ng-content />
     @if (showBackLink) {

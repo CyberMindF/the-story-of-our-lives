@@ -10,7 +10,7 @@ import { WorldHeader } from '../layout/world-header/world-header';
   templateUrl: './app-shell.html'
 })
 export class AppShell implements OnInit {
-  @Input() homeHref = '/mondo-bianco';
+  @Input() homeHref = '/';
   @Input() homeAria = 'Torna al Mondo Bianco';
   @Input() homeIcon = '←';
   @Input() homeLabel = 'Il Mondo Bianco';
@@ -18,6 +18,7 @@ export class AppShell implements OnInit {
   @Input() showSuggestLink = true;
   @Input() showHomeShortcut = true;
   @Input() showBackLink = true;
+  @Input() showHeader = true;
   @Input() shellClass = '';
   @Input() headerExtraClass = '';
   @Input() homeLinkExtraClass = '';

@@ -1,0 +1,52 @@
+<app-shell [showHeader]="false">
+  <div class="stranger-backdrop" aria-hidden="true"></div>
+  <div class="omegle-page">
+    <header class="omegle-header">
+      <div class="omegle-brand">
+        <img class="omegle-logo-img" src="assets/images/world/omegle-logo.svg" alt="Omegle" />
+      </div>
+      <img class="omegle-tagline-img" src="assets/images/world/omegle-tagline.png" alt="Talk to strangers!" />
+      <div class="omegle-social" aria-hidden="true">
+        <img class="omegle-social-btn" src="assets/images/world/omegle-fb.png" alt="Share on FB" />
+        <img class="omegle-social-btn" src="assets/images/world/omegle-tweet.png" alt="Tweet" />
+        <span class="omegle-social-lang">Select Language</span>
+      </div>
+      <p class="omegle-online"><strong>2+</strong> online now</p>
+    </header>
+
+    <section class="omegle-box" aria-label="Conversazione">
+      @if (!entered()) {
+      <p class="omegle-box-message">ti va se ricominciamo tutto da capo?</p>
+      <button type="button" class="omegle-btn omegle-btn--new" (click)="enter()">New chat</button>
+      }
+
+      @if (entered()) {
+      <div class="omegle-log" #log>
+        <p class="omegle-system-line">You're now chatting with a random stranger. Say hi!</p>
+        @if (loadError()) { <p class="omegle-system-line">Impossibile caricare la chat. Riprova più tardi.</p> }
+        @if (loading()) { <p class="omegle-system-line">Connecting…</p> }
+
+        @for (message of messages(); track message.id) {
+        <p class="omegle-line">
+          <span class="omegle-line-who" [class.omegle-line-who--you]="message.senderIdentity === ownIdentity()">{{ message.senderIdentity === ownIdentity() ? 'You' : 'Stranger' }}:</span>
+          <span class="omegle-line-text">{{ message.body }}</span>
+        </p>
+        }
+        @if (sendError()) { <p class="omegle-system-line" role="status">{{ sendError() }}</p> }
+      </div>
+      }
+    </section>
+
+    <form class="omegle-compose" (ngSubmit)="send()">
+      <button type="button" class="omegle-btn omegle-btn--esc" (click)="entered() ? stop() : enter()">
+        New<small>Esc</small>
+      </button>
+      <textarea class="omegle-input" [ngModel]="composeText()" (ngModelChange)="composeText.set($event)"
+        name="composeText" maxlength="2000" rows="1" [disabled]="!entered()"></textarea>
+      <button type="submit" class="omegle-btn omegle-btn--send" [class.is-active]="entered() && composeText().trim() && !sending()"
+        [disabled]="!entered() || sending() || !composeText().trim()">
+        Send<small>Enter</small>
+      </button>
+    </form>
+  </div>
+</app-shell>
