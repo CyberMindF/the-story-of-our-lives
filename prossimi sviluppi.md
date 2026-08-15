@@ -15,7 +15,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 - #e14 (idea, non ancora concordata nei dettagli) — "Il Ricordo di Oggi": una piccola card che pesca un ricordo a caso dalla Bacheca o dalla Mappa. Proposta il 14/08/2026, Rory ha detto che gli piace ma **al momento non ci sono abbastanza ricordi scritti** perché valga la pena farla — da rivalutare quando la Bacheca/Mappa avranno più contenuto.
 - #e16 (idea, ripescata) — Playlist Spotify condivisa nelle Cuffiette: era già stata proposta come #e1 e scartata il 13/08/2026 perché non chiaro il senso. Rory ha chiarito il 14/08/2026: non un editoriale scritto, ma un vero embed di una playlist Spotify che lui cura nel tempo, aggiungendo canzoni man mano — più semplice da fare di una pagina editoriale (nessun CMS, nessun testo da scrivere, solo un iframe verso la playlist).
 - #e17 (idea) — Modalità di lettura pulita: un formato "solo testo, senza UI" per rileggere una sezione (es. le Lettere) senza bottoni/form/header visibili. Proposta il 14/08/2026, valutata fattibile e semplice (~15-30 righe): `AppShell` ha già un pattern di `@Input` per nascondere pezzi di chrome (`showBackLink`, `showSuggestLink`, ecc.), basterebbe estenderlo con un interruttore in più, letto da query param (es. `?clean=1`), niente route nuova.
-- #e15 (idea, da studiare meglio) — "Capsula del tempo": un messaggio/foto scritto oggi ma visibile solo a partire da una data futura scelta (compleanno, anniversario). Diverso dal Barattolo dei Pensieri (casuale e immediato): qui è mirato e programmato. Proposta il 14/08/2026, piace a Rory ma **da progettare meglio** prima di iniziare (come si sceglie la data, notifiche, dove vive nel sito).
 - #e6 - Test generalee fix finali mobile
 - [x] #e12 — **Il Barattolo dei Pensieri** (`/barattolo-dei-pensieri`, card e voce nell'Atlante del Mappamondo incluse, gruppo "ricordi"). Due barattoli (uno per "lui", uno per "lei"): ognuno vede il proprio con solo il bottone "Pesca", quello dell'altro con solo la form "Scrivi per…" — mai entrambe le azioni sullo stesso barattolo. Numeri sopra ciascun barattolo con il conteggio dei biglietti attivi. Rispetto alla descrizione iniziale, due semplificazioni concordate con Rory: **niente categorie/stati d'animo** (pesca sempre "a caso" su tutto il barattolo attivo) e **aggiunta diretta per entrambi** (chiunque abbia sessione valida può scrivere per il barattolo dell'altro — il vincolo "mai per il proprio" è strutturale lato server: `jarIdentity` è sempre derivato dall'identità opposta a quella della sessione, non arriva mai dal client, quindi non richiede validazione). Niente più canale via Suggerimenti, reso ridondante dall'aggiunta diretta. Coda mobile di esclusione delle ultime `min(10, attivi-1)` pesche per barattolo (si riduce da sola se il barattolo ha meno di 11 biglietti attivi) e casualità pesata verso i meno pescati (peso `1/√(draw_count+1)`), in `functions/api/pensieri-biglietti/pesca.js`. Dopo l'apertura solo `Rimetti nel barattolo` / `Pesca ancora`, nessun archivio. Telemetria solo con l'ID del biglietto, mai il testo (`barattolo_biglietto_pescato`). Il biglietto pescato appare in un modale con lo stesso stile "carta scritta a mano" delle Lettere (`card--handwritten` + `handwritten-text`, font Caveat) e la stessa leggera rotazione pseudo-casuale-ma-fissa per id (ora condivisa: `seededRotation()` in `web/src/app/shared/random.ts`, riusata anche da Lettere al posto della sua vecchia copia privata). **Niente animazione di apertura/chiusura**: dopo diversi tentativi (scale/clip-path, poi un vero foglio a 4 pannelli con cerniere 3D rotateX/rotateY) nessuno rendeva bene l'effetto "foglietto piegato in 4 che si spiega" voluto da Rory — il biglietto compare e scompare di scatto, vedi #f6 qui sotto per riprenderla in un secondo momento. Editor di gestione (modifica testo/titolo, attivo/non attivo, frecce + comando "Sposta…", cancellazione) **non** su una route admin separata come inizialmente pianificato, ma inline nella stessa pagina dietro `canEdit()` — scoperto durante l'implementazione che è il pattern dominante nel resto del sito (Linguaggio Segreto, card del Mondo Bianco), non la route dedicata usata invece per il playground di Prova a Dire No (quello è un sandbox per provare effetti, non un editor di contenuti). Tabelle `pensieri_biglietti` e `pensieri_estrazioni`, migrazione `0078_add_barattolo_dei_pensieri.sql`.
 - #f5 - Implementare invio di email per gli aggiornamenti che suppongo che non sarà automatico, oppure si chiedo all'AI: C'è un modo per mandarle in automatico quando aggiorniamo il sito? O aggiungiamo roba?
@@ -32,6 +31,36 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ---
 
 ## Fatto
+
+### Extra (fuori scaletta, chiesto il 15/08/2026)
+
+- [x] #e15 — **La Capsula del Tempo** (`/capsula-del-tempo`, card e voce nell'Atlante del
+  Mappamondo incluse, gruppo "ricordi"). Idea rimasta aperta dal 14/08/2026 in attesa di essere
+  progettata meglio; definita e implementata il 15/08/2026. A differenza del Barattolo dei
+  Pensieri (mirato a un destinatario, pescata a caso, subito leggibile), qui il messaggio (+
+  foto o video opzionali) è scritto oggi ma sigillato fino a una data futura scelta da chi
+  scrive, poi visibile a **entrambi automaticamente** — nessun destinatario, nessuna scelta di
+  chi la apre. Decisioni prese con Rory: nessun limite al numero di capsule aperte o in attesa
+  contemporaneamente; una capsula non ancora sbloccata **si vede** come card "in arrivo" con
+  lucchetto e sola data, senza contenuto; **niente notifica email** (Rory l'avrebbe voluta, ma
+  dipende da #f5 non ancora deciso — si aggancia più avanti, stesso schema già usato per il
+  Blocco 5 di #e4). Il gate non è mai lato client: `toCapsulaView` in
+  `functions/api/capsule-tempo/_shared.js` omette titolo/testo/media dal payload JSON stesso
+  per le capsule non ancora sbloccate, confrontando `unlock_date` con la data odierna lato
+  server — anche ispezionando la risposta di rete non si legge il contenuto prima del tempo.
+  `author_identity` sempre derivato dalla sessione (mai dal client), stesso principio di
+  `jarIdentity`/`sender_identity` nel Barattolo e nei Ponti. Upload foto/video su R2 con lo
+  stesso schema stream-binario di `ponti-chat/media.js` (niente multipart, limiti separati per
+  tipo: 15MB foto, 200MB video). **A differenza di Ponti Chat, nessuna scadenza sul media**:
+  richiesto esplicitamente da Rory (una capsula può restare sigillata mesi, il file caricato
+  oggi deve sopravvivere fino allo sblocco e oltre), quindi niente `media_expires_at` né pulizia
+  pigra su R2. Nessun endpoint di modifica dopo la creazione: la capsula è "sigillata" per
+  costruzione, solo l'autore può eliminarla (prima o dopo lo sblocco). Tabella `capsule_tempo`,
+  migrazione `0094_add_capsula_del_tempo.sql`. Verificato end-to-end (API via curl con due
+  identità di prova, poi Playwright sul frontend, account e dati ripuliti da D1 locale):
+  creazione, mascheramento del contenuto prima dello sblocco, comparsa automatica del contenuto
+  dopo lo sblocco per entrambe le identità (foto e video), permesso di eliminazione limitato al
+  proprio autore.
 
 ### Extra (fuori scaletta, chiesto il 14/08/2026)
 

@@ -1,0 +1,42 @@
+.capsule-eyebrow { margin: 0 0 .65rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+
+.capsule-hero { width: min(100%, 46rem); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+.capsule-hero h1 { margin: 0; font-size: var(--hero-size-md); line-height: .95; letter-spacing: -.04em; }
+.capsule-intro { margin: 1.25rem auto 0; max-width: 34rem; color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
+
+.capsule-write {
+  width: min(100%, 40rem);
+  margin: 0 auto clamp(2.5rem, 6vw, 4rem);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+.capsule-write h2 { margin: 0 0 1.25rem; font-size: 1.35rem; font-weight: 400; font-family: Georgia, "Times New Roman", serif; }
+
+.capsule-form { display: grid; gap: 1rem; text-align: left; }
+.capsule-form textarea { min-height: 7rem; }
+
+.page-message { text-align: center; color: var(--muted-color); }
+.page-message[role='alert'] { color: var(--danger-text-color); }
+
+.capsule-list {
+  width: min(100%, 64rem);
+  margin: 0 auto;
+  padding-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+.capsule-list h2 { margin: 0 0 1rem; font-size: 1.1rem; font-weight: 700; color: var(--muted-color); text-transform: uppercase; letter-spacing: .08em; }
+
+.capsule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: clamp(1rem, 3vw, 1.5rem);
+}
+
+.capsule-card { display: grid; gap: .6rem; padding: clamp(1.25rem, 3vw, 1.75rem); text-align: left; }
+
+.capsule-card--locked { text-align: center; justify-items: center; color: var(--muted-color); }
+.capsule-lock { font-size: 2rem; }
+.capsule-date { margin: 0; font-weight: 600; }
+.capsule-author { margin: 0; color: var(--muted-color); font-size: .85rem; }
+
+.capsule-card-title { margin: 0; font-size: 1.15rem; font-weight: 400; font-family: Georgia, "Times New Roman", serif; }
+.capsule-text { margin: 0; white-space: pre-wrap; line-height: 1.6; }
+.capsule-photo { width: 100%; border-radius: .75rem; object-fit: cover; }

@@ -30,6 +30,7 @@ export const WORLD_PLACES: readonly WorldPlace[] = [
   { id: 'lettere', emoji: '📫', route: '/lettere', fallbackName: 'La Cassetta delle Lettere', fallbackDescription: 'I messaggi che vogliamo lasciarci e rileggere con calma.', group: 'ricordi', primary: true },
   { id: 'domande', emoji: '⛲', route: '/domande', fallbackName: 'Il Pozzo dei Dubbi', fallbackDescription: 'Le domande che voglio farti e le risposte che vorrai lasciare.', group: 'ricordi', primary: true },
   { id: 'barattolo-dei-pensieri', emoji: '🫙', route: '/barattolo-dei-pensieri', fallbackName: 'Il Barattolo dei Pensieri', fallbackDescription: 'Piccoli biglietti da pescare, scritti l’uno per l’altra.', group: 'ricordi', primary: true },
+  { id: 'capsula-del-tempo', emoji: '⏳', route: '/capsula-del-tempo', fallbackName: 'La Capsula del Tempo', fallbackDescription: 'Un messaggio scritto oggi, che si apre solo a partire da una data futura.', group: 'ricordi', primary: true },
 
   { id: 'mappa', emoji: '🗺️', route: '/mappa', fallbackName: 'La Mappa', fallbackDescription: 'I luoghi in cui siamo stati e quelli in cui vorremmo arrivare.', group: 'insieme', primary: true },
   { id: 'cose-da-fare-insieme', emoji: '📔', route: '/cose-da-fare-insieme', fallbackName: "L'Agenda delle Idee", fallbackDescription: 'La lista delle cose piccole e grandi che vogliamo fare insieme.', group: 'insieme', primary: true },

@@ -1,0 +1,95 @@
+<app-shell>
+  <section class="capsule-hero" aria-labelledby="capsule-title">
+    <p class="capsule-eyebrow">Il Mondo Bianco</p>
+    <h1 id="capsule-title"><span aria-hidden="true">⏳</span> La Capsula del Tempo</h1>
+    <p class="capsule-intro">Scrivi qualcosa oggi, scegli quando aprirla: resterà sigillata finché non arriva quel
+      giorno, poi sarà lì per entrambi.</p>
+  </section>
+
+  @if (loadError()) { <p class="page-message" role="alert">Non sono riuscito a caricare le capsule. Riprova più
+    tardi.</p> }
+
+  <section class="capsule-write card" aria-labelledby="capsule-write-title">
+    <h2 id="capsule-write-title">Sigilla una nuova capsula</h2>
+    <form class="capsule-form" (ngSubmit)="submit()">
+      <label class="form-field">
+        <span>Titolo</span>
+        <input type="text" [ngModel]="formTitle()" (ngModelChange)="formTitle.set($event)" name="title" required
+          maxlength="120" placeholder="es. per il tuo compleanno" />
+      </label>
+      <label class="form-field">
+        <span>Messaggio</span>
+        <textarea [ngModel]="formText()" (ngModelChange)="formText.set($event)" name="text" required
+          maxlength="4000" placeholder="Scrivi qui..."></textarea>
+      </label>
+      <label class="form-field">
+        <span>Foto o video <small>facoltativi</small></span>
+        <input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime"
+          (change)="onFileSelected($event)" name="media" />
+      </label>
+      <label class="form-field">
+        <span>Quando si apre</span>
+        <input type="date" [ngModel]="formDate()" (ngModelChange)="formDate.set($event)" name="unlockDate" required
+          [min]="minDate" />
+      </label>
+      <div class="form-submit-row">
+        <button type="submit" class="btn btn-submit"
+          [disabled]="submitting() || !formTitle().trim() || !formText().trim() || !formDate()">
+          {{ submitting() ? 'Sto sigillando…' : 'Sigilla la capsula' }}
+        </button>
+      </div>
+      @if (submitError()) { <p class="form-message is-error" role="status">{{ submitError() }}</p> }
+      @if (submitSuccess()) { <p class="form-message is-success" role="status">Capsula sigillata, si aprirà il giorno
+        scelto.</p> }
+    </form>
+  </section>
+
+  @if (upcoming().length > 0) {
+  <section class="capsule-list" aria-labelledby="capsule-upcoming-title">
+    <h2 id="capsule-upcoming-title">In arrivo</h2>
+    <div class="capsule-grid">
+      @for (capsula of upcoming(); track capsula.id) {
+      <article class="capsule-card capsule-card--locked card">
+        <span class="capsule-lock" aria-hidden="true">🔒</span>
+        <p class="capsule-date">Si apre il {{ capsula.unlockDate }}</p>
+        <p class="capsule-author">scritta da {{ identityLabel(capsula.authorIdentity) }}</p>
+        @if (capsula.authorIdentity === ownIdentity()) {
+        <button type="button" class="btn" (click)="requestDelete(capsula.id)">🗑️ Elimina</button>
+        }
+      </article>
+      }
+    </div>
+  </section>
+  }
+
+  @if (opened().length > 0) {
+  <section class="capsule-list" aria-labelledby="capsule-opened-title">
+    <h2 id="capsule-opened-title">Aperte</h2>
+    <div class="capsule-grid">
+      @for (capsula of opened(); track capsula.id) {
+      <article class="capsule-card card">
+        @if (capsula.title) { <h3 class="capsule-card-title">{{ capsula.title }}</h3> }
+        @if (capsula.mediaKey && capsula.mediaType === 'photo') { <img class="capsule-photo" [src]="mediaUrl(capsula)"
+          alt="" /> }
+        @if (capsula.mediaKey && capsula.mediaType === 'video') { <video class="capsule-photo" [src]="mediaUrl(capsula)"
+          controls></video> }
+        <p class="capsule-text">{{ capsula.text }}</p>
+        <p class="capsule-author">scritta da {{ identityLabel(capsula.authorIdentity) }} · aperta il
+          {{ capsula.unlockDate }}</p>
+        @if (capsula.authorIdentity === ownIdentity()) {
+        <button type="button" class="btn" (click)="requestDelete(capsula.id)">🗑️ Elimina</button>
+        }
+      </article>
+      }
+    </div>
+  </section>
+  }
+
+  @if (capsule().length === 0 && !loadError()) {
+  <p class="page-message">Ancora nessuna capsula. Scrivi la prima qui sopra.</p>
+  }
+
+  <app-confirmation-dialog dialogId="delete-capsula" title="Eliminare questa capsula?"
+    description="L'azione non si può annullare." confirmLabel="Elimina" cancelLabel="Annulla"
+    [open]="deleteTargetId() !== null" (confirm)="confirmDelete()" (cancel)="cancelDelete()" />
+</app-shell>
