@@ -1,71 +1,274 @@
 /* Ricostruzione della pagina Omegle dove i due si sono conosciuti, sui valori reali estratti
-   dal sorgente archiviato (web.archive.org, snapshot del 28/07/2023: style.css e html) invece
-   che a memoria — colore di sfondo, gradiente dei bottoni, raggi, colori dei messaggi,
-   spaziature minime (l'originale usa margini di .5em ovunque, non un container centrato con
-   margini larghi). Header del sito nascosto del tutto per questa pagina
-   (AppShell [showHeader]="false"): è l'unica pagina che deve sembrare "un altro sito", resta
-   solo il "← Il Mondo Bianco" già fornito da app-back-link, nessun altro elemento di chrome
-   del sito. Il markup di <app-shell> (.place-shell, <main>) appartiene al SUO componente, non
-   a questo: l'incapsulamento CSS di Angular impedisce a qualunque regola scritta qui di
-   raggiungerlo. Un backdrop position:fixed, reso da QUESTO componente e quindi soggetto alle
-   sue regole, copre l'intero viewport senza dover duplicare markup condiviso. */
-.stranger-backdrop { position: fixed; inset: 0; z-index: -1; background: #fff7ee; }
-
-/* Pagina a piena altezza/larghezza: header fisso in cima, box che riempie tutto lo spazio
-   restante, barra di composizione ancorata in fondo — non un blocco centrato con margini
-   larghi ai lati. */
-.omegle-page {
-  display: flex; flex-direction: column; min-height: 100vh; width: 100%; color: #222;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+   dal sorgente archiviato (web.archive.org, snapshot del 28/07/2023: style.css e html).
+   Header del sito nascosto del tutto per questa pagina (AppShell [showHeader]="false"
+   [showBackLink]="false"): è l'unica pagina che deve sembrare "un altro sito", il ritorno al
+   Mondo Bianco è un piccolo "←" dentro l'header stesso, non il pannello condiviso del sito. Il
+   markup di <app-shell> (.place-shell, <main>) appartiene al SUO componente, non a questo:
+   l'incapsulamento CSS di Angular impedisce a qualunque regola scritta qui di raggiungerlo. Un
+   backdrop position:fixed, reso da QUESTO componente e quindi soggetto alle sue regole, copre
+   l'intero viewport senza dover duplicare markup condiviso. .place-shell (world-shell.css) ha
+   però anche un padding proprio molto generoso su tutti i lati (fino a 3rem ai lati, 7rem in
+   basso, irraggiungibile per lo stesso motivo) che lasciava margini enormi intorno alla
+   pagina: annullato con margini negativi calcolati sugli stessi valori, così l'header tocca
+   davvero il bordo della finestra come nell'originale. */
+.stranger-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #fff7ee;
 }
 
-.omegle-header { position: relative; display: flex; align-items: center; gap: .6em; flex-wrap: wrap; background: #fff; box-shadow: 0 .25em .75em #ccc; padding: .4em .5em; }
-.omegle-brand { flex-shrink: 0; line-height: 0; }
-.omegle-logo-img { height: 2.1rem; width: auto; display: block; }
-.omegle-tagline-img { height: 1.9rem; width: auto; display: block; }
+/* .place-shell non ha solo un padding, ma anche un tetto massimo di larghezza (76rem,
+   centrato con margin:auto) — sui monitor larghi è quello a dominare, i margini negativi sul
+   solo padding non bastavano a compensarlo. width:100vw + margini calcolati sul centro del
+   viewport (invece che sul genitore) è la tecnica "full-bleed" standard per uscire da un
+   contenitore centrato a larghezza fissa senza poterne toccare il CSS. */
+.omegle-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  color: #222;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  width: 100vw;
+  margin-top: calc(-1 * max(1rem, env(safe-area-inset-top)));
+  margin-bottom: calc(-1 * clamp(4rem, 8vw, 7rem));
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
 
-.omegle-social { margin: 0 0 0 auto; display: flex; align-items: center; gap: .4em; }
-.omegle-social-btn { display: block; height: 1.1rem; width: auto; }
-.omegle-social-lang { font-size: .75rem; color: #555; }
+.omegle-header {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: .6em;
+  flex-wrap: wrap;
+  background: #fff;
+  box-shadow: 0 .25em .75em #ccc;
+  padding: .65em .75em;
+}
 
-.omegle-online { margin: 0 0 0 1em; font-size: 1rem; color: #9cf; white-space: nowrap; }
-.omegle-online strong { font-size: 1.3rem; color: #6cb5ff; }
+.omegle-back {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .1em;
+  color: #333;
+  text-decoration: none;
+  padding: .2em .3em;
+}
 
-/* Box e barra sotto: margini di .5em su tutti i lati come nell'originale, non un container
-   centrato — riempiono la larghezza disponibile. Solo gli angoli esterni sono smussati (box:
-   alto; New/Send: il rispettivo angolo basso), dove i pezzi si toccano restano ad angolo vivo. */
-.omegle-box { flex: 1; margin: .5em .5em 0; padding: .5em .75em; border: 1px solid #ccc; border-radius: .5em .5em 0 0; border-bottom: none; background: #fff; box-shadow: inset 0 0 .5em #bbb; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; }
-.omegle-btn--new { align-self: flex-start; }
-.omegle-box-message { margin: 0 0 .5em; font-size: .95rem; color: #222; }
+.omegle-back:hover {
+  color: #000;
+}
+
+.omegle-back-arrow {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.omegle-back-dot {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.omegle-brand {
+  flex-shrink: 0;
+  line-height: 0;
+  margin-right: 5em;
+}
+
+.omegle-logo-img {
+  height: 2.4rem;
+  width: auto;
+  display: block;
+}
+
+.omegle-tagline-img {
+  height: 2.5rem;
+  width: auto;
+  display: block;
+}
+
+.omegle-header-right {
+  margin: 0 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: .25em;
+}
+
+.omegle-social {
+  display: flex;
+  align-items: center;
+  gap: .4em;
+}
+
+.omegle-social-btn {
+  display: block;
+  height: 1.1rem;
+  width: auto;
+}
+
+.omegle-online {
+  margin: 0;
+  font-size: 1rem;
+  color: #9cf;
+  white-space: nowrap;
+}
+
+.omegle-online strong {
+  font-size: 1.3rem;
+  color: #6cb5ff;
+}
+
+/* Box e barra sotto, con un piccolo distacco tra loro (.5em, come tutte le altre spaziature
+   dell'originale) — ma smussati solo sui 4 angoli ESTERNI dell'insieme box+barra, trattato
+   come un unico blocco visivo: alto del box, e i due angoli bassi esterni dei bottoni New/Send
+   nella barra. Il fondo del box resta ad angolo vivo. Niente ombre dentro il box: il CSS reale
+   della chat live (.logwrapper) non ne ha nessuna, l'inset-shadow usata nei giri precedenti
+   veniva presa per errore dal box statico della homepage (#intro), non da quello della chat
+   vera. */
+.omegle-box {
+  flex: 1;
+  min-height: 0;
+  margin: .5em .5em 0;
+  padding: .6em .8em;
+  border: 1px solid #ccc;
+  border-radius: .5em .5em 0 0;
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
 .omegle-btn {
-  font-family: inherit; font-size: 1rem; font-weight: 400; padding: .5em 1.2em;
-  border: 1px solid #ccc; border-radius: 0; background: #fff; color: #333; cursor: pointer; line-height: 1.2;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 400;
+  padding: .7em 1.5em;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  line-height: 1.2;
 }
-.omegle-btn:disabled { color: #aaa; cursor: default; }
-.omegle-btn small { display: block; font-size: .65rem; font-weight: 400; }
-.omegle-btn--esc { border-radius: 0 0 0 .5em; border-right: none; }
-.omegle-btn--send { border-radius: 0 0 .5em 0; border-left: none; }
+
+.omegle-btn:disabled {
+  color: #aaa;
+  cursor: default;
+}
+
+.omegle-btn small {
+  display: block;
+  font-size: .68rem;
+  font-weight: 400;
+}
+
+.omegle-btn--esc {
+  border-radius: 0 0 0 .5em;
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+.omegle-btn--send {
+  border-radius: 0 0 .5em 0;
+  padding-left: 2em;
+  padding-right: 2em;
+}
 
 .omegle-btn--new,
 .omegle-btn--esc,
 .omegle-btn--send.is-active {
   background: linear-gradient(to bottom, #80c0ff 0%, #017ffe 100%);
-  border-color: #ccc; color: #fff; font-weight: 700;
+  border-color: #ccc;
+  color: #fff;
+  font-weight: 700;
 }
-.omegle-btn--new { border-radius: .3em; }
 
-.omegle-log { flex: 1; align-self: stretch; display: flex; flex-direction: column; gap: .25em; overflow-y: auto; }
-.omegle-system-line { margin: 0; color: #555; font-size: .9em; font-weight: 700; }
+.omegle-btn--new {
+  align-self: flex-start;
+  border-radius: .3em;
+  font-size: 1.2rem;
+  padding: .7em 2.6em;
+}
 
-.omegle-line { margin: 0; line-height: 1.5; font-size: .95rem; word-break: break-word; }
-.omegle-line-who { font-weight: 700; color: red; }
-.omegle-line-who--you { color: blue; }
-.omegle-line-text { white-space: pre-wrap; color: #111; }
+.omegle-log {
+  flex: 1;
+  min-height: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: .25em;
+  overflow-y: auto;
+}
 
-.omegle-compose { display: flex; align-items: stretch; margin: 0 .5em .5em; }
-.omegle-input { flex: 1; font-family: inherit; font-size: 1rem; padding: .5em .6em; border: 1px solid #ccc; border-radius: 0; background: #fff; color: #111; resize: none; min-height: 3em; }
-.omegle-input:disabled { background: #f5f5f2; color: #999; }
-.omegle-input:focus { outline: none; position: relative; z-index: 1; border-color: #017ffe; }
+.omegle-system-line {
+  margin: 0 0 .6em;
+  color: #555;
+  font-size: .9em;
+  font-weight: 700;
+}
 
-.omegle-btn--send:disabled { color: #aaa; }
+.omegle-line {
+  margin: 0;
+  line-height: 1.5;
+  font-size: .95rem;
+  word-break: break-word;
+}
+
+.omegle-line-who {
+  font-weight: 700;
+  color: red;
+  margin-right: .35em;
+}
+
+.omegle-line-who--you {
+  color: blue;
+}
+
+.omegle-line-text {
+  white-space: pre-wrap;
+  color: #111;
+}
+
+.omegle-compose {
+  flex-shrink: 0;
+  display: flex;
+  align-items: stretch;
+  gap: .4em;
+  margin: .5em .5em .5em;
+}
+
+.omegle-input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 1.05rem;
+  padding: .6em .7em;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  background: #fff;
+  color: #111;
+  resize: none;
+  min-height: 4.4em;
+}
+
+.omegle-input:disabled {
+  background: #f5f5f2;
+  color: #999;
+}
+
+.omegle-input:focus {
+  outline: none;
+  position: relative;
+  z-index: 1;
+  border-color: #017ffe;
+}
+
+.omegle-btn--send:disabled {
+  color: #aaa;
+}

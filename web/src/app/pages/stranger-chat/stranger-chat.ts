@@ -1,5 +1,6 @@
 import { Component, ElementRef, Injector, OnInit, ViewChild, afterNextRender, computed, inject, runInInjectionContext, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService, UserIdentity } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
@@ -17,7 +18,7 @@ interface ChatMessage {
 @Component({
   selector: 'app-stranger-chat',
   standalone: true,
-  imports: [AppShell, FormsModule],
+  imports: [AppShell, FormsModule, RouterLink],
   styleUrls: ['../../../styles/pages/stranger-chat.css'],
   templateUrl: './stranger-chat.html'
 })

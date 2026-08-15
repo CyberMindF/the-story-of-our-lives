@@ -1,22 +1,27 @@
-<app-shell [showHeader]="false">
+<app-shell [showHeader]="false" [showBackLink]="false">
   <div class="stranger-backdrop" aria-hidden="true"></div>
   <div class="omegle-page">
     <header class="omegle-header">
+      <a class="omegle-back" routerLink="/" aria-label="Torna al Mondo Bianco">
+        <span class="omegle-back-dot" aria-hidden="true">⭕️</span>
+        <span class="omegle-back-arrow">←</span>
+      </a>
       <div class="omegle-brand">
         <img class="omegle-logo-img" src="assets/images/world/omegle-logo.svg" alt="Omegle" />
       </div>
       <img class="omegle-tagline-img" src="assets/images/world/omegle-tagline.png" alt="Talk to strangers!" />
-      <div class="omegle-social" aria-hidden="true">
-        <img class="omegle-social-btn" src="assets/images/world/omegle-fb.png" alt="Share on FB" />
-        <img class="omegle-social-btn" src="assets/images/world/omegle-tweet.png" alt="Tweet" />
-        <span class="omegle-social-lang">Select Language</span>
+      <div class="omegle-header-right">
+        <div class="omegle-social" aria-hidden="true">
+          <img class="omegle-social-btn" src="assets/images/world/omegle-fb.png" alt="Share on FB" />
+          <img class="omegle-social-btn" src="assets/images/world/omegle-tweet.png" alt="Tweet" />
+        </div>
+        <p class="omegle-online"><strong>2+</strong> online now</p>
       </div>
-      <p class="omegle-online"><strong>2+</strong> online now</p>
     </header>
 
     <section class="omegle-box" aria-label="Conversazione">
       @if (!entered()) {
-      <p class="omegle-box-message">ti va se ricominciamo tutto da capo?</p>
+      <p class="omegle-system-line">Click the button below and talk to strangers!</p>
       <button type="button" class="omegle-btn omegle-btn--new" (click)="enter()">New chat</button>
       }
 
