@@ -50,4 +50,17 @@
       }
     </section>
   }
+
+  <form class="profilo-form card" aria-label="Avvisa via email" (ngSubmit)="submitNotify()">
+    <h2>Avvisa via email</h2>
+    <p class="profilo-admin-note">Manda un'email per far sapere che c'è qualcosa di nuovo. Arriva solo se l'altra persona ha attivato le notifiche email.</p>
+    <label class="form-field">
+      <span>Messaggio (facoltativo)</span>
+      <textarea name="notifyMessage" rows="3" maxlength="500" [(ngModel)]="notifyMessage" placeholder="Ci sono novità sul Mondo Bianco."></textarea>
+    </label>
+    <div class="form-submit-row">
+      <button type="submit" class="btn btn-submit" [disabled]="notifyLoading()">Manda avviso</button>
+    </div>
+    <app-form-status [message]="notifyResultMessage()" [status]="notifyStatus()" />
+  </form>
 </app-shell>

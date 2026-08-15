@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService } from '../../core/auth.service';
+import { NotifyService } from '../../core/notify.service';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { SubmissionStatus } from '../../shared/form-submission/form-submission';
@@ -20,6 +21,7 @@ import { PasswordField } from '../../shared/password-field/password-field';
 })
 export class Profilo {
   protected readonly authService = inject(AuthService);
+  private readonly notifyService = inject(NotifyService);
 
   protected nickname = this.authService.currentUser()?.nickname ?? '';
   protected readonly nicknameLoading = signal(false);
@@ -32,6 +34,11 @@ export class Profilo {
   protected readonly passwordLoading = signal(false);
   protected readonly passwordStatus = signal<SubmissionStatus>('');
   protected readonly passwordMessage = signal('');
+
+  protected notifyMessage = '';
+  protected readonly notifyLoading = signal(false);
+  protected readonly notifyStatus = signal<SubmissionStatus>('');
+  protected readonly notifyResultMessage = signal('');
 
   protected async submitNickname(): Promise<void> {
     const nickname = this.nickname.trim();
@@ -102,6 +109,26 @@ export class Profilo {
       this.passwordMessage.set(error instanceof Error ? error.message : 'Impossibile cambiare la password.');
     } finally {
       this.passwordLoading.set(false);
+    }
+  }
+
+  protected async submitNotify(): Promise<void> {
+    this.notifyLoading.set(true);
+    this.notifyStatus.set('');
+    this.notifyResultMessage.set('');
+
+    try {
+      const sent = await this.notifyService.notifyUpdate(this.notifyMessage.trim() || undefined);
+      this.notifyStatus.set('success');
+      this.notifyResultMessage.set(
+        sent ? 'Avviso inviato.' : "Nessuna email inviata: l'altra persona non ha attivato le notifiche."
+      );
+      this.notifyMessage = '';
+    } catch {
+      this.notifyStatus.set('error');
+      this.notifyResultMessage.set("Non è stato possibile inviare l'avviso.");
+    } finally {
+      this.notifyLoading.set(false);
     }
   }
 
