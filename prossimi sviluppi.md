@@ -19,7 +19,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   in `checkStreak()` agganciata a `GET /api/carte-bustine` — dettagli completi in
   `e4-carte-collezionabili.md`. Il resto della feature è concluso e rifinito, vedi voce completa
   più sotto nel Fatto.
-- #e14 (idea, non ancora concordata nei dettagli) — "Il Ricordo di Oggi": una piccola card che pesca un ricordo a caso dalla Bacheca o dalla Mappa. Proposta il 14/08/2026, Rory ha detto che gli piace ma **al momento non ci sono abbastanza ricordi scritti** perché valga la pena farla — da rivalutare quando la Bacheca/Mappa avranno più contenuto.
 - #e16 (idea, ripescata) — Playlist Spotify condivisa nelle Cuffiette: era già stata proposta come #e1 e scartata il 13/08/2026 perché non chiaro il senso. Rory ha chiarito il 14/08/2026: non un editoriale scritto, ma un vero embed di una playlist Spotify che lui cura nel tempo, aggiungendo canzoni man mano — più semplice da fare di una pagina editoriale (nessun CMS, nessun testo da scrivere, solo un iframe verso la playlist).
 - #e6 - Test generalee fix finali mobile
 - [x] #f5 — Infrastruttura email (Resend) implementata il 15/08/2026, dominio `il-mondo-bianco.com`
@@ -62,6 +61,28 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   versione definitiva di Rory (ingredienti e procedimento) e ricostruiti ingredienti/procedimento
   dei biscotti di pasta frolla. Modifiche fatte in locale e sincronizzate in produzione con la
   migrazione `0095_sync_contenuti_locale_15082026.sql`.
+- [x] #e14 — **"Ecco qualcosa che è successo oggi"** (banner in home, Mondo Bianco). Ridefinita
+  il 15/08/2026 rispetto all'idea originale (pesca a caso da Bacheca/Mappa, bloccata per
+  mancanza di date precise): ora pesca eventi Calendario, Lettere e giorni/blocchi Bacheca la
+  cui data (giorno+mese, ignorando l'anno) coincide con oggi — un vero "on this day", fisso
+  per tutto il giorno, nessuno stato server, filtro client-side su dati già esposti dagli
+  endpoint esistenti (`/api/calendar-events`, `/api/letters`, `/api/bacheca-days`). Se non c'è
+  nessuna corrispondenza il banner non appare (deciso con Rory). Per includere la Bacheca
+  (che non aveva alcun campo data) aggiunta `memory_date` opzionale sia a livello di giorno
+  sia di singolo blocco (`migrations/0096_add_bacheca_memory_date.sql`), con editor esteso di
+  conseguenza; backfill delle date reali fornite da Rory per i giorni esistenti
+  (`migrations/0097_backfill_bacheca_memory_dates.sql`) — "Due fotine bonus", "Screenshots" e
+  le collezioni "Altre cose"/"Giochi"/"Fuochetto" restano senza data su sua richiesta esplicita
+  ("il resto lo puoi ignorare"). Se un giorno ha più blocchi datati sulla stessa data (es. 30
+  foto scattate lo stesso giorno), il banner mostra **una sola card** per quel giorno con una
+  foto scelta a caso — non le mostra tutte, per non affollare il banner (decisione di Rory dopo
+  aver visto la prima versione, che ne creava una per blocco). Card con miniatura per i blocchi
+  foto. Deep-link (`?evento=`, `?lettera=`, `?giorno=&blocco=`) per aprire il dettaglio dalla
+  card: durante il test è emerso un bug reale nello scroll verso un blocco lontano nella pagina
+  Bacheca (le foto `loading="lazy"` senza dimensioni riservate spostavano continuamente il
+  layout mentre la pagina scrollava, portando il target molto lontano dal punto giusto) — corretto
+  rendendo lo scroll auto-correggente (ripete finché la posizione non si stabilizza, max 4s).
+  Rimossa nello stesso giro anche `CleanModeService`, rimasta senza alcun utilizzo nel codice.
 - [x] #e15 — **La Capsula del Tempo** (`/capsula-del-tempo`, card e voce nell'Atlante del
   Mappamondo incluse, gruppo "ricordi"). Idea rimasta aperta dal 14/08/2026 in attesa di essere
   progettata meglio; definita e implementata il 15/08/2026. A differenza del Barattolo dei
