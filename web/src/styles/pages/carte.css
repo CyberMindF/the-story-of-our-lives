@@ -43,29 +43,28 @@
 .carte-bustine-strip {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: .8rem;
   padding-bottom: 1rem;
   margin-bottom: .4rem;
   border-bottom: 1px solid var(--panel-border-color);
 }
+/* Blocco di sinistra (titolo + bottone "Apri una bustina"): un gruppo unico, cosi lo streak a
+   destra (.carte-streak-badge) resta staccato invece di infilarsi in mezzo quando la riga va
+   a capo su schermi stretti. */
+.carte-bustine-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .8rem;
+}
 .carte-bustine-count { margin: 0; font-size: 1.05rem; }
 
+/* Stesso .btn di tutti gli altri bottoni della pagina (dimensioni/pillola coerenti), qui solo
+   sfondo trasparente per distinguerlo come indicatore/toggle piuttosto che un'azione primaria. */
 .carte-streak-badge {
-  display: inline-flex;
-  align-items: center;
-  align-self: start;
-  justify-self: start;
-  gap: .3rem;
-  margin: 0;
-  padding: .3rem .7rem;
-  border: 1px solid var(--panel-border-color);
-  border-radius: 999px;
   background: transparent;
-  color: var(--text-color);
-  font-size: .9rem;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 .carte-streak-modal-card { display: flex; flex-direction: column; align-items: center; gap: .25rem; }
