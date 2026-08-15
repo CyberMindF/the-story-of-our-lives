@@ -6,11 +6,16 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
-- #e4 (continua) — resta aperto solo il Blocco 5 del piano in `e4-carte-collezionabili.md`
-  (notifiche email dei trade): volutamente non fatto, dipende da #f5 che non esiste ancora nel
-  sito, si aggancia quando/se #f5 verrà implementato. Resta aperta anche l'idea della streak
-  "giorni di fila" proposta il 14/08/2026 (mai implementata, nessuna traccia nel codice). Il
-  resto della feature è concluso e rifinito, vedi voce completa più sotto nel Fatto.
+- #e4 (continua) — il Blocco 5 del piano in `e4-carte-collezionabili.md` (notifiche email dei
+  trade) è **implementato il 15/08/2026** insieme a #f5, agganciato a
+  proponi/accetta/rifiuta/controproponi in `functions/api/carte-trade/` (vedi voce #f5 più sotto
+  per i dettagli). **Non ancora verificabile end-to-end**: c'è un solo account registrato
+  (Rory), e `notifyOtherIdentity` cerca sempre un secondo utente diverso dall'attore — finché
+  Desy non si registra (e attiva `notify_email_updates`) non parte nessuna email reale di
+  trade, anche se il codice è pronto e testato nella parte di invio (vedi test diretto in #f5).
+  Resta aperta anche l'idea della streak "giorni di fila" proposta il 14/08/2026 (mai
+  implementata, nessuna traccia nel codice). Il resto della feature è concluso e rifinito, vedi
+  voce completa più sotto nel Fatto.
 - #e14 (idea, non ancora concordata nei dettagli) — "Il Ricordo di Oggi": una piccola card che pesca un ricordo a caso dalla Bacheca o dalla Mappa. Proposta il 14/08/2026, Rory ha detto che gli piace ma **al momento non ci sono abbastanza ricordi scritti** perché valga la pena farla — da rivalutare quando la Bacheca/Mappa avranno più contenuto.
 - #e16 (idea, ripescata) — Playlist Spotify condivisa nelle Cuffiette: era già stata proposta come #e1 e scartata il 13/08/2026 perché non chiaro il senso. Rory ha chiarito il 14/08/2026: non un editoriale scritto, ma un vero embed di una playlist Spotify che lui cura nel tempo, aggiungendo canzoni man mano — più semplice da fare di una pagina editoriale (nessun CMS, nessun testo da scrivere, solo un iframe verso la playlist).
 - #e6 - Test generalee fix finali mobile
@@ -18,14 +23,20 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   verificato su Resend, API key salvata come secret Cloudflare (`RESEND_API_KEY`, mai nel repo).
   Libreria condivisa `functions/api/_shared/email.js` (`sendEmail`, `notifyOtherIdentity`, quest'ultima
   rispetta sempre `users.notify_email_updates`). Due canali attivi per ora: **notifica manuale**
-  (bottone nella userbar condivisa, `web/src/app/layout/world-user-bar/`, chiama
-  `functions/api/notify-update.js`) e **notifiche automatiche di scambio carte** (#e4, Blocco 5:
-  proponi/accetta/rifiuta/controproponi in `functions/api/carte-trade/`). Deciso con Rory di non
-  agganciare automaticamente tutte le altre 20 sezioni con contenuto pubblicabile (Ricettario,
-  Lettere, Bacheca, ecc.): troppo rumoroso da fare a tappeto ora; si aggiungeranno singolarmente
-  in futuro se richiesto, o si valuterà una newsletter settimanale riassuntiva invece di email
-  puntuali. Invio reale testato end-to-end il 15/08/2026 (email di prova consegnata con successo
-  a rory982011@gmail.com), endpoint di test temporaneo rimosso subito dopo.
+  (inizialmente un bottone nella userbar condivisa, spostato lo stesso giorno nella pagina
+  **Profilo** — sotto "Strumenti riservati" — con una casella di testo per personalizzare il
+  messaggio prima di inviarlo, `web/src/app/pages/profilo/`, chiama `functions/api/notify-update.js`)
+  e **notifiche automatiche di scambio carte** (#e4, Blocco 5: proponi/accetta/rifiuta/controproponi
+  in `functions/api/carte-trade/`). Deciso con Rory di non agganciare automaticamente tutte le
+  altre 20 sezioni con contenuto pubblicabile (Ricettario, Lettere, Bacheca, ecc.): troppo
+  rumoroso da fare a tappeto ora; si aggiungeranno singolarmente in futuro se richiesto, o si
+  valuterà una newsletter settimanale riassuntiva invece di email puntuali. Invio reale testato
+  end-to-end il 15/08/2026 (email di prova consegnata con successo a rory982011@gmail.com),
+  endpoint di test temporaneo rimosso subito dopo. Controllando la nuova card nel Profilo è
+  emerso un bug preesistente e indipendente: `--input-bg` (sfondo dei campi di testo) era
+  definito solo nel tema scuro di default e mai ridefinito negli altri 7 temi in `themes.css` —
+  con qualunque tema chiaro attivo tutti i campi di testo del sito restavano scuri. Risolto
+  ridefinendo `--input-bg` in ciascun tema, verificato con screenshot Playwright prima/dopo.
 - #f6 - Animazione di apertura/chiusura del biglietto nel Barattolo dei Pensieri (#e12): voluta come un vero foglietto piegato in 4 (due pieghe, orizzontale e verticale) che si spiega — tentativi fatti e scartati: scale()/clip-path (sembrava una copia in miniatura, non una piega), 4 pannelli reali con cerniere 3D rotateX/rotateY (geometricamente corretto ma troppo macchinoso/fragile da rifinire). Per ora il biglietto compare e scompare di scatto, senza animazione.
 - #e18 (pulizia interna, non urgente) — Duplicazione trovata il 14/08/2026 durante un'audit richiesta da Rory: (a) il metodo "sposta su/giù" è identico in 9 pagine (Bacheca, Barattolo dei Pensieri, Linguaggio Segreto, Cuffiette, Mappamondo, Mappa, Storie, Cruciverba, Ricettario) — stesso corpo di 3 righe, cambia solo endpoint e nome del metodo di reload; estrarlo in un helper condiviso è lavoro piccolo (~1h, basso rischio). (b) il pattern completo "Sposta…" (spostare un elemento in un altro contenitore/categoria: stessi signal `startMove*`/`cancelMove*`/`confirmMove*`, stesso blocco HTML con due select e bottoni Annulla/Sposta, stesso cluster di bottoni ⬆️⬇️↔️✏️🗑️) è ripetuto in 3 pagine (Bacheca, Barattolo dei Pensieri, Linguaggio Segreto) con nomi di campo diversi invece di essere un componente condiviso — lavoro medio (~mezza giornata: progettazione componente generico + migrazione delle 3 pagine + verifica Playwright). Nessuna delle due è urgente: non è un bug, non cambia nulla nell'uso del sito, solo manutenzione interna coerente con la regola "zero duplicazione" (CLAUDE.md). Rimandato per ora su richiesta di Rory (poco tempo disponibile).
 ---

@@ -171,10 +171,12 @@ identificativo utente passato dal client.
 
 ## Piano di lavoro: dipendenze e parallelizzabilità
 
-**Stato al 14/08/2026**: Blocchi 1-4 fatti e verificati end-to-end (schema DB, bustine con
-accumulo/drop rate, album con vista comparativa, editor admin set/design, scambi con
-proponi/accetta/rifiuta e badge). Il gioco è usabile per intero. **Blocco 5 (email) resta
-volutamente non fatto**, in attesa di #f5 — vedi sotto. Semplificazioni introdotte durante
+**Stato al 15/08/2026**: Blocchi 1-5 fatti (schema DB, bustine con accumulo/drop rate, album con
+vista comparativa, editor admin set/design, scambi con proponi/accetta/rifiuta e badge, notifiche
+email dei trade). Il gioco è usabile per intero. **Blocco 5 non ancora verificabile end-to-end**:
+il codice è pronto e agganciato, ma con un solo account registrato (Rory) `notifyOtherIdentity`
+non trova mai un destinatario — serve l'account di Desy (con `notify_email_updates` attivo) per
+vedere un'email di trade reale arrivare. Semplificazioni introdotte durante
 l'implementazione, non discusse prima con Rory ma coerenti col resto del piano: niente
 riordino (move) per set e design nell'editor admin (si aggiungono in coda, aggiungibile dopo se
 serve); un'unica immagine per design condivisa dalle 5 finiture (coerente col punto "non ancora
@@ -237,12 +239,14 @@ parallelizzabili (🔀) nonostante dipendano tutti dal Blocco 1.
 - Verifica end-to-end con Playwright su account di prova (pattern standard del progetto: sempre
   ripulito da D1/R2 locali dopo il test)
 
-### Blocco 5 — opzionale, indipendente da tutto il resto, da agganciare quando esiste #f5 — ⬜ non fatto, in attesa di #f5
+### Blocco 5 — opzionale, indipendente da tutto il resto — ✅ implementato il 15/08/2026, non ancora verificato con un secondo account reale
 
-- **Notifiche email di trade** ⛓️ infrastruttura email generica (che non esiste ancora — è
-  l'oggetto di #f5, non di #e4) + endpoint scambi (Blocco 2) + account Resend verificato 🙋. Non
-  è un prerequisito per lanciare il gioco: si aggiunge a #e4 già funzionante, in un momento
-  qualsiasi, quando #f5 viene affrontato da questa o da un'altra sessione.
+- **Notifiche email di trade**: agganciate a proponi/accetta/rifiuta/controproponi in
+  `functions/api/carte-trade/`, usa `notifyOtherIdentity` da `functions/api/_shared/email.js`
+  (vedi #f5 in `prossimi sviluppi.md` per l'infrastruttura Resend). Testato l'invio reale in
+  generale (email di prova consegnata a rory982011@gmail.com), ma non lo scenario specifico di
+  un trade — serve l'account di Desy registrato e con `notify_email_updates` attivo per vedere
+  una di queste email arrivare davvero.
 
 ## Lavori che solo Rory può fare (riepilogo)
 
