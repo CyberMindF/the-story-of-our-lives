@@ -28,6 +28,20 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-6 6c0 2.5 1.4 3.8 2.2 4.6.5.5.8 1.1.8 1.4h6c0-.3.3-.9.8-1.4.8-.8 2.2-2.1 2.2-4.6a6 6 0 0 0-6-6Z" /></svg>
     </a>
   }
+  <button
+    class="notify-update-button"
+    type="button"
+    aria-label="Avvisa via email di un aggiornamento"
+    [title]="notifySent() ? 'Avviso inviato' : 'Avvisa via email'"
+    [disabled]="notifying()"
+    (click)="onNotifyClick()"
+  >
+    @if (notifySent()) {
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 7" /></svg>
+    } @else {
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" fill="none" /><path d="M4 6l8 7 8-7M4 6v12h16V6" /></svg>
+    }
+  </button>
   <button id="logout-button" class="logout-button" type="button" aria-label="Esci dall'account" title="Esci" [disabled]="loggingOut()" (click)="onLogoutClick()">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9" /></svg>
   </button>

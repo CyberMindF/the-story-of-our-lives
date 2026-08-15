@@ -2,6 +2,7 @@ import { Component, Input, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { NavigationService } from '../../core/navigation.service';
+import { NotifyService } from '../../core/notify.service';
 
 @Component({
   selector: 'app-world-user-bar',
@@ -17,11 +18,26 @@ export class WorldUserBar {
 
   private readonly navigationService = inject(NavigationService);
   private readonly router = inject(Router);
+  private readonly notifyService = inject(NotifyService);
 
   protected readonly loggingOut = signal(false);
   protected readonly changingAdminMode = signal(false);
+  protected readonly notifying = signal(false);
+  protected readonly notifySent = signal(false);
 
   protected readonly authService = inject(AuthService);
+
+  protected async onNotifyClick(): Promise<void> {
+    if (this.notifying()) return;
+    this.notifying.set(true);
+    this.notifySent.set(false);
+    const sent = await this.notifyService.notifyUpdate();
+    this.notifying.set(false);
+    if (sent) {
+      this.notifySent.set(true);
+      setTimeout(() => this.notifySent.set(false), 3000);
+    }
+  }
 
   protected userName(): string | null {
     return this.authService.currentUser()?.nickname ?? null;

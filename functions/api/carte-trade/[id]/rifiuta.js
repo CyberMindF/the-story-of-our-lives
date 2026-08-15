@@ -1,5 +1,6 @@
 import { getAuthenticatedSession, json } from "../../auth/_shared.js";
 import { recordEvent } from "../../_shared/events.js";
+import { notifyOtherIdentity } from "../../_shared/email.js";
 import { toTradeView } from "../_shared.js";
 
 // Solo il destinatario può rifiutare una proposta "proposto". Nessuna carta si muove.
@@ -31,6 +32,10 @@ export async function onRequestPost(context) {
       section: "carte",
       eventType: "carte_trade_rifiutato",
       metadata: { tradeId }
+    }));
+    context.waitUntil(notifyOtherIdentity(env, session.user.id, {
+      subject: `${session.user.nickname} ha rifiutato il tuo scambio di carte`,
+      html: `<p>${session.user.nickname} ha rifiutato il tuo scambio nel gioco di carte.</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`
     }));
 
     const updated = await env.DB.prepare("SELECT * FROM carte_trade WHERE id = ?").bind(tradeId).first();

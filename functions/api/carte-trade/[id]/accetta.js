@@ -1,5 +1,6 @@
 import { getAuthenticatedSession, json } from "../../auth/_shared.js";
 import { recordEvent } from "../../_shared/events.js";
+import { notifyOtherIdentity } from "../../_shared/email.js";
 import { findInsufficientItem, toTradeView, transferStatements } from "../_shared.js";
 
 // Solo il destinatario può accettare una proposta "proposto". Sposta davvero le carte tra i
@@ -55,6 +56,10 @@ export async function onRequestPost(context) {
       section: "carte",
       eventType: "carte_trade_accettato",
       metadata: { tradeId }
+    }));
+    context.waitUntil(notifyOtherIdentity(env, session.user.id, {
+      subject: `${session.user.nickname} ha accettato il tuo scambio di carte`,
+      html: `<p>${session.user.nickname} ha accettato il tuo scambio nel gioco di carte.</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`
     }));
 
     return json(await toTradeView(env, updated));

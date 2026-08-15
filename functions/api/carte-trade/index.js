@@ -1,5 +1,6 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
+import { notifyOtherIdentity } from "../_shared/email.js";
 import {
   definizioniExist,
   findInsufficientItem,
@@ -98,6 +99,10 @@ export async function onRequestPost(context) {
       section: "carte",
       eventType: "carte_trade_proposto",
       metadata: { tradeId: trade.id }
+    }));
+    context.waitUntil(notifyOtherIdentity(env, session.user.id, {
+      subject: `${session.user.nickname} ti ha proposto uno scambio di carte`,
+      html: `<p>${session.user.nickname} ti ha proposto uno scambio nel gioco di carte.</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`
     }));
 
     return json(await toTradeView(env, trade), 201);
