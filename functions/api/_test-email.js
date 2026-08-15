@@ -13,5 +13,5 @@ export async function onRequestPost(context) {
     html: "<p>Questa è un'email di prova per verificare la configurazione Resend.</p>"
   });
 
-  return json(result);
+  return json({ ...result, envKeys: Object.keys(env) });
 }
