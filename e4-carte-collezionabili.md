@@ -64,6 +64,41 @@ stesso design e rifinitura").
   Il design specifico pescato dentro una finitura è scelto a caso uniformemente tra tutti i
   design disponibili in tutti i set attivi (salvo decisione futura di pesare per set).
 
+- **Lucido plastica sulle carte standard** (aggiunto il 15/08/2026): prima solo le gemme e i
+  metalli avevano un effetto di superficie (mosaico olografico / foil metallico), le carte
+  `flat` mostravano l'immagine nuda. Effetto finale: `.carta-tilt-gloss`
+  (`web/src/app/shared/carta-tilt/`), un div assoluto sibling della foto — stesse posizioni di
+  banda di `.metal-surface` (metallic-foil.css, stop per stop) e stesso movimento
+  (`background-position` legato a `--mx`/`--my`, già calcolate da `CartaTilt.onPointerMove`,
+  nessun tracking duplicato), ma con `rgba()` invece di `rgb()` opaco: shadow/dark/mid/main ad
+  alpha 0, solo la fascia light→white→highlight visibile, `mix-blend-mode: screen`.
+
+  Percorso per arrivarci, quattro versioni scartate/corrette in sequenza (tutte su richiesta
+  esplicita di Rory, stesso pomeriggio): (1) `radial-gradient` centrato sul mouse — bocciata
+  ("quel maledettissimo puntino di luce"); (2) `repeating-linear-gradient` dentro
+  `.carta-tilt-glass`, condiviso per errore anche con le gemme (stesso elemento HTML riusato in
+  entrambi i rami) — bocciata perché alterava pure il riflesso delle gemme, mai voluto; (3)
+  tentativo di riusare **il componente `MetallicFoil`** vero e proprio (preset grigio +
+  `@Input() overlay` con `mix-blend-mode: screen` sull'host) per zero duplicazione — **non
+  funziona**: `:host` di `MetallicFoil` ha `isolation: isolate` per isolare i suoi blend interni
+  (metal-brushed/metal-grain), e un `mix-blend-mode` su un host isolato non blenda con elementi
+  FUORI dal componente, nemmeno togliendo `isolation` via CSS (verificato leggendo i pixel
+  renderizzati: restava opaco). Fix scartato, `MetallicFoil` riportato con `git checkout` alla
+  versione originale, invariata. (4) versione finale: `.carta-tilt-gloss` come div semplice
+  (sibling diretto di `.carta-tilt-image`, stesso stacking context — blend confermato
+  funzionante lì), stesse posizioni di banda del metallo ma `rgba()` invece di blend-su-host per
+  la trasparenza. Le gemme usano ancora il loro `.carta-tilt-glass` originale (radial + linear),
+  mai toccato da nessuna di queste versioni.
+
+  **Bug trovato dopo, corretto lo stesso giorno**: `onPointerLeave()` in `carta-tilt.ts`
+  resettava solo `--rx`/`--ry` (l'inclinazione 3D) ma non `--mx`/`--my`, da cui dipendono sia
+  `.carta-tilt-gloss` (standard) sia `.carta-tilt-glass` (gemme) — la striscia di luce restava
+  "congelata" all'ultima posizione del mouse invece di tornare al centro di riposo quando il
+  puntatore usciva dalla carta (segnalato da Rory: "quando la carta perde il focus la riga di
+  illuminazione non torna al suo posto"). Fix: `onPointerLeave` ora resetta anche `--mx`/`--my`
+  a `REST_LIGHT` (la stessa costante già usata per il riposo del mosaico delle gemme) — un solo
+  punto corregge entrambi gli effetti, mai state due variabili separate.
+
 - **Apertura bustina**: nessuna animazione elaborata alla prima versione. Reveal semplice delle
   5 carte (flip o fade in sequenza), coerente con l'esperienza già fatta su #f6 (Barattolo dei
   Pensieri) dove tentativi di animazioni complesse (scale/clip-path, poi pannelli 3D con
@@ -73,6 +108,52 @@ stesso design e rifinitura").
   estrazione/assegnazione carte — separare nettamente "logica di pesca" (server, già
   deterministica quando la bustina viene aperta) da "presentazione" (componente client,
   sostituibile).
+
+## Streak "giorni di fila"
+
+Idea proposta il 14/08/2026, dettagliata e implementata il 15/08/2026, indipendente dal Blocco 5
+(notifiche email trade).
+
+- **"Giorno"** = una visita alla pagina Carte in una data di calendario (UTC) diversa
+  dall'ultima registrata, non tempo passivo — a differenza delle bustine passive sopra. Basta
+  aprire la pagina, non serve aprire una bustina. Saltare un giorno intero azzera la streak a 1
+  alla visita successiva.
+- **Premio, versione finale** (rivista due volte lo stesso pomeriggio su richiesta di Rory):
+  **ogni** giorno di streak dà bustine bonus, non solo alcune soglie — la primissima versione
+  premiava solo 3/7/14/30 giorni (zero gli altri), scartata perché "ogni giorno si prendono le
+  bustine, ma più si va avanti più bustine si prendono man mano". Formula:
+  `streakDayBonus(day) = floor((day - 1) / 3) + 1` — l'importo cresce di 1 ogni 3 giorni, senza
+  tetto (giorni 1-3 → +1, 4-6 → +2, 7-9 → +3, ...). Stessa funzione duplicata intenzionalmente
+  in due punti con la stessa firma per restare sincronizzata a vista: `streakDayBonus()` in
+  `functions/api/carte-bustine/_shared.js` (fonte di verità, decide il bonus vero) e
+  `streakDayBonus()` in `web/src/app/pages/carte/carte.ts` (serve solo a disegnare le 30
+  caselle del calendario, il bonus reale arriva sempre dalla risposta del server).
+
+- Tabella dedicata `carte_streak` (owner_identity, streak_corrente, streak_migliore,
+  ultimo_giorno, ultima_soglia_raggiunta), migrazione `0098_add_carte_streak.sql` — non
+  sovraccarica `sessions.last_seen_at`, che è generico e aggiornato solo su refresh esplicito
+  del token, non granulare a livello di giorno.
+- Logica in `checkStreak()` (`functions/api/carte-bustine/_shared.js`), agganciata all'endpoint
+  esistente `GET /api/carte-bustine` (chiamato a ogni `ngOnInit` della pagina Carte) invece di
+  un endpoint dedicato — stesso principio di calcolo pigro di `accrueBustine`, nessun cron.
+  Le bustine bonus di soglia si sommano al saldo restituito nella stessa risposta.
+- UI, versione finale dopo diversi giri di correzione con Rory il 15/08/2026: un badge
+  compatto "🔥 N" **visibile fin dal giorno 1** (la prima versione lo nascondeva sotto i 2
+  giorni — "non vedo nessuna streak"), posizionato **sopra** la `carte-bustine-strip` (non più
+  incastrato tra il contatore bustine e il bottone "Apri una bustina" — "non dovrebbe stare
+  tra il numero di bustine e il bottone"), cliccabile per riaprire il modale in ogni momento
+  (tolto il bottone ℹ️ separato di una versione intermedia, ridondante col badge stesso).
+
+  Il modale si apre anche in automatico alla **prima visita della giornata**
+  (`streakPrimaVisitaOggi` dalla risposta di `GET /api/carte-bustine`, `true` solo alla prima
+  chiamata del giorno) e mostra un **calendario premi di 30 caselle** in stile "login
+  giornaliero" dei giochi mobile — non 4-5 pallini con testo a fianco (versione scartata,
+  troppo testosa: "troppe spiegazioni in quella riga"). Ogni casella è il numero del giorno,
+  tranne le soglie bonus che mostrano 🎁; le caselle fino alla streak corrente sono evidenziate,
+  quella del giorno corrente ha un contorno acceso. Il modale usa `card--dialog` (stesso
+  pattern di `ConfirmationDialog`) per avere uno sfondo pieno — la primissima versione usava
+  solo `.modal-card` senza combinarlo con una classe `card`, risultando in un riquadro
+  trasparente con testo che galleggiava sopra la pagina sfocata.
 
 ## Scambi (trade)
 

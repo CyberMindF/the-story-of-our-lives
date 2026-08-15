@@ -39,6 +39,67 @@ export async function accrueBustine(env, ownerIdentity) {
   return { ownerIdentity, quantitaDisponibile, minutiResidui: remainingMinutes };
 }
 
+// Streak "giorni di fila" (#e4, dettagliata il 15/08/2026, rivista lo stesso giorno): premia
+// OGNI visita alla pagina Carte in giorni di calendario consecutivi (UTC), non solo alcune
+// soglie — versione precedente (bonus solo a 1/3/7/14/30 giorni, zero gli altri) sostituita su
+// richiesta di Rory ("ogni giorno si prendono le bustine, ma più si va avanti più bustine si
+// prendono"). L'importo cresce di 1 ogni 3 giorni: 1-3→+1, 4-6→+2, 7-9→+3, ecc, senza tetto —
+// "man mano" implica crescita continua, non un plateau. "Giorno" = una visita in una data di
+// calendario diversa dall'ultima registrata, non tempo passivo (a differenza delle bustine
+// passive sopra). Il primo controllo della giornata (primaVisitaOggi) fa comparire un modale
+// di riepilogo in pagina.
+export function streakDayBonus(streakDay) {
+  return Math.floor((streakDay - 1) / 3) + 1;
+}
+
+function todayUtc(now) {
+  return now.toISOString().slice(0, 10);
+}
+
+function daysBetween(fromIso, toIso) {
+  const from = new Date(`${fromIso}T00:00:00Z`);
+  const to = new Date(`${toIso}T00:00:00Z`);
+  return Math.round((to.getTime() - from.getTime()) / 86400000);
+}
+
+export async function checkStreak(env, ownerIdentity) {
+  const row = await env.DB
+    .prepare("SELECT streak_corrente, streak_migliore, ultimo_giorno FROM carte_streak WHERE owner_identity = ?")
+    .bind(ownerIdentity)
+    .first();
+
+  const now = new Date();
+  const today = todayUtc(now);
+  const iso = now.toISOString();
+
+  if (row && row.ultimo_giorno === today) {
+    return { streakCorrente: row.streak_corrente, streakMigliore: row.streak_migliore, bustineBonus: 0, primaVisitaOggi: false };
+  }
+
+  // !row (primissima visita in assoluto) e streak riazzerata (gap di più di 1 giorno) passano
+  // dallo stesso ramo: entrambe ripartono da 1.
+  const gap = row?.ultimo_giorno ? daysBetween(row.ultimo_giorno, today) : null;
+  const streakCorrente = gap === 1 ? row.streak_corrente + 1 : 1;
+  const streakMigliore = Math.max(row?.streak_migliore ?? 0, streakCorrente);
+  const bustineBonus = streakDayBonus(streakCorrente);
+
+  const statements = [
+    row
+      ? env.DB
+          .prepare("UPDATE carte_streak SET streak_corrente = ?, streak_migliore = ?, ultimo_giorno = ?, updated_at = ? WHERE owner_identity = ?")
+          .bind(streakCorrente, streakMigliore, today, iso, ownerIdentity)
+      : env.DB
+          .prepare("INSERT INTO carte_streak (owner_identity, streak_corrente, streak_migliore, ultimo_giorno, updated_at) VALUES (?, ?, ?, ?, ?)")
+          .bind(ownerIdentity, streakCorrente, streakMigliore, today, iso),
+    env.DB
+      .prepare("UPDATE carte_bustine SET quantita_disponibile = quantita_disponibile + ?, updated_at = ? WHERE owner_identity = ?")
+      .bind(bustineBonus, iso, ownerIdentity)
+  ];
+  await env.DB.batch(statements);
+
+  return { streakCorrente, streakMigliore, bustineBonus, primaVisitaOggi: true };
+}
+
 // Piramide ripida (scelta esplicita di Rory tra le opzioni proposte), estesa con argento
 // (metallo, subito sotto l'oro) e zaffiro (gemma, subito sopra il diamante) quando le due
 // finiture sono state aggiunte. Pesi di argento/zaffiro scelti di default, non discussi

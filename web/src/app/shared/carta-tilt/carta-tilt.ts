@@ -165,6 +165,11 @@ export class CartaTilt implements AfterViewChecked, OnDestroy {
       const frame = this.frameRef.nativeElement;
       frame.style.setProperty('--rx', '0deg');
       frame.style.setProperty('--ry', '0deg');
+      // --mx/--my pilotano anche .carta-tilt-gloss (lucido plastica, background-position):
+      // senza questo reset restavano ferme all'ultima posizione del mouse invece di tornare al
+      // centro, la striscia di luce restava "bloccata" invece di rientrare (segnalato da Rory).
+      frame.style.setProperty('--mx', `${CartaTilt.REST_LIGHT[0] * 100}%`);
+      frame.style.setProperty('--my', `${CartaTilt.REST_LIGHT[1] * 100}%`);
       frame.classList.remove('is-active');
 
       if (this.isGemma) this.renderFoil(...CartaTilt.REST_LIGHT);

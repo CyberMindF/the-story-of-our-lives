@@ -23,9 +23,14 @@
 
   @if (tab() === 'album') {
     <section class="carte-album-panel">
+      @if (streakCorrente() > 0) {
+        <button type="button" class="carte-streak-badge" (click)="apriStreakModal()">
+          🔥 {{ streakCorrente() }}
+        </button>
+      }
       <div class="carte-bustine-strip">
         <p class="carte-bustine-count">
-          Bustine disponibili: <strong>{{ bustineDisponibili() }}</strong>
+          <span aria-hidden="true">🧧</span> Bustine disponibili: <strong>{{ bustineDisponibili() }}</strong>
         </p>
         @if (bustineLoadError()) {
           <p class="carte-error">Non è stato possibile leggere le bustine disponibili.</p>
@@ -37,7 +42,7 @@
           [disabled]="opening() || bustineDisponibili() < 1"
           (click)="apriBustina()"
         >
-          {{ opening() ? 'Apertura…' : 'Apri una bustina' }}
+          <span aria-hidden="true">🧧</span> {{ opening() ? 'Apertura…' : 'Apri una bustina' }}
         </button>
         @if (openError()) {
           <p class="carte-error">{{ openError() }}</p>
@@ -265,9 +270,9 @@
           {{ cartaInEvidenza() ? 'Avanti →' : 'Chiudi' }}
         </button>
         @if (cartaInEvidenza()) {
-          <button type="button" class="btn" (click)="apriTutteVeloce()">Apri tutte</button>
+          <button type="button" class="btn" (click)="apriTutteVeloce()"><span aria-hidden="true">🧧</span> Apri tutte</button>
         } @else if (bustineDisponibili() > 0) {
-          <button type="button" class="btn" (click)="apriBustina()">Apri la prossima</button>
+          <button type="button" class="btn" (click)="apriBustina()"><span aria-hidden="true">🧧</span> Apri la prossima</button>
         }
       </div>
     </div>
@@ -285,6 +290,31 @@
       <div class="modal-actions">
         <button type="button" class="btn btn-submit" (click)="chiudiCartaIngrandita()">Chiudi</button>
       </div>
+    </div>
+  </div>
+
+  <div class="modal" [class.hidden]="!streakModalOpen()" role="dialog" aria-modal="true" (click)="onStreakModalBackdropClick($event)">
+    <div class="modal-card card--dialog carte-streak-modal-card">
+      <p class="carte-streak-modal-flame">🔥</p>
+      <h2>{{ streakCorrente() }}</h2>
+      <p class="carte-streak-modal-sub">
+        {{ streakCorrente() === 1 ? 'giorno di fila' : 'giorni di fila' }}
+        @if (streakBonusOttenuto() > 0) { · +{{ streakBonusOttenuto() }} 🎁 }
+      </p>
+      <div class="carte-streak-calendario">
+        @for (day of streakDays; track day.giorno) {
+          <div
+            class="carte-streak-day"
+            [class.is-raggiunto]="streakCorrente() >= day.giorno"
+            [class.is-oggi]="streakCorrente() === day.giorno"
+          >
+            <span class="carte-streak-day-num">{{ day.giorno }}</span>
+            <span class="carte-streak-day-bonus">+{{ day.bonus }} <span aria-hidden="true">🧧</span></span>
+          </div>
+        }
+      </div>
+      <p class="carte-streak-modal-hint">Ogni giorno di fila dà bustine bonus, sempre di più.</p>
+      <button type="button" class="btn btn-submit" (click)="chiudiStreakModal()">Chiudi</button>
     </div>
   </div>
 </app-shell>

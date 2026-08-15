@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/CyberMindF/the-story-of-our-lives#readme",
   "devDependencies": {
+    "playwright": "^1.62.1",
     "playwright-core": "^1.62.1",
     "sharp": "^0.35.3",
     "wrangler": "^4.119.0"

@@ -5,6 +5,13 @@ import { AuthService, UserIdentity } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 import { CartaTilt } from '../../shared/carta-tilt/carta-tilt';
 
+// Stessa formula di streakDayBonus() in functions/api/carte-bustine/_shared.js — qui serve solo
+// per disegnare il calendario, il bonus vero lo assegna sempre il server. Ogni giorno dà
+// bustine, l'importo cresce di 1 ogni 3 giorni (1-3→+1, 4-6→+2, 7-9→+3, ...), senza tetto.
+function streakDayBonus(day: number): number {
+  return Math.floor((day - 1) / 3) + 1;
+}
+
 type Finitura = 'flat' | 'argento' | 'oro' | 'smeraldo' | 'rubino' | 'zaffiro' | 'diamante';
 type Tab = 'album' | 'scambi' | 'editor';
 type TradeStato = 'proposto' | 'accettato' | 'rifiutato' | 'controproposto';
@@ -106,6 +113,19 @@ export class Carte implements OnInit {
   // --- Bustina ---
   protected readonly bustineDisponibili = signal(0);
   protected readonly bustineLoadError = signal(false);
+  protected readonly streakCorrente = signal(0);
+  protected readonly streakMigliore = signal(0);
+  protected readonly streakBonusOttenuto = signal(0);
+  // Aperto in automatico solo alla prima visita della giornata (streakPrimaVisitaOggi dal
+  // server), ma riapribile in ogni momento cliccando il badge 🔥 — i dati mostrati
+  // (streakCorrente/streakBonusOttenuto) restano quelli sopra, nessuna duplicazione di stato.
+  protected readonly streakModalOpen = signal(false);
+  // Calendario premi tipo "login giornaliero" dei giochi mobile: una casella per ciascuno dei
+  // 30 giorni. Ogni giorno dà un bonus (non solo alcune soglie) — rivisto il 15/08/2026.
+  protected readonly streakDays = Array.from({ length: 30 }, (_, i) => {
+    const giorno = i + 1;
+    return { giorno, bonus: streakDayBonus(giorno) };
+  });
   protected readonly opening = signal(false);
   protected readonly openError = signal('');
   protected readonly carteAperte = signal<CartaPescata[] | null>(null);
@@ -204,13 +224,37 @@ export class Carte implements OnInit {
     this.tab.set(tab);
   }
 
+  protected apriStreakModal(): void {
+    this.streakModalOpen.set(true);
+  }
+
+  protected chiudiStreakModal(): void {
+    this.streakModalOpen.set(false);
+  }
+
+  protected onStreakModalBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) this.chiudiStreakModal();
+  }
+
   // --- Bustina ---
   private async loadBustine(): Promise<void> {
     try {
       const response = await fetch('/api/carte-bustine', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
       if (!response.ok) throw new Error(`Caricamento fallito: ${response.status}`);
-      const data = (await response.json()) as { quantitaDisponibile?: number };
+      const data = (await response.json()) as {
+        quantitaDisponibile?: number;
+        streakCorrente?: number;
+        streakMigliore?: number;
+        streakBustineBonus?: number;
+        streakPrimaVisitaOggi?: boolean;
+      };
       this.bustineDisponibili.set(data.quantitaDisponibile ?? 0);
+      this.streakCorrente.set(data.streakCorrente ?? 0);
+      this.streakMigliore.set(data.streakMigliore ?? 0);
+      this.streakBonusOttenuto.set(data.streakBustineBonus ?? 0);
+      if (data.streakPrimaVisitaOggi) {
+        this.streakModalOpen.set(true);
+      }
     } catch (error) {
       console.error('Errore nel caricamento delle bustine:', error);
       this.bustineLoadError.set(true);

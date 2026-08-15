@@ -72,8 +72,11 @@
   shape-rendering: geometricPrecision;
 }
 
-/* Vetro: un riflesso morbido aggiuntivo che segue il mouse (non il mosaico, che resta fisso),
-   per dare profondità extra come una vera laminazione lucida sopra il foil. */
+/* Vetro delle GEMME (solo smeraldo/rubino/zaffiro/diamante, mai flat): un riflesso morbido
+   aggiuntivo che segue il mouse, sopra il mosaico olografico che resta fisso — dà profondità
+   extra come una vera laminazione lucida sopra il foil. NON toccare per modifiche al lucido
+   plastica delle carte standard: quello vive in .carta-tilt-gloss qui sotto, elemento separato
+   apposta dopo che una versione precedente li aveva confusi (15/08/2026). */
 .carta-tilt-glass {
   position: absolute;
   inset: 0;
@@ -82,6 +85,40 @@
   background:
     radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.22) 0%, rgba(255,255,210,.09) 13%, rgba(255,255,255,.025) 30%, transparent 52%),
     linear-gradient(115deg, transparent 20%, rgba(255,255,255,.04) 42%, rgba(255,255,255,.13) 49%, rgba(255,255,255,.035) 56%, transparent 75%);
+}
+
+/* Lucido plastica delle carte STANDARD (flat) soltanto, aggiunto il 15/08/2026: stesse
+   posizioni di banda di .metal-surface (metallic-foil.css, stop per stop) e stesso movimento
+   (background-position legata a --mx/--my, già calcolate da CartaTilt.onPointerMove — nessuna
+   logica di tracking duplicata), ma alpha reale invece di colore opaco: shadow/dark/mid/main a
+   trasparenza totale, solo la fascia light→white→highlight resta visibile — "deve essere
+   totalmente trasparente, rimangono visibili solo gli effetti di luce" (Rory, 15/08/2026). Un
+   div semplice, non un componente con isolation propria: verificato che il blend funziona qui
+   (sibling diretto nello stesso stacking context di .carta-tilt-image), a differenza del
+   tentativo con MetallicFoil riusato in overlay (vedi commento in carta-tilt.html). */
+.carta-tilt-gloss {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0) 24%,
+    rgba(255,255,255,.12) 30%,
+    rgba(255,255,255,.22) 34%,
+    rgba(255,255,255,.35) 37%,
+    rgba(255,255,255,.22) 40%,
+    rgba(255,255,255,.12) 44%,
+    rgba(255,255,255,0) 52%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 260% 260%;
+  background-position: var(--mx) var(--my);
+  transition: none;
+}
+.carta-tilt-frame:not(.is-active) .carta-tilt-gloss {
+  transition: background-position .5s cubic-bezier(.22, 1, .36, 1);
 }
 
 .carta-tilt-rim {

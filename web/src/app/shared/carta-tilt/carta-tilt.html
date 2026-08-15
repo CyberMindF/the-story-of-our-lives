@@ -8,6 +8,18 @@
       <div class="carta-tilt-tint" [style.background-image]="tintStyle"></div>
       <svg #foilSvg class="carta-tilt-foil" viewBox="0 0 1 1" preserveAspectRatio="none"></svg>
       <div class="carta-tilt-glass"></div>
+    } @else {
+      <!-- Lucido plastica SOLO per le carte standard (flat). Provato a riusare MetallicFoil
+           con un overlay trasparente (stesso componente del metallo, preset grigio) — non
+           funziona: MetallicFoil ha `isolation: isolate` sull'host per isolare i suoi stessi
+           blend interni (metal-brushed/metal-grain), e un mix-blend-mode sull'host isolato non
+           blenda con gli elementi FUORI dal componente (verificato pixel alla mano: restava
+           opaco anche disattivando isolation). Qui invece un div semplice, sibling diretto
+           della foto nello stesso stacking context: stesse posizioni di banda di
+           .metal-surface, stesso movimento (--mx/--my, già calcolate da CartaTilt), ma solo
+           alpha di bianco nei picchi (shadow/dark/mid/main a alpha 0, "solo effetti di luce
+           visibili" richiesto esplicitamente da Rory) invece delle bande colorate opache. -->
+      <div class="carta-tilt-gloss"></div>
     }
   }
 

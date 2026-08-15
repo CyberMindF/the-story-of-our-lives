@@ -6,6 +6,11 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
+- #e4 (idee proposte il 15/08/2026, non ancora fatte) — grafica delle carte: (a) un **retro
+  della carta** vero (oggi le carte non ancora rivelate/nell'album non hanno un fronte
+  "coperto" disegnato); (b) una **texture per la bustina** stessa (oggi solo un'emoji 🧧 nel
+  bottone "Apri una bustina" e nel contatore, nessuna illustrazione). Segnate su richiesta di
+  Rory, da progettare quando ci sarà tempo — nessun dettaglio deciso su stile o formato.
 - #e4 (continua) — il Blocco 5 del piano in `e4-carte-collezionabili.md` (notifiche email dei
   trade) è **implementato il 15/08/2026** insieme a #f5, agganciato a
   proponi/accetta/rifiuta/controproponi in `functions/api/carte-trade/` (vedi voce #f5 più sotto
@@ -13,10 +18,24 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   (Rory), e `notifyOtherIdentity` cerca sempre un secondo utente diverso dall'attore — finché
   Desy non si registra (e attiva `notify_email_updates`) non parte nessuna email reale di
   trade, anche se il codice è pronto e testato nella parte di invio (vedi test diretto in #f5).
-  La streak "giorni di fila" proposta il 14/08/2026 è **implementata il 15/08/2026**: visita
-  alla pagina Carte in giorni di calendario consecutivi, bonus bustine a soglie 3/7/14/30 giorni
-  (tetto a +5 bustine), tabella `carte_streak` (migrazione `0098_add_carte_streak.sql`), logica
-  in `checkStreak()` agganciata a `GET /api/carte-bustine` — dettagli completi in
+
+  La streak "giorni di fila" proposta il 14/08/2026 è **implementata e chiusa il 15/08/2026**,
+  dopo diversi giri di correzione con Rory nello stesso pomeriggio. Versione finale: **ogni**
+  giorno di visita alla pagina Carte in giorni di calendario consecutivi dà bustine bonus,
+  importo crescente ogni 3 giorni (`streakDayBonus(day) = floor((day-1)/3) + 1`, senza tetto),
+  non solo alcune soglie fisse come nella primissima versione. Tabella `carte_streak`
+  (migrazione `0098_add_carte_streak.sql`), logica in `checkStreak()` agganciata a
+  `GET /api/carte-bustine`. UI: badge "🔥 N" sopra la fascia bustine (riapribile in ogni
+  momento), calendario premi di 30 caselle nel modale (stile login giornaliero dei giochi
+  mobile, emoji 🧧 su ogni casella). In più, lucido plastica sulle carte standard (`flat`):
+  `.carta-tilt-gloss` in `carta-tilt.css`, stesse posizioni di banda di `.metal-surface`
+  (metallic-foil.css) ma con `rgba()` invece di colore opaco — un tentativo di riuso diretto del
+  componente `MetallicFoil` è stato scartato per un limite reale del CSS (`isolation:isolate`
+  sull'host impedisce al suo `mix-blend-mode` di blendare fuori dal componente). Corretto anche
+  un bug scoperto durante il lavoro: `onPointerLeave` in `carta-tilt.ts` non resettava
+  `--mx`/`--my`, quindi il riflesso (sia sulle standard che sulle gemme) restava bloccato
+  all'ultima posizione del mouse invece di tornare al centro quando il puntatore usciva dalla
+  carta. Dettagli e percorso completo (comprese le versioni scartate) in
   `e4-carte-collezionabili.md`. Il resto della feature è concluso e rifinito, vedi voce completa
   più sotto nel Fatto.
 - #e16 (idea, ripescata) — Playlist Spotify condivisa nelle Cuffiette: era già stata proposta come #e1 e scartata il 13/08/2026 perché non chiaro il senso. Rory ha chiarito il 14/08/2026: non un editoriale scritto, ma un vero embed di una playlist Spotify che lui cura nel tempo, aggiungendo canzoni man mano — più semplice da fare di una pagina editoriale (nessun CMS, nessun testo da scrivere, solo un iframe verso la playlist).
