@@ -44,6 +44,9 @@
                   <header class="bde-block-heading">
                     <span class="bde-block-type">{{ block.type }}</span>
                     <span class="bde-block-summary">{{ summary(block) }}</span>
+                    @if (block.memoryDate) {
+                      <span class="bde-block-date">📅 {{ block.memoryDate }}</span>
+                    }
                   </header>
 
                   @switch (block.type) {
@@ -84,6 +87,11 @@
                       <option value="audio">Audio</option>
                       <option value="link">Link</option>
                     </select>
+                  </label>
+
+                  <label class="form-field">
+                    <span>Data del ricordo <small>facoltativa, per "successo oggi" in home (sostituisce la data del giorno per questo blocco)</small></span>
+                    <input type="date" [ngModel]="blockForm().memoryDate" (ngModelChange)="updateBlockForm({ memoryDate: $event })" name="blockMemoryDate-{{ rowIndex }}-{{ colIndex }}" />
                   </label>
 
                   @switch (blockForm().type) {

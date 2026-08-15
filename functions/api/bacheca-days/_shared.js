@@ -36,6 +36,19 @@ function validateInlineLink(value) {
   return { ok: true, link: { href: value.href.trim(), label: value.label.trim() } };
 }
 
+// #e14bis: data facoltativa del singolo blocco (stesso formato/pattern di memory_date sul
+// giorno, vedi normalizeMemoryDate più sotto), per i giorni "collezione" dove blocchi diversi
+// hanno date reali diverse. Ritorna { ok:false } se il valore è presente ma malformato.
+function validateBlockMemoryDate(value) {
+  if (value === undefined || value === null || value === "") {
+    return { ok: true, date: undefined };
+  }
+  if (typeof value !== "string" || !MEMORY_DATE_PATTERN.test(value.trim())) {
+    return { ok: false };
+  }
+  return { ok: true, date: value.trim() };
+}
+
 // Un blocco malformato deve far fallire l'intero salvataggio (mai un JSON parzialmente
 // valido in pagina): ogni tipo ha i propri campi obbligatori, il resto è ignorato.
 function validateBlock(block) {
@@ -43,18 +56,22 @@ function validateBlock(block) {
     return null;
   }
 
+  const memoryDateResult = validateBlockMemoryDate(block.memoryDate);
+  if (!memoryDateResult.ok) return null;
+
+  let out;
   switch (block.type) {
     case "text": {
       if (!isNonEmptyString(block.text, MAX_TEXT_LENGTH)) return null;
       const linkResult = validateInlineLink(block.link);
       if (!linkResult.ok) return null;
-      const out = { type: "text", text: block.text.trim() };
+      out = { type: "text", text: block.text.trim() };
       if (linkResult.link) out.link = linkResult.link;
-      return out;
+      break;
     }
     case "photo": {
       if (!isNonEmptyString(block.key, 300) || !MEDIA_KEY_PATTERN.test(block.key.trim())) return null;
-      const out = { type: "photo", key: block.key.trim() };
+      out = { type: "photo", key: block.key.trim() };
       if (block.thumbKey !== undefined) {
         if (!isNonEmptyString(block.thumbKey, 300) || !MEDIA_KEY_PATTERN.test(block.thumbKey.trim())) return null;
         out.thumbKey = block.thumbKey.trim();
@@ -63,12 +80,12 @@ function validateBlock(block) {
         if (!isNonEmptyString(block.caption, MAX_CAPTION_LENGTH)) return null;
         out.caption = block.caption.trim();
       }
-      return out;
+      break;
     }
     case "video":
     case "audio": {
       if (!isNonEmptyString(block.key, 300) || !MEDIA_KEY_PATTERN.test(block.key.trim())) return null;
-      const out = { type: block.type, key: block.key.trim() };
+      out = { type: block.type, key: block.key.trim() };
       if (block.label !== undefined && block.label !== "") {
         if (!isNonEmptyString(block.label, MAX_LABEL_LENGTH)) return null;
         out.label = block.label.trim();
@@ -77,20 +94,23 @@ function validateBlock(block) {
         if (typeof block.vertical !== "boolean") return null;
         out.vertical = block.vertical;
       }
-      return out;
+      break;
     }
     case "link": {
       if (!isNonEmptyString(block.href, MAX_HREF_LENGTH) || !HREF_PATTERN.test(block.href.trim())) return null;
-      const out = { type: "link", href: block.href.trim() };
+      out = { type: "link", href: block.href.trim() };
       if (block.caption !== undefined && block.caption !== "") {
         if (!isNonEmptyString(block.caption, MAX_CAPTION_LENGTH)) return null;
         out.caption = block.caption.trim();
       }
-      return out;
+      break;
     }
     default:
       return null;
   }
+
+  if (memoryDateResult.date) out.memoryDate = memoryDateResult.date;
+  return out;
 }
 
 function validateColumn(column) {
@@ -142,6 +162,19 @@ export function validateContent(value) {
 export function normalizeSlug(value) {
   const slug = typeof value === "string" ? value.trim().toLowerCase() : "";
   return /^[a-z][a-z0-9-]{0,63}$/.test(slug) ? slug : null;
+}
+
+// #e14: data facoltativa (giorno+mese confrontati con oggi per il banner "successo oggi" in
+// home), stesso formato ISO di calendar_events.event_date. Vuota/assente => nessuna data
+// (il giorno resta escluso dal banner, nessun obbligo di compilarla).
+const MEMORY_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+export function normalizeMemoryDate(value) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const date = typeof value === "string" ? value.trim() : "";
+  return MEMORY_DATE_PATTERN.test(date) ? date : undefined;
 }
 
 export function normalizeTitle(value) {

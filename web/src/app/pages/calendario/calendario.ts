@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
@@ -42,6 +43,7 @@ const MONTH_FORMATTER = new Intl.DateTimeFormat('it-IT', { month: 'long', timeZo
 })
 export class Calendario {
   private readonly api = inject(ApiService);
+  private readonly route = inject(ActivatedRoute);
   protected readonly authService = inject(AuthService);
 
   protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
@@ -75,10 +77,24 @@ export class Calendario {
       const events = result.events ?? [];
       this.events.set(events);
       this.countLabel.set(`${events.length} date da ricordare`);
+      this.scrollToRequestedEvent();
     } catch (error) {
       console.error('Impossibile caricare il Calendario.', error);
       this.countLabel.set('Le date non sono disponibili in questo momento.');
     }
+  }
+
+  // #e14: deep-link dal banner "Ecco qualcosa che è successo oggi" (?evento=<id>) — apre
+  // direttamente sulla data richiesta.
+  private scrollToRequestedEvent(): void {
+    const eventId = this.route.snapshot.queryParamMap.get('evento');
+    if (!eventId) {
+      return;
+    }
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`calendar-event-${eventId}`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   }
 
   private groupByYear(events: CalendarEvent[]): YearGroup[] {

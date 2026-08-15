@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AudioPlayer } from '../../shared/audio-player/audio-player';
 import { ContentMessage } from '../../shared/content-message/content-message';
@@ -11,7 +11,7 @@ import { ApiService } from '../../core/api.service';
 import { BachecaDayEditor } from './bacheca-day-editor/bacheca-day-editor';
 import { DayContent, DayRow, PeriodRow, PhotoBlock } from './bacheca.types';
 
-interface Day { id: string; title?: string; slug: string; rows: DayContent['rows'] }
+interface Day { id: string; title?: string; slug: string; rows: DayContent['rows']; memoryDate: string | null }
 interface Period { id: string; title: string; days: Day[] }
 
 interface PeriodDraft {
@@ -23,6 +23,7 @@ interface DayDraft {
   periodId: string;
   slug: string;
   title: string;
+  memoryDate: string;
 }
 
 function emptyPeriodDraft(): PeriodDraft {
@@ -30,7 +31,7 @@ function emptyPeriodDraft(): PeriodDraft {
 }
 
 function emptyDayDraft(periodId: string): DayDraft {
-  return { periodId, slug: '', title: '' };
+  return { periodId, slug: '', title: '', memoryDate: '' };
 }
 
 // Fase 1-3 dell'editor "ibrido" della Bacheca (opzione D concordata il 12/08/2026): periodi e
@@ -47,6 +48,7 @@ function emptyDayDraft(periodId: string): DayDraft {
 })
 export class BachecaPreview implements OnInit, AfterViewInit {
   private readonly api = inject(ApiService);
+  private readonly route = inject(ActivatedRoute);
   protected readonly authService = inject(AuthService);
   protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
 
@@ -60,6 +62,10 @@ export class BachecaPreview implements OnInit, AfterViewInit {
   private readonly rawPeriods = signal<PeriodRow[]>([]);
   private readonly rawDays = signal<DayRow[]>([]);
 
+  // #e14bis: id del blocco raggiunto da ?blocco=<rowIndex-colIndex-blockIndex>, evidenziato
+  // temporaneamente dopo lo scroll. null quando nessun deep-link a blocco è attivo.
+  protected readonly highlightedBlockId = signal<string | null>(null);
+
   protected readonly layoutPeriods = computed<Period[]>(() =>
     [...this.rawPeriods()]
       .sort((a, b) => a.position - b.position)
@@ -69,7 +75,7 @@ export class BachecaPreview implements OnInit, AfterViewInit {
         days: this.rawDays()
           .filter((day) => day.periodId === period.id)
           .sort((a, b) => a.position - b.position)
-          .map((day) => ({ id: day.id, title: day.title ?? undefined, slug: day.slug, rows: day.content.rows }))
+          .map((day) => ({ id: day.id, title: day.title ?? undefined, slug: day.slug, rows: day.content.rows, memoryDate: day.memoryDate }))
       }))
   );
 
@@ -93,6 +99,77 @@ export class BachecaPreview implements OnInit, AfterViewInit {
 
   async ngOnInit(): Promise<void> {
     await this.loadLayout();
+    this.scrollToRequestedDay();
+  }
+
+  // #e14: deep-link dal banner "Ecco qualcosa che è successo oggi" (?giorno=<id>) — apre
+  // direttamente sul giorno richiesto. Riusa il fragment già calcolato da dayId() (period.id
+  // o period.id-slug), lo stesso usato dai link della nav interna.
+  // #e14bis: se è presente anche ?blocco=<rowIndex-colIndex-blockIndex>, dopo aver raggiunto il
+  // giorno fa scroll/evidenzia quel blocco specifico invece del giorno intero.
+  private scrollToRequestedDay(): void {
+    const dayIdParam = this.route.snapshot.queryParamMap.get('giorno');
+    if (!dayIdParam) {
+      return;
+    }
+    const day = this.rawDays().find((d) => d.id === dayIdParam);
+    const period = this.rawPeriods().find((p) => p.id === day?.periodId);
+    if (!day || !period) {
+      return;
+    }
+    const blockParam = this.route.snapshot.queryParamMap.get('blocco');
+    const targetId = blockParam
+      ? this.blockDomId(day.id, ...(blockParam.split('-').map(Number) as [number, number, number]))
+      : this.dayId(
+          { id: period.id, title: period.title, days: [] },
+          { id: day.id, title: day.title ?? undefined, slug: day.slug, rows: day.content.rows, memoryDate: day.memoryDate }
+        );
+    if (blockParam) {
+      this.highlightedBlockId.set(targetId);
+    }
+    requestAnimationFrame(() => this.scrollToTargetUntilStable(targetId));
+  }
+
+  // Le foto/i video del giorno caricano con `loading="lazy"` e senza dimensioni riservate:
+  // mentre la pagina scrolla verso un blocco lontano, le immagini sopra il target continuano
+  // a caricarsi e ne spostano la posizione verso il basso. Un solo scrollIntoView calcolato
+  // all'inizio finisce quindi molto lontano dal bersaglio reale. Si ripete lo scroll finché
+  // la posizione del target non resta stabile per un breve periodo (o scade un timeout).
+  private scrollToTargetUntilStable(targetId: string): void {
+    const deadline = Date.now() + 4000;
+    let lastTop: number | null = null;
+    let stableSince: number | null = null;
+
+    const tick = () => {
+      const el = document.getElementById(targetId);
+      if (!el) {
+        if (Date.now() < deadline) requestAnimationFrame(tick);
+        return;
+      }
+      const top = el.getBoundingClientRect().top;
+      const isCentered = Math.abs(top - window.innerHeight / 2) < 4;
+      if (!isCentered) {
+        el.scrollIntoView({ behavior: 'auto', block: 'center' });
+      }
+      const stableEnough = lastTop !== null && Math.abs(top - lastTop) < 2;
+      lastTop = top;
+      if (stableEnough) {
+        stableSince ??= Date.now();
+        if (Date.now() - stableSince > 300) return;
+      } else {
+        stableSince = null;
+      }
+      if (Date.now() < deadline) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // #e14bis: identificatore stabile (finché il contenuto del giorno non viene riordinato) di un
+  // blocco, usato sia come id DOM sia come valore del query param ?blocco= nei deep-link dal
+  // banner "successo oggi" — niente id persistito nel JSON, la posizione basta per uno
+  // scroll/evidenziazione mirati.
+  protected blockDomId(dayId: string, rowIndex: number, colIndex: number, blockIndex: number): string {
+    return `bacheca-blocco-${dayId}-${rowIndex}-${colIndex}-${blockIndex}`;
   }
 
   // Lightbox e utility media: prima ereditati dal componente legacy pages/bacheca (mai
@@ -205,7 +282,8 @@ export class BachecaPreview implements OnInit, AfterViewInit {
     const ok = await this.api.sendAuthenticatedJson(`/api/bacheca-days/${dayId}`, {
       slug: day.slug,
       title: day.title,
-      content
+      content,
+      memoryDate: day.memoryDate
     }, 'PUT');
     if (ok) {
       this.editingDayId.set(null);
@@ -290,7 +368,7 @@ export class BachecaPreview implements OnInit, AfterViewInit {
   }
 
   protected startEditDay(day: DayRow): void {
-    this.dayDraft.set({ periodId: day.periodId, slug: day.slug, title: day.title ?? '' });
+    this.dayDraft.set({ periodId: day.periodId, slug: day.slug, title: day.title ?? '', memoryDate: day.memoryDate ?? '' });
     this.dayFormError.set('');
     this.dayEditingId.set(day.id);
   }
@@ -312,12 +390,14 @@ export class BachecaPreview implements OnInit, AfterViewInit {
     }
 
     const isNew = this.dayEditingId() === '__new__';
+    const memoryDate = d.memoryDate.trim() || null;
     if (isNew) {
       const ok = await this.api.sendAuthenticatedJson('/api/bacheca-days', {
         periodId: d.periodId,
         slug,
         title: d.title.trim() || null,
-        content: { rows: [{ columns: [{ width: 1, blocks: [{ type: 'text', text: 'Nuovo giorno: aggiungi qui il primo blocco.' }] }] }] }
+        content: { rows: [{ columns: [{ width: 1, blocks: [{ type: 'text', text: 'Nuovo giorno: aggiungi qui il primo blocco.' }] }] }] },
+        memoryDate
       }, 'POST');
       if (!ok) {
         this.dayFormError.set('Non è stato possibile creare il giorno.');
@@ -329,7 +409,8 @@ export class BachecaPreview implements OnInit, AfterViewInit {
       const ok = await this.api.sendAuthenticatedJson(`/api/bacheca-days/${this.dayEditingId()}`, {
         slug,
         title: d.title.trim() || null,
-        content: existing.content
+        content: existing.content,
+        memoryDate
       }, 'PUT');
       if (!ok) {
         this.dayFormError.set('Non è stato possibile salvare il giorno.');

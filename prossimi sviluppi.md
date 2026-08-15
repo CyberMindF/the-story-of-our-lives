@@ -13,9 +13,12 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   (Rory), e `notifyOtherIdentity` cerca sempre un secondo utente diverso dall'attore — finché
   Desy non si registra (e attiva `notify_email_updates`) non parte nessuna email reale di
   trade, anche se il codice è pronto e testato nella parte di invio (vedi test diretto in #f5).
-  Resta aperta anche l'idea della streak "giorni di fila" proposta il 14/08/2026 (mai
-  implementata, nessuna traccia nel codice). Il resto della feature è concluso e rifinito, vedi
-  voce completa più sotto nel Fatto.
+  La streak "giorni di fila" proposta il 14/08/2026 è **implementata il 15/08/2026**: visita
+  alla pagina Carte in giorni di calendario consecutivi, bonus bustine a soglie 3/7/14/30 giorni
+  (tetto a +5 bustine), tabella `carte_streak` (migrazione `0098_add_carte_streak.sql`), logica
+  in `checkStreak()` agganciata a `GET /api/carte-bustine` — dettagli completi in
+  `e4-carte-collezionabili.md`. Il resto della feature è concluso e rifinito, vedi voce completa
+  più sotto nel Fatto.
 - #e14 (idea, non ancora concordata nei dettagli) — "Il Ricordo di Oggi": una piccola card che pesca un ricordo a caso dalla Bacheca o dalla Mappa. Proposta il 14/08/2026, Rory ha detto che gli piace ma **al momento non ci sono abbastanza ricordi scritti** perché valga la pena farla — da rivalutare quando la Bacheca/Mappa avranno più contenuto.
 - #e16 (idea, ripescata) — Playlist Spotify condivisa nelle Cuffiette: era già stata proposta come #e1 e scartata il 13/08/2026 perché non chiaro il senso. Rory ha chiarito il 14/08/2026: non un editoriale scritto, ma un vero embed di una playlist Spotify che lui cura nel tempo, aggiungendo canzoni man mano — più semplice da fare di una pagina editoriale (nessun CMS, nessun testo da scrivere, solo un iframe verso la playlist).
 - #e6 - Test generalee fix finali mobile

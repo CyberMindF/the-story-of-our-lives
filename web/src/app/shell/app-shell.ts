@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { CleanModeService } from '../core/clean-mode.service';
 import { TelemetryService } from '../core/telemetry.service';
 import { BackLink } from '../layout/back-link/back-link';
 import { WorldHeader } from '../layout/world-header/world-header';
@@ -28,15 +27,6 @@ export class AppShell implements OnInit {
   @Input() beforeLogout: (() => Promise<void>) | null = null;
 
   private readonly telemetryService = inject(TelemetryService);
-  private readonly cleanModeService = inject(CleanModeService);
-
-  protected get resolvedShowHeader(): boolean {
-    return this.showHeader && !this.cleanModeService.active();
-  }
-
-  protected get resolvedShowBackLink(): boolean {
-    return this.showBackLink && !this.cleanModeService.active();
-  }
 
   ngOnInit(): void {
     if (this.trackPageOpened) {

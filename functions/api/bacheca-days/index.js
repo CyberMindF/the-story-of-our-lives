@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
-import { daySlugExists, normalizeSlug, normalizeTitle, periodExists, validateContent } from "./_shared.js";
+import { daySlugExists, normalizeMemoryDate, normalizeSlug, normalizeTitle, periodExists, validateContent } from "./_shared.js";
 
 // Editor "ibrido" della Bacheca (opzione D concordata il 12/08/2026): un giorno = un record
 // con l'intero layout (righe/colonne/blocchi) come JSON validato rigorosamente, non 5 livelli
@@ -40,6 +40,7 @@ export async function onRequestPost(context) {
     const slug = normalizeSlug(payload?.slug);
     const title = normalizeTitle(payload?.title);
     const content = validateContent(payload?.content);
+    const memoryDate = normalizeMemoryDate(payload?.memoryDate);
 
     if (!(await periodExists(env, periodId))) return json({ error: "Periodo non valido." }, 400);
     if (!slug) return json({ error: "Slug non valido." }, 400);
@@ -48,6 +49,7 @@ export async function onRequestPost(context) {
     }
     if (title === undefined) return json({ error: "Titolo non valido." }, 400);
     if (!content) return json({ error: "Contenuto del giorno non valido." }, 400);
+    if (memoryDate === undefined) return json({ error: "Data non valida." }, 400);
 
     const maxId = await env.DB.prepare("SELECT MAX(id) AS max FROM bacheca_days").first();
     const id = (maxId?.max ?? 0) + 1;
@@ -60,10 +62,10 @@ export async function onRequestPost(context) {
 
     await env.DB
       .prepare(`
-        INSERT INTO bacheca_days (id, period_id, slug, title, content, position, created_by, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO bacheca_days (id, period_id, slug, title, content, position, created_by, created_at, updated_at, memory_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
-      .bind(id, periodId, slug, title, JSON.stringify(content), position, session.user.id, now, now)
+      .bind(id, periodId, slug, title, JSON.stringify(content), position, session.user.id, now, now, memoryDate)
       .run();
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
@@ -88,6 +90,7 @@ export function toDayView(row) {
     title: row.title,
     content: JSON.parse(row.content),
     position: row.position,
-    updatedAt: row.updated_at
+    updatedAt: row.updated_at,
+    memoryDate: row.memory_date ?? null
   };
 }

@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
-import { daySlugExists, normalizeSlug, normalizeTitle, validateContent } from "./_shared.js";
+import { daySlugExists, normalizeMemoryDate, normalizeSlug, normalizeTitle, validateContent } from "./_shared.js";
 import { toDayView } from "./index.js";
 
 // Modifica slug/titolo/contenuto (periodo e posizione restano invariati: per spostarlo ci
@@ -24,6 +24,7 @@ export async function onRequestPut(context) {
     const slug = normalizeSlug(payload?.slug);
     const title = normalizeTitle(payload?.title);
     const content = validateContent(payload?.content);
+    const memoryDate = normalizeMemoryDate(payload?.memoryDate);
 
     if (!slug) return json({ error: "Slug non valido." }, 400);
     if (await daySlugExists(env, existing.period_id, slug, params.id)) {
@@ -31,11 +32,12 @@ export async function onRequestPut(context) {
     }
     if (title === undefined) return json({ error: "Titolo non valido." }, 400);
     if (!content) return json({ error: "Contenuto del giorno non valido." }, 400);
+    if (memoryDate === undefined) return json({ error: "Data non valida." }, 400);
 
     const now = new Date().toISOString();
     await env.DB
-      .prepare("UPDATE bacheca_days SET slug = ?, title = ?, content = ?, updated_at = ? WHERE id = ?")
-      .bind(slug, title, JSON.stringify(content), now, params.id)
+      .prepare("UPDATE bacheca_days SET slug = ?, title = ?, content = ?, updated_at = ?, memory_date = ? WHERE id = ?")
+      .bind(slug, title, JSON.stringify(content), now, memoryDate, params.id)
       .run();
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {

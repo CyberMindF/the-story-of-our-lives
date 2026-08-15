@@ -44,8 +44,8 @@
               <div class="bk-admin-inline-actions">
                 <button type="button" class="btn" (click)="moveDay(day.id, 'up')">⬆️</button>
                 <button type="button" class="btn" (click)="moveDay(day.id, 'down')">⬇️</button>
-                <button type="button" class="btn" (click)="startMoveDay({ id: day.id, periodId: period.id, slug: day.slug, title: day.title ?? null, content: { rows: day.rows }, position: 0 })">↔️ Sposta giorno…</button>
-                <button type="button" class="btn" (click)="startEditDay({ id: day.id, periodId: period.id, slug: day.slug, title: day.title ?? null, content: { rows: day.rows }, position: 0 })">✏️ Titolo/slug</button>
+                <button type="button" class="btn" (click)="startMoveDay({ id: day.id, periodId: period.id, slug: day.slug, title: day.title ?? null, content: { rows: day.rows }, position: 0, memoryDate: day.memoryDate })">↔️ Sposta giorno…</button>
+                <button type="button" class="btn" (click)="startEditDay({ id: day.id, periodId: period.id, slug: day.slug, title: day.title ?? null, content: { rows: day.rows }, position: 0, memoryDate: day.memoryDate })">✏️ Titolo/slug</button>
                 <button type="button" class="btn" (click)="requestDeleteDay(day.id)">🗑️ Elimina giorno</button>
                 <button type="button" class="btn btn-submit" (click)="toggleContentEditor(day.id)">
                   {{ editingDayId() === day.id ? 'Chiudi editor contenuto' : '✏️ Modifica contenuto' }}
@@ -87,11 +87,15 @@
               />
             } @else {
               <div class="memory-rows">
-                @for (row of day.rows; track $index) {
+                @for (row of day.rows; track $index; let rowIndex = $index) {
                   <section class="memory-row" [class.is-gallery]="rowPhotos(row).length === row.columns.length && rowPhotos(row).length > 1">
-                    @for (column of row.columns; track $index) {
+                    @for (column of row.columns; track $index; let colIndex = $index) {
                       <div class="memory-column" [style.--column-width]="column.width">
-                        @for (block of column.blocks; track $index) {
+                        @for (block of column.blocks; track $index; let blockIndex = $index) {
+                          <div
+                            [id]="blockDomId(day.id, rowIndex, colIndex, blockIndex)"
+                            [class.memory-block-highlight]="highlightedBlockId() === blockDomId(day.id, rowIndex, colIndex, blockIndex)"
+                          >
                           @switch (block.type) {
                             @case ('text') {
                               <p class="memory-prose">
@@ -126,6 +130,7 @@
                               <a class="memory-external" [href]="block.href" target="_blank">{{ block.caption || 'Apri questo ricordo' }} ↗</a>
                             }
                           }
+                          </div>
                         }
                       </div>
                     }
@@ -177,6 +182,10 @@
       <label class="form-field">
         <span>Slug</span>
         <input type="text" required [ngModel]="dayDraft().slug" (ngModelChange)="updateDayDraft({ slug: $event })" name="daySlug" />
+      </label>
+      <label class="form-field">
+        <span>Data del ricordo <small>facoltativa, per "successo oggi" in home</small></span>
+        <input type="date" [ngModel]="dayDraft().memoryDate" (ngModelChange)="updateDayDraft({ memoryDate: $event })" name="dayMemoryDate" />
       </label>
       <p class="bk-form-error">{{ dayFormError() }}</p>
       <div class="bk-form-actions">

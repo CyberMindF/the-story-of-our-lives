@@ -5,7 +5,6 @@
     <div class="lettere-intro"><app-editorial-text contentKey="lettere.introduzione" /></div>
   </section>
 
-  @if (!cleanMode.active()) {
   <form class="letter-form" aria-label="Scrivi una lettera" #letterForm (ngSubmit)="submitLetter(letterForm)">
     <label class="letter-field">
       <span>La tua lettera</span>
@@ -16,7 +15,6 @@
     </div>
     <app-form-status [message]="submission.message()" [status]="submission.status()" />
   </form>
-  }
 
   <section class="lettere-archive" aria-labelledby="archive-title">
     <div class="lettere-section-heading">
@@ -25,7 +23,7 @@
     </div>
     <div class="letters-list">
       @for (letter of letters(); track letter.id) {
-        <button type="button" class="letter-card" [class.is-unread]="isUnread(letter)" #cardBtn (click)="openLetter(letter, cardBtn)">
+        <button type="button" [id]="'letter-card-' + letter.id" class="letter-card" [class.is-unread]="isUnread(letter)" #cardBtn (click)="openLetter(letter, cardBtn)">
           <span class="envelope" aria-hidden="true">
             <span class="envelope-back"></span>
             <span class="envelope-flap envelope-flap-behind"></span>

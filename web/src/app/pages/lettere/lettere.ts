@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CleanModeService } from '../../core/clean-mode.service';
+import { ActivatedRoute } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
@@ -34,7 +34,7 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 
 })
 export class Lettere implements OnInit, OnDestroy {
   protected readonly submission = inject(FormSubmission);
-  protected readonly cleanMode = inject(CleanModeService);
+  private readonly route = inject(ActivatedRoute);
   @ViewChild('letterDialog') private dialogRef?: ElementRef<HTMLDialogElement>;
   @ViewChild('dialogPaper') private dialogPaperRef?: ElementRef<HTMLDivElement>;
   @ViewChild('pagerViewport') private pagerViewportRef?: ElementRef<HTMLDivElement>;
@@ -232,10 +232,30 @@ export class Lettere implements OnInit, OnDestroy {
       }
       const data = (await response.json()) as { letters?: Letter[] };
       this.letters.set(data.letters || []);
+      this.openRequestedLetter();
     } catch (error) {
       console.error('Errore nel caricamento delle lettere:', error);
       this.loadError.set(true);
     }
+  }
+
+  // #e14: deep-link dal banner "Ecco qualcosa che è successo oggi" (?lettera=<id>) — apre
+  // direttamente la lettera richiesta, stessa animazione dell'apertura manuale.
+  private openRequestedLetter(): void {
+    const letterId = this.route.snapshot.queryParamMap.get('lettera');
+    if (!letterId) {
+      return;
+    }
+    const letter = this.letters().find((entry) => String(entry.id) === letterId);
+    if (!letter) {
+      return;
+    }
+    requestAnimationFrame(() => {
+      const cardEl = document.getElementById(`letter-card-${letter.id}`);
+      if (cardEl) {
+        void this.openLetter(letter, cardEl);
+      }
+    });
   }
 
   protected async submitLetter(form: HTMLFormElement): Promise<void> {

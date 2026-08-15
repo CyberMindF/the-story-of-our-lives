@@ -18,6 +18,8 @@ interface BlockFormState {
   label: string;
   vertical: boolean;
   href: string;
+  // #e14bis: data facoltativa del singolo blocco (YYYY-MM-DD), comune a tutti i tipi.
+  memoryDate: string;
 }
 
 interface BlockTarget {
@@ -27,11 +29,12 @@ interface BlockTarget {
 }
 
 function emptyBlockForm(type: BlockType = 'text'): BlockFormState {
-  return { type, text: '', linkHref: '', linkLabel: '', key: '', thumbKey: '', caption: '', label: '', vertical: false, href: '' };
+  return { type, text: '', linkHref: '', linkLabel: '', key: '', thumbKey: '', caption: '', label: '', vertical: false, href: '', memoryDate: '' };
 }
 
 function blockToForm(block: Block): BlockFormState {
   const form = emptyBlockForm(block.type);
+  form.memoryDate = block.memoryDate ?? '';
   if (block.type === 'text') {
     form.text = block.text;
     form.linkHref = block.link?.href ?? '';
@@ -52,6 +55,14 @@ function blockToForm(block: Block): BlockFormState {
 }
 
 function formToBlock(form: BlockFormState): Block | null {
+  const block = buildBlockFromForm(form);
+  if (block && form.memoryDate.trim()) {
+    block.memoryDate = form.memoryDate.trim();
+  }
+  return block;
+}
+
+function buildBlockFromForm(form: BlockFormState): Block | null {
   switch (form.type) {
     case 'text': {
       const text = form.text.trim();

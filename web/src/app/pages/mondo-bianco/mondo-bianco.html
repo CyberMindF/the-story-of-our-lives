@@ -48,6 +48,28 @@
     <app-editorial-text contentKey="mondo-bianco.benvenuta" />
   </section>
 
+  @if (todayMemories().length > 0) {
+    <section class="world-today" aria-labelledby="today-title">
+      <div class="world-section-heading">
+        <p class="world-eyebrow">Anni fa, oggi</p>
+        <h2 id="today-title">Ecco qualcosa che è successo oggi</h2>
+      </div>
+      <div class="world-today-row">
+        @for (memory of todayMemories(); track memory.type + memory.id) {
+          <article class="world-today-card card card--compact">
+            <span class="world-today-year">{{ memory.year }}</span>
+            <strong class="world-today-title">{{ memory.title }}</strong>
+            <p class="world-today-excerpt">{{ memory.excerpt }}</p>
+            @if (memory.thumbnailUrl) {
+              <img class="world-today-thumbnail" [src]="memory.thumbnailUrl" alt="" loading="lazy" />
+            }
+            <a class="btn world-today-link" [routerLink]="memory.route" [queryParams]="memory.queryParams">Vai alla pagina</a>
+          </article>
+        }
+      </div>
+    </section>
+  }
+
   <section class="world-places" aria-labelledby="places-title">
     <div class="world-section-heading">
       <p class="world-eyebrow">La mappa</p>

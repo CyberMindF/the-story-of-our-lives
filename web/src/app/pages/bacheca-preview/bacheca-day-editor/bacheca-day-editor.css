@@ -20,6 +20,7 @@
 .bde-block-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; }
 .bde-block-type { padding: .1rem .5rem; border-radius: 999px; background: var(--button-bg); color: var(--muted-color); font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
 .bde-block-summary { color: var(--muted-color); font-size: .85rem; }
+.bde-block-date { padding: .1rem .5rem; border-radius: 999px; background: var(--button-bg); color: var(--accent-color); font-size: .72rem; font-weight: 700; }
 .bde-block-preview { display: block; width: 100%; max-height: 10rem; object-fit: cover; border-radius: .6rem; }
 .bde-block-actions { display: flex; flex-wrap: wrap; gap: .35rem; }
 .bde-block-actions .btn { padding: .3rem .55rem; font-size: .76rem; }

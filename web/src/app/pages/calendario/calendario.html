@@ -51,7 +51,7 @@
           <h3 [id]="'calendar-year-' + group.year">{{ group.year }}</h3>
           <ol>
             @for (cell of group.entries; track cell.event.id) {
-              <li [class]="cell.accentClass">
+              <li [id]="'calendar-event-' + cell.event.id" [class]="cell.accentClass">
                 @if (editingId() === cell.event.id) {
                   <form class="calendar-edit-form" (ngSubmit)="submitEdit()">
                     <label class="form-field">
