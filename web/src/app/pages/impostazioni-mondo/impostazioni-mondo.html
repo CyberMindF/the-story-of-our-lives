@@ -38,23 +38,6 @@
       <button type="button" class="btn" (click)="disableAllEffects()">Disattiva tutte le animazioni</button>
     </div>
 
-    @if (authService.isAdmin()) {
-    <label class="settings-toggle card">
-      <span class="settings-toggle-info">
-        <span class="settings-toggle-title"><span aria-hidden="true">📖</span> Modalità di lettura pulita (admin)</span>
-        <span class="settings-toggle-description">Nasconde header, back-link e form su tutte le pagine che la supportano, per rileggere senza distrazioni. In prova, per ora visibile solo agli admin.</span>
-      </span>
-      <input
-        type="checkbox"
-        class="settings-toggle-input"
-        [checked]="cleanModeService.active()"
-        (change)="toggleCleanMode($event)"
-        aria-label="Modalità di lettura pulita"
-      />
-      <span class="settings-toggle-switch" aria-hidden="true"></span>
-    </label>
-    }
-
     <div class="settings-effects-grid">
 
     <section class="settings-effect-group">
