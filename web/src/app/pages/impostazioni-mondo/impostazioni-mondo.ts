@@ -1,5 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { AppShell } from '../../shell/app-shell';
+import { AuthService } from '../../core/auth.service';
+import { CleanModeService } from '../../core/clean-mode.service';
 import { WorldSettingKey, WorldSettingsService } from '../../core/world-settings.service';
 import { MOON_PHASE_LABEL } from '../../shared/moon-phase';
 import { PETAL_KIND_LABEL, PetalKind } from '../../shared/world-petals';
@@ -24,6 +26,8 @@ import { isLightTheme, ThemeService } from '../../core/theme.service';
 export class ImpostazioniMondo {
   protected readonly worldSettingsService = inject(WorldSettingsService);
   protected readonly themeService = inject(ThemeService);
+  protected readonly authService = inject(AuthService);
+  protected readonly cleanModeService = inject(CleanModeService);
   protected readonly themeOptions: readonly AppSelectOption[] = this.themeService.themes.map((theme) => ({
     value: theme.id,
     label: theme.label
@@ -62,6 +66,10 @@ export class ImpostazioniMondo {
     { value: 'magenta', label: 'Magenta' },
     { value: 'mix', label: 'Colori misti' }
   ];
+
+  protected toggleCleanMode(event: Event): void {
+    this.cleanModeService.setForced((event.target as HTMLInputElement).checked);
+  }
 
   protected async disableAllEffects(): Promise<void> {
     await Promise.all(this.effectKeys.map((key) => this.worldSettingsService.set(key, false)));

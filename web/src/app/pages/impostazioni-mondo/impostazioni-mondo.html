@@ -38,6 +38,23 @@
       <button type="button" class="btn" (click)="disableAllEffects()">Disattiva tutte le animazioni</button>
     </div>
 
+    @if (authService.isAdmin()) {
+    <label class="settings-toggle card">
+      <span class="settings-toggle-info">
+        <span class="settings-toggle-title"><span aria-hidden="true">📖</span> Modalità di lettura pulita (admin)</span>
+        <span class="settings-toggle-description">Nasconde header, back-link e form su tutte le pagine che la supportano, per rileggere senza distrazioni. In prova, per ora visibile solo agli admin.</span>
+      </span>
+      <input
+        type="checkbox"
+        class="settings-toggle-input"
+        [checked]="cleanModeService.active()"
+        (change)="toggleCleanMode($event)"
+        aria-label="Modalità di lettura pulita"
+      />
+      <span class="settings-toggle-switch" aria-hidden="true"></span>
+    </label>
+    }
+
     <div class="settings-effects-grid">
 
     <section class="settings-effect-group">
@@ -136,6 +153,36 @@
           <app-select [options]="auroraColorOptions" [value]="worldSettingsService.values().pearlShimmers === 'white' ? 'green' : (worldSettingsService.values().pearlShimmers || 'green')" ariaLabel="Colore dell'aurora" (valueChange)="setAuroraColor($event)" />
         </div>
       </div>
+
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🎈</span> Palloncini</span>
+          <span class="settings-toggle-description">Volano verso l'alto, di forme e colori diversi.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().balloons"
+          (change)="toggleSetting('balloons', $event)"
+          aria-label="Palloncini"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="settings-toggle card">
+        <span class="settings-toggle-info">
+          <span class="settings-toggle-title"><span aria-hidden="true">🎆</span> Fuochi d'artificio</span>
+          <span class="settings-toggle-description">Esplodono ogni tanto, sparsi nel cielo.</span>
+        </span>
+        <input
+          type="checkbox"
+          class="settings-toggle-input"
+          [checked]="worldSettingsService.settings().fireworks"
+          (change)="toggleSetting('fireworks', $event)"
+          aria-label="Fuochi d'artificio"
+        />
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </label>
     </div>
     </section>
 
@@ -340,41 +387,6 @@
           />
         </div>
       </div>
-    </div>
-    </section>
-
-    <section class="settings-effect-group">
-    <h3 class="settings-group-title">Festa</h3>
-    <div class="settings-list">
-      <label class="settings-toggle card">
-        <span class="settings-toggle-info">
-          <span class="settings-toggle-title"><span aria-hidden="true">🎈</span> Palloncini</span>
-          <span class="settings-toggle-description">Volano verso l'alto, di forme e colori diversi.</span>
-        </span>
-        <input
-          type="checkbox"
-          class="settings-toggle-input"
-          [checked]="worldSettingsService.settings().balloons"
-          (change)="toggleSetting('balloons', $event)"
-          aria-label="Palloncini"
-        />
-        <span class="settings-toggle-switch" aria-hidden="true"></span>
-      </label>
-
-      <label class="settings-toggle card">
-        <span class="settings-toggle-info">
-          <span class="settings-toggle-title"><span aria-hidden="true">🎆</span> Fuochi d'artificio</span>
-          <span class="settings-toggle-description">Esplodono ogni tanto, sparsi nel cielo.</span>
-        </span>
-        <input
-          type="checkbox"
-          class="settings-toggle-input"
-          [checked]="worldSettingsService.settings().fireworks"
-          (change)="toggleSetting('fireworks', $event)"
-          aria-label="Fuochi d'artificio"
-        />
-        <span class="settings-toggle-switch" aria-hidden="true"></span>
-      </label>
     </div>
     </section>
     </div>

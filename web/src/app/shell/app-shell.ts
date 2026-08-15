@@ -31,11 +31,11 @@ export class AppShell implements OnInit {
   private readonly cleanModeService = inject(CleanModeService);
 
   protected get resolvedShowHeader(): boolean {
-    return this.showHeader && !this.cleanModeService.active;
+    return this.showHeader && !this.cleanModeService.active();
   }
 
   protected get resolvedShowBackLink(): boolean {
-    return this.showBackLink && !this.cleanModeService.active;
+    return this.showBackLink && !this.cleanModeService.active();
   }
 
   ngOnInit(): void {

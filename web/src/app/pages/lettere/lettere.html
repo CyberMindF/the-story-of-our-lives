@@ -5,7 +5,7 @@
     <div class="lettere-intro"><app-editorial-text contentKey="lettere.introduzione" /></div>
   </section>
 
-  @if (!cleanMode.active) {
+  @if (!cleanMode.active()) {
   <form class="letter-form" aria-label="Scrivi una lettera" #letterForm (ngSubmit)="submitLetter(letterForm)">
     <label class="letter-field">
       <span>La tua lettera</span>

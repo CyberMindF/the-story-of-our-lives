@@ -125,14 +125,20 @@
 .settings-theme-only-copy { display: grid; gap: .25rem; }
 .settings-theme-only-copy small { color: var(--muted-color); font-size: .82rem; line-height: 1.45; }
 
+/* Colonne CSS invece di grid a righe: con grid, un gruppo alto (es. Night Sky) affiancato a
+   uno corto lascia un vuoto sotto quest'ultimo prima della riga successiva. Le colonne
+   "impilano" ogni gruppo nella colonna più corta in quel momento (comportamento masonry
+   nativo, senza JS), eliminando quel vuoto. */
 .settings-effects-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
-  gap: 1.25rem;
+  columns: 2;
+  column-gap: 1.25rem;
 }
 
-.settings-effect-group { min-width: 0; }
+.settings-effect-group {
+  min-width: 0;
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+}
 
 /* Gruppi per tema (#b3-b): ogni titolo introduce la .settings-list che lo segue, tranne il
    primo (subito dopo l'intro della sezione, non serve altro spazio sopra). */
@@ -146,7 +152,7 @@
 }
 
 @media (max-width: 720px) {
-  .settings-effects-grid,
+  .settings-effects-grid { columns: 1; }
   .settings-theme-only { grid-template-columns: 1fr; }
 }
 
