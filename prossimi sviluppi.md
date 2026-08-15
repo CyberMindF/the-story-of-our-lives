@@ -39,7 +39,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `e4-carte-collezionabili.md`. Il resto della feature è concluso e rifinito, vedi voce completa
   più sotto nel Fatto.
 - #e16 (idea, ripescata) — Playlist Spotify condivisa nelle Cuffiette: era già stata proposta come #e1 e scartata il 13/08/2026 perché non chiaro il senso. Rory ha chiarito il 14/08/2026: non un editoriale scritto, ma un vero embed di una playlist Spotify che lui cura nel tempo, aggiungendo canzoni man mano — più semplice da fare di una pagina editoriale (nessun CMS, nessun testo da scrivere, solo un iframe verso la playlist).
-- #e6 - Test generalee fix finali mobile
 - [x] #f5 — Infrastruttura email (Resend) implementata il 15/08/2026, dominio `il-mondo-bianco.com`
   verificato su Resend, API key salvata come secret Cloudflare (`RESEND_API_KEY`, mai nel repo).
   Libreria condivisa `functions/api/_shared/email.js` (`sendEmail`, `notifyOtherIdentity`, quest'ultima
@@ -71,6 +70,8 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ---
 
 ## Fatto
+
+- [x] #e6 - Test generale e fix finali mobile: verifica sistematica con Playwright (viewport 375×812, sessione autenticata via cookie di sessione impostato direttamente, senza passare dal Portone) di tutte le 35 rotte del sito, incluse quelle admin (Log, Contenuti, playground di Prova a Dire No) e il Portone da sloggato. Per ognuna controllati overflow orizzontale (`scrollWidth` vs `clientWidth` su `html`/`body`), testo tagliato, bottoni troppo piccoli, elementi sovrapposti, e screenshot a piena pagina. Trovato un solo bug reale: nell'header condiviso (`app-world-header`/`app-world-user-bar`, `web/src/styles/components/world-shell.css`) la riga `.place-header` non poteva andare a capo — su Il Mappamondo, che disattiva il collasso dell'etichetta home (`homeLabelCollapsible="false"`), un utente con ruolo admin (bottone extra "Admin" nella barra utente) superava la larghezza della viewport di circa 26px, con scroll orizzontale della pagina. Corretto con una regola di difesa in profondità sul componente condiviso, non specifica del Mappamondo: sotto i 480px `.place-header` va in `flex-wrap: wrap` e `.place-userbar` si allinea a destra con `margin-left: auto`, così la barra utente scende a riga nuova invece di sforare, qualunque combinazione di pagina/ruolo. Verificato dopo il fix che tutte le 35 rotte tornano a `overflow: false`. Durante la verifica trovato anche un problema preesistente e indipendente, non del test mobile: nel working tree c'era una modifica a metà (riorganizzazione della home in 4 macro-luoghi, non ancora committata in quel momento) che rompeva la build (`ng build` falliva, `places` reso `private` in `mondo-bianco.ts` ma il template ancora lo usa) — corretto riportando la visibilità a `protected` per sbloccare il build e poter testare il sito, senza toccare né completare quella feature.
 
 ### Extra (fuori scaletta, chiesto il 15/08/2026)
 

@@ -146,3 +146,20 @@ app-back-link {
     display: none;
   }
 }
+
+/* Difesa in profondità per la riga dell'header: alcune pagine (es. Il Mappamondo) disattivano
+   il collasso dell'etichetta home (homeLabelCollapsible=false) e la barra utente cresce in più
+   con la Modalità admin (bottone extra visibile solo per gli admin) — combinati, su schermi
+   stretti la riga poteva superare la larghezza della viewport (bug rilevato il 15/08/2026,
+   #e6). Il wrap qui è la rete di sicurezza comune a tutte le pagine, non un fix per il solo
+   Mappamondo. */
+@media (max-width: 480px) {
+  .place-header {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+
+  .place-userbar {
+    margin-left: auto;
+  }
+}
