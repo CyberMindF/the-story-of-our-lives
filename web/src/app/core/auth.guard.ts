@@ -26,5 +26,5 @@ export const authGuard: CanActivateFn = async (_route, state) => {
   }
 
   navigationService.rememberCurrentDestination();
-  return router.createUrlTree(['/'], { queryParams: { returnTo: state.url } });
+  return router.createUrlTree(['/login'], { queryParams: { returnTo: state.url } });
 };

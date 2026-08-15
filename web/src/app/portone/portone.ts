@@ -151,8 +151,8 @@ export class Portone implements OnInit {
     this.unlocked.set(true);
 
     // Stesso fallback di assets/js/portone/main.js (onUnlock -> "./mondo-bianco/"): senza una
-    // destinazione richiesta valida, si va all'hub — MAI a "/", che è il Portone stesso.
+    // destinazione richiesta valida, si va all'hub, che ora vive su "/" (il Portone è "/login").
     const safeTarget = this.navigationService.consumeRequestedDestination();
-    await this.router.navigateByUrl(safeTarget || '/mondo-bianco');
+    await this.router.navigateByUrl(safeTarget || '/');
   }
 }

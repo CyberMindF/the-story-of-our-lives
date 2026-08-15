@@ -3,27 +3,33 @@ import { authGuard } from './core/auth.guard';
 import { adminGuard } from './core/admin.guard';
 import { Portone } from './portone/portone';
 
-// Struttura route: '/' è il Portone (pathMatch 'full' essenziale — senza, matcherebbe come
-// prefisso anche le route protette sotto, impedendo loro di attivarsi). Le pagine protette
-// stanno sotto un gruppo con un'unica guardia condivisa (authGuard) ma NESSUN componente
-// shell in comune: ogni pagina include <app-shell> con i propri @Input (vedi
-// pages/mondo-bianco), replicando come nell'originale ogni pagina generasse la propria shell
-// completa invece di condividerne una sola tra tutte le navigazioni.
+// Struttura route: '/login' è il Portone (pagina di accesso). Le pagine protette stanno sotto
+// un gruppo con un'unica guardia condivisa (authGuard) ma NESSUN componente shell in comune:
+// ogni pagina include <app-shell> con i propri @Input (vedi pages/mondo-bianco), replicando
+// come nell'originale ogni pagina generasse la propria shell completa invece di condividerne
+// una sola tra tutte le navigazioni. '/' (root) è il Mondo Bianco stesso — pathMatch 'full'
+// essenziale sul child vuoto, senza matcherebbe come prefisso anche le altre route protette
+// sotto, impedendo loro di attivarsi.
 //
-// loadComponent (lazy) invece di component (eager) per tutte le pagine protette: con ~17
-// pagine da migrare in totale (cruciverba compreso, il pezzo più grande) un bundle iniziale
-// unico sarebbe cresciuto senza controllo. Il Portone resta eager: è la prima cosa che
-// chiunque vede, niente da guadagnare a caricarlo pigro.
+// loadComponent (lazy) invece di component (eager) per tutte le pagine protette. Il Portone
+// resta eager: è la prima cosa che vede chi non ha ancora una sessione valida (authGuard
+// reindirizza lì), niente da guadagnare a caricarlo pigro.
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', component: Portone, data: { bodyClasses: ['access-locked', 'portone-page'] } },
+  { path: 'login', pathMatch: 'full', component: Portone, data: { bodyClasses: ['access-locked', 'portone-page'] } },
   {
     path: '',
     canActivate: [authGuard],
     children: [
       {
-        path: 'mondo-bianco',
+        path: '',
+        pathMatch: 'full',
         data: { bodyClasses: ['world-page'] },
         loadComponent: () => import('./pages/mondo-bianco/mondo-bianco').then((m) => m.MondoBianco)
+      },
+      {
+        path: 'mondo-bianco',
+        redirectTo: '',
+        pathMatch: 'full'
       },
       {
         path: 'ponti',
@@ -125,6 +131,11 @@ export const routes: Routes = [
         path: 'ponti-chat',
         data: { bodyClasses: ['ponti-chat-page'] },
         loadComponent: () => import('./pages/ponti-chat/ponti-chat').then((m) => m.PontiChat)
+      },
+      {
+        path: 'stranger-chat',
+        data: { bodyClasses: ['stranger-chat-page'] },
+        loadComponent: () => import('./pages/stranger-chat/stranger-chat').then((m) => m.StrangerChat)
       },
       {
         path: 'cose-da-fare-insieme',

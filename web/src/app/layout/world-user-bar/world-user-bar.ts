@@ -49,7 +49,7 @@ export class WorldUserBar {
       this.authService.clearAccessUnlock();
       this.authService.currentUser.set(null);
       this.navigationService.clearRequestedDestination();
-      await this.router.navigateByUrl('/');
+      await this.router.navigateByUrl('/login');
       return;
     }
     this.loggingOut.set(false);

@@ -9,7 +9,7 @@ import { WorldUserBar } from '../world-user-bar/world-user-bar';
   templateUrl: './world-header.html'
 })
 export class WorldHeader {
-  @Input() homeHref = '/mondo-bianco';
+  @Input() homeHref = '/';
   @Input() homeAria = 'Torna al Mondo Bianco';
   @Input() homeIcon = '←';
   @Input() homeLabel = 'Il Mondo Bianco';

@@ -15,5 +15,5 @@ export const adminGuard: CanActivateFn = () => {
     return true;
   }
 
-  return router.createUrlTree(['/mondo-bianco']);
+  return router.createUrlTree(['/']);
 };
