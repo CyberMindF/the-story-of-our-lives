@@ -1,0 +1,496 @@
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AppShell } from '../../shell/app-shell';
+import { AuthService, UserIdentity } from '../../core/auth.service';
+import { ApiService } from '../../core/api.service';
+import { CartaTilt } from '../../shared/carta-tilt/carta-tilt';
+
+type Finitura = 'flat' | 'argento' | 'oro' | 'smeraldo' | 'rubino' | 'zaffiro' | 'diamante';
+type Tab = 'album' | 'scambi' | 'editor';
+type TradeStato = 'proposto' | 'accettato' | 'rifiutato' | 'controproposto';
+
+interface CartaPescata {
+  id: string;
+  finitura: Finitura;
+  designId: string;
+  designNome: string;
+  immagineKey: string | null;
+}
+
+interface CartaCollezione {
+  definizioneId: string | null;
+  finitura: Finitura;
+  designId: string;
+  designNome: string;
+  setId: string;
+  setNome: string;
+  immagineKey: string | null;
+  quantitaMia: number;
+  quantitaAltro: number;
+}
+
+interface TradeItem {
+  carteDefinizioneId: string;
+  finitura: Finitura;
+  designId: string;
+  designNome: string;
+  immagineKey: string | null;
+  quantita: number;
+}
+
+interface Trade {
+  id: string;
+  proponenteIdentity: UserIdentity;
+  destinatarioIdentity: UserIdentity;
+  stato: TradeStato;
+  messaggio: string | null;
+  tradePrecedenteId: string | null;
+  createdAt: string;
+  risoltoAt: string | null;
+  offerta: TradeItem[];
+  richiesta: TradeItem[];
+}
+
+interface CartaSet {
+  id: string;
+  slug: string;
+  nome: string;
+  descrizione: string | null;
+  position: number;
+}
+
+interface CartaDesign {
+  id: string;
+  setId: string;
+  nome: string;
+  immagineKey: string | null;
+  position: number;
+}
+
+const FINITURE: Finitura[] = ['flat', 'argento', 'oro', 'smeraldo', 'rubino', 'zaffiro', 'diamante'];
+const FINITURA_LABELS: Record<Finitura, string> = {
+  flat: 'Standard',
+  argento: 'Argento',
+  oro: 'Oro',
+  smeraldo: 'Smeraldo',
+  rubino: 'Rubino',
+  zaffiro: 'Zaffiro',
+  diamante: 'Diamante'
+};
+const IDENTITY_LABELS: Record<UserIdentity, string> = { lui: 'lui', lei: 'lei' };
+
+// Route + card di #e4 (gioco di carte collezionabili) — vedi e4-carte-collezionabili.md per il
+// design completo. Un'unica pagina a tab (Bustina/Album/Scambi/+Editor per l'admin) invece di
+// route separate: stesso principio già usato dal pannello GDR, evita di duplicare shell/hero
+// per una feature che è concettualmente un solo posto. L'editor è inline dietro canEdit(),
+// non su una route admin dedicata (pattern dominante nel sito, vedi Barattolo dei Pensieri).
+@Component({
+  selector: 'app-carte',
+  standalone: true,
+  imports: [AppShell, FormsModule, CartaTilt],
+  styleUrls: ['../../../styles/components/modal.css', '../../../styles/pages/carte.css'],
+  templateUrl: './carte.html'
+})
+export class Carte implements OnInit {
+  private readonly authService = inject(AuthService);
+  private readonly api = inject(ApiService);
+
+  protected readonly ownIdentity = computed<UserIdentity>(() => this.authService.currentUser()?.identity ?? 'lei');
+  protected readonly otherIdentity = computed<UserIdentity>(() => (this.ownIdentity() === 'lui' ? 'lei' : 'lui'));
+  protected readonly ownLabel = computed(() => IDENTITY_LABELS[this.ownIdentity()]);
+  protected readonly otherLabel = computed(() => IDENTITY_LABELS[this.otherIdentity()]);
+  protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
+
+  protected readonly tab = signal<Tab>('album');
+
+  // --- Bustina ---
+  protected readonly bustineDisponibili = signal(0);
+  protected readonly bustineLoadError = signal(false);
+  protected readonly opening = signal(false);
+  protected readonly openError = signal('');
+  protected readonly carteAperte = signal<CartaPescata[] | null>(null);
+  // Quante carte sono già state "girate" e messe in riga dietro: 0 = solo la prima carta in
+  // primo piano, nessuna ancora in fila. Quando arriva a carteAperte().length, tutte le carte
+  // sono in riga e il pulsante "Avanti" diventa "Chiudi" — svelamento una alla volta invece di
+  // una griglia con tutte le carte già scoperte, richiesto esplicitamente da Rory.
+  protected readonly cartaRivelataIndex = signal(0);
+
+  // Carta mostrata in grande al centro (quella non ancora in riga); null quando sono già
+  // state rivelate tutte.
+  protected readonly cartaInEvidenza = computed(() => {
+    const carte = this.carteAperte();
+    const i = this.cartaRivelataIndex();
+    return carte && i < carte.length ? carte[i] : null;
+  });
+
+  // Le carte già "girate", nell'ordine in cui sono state rivelate.
+  protected readonly carteInRiga = computed(() => {
+    const carte = this.carteAperte();
+    return carte ? carte.slice(0, this.cartaRivelataIndex()) : [];
+  });
+
+  // Vista a schermo intero di una singola carta (click su uno slot dell'album): stessa
+  // finitura/immagine, solo più grande, per vedere davvero il foil che a dimensione slot è
+  // troppo piccolo per giudicare (richiesta esplicita di Rory dopo aver visto l'album).
+  protected readonly cartaIngrandita = signal<{ finitura: Finitura; immagineUrl: string | null; nome: string } | null>(null);
+
+  // --- Album ---
+  protected readonly collezione = signal<CartaCollezione[]>([]);
+  protected readonly albumLoadError = signal(false);
+  protected readonly finituraAttiva = signal<Finitura>('flat');
+  protected readonly finiture = FINITURE;
+  protected readonly finituraLabels = FINITURA_LABELS;
+
+  protected readonly fogli = computed(() => {
+    const finitura = this.finituraAttiva();
+    const bySet = new Map<string, { setNome: string; carte: CartaCollezione[] }>();
+    for (const carta of this.collezione()) {
+      if (carta.finitura !== finitura) continue;
+      if (!bySet.has(carta.setId)) bySet.set(carta.setId, { setNome: carta.setNome, carte: [] });
+      bySet.get(carta.setId)!.carte.push(carta);
+    }
+    return [...bySet.values()];
+  });
+
+  // Carte possedute (quantità mia > 0), per i selettori di offerta nella proposta di trade.
+  protected readonly carteMiePossedute = computed(() => this.collezione().filter((c) => c.quantitaMia > 0));
+
+  // --- Scambi ---
+  protected readonly trades = signal<Trade[]>([]);
+  protected readonly tradesLoadError = signal(false);
+  protected readonly tradesInSospeso = computed(
+    () => this.trades().filter((t) => t.stato === 'proposto' && t.destinatarioIdentity === this.ownIdentity()).length
+  );
+
+  protected readonly nuovaOffertaId = signal('');
+  protected readonly nuovaOffertaQuantita = signal(1);
+  protected readonly nuovaRichiestaId = signal('');
+  protected readonly nuovaRichiestaQuantita = signal(1);
+  protected readonly nuovoMessaggio = signal('');
+  protected readonly offertaBozza = signal<{ carteDefinizioneId: string; quantita: number }[]>([]);
+  protected readonly richiestaBozza = signal<{ carteDefinizioneId: string; quantita: number }[]>([]);
+  protected readonly proponendo = signal(false);
+  protected readonly tradeError = signal('');
+
+  // --- Editor admin ---
+  protected readonly sets = signal<CartaSet[]>([]);
+  protected readonly designs = signal<CartaDesign[]>([]);
+  protected readonly editorLoadError = signal(false);
+  protected readonly nuovoSetNome = signal('');
+  protected readonly nuovoSetDescrizione = signal('');
+  protected readonly nuovoDesignSetId = signal('');
+  protected readonly nuovoDesignNome = signal('');
+  protected readonly nuovoDesignFile = signal<File | null>(null);
+  protected readonly uploadingDesign = signal(false);
+  protected readonly editorError = signal('');
+
+  protected readonly designsBySet = computed(() => {
+    const groups = new Map<string, CartaDesign[]>();
+    for (const design of this.designs()) {
+      if (!groups.has(design.setId)) groups.set(design.setId, []);
+      groups.get(design.setId)!.push(design);
+    }
+    return groups;
+  });
+
+  async ngOnInit(): Promise<void> {
+    await Promise.all([this.loadBustine(), this.loadCollezione(), this.loadTrades()]);
+    if (this.canEdit()) {
+      await this.loadEditorData();
+    }
+  }
+
+  protected selectTab(tab: Tab): void {
+    this.tab.set(tab);
+  }
+
+  // --- Bustina ---
+  private async loadBustine(): Promise<void> {
+    try {
+      const response = await fetch('/api/carte-bustine', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error(`Caricamento fallito: ${response.status}`);
+      const data = (await response.json()) as { quantitaDisponibile?: number };
+      this.bustineDisponibili.set(data.quantitaDisponibile ?? 0);
+    } catch (error) {
+      console.error('Errore nel caricamento delle bustine:', error);
+      this.bustineLoadError.set(true);
+    }
+  }
+
+  protected async apriBustina(): Promise<void> {
+    if (this.opening() || this.bustineDisponibili() < 1) return;
+    this.opening.set(true);
+    this.openError.set('');
+
+    try {
+      const response = await fetch('/api/carte-bustine/apri', { method: 'POST', credentials: 'same-origin' });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(typeof result.error === 'string' ? result.error : 'Non è stato possibile aprire la bustina.');
+      }
+
+      this.cartaRivelataIndex.set(0);
+      this.carteAperte.set(result.carte ?? []);
+      this.bustineDisponibili.set(result.quantitaDisponibile ?? 0);
+      await this.loadCollezione();
+    } catch (error) {
+      this.openError.set(error instanceof Error ? error.message : 'Non è stato possibile aprire la bustina.');
+    } finally {
+      this.opening.set(false);
+    }
+  }
+
+  // "Avanti": se c'è ancora una carta in primo piano la gira e la manda in riga; se erano
+  // già tutte in riga (niente più da girare), lo stesso pulsante chiude il riepilogo.
+  protected avantiReveal(): void {
+    if (this.cartaInEvidenza()) {
+      this.cartaRivelataIndex.update((i) => i + 1);
+    } else {
+      this.chiudiReveal();
+    }
+  }
+
+  // Salta l'apertura una alla volta: manda subito tutte le carte in riga, come chiedere di
+  // "aprire direttamente" invece di premere avanti ripetutamente.
+  protected apriTutteVeloce(): void {
+    this.cartaRivelataIndex.set(this.carteAperte()?.length ?? 0);
+  }
+
+  protected chiudiReveal(): void {
+    this.carteAperte.set(null);
+    this.cartaRivelataIndex.set(0);
+  }
+
+  protected onModalBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) this.chiudiReveal();
+  }
+
+  protected immagineUrl(key: string | null): string | null {
+    return key ? `/api/media/${key}` : null;
+  }
+
+  // --- Album ---
+  private async loadCollezione(): Promise<void> {
+    try {
+      const response = await fetch('/api/carte-collezione', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error(`Caricamento fallito: ${response.status}`);
+      const data = (await response.json()) as { carte?: CartaCollezione[] };
+      this.collezione.set(data.carte ?? []);
+    } catch (error) {
+      console.error("Errore nel caricamento dell'album:", error);
+      this.albumLoadError.set(true);
+    }
+  }
+
+  protected selectFinitura(finitura: Finitura): void {
+    this.finituraAttiva.set(finitura);
+  }
+
+  protected ingrandisciCarta(carta: { finitura: Finitura; immagineKey: string | null; designNome: string }): void {
+    this.cartaIngrandita.set({ finitura: carta.finitura, immagineUrl: this.immagineUrl(carta.immagineKey), nome: carta.designNome });
+  }
+
+  protected chiudiCartaIngrandita(): void {
+    this.cartaIngrandita.set(null);
+  }
+
+  protected onIngranditaBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) this.chiudiCartaIngrandita();
+  }
+
+  // --- Scambi ---
+  private async loadTrades(): Promise<void> {
+    try {
+      const response = await fetch('/api/carte-trade', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error(`Caricamento fallito: ${response.status}`);
+      const data = (await response.json()) as { trades?: Trade[] };
+      this.trades.set(data.trades ?? []);
+    } catch (error) {
+      console.error('Errore nel caricamento degli scambi:', error);
+      this.tradesLoadError.set(true);
+    }
+  }
+
+  protected aggiungiOfferta(): void {
+    const id = this.nuovaOffertaId();
+    const quantita = this.nuovaOffertaQuantita();
+    if (!id || quantita < 1) return;
+    this.offertaBozza.set([...this.offertaBozza(), { carteDefinizioneId: id, quantita }]);
+    this.nuovaOffertaId.set('');
+    this.nuovaOffertaQuantita.set(1);
+  }
+
+  protected rimuoviOfferta(index: number): void {
+    this.offertaBozza.set(this.offertaBozza().filter((_, i) => i !== index));
+  }
+
+  protected aggiungiRichiesta(): void {
+    const id = this.nuovaRichiestaId();
+    const quantita = this.nuovaRichiestaQuantita();
+    if (!id || quantita < 1) return;
+    this.richiestaBozza.set([...this.richiestaBozza(), { carteDefinizioneId: id, quantita }]);
+    this.nuovaRichiestaId.set('');
+    this.nuovaRichiestaQuantita.set(1);
+  }
+
+  protected rimuoviRichiesta(index: number): void {
+    this.richiestaBozza.set(this.richiestaBozza().filter((_, i) => i !== index));
+  }
+
+  protected async proponiTrade(): Promise<void> {
+    if (this.proponendo()) return;
+    if (this.offertaBozza().length === 0 && this.richiestaBozza().length === 0) {
+      this.tradeError.set('Seleziona almeno una carta da offrire o richiedere.');
+      return;
+    }
+
+    this.proponendo.set(true);
+    this.tradeError.set('');
+
+    try {
+      const response = await fetch('/api/carte-trade', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          offerta: this.offertaBozza(),
+          richiesta: this.richiestaBozza(),
+          messaggio: this.nuovoMessaggio().trim() || undefined
+        })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(typeof result.error === 'string' ? result.error : 'Non è stato possibile proporre lo scambio.');
+      }
+
+      this.offertaBozza.set([]);
+      this.richiestaBozza.set([]);
+      this.nuovoMessaggio.set('');
+      await this.loadTrades();
+    } catch (error) {
+      this.tradeError.set(error instanceof Error ? error.message : 'Non è stato possibile proporre lo scambio.');
+    } finally {
+      this.proponendo.set(false);
+    }
+  }
+
+  protected async accettaTrade(id: string): Promise<void> {
+    const ok = await this.api.sendAuthenticatedJson(`/api/carte-trade/${id}/accetta`, {}, 'POST');
+    if (!ok) {
+      this.tradeError.set('Non è stato possibile accettare lo scambio.');
+      return;
+    }
+    await Promise.all([this.loadTrades(), this.loadCollezione()]);
+  }
+
+  protected async rifiutaTrade(id: string): Promise<void> {
+    const ok = await this.api.sendAuthenticatedJson(`/api/carte-trade/${id}/rifiuta`, {}, 'POST');
+    if (!ok) {
+      this.tradeError.set('Non è stato possibile rifiutare lo scambio.');
+      return;
+    }
+    await this.loadTrades();
+  }
+
+  protected tradeVerso(trade: Trade): string {
+    const destinatario = trade.destinatarioIdentity === this.ownIdentity() ? 'te' : this.otherLabel();
+    const proponente = trade.proponenteIdentity === this.ownIdentity() ? 'tu' : this.otherLabel();
+    return `Da ${proponente} a ${destinatario}`;
+  }
+
+  // --- Editor admin ---
+  private async loadEditorData(): Promise<void> {
+    try {
+      const [setsRes, designsRes] = await Promise.all([
+        fetch('/api/carte-sets', { credentials: 'same-origin', headers: { Accept: 'application/json' } }),
+        fetch('/api/carte-designs', { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+      ]);
+      if (!setsRes.ok || !designsRes.ok) throw new Error('Caricamento fallito.');
+      const setsData = (await setsRes.json()) as { sets?: CartaSet[] };
+      const designsData = (await designsRes.json()) as { designs?: CartaDesign[] };
+      this.sets.set(setsData.sets ?? []);
+      this.designs.set(designsData.designs ?? []);
+    } catch (error) {
+      console.error("Errore nel caricamento dell'editor:", error);
+      this.editorLoadError.set(true);
+    }
+  }
+
+  protected async creaSet(): Promise<void> {
+    const nome = this.nuovoSetNome().trim();
+    if (!nome) return;
+
+    const ok = await this.api.sendAuthenticatedJson('/api/carte-sets', {
+      nome,
+      descrizione: this.nuovoSetDescrizione().trim() || undefined
+    }, 'POST');
+    if (!ok) {
+      this.editorError.set('Non è stato possibile creare il set.');
+      return;
+    }
+
+    this.nuovoSetNome.set('');
+    this.nuovoSetDescrizione.set('');
+    await this.loadEditorData();
+  }
+
+  protected onDesignFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.nuovoDesignFile.set(input.files?.[0] ?? null);
+  }
+
+  protected async creaDesign(): Promise<void> {
+    const setId = this.nuovoDesignSetId();
+    const nome = this.nuovoDesignNome().trim();
+    const file = this.nuovoDesignFile();
+    if (!setId || !nome) {
+      this.editorError.set('Set e nome sono obbligatori.');
+      return;
+    }
+
+    this.uploadingDesign.set(true);
+    this.editorError.set('');
+
+    try {
+      let immagineKey: string | undefined;
+      if (file) {
+        const uploadResponse = await fetch('/api/carte-media/upload?type=photo', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': file.type },
+          body: file
+        });
+        const uploadResult = await uploadResponse.json().catch(() => ({}));
+        if (!uploadResponse.ok) {
+          throw new Error(typeof uploadResult.error === 'string' ? uploadResult.error : "Upload dell'immagine non riuscito.");
+        }
+        immagineKey = uploadResult.key;
+      }
+
+      const ok = await this.api.sendAuthenticatedJson('/api/carte-designs', { setId: Number(setId), nome, immagineKey }, 'POST');
+      if (!ok) throw new Error('Non è stato possibile creare la carta.');
+
+      this.nuovoDesignNome.set('');
+      this.nuovoDesignFile.set(null);
+      await this.loadEditorData();
+    } catch (error) {
+      this.editorError.set(error instanceof Error ? error.message : 'Non è stato possibile creare la carta.');
+    } finally {
+      this.uploadingDesign.set(false);
+    }
+  }
+
+  protected async eliminaDesign(id: string): Promise<void> {
+    await this.api.sendAuthenticatedJson(`/api/carte-designs/${id}`, {}, 'DELETE');
+    await this.loadEditorData();
+  }
+
+  protected async eliminaSet(id: string): Promise<void> {
+    const ok = await this.api.sendAuthenticatedJson(`/api/carte-sets/${id}`, {}, 'DELETE');
+    if (!ok) {
+      this.editorError.set('Non è stato possibile eliminare il set: contiene ancora delle carte.');
+      return;
+    }
+    await this.loadEditorData();
+  }
+}

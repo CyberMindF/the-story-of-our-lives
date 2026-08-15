@@ -1,0 +1,290 @@
+<app-shell homeHref="/tavolo-da-gioco" homeAria="Torna al Tavolo da Gioco" homeLabel="Il Tavolo da Gioco">
+  <section class="tavolo-hero tavolo-hero-text-only" aria-labelledby="carte-title">
+    <p class="tavolo-eyebrow">Il tavolo · carte</p>
+    <h1 id="carte-title"><span aria-hidden="true">🃏</span> Le Carte Collezionabili</h1>
+  </section>
+
+  <div class="tavolo-intro">
+    <p>Bustine casuali, un album da riempire, carte da scambiarvi.</p>
+  </div>
+
+  <nav class="carte-tabs" role="tablist">
+    <button type="button" role="tab" class="carte-tab" [class.is-active]="tab() === 'album'" (click)="selectTab('album')">Album</button>
+    <button type="button" role="tab" class="carte-tab" [class.is-active]="tab() === 'scambi'" (click)="selectTab('scambi')">
+      Scambi
+      @if (tradesInSospeso() > 0) {
+        <span class="carte-tab-badge">{{ tradesInSospeso() }}</span>
+      }
+    </button>
+    @if (canEdit()) {
+      <button type="button" role="tab" class="carte-tab" [class.is-active]="tab() === 'editor'" (click)="selectTab('editor')">Editor</button>
+    }
+  </nav>
+
+  @if (tab() === 'album') {
+    <section class="carte-album-panel">
+      <div class="carte-bustine-strip">
+        <p class="carte-bustine-count">
+          Bustine disponibili: <strong>{{ bustineDisponibili() }}</strong>
+        </p>
+        @if (bustineLoadError()) {
+          <p class="carte-error">Non è stato possibile leggere le bustine disponibili.</p>
+        }
+        <button
+          type="button"
+          class="btn btn-submit"
+          [class.carte-bustina-btn--vuota]="!opening() && bustineDisponibili() < 1"
+          [disabled]="opening() || bustineDisponibili() < 1"
+          (click)="apriBustina()"
+        >
+          {{ opening() ? 'Apertura…' : 'Apri una bustina' }}
+        </button>
+        @if (openError()) {
+          <p class="carte-error">{{ openError() }}</p>
+        }
+      </div>
+
+      @if (albumLoadError()) {
+        <p class="carte-error">Non è stato possibile caricare l'album.</p>
+      }
+
+      <div class="carte-finitura-tabs" role="tablist">
+        @for (finitura of finiture; track finitura) {
+          <button
+            type="button"
+            role="tab"
+            class="carte-finitura-tab"
+            [class.is-active]="finituraAttiva() === finitura"
+            [attr.aria-selected]="finituraAttiva() === finitura"
+            (click)="selectFinitura(finitura)"
+          >
+            {{ finituraLabels[finitura] }}
+          </button>
+        }
+      </div>
+
+      @for (foglio of fogli(); track foglio.setNome) {
+        <div class="carte-pagina">
+          <h3 class="carte-pagina-titolo">{{ foglio.setNome }}</h3>
+
+          <div class="carte-pagina-sezione">
+            <p class="carte-pagina-proprietario">Il tuo album ({{ ownLabel() }})</p>
+            <div class="carte-grid">
+              @for (carta of foglio.carte; track carta.designId) {
+                <div
+                  class="carte-card-wrap"
+                  [class.carte-card-wrap--clickable]="carta.quantitaMia > 0"
+                  [attr.role]="carta.quantitaMia > 0 ? 'button' : null"
+                  [attr.tabindex]="carta.quantitaMia > 0 ? 0 : null"
+                  (click)="carta.quantitaMia > 0 && ingrandisciCarta(carta)"
+                  (keydown.enter)="carta.quantitaMia > 0 && ingrandisciCarta(carta)"
+                >
+                  @if (carta.quantitaMia > 0) {
+                    <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)" [nome]="carta.designNome" />
+                    @if (carta.quantitaMia > 1) {
+                      <span class="carte-card-badge">×{{ carta.quantitaMia }}</span>
+                    }
+                  } @else {
+                    <div class="carte-card-empty" aria-hidden="true"></div>
+                  }
+                  <p class="carte-card-nome">{{ carta.quantitaMia > 0 ? carta.designNome : '???' }}</p>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="carte-pagina-sezione">
+            <p class="carte-pagina-proprietario">Album di {{ otherLabel() }}</p>
+            <div class="carte-grid">
+              @for (carta of foglio.carte; track carta.designId) {
+                <div
+                  class="carte-card-wrap"
+                  [class.carte-card-wrap--clickable]="carta.quantitaAltro > 0"
+                  [attr.role]="carta.quantitaAltro > 0 ? 'button' : null"
+                  [attr.tabindex]="carta.quantitaAltro > 0 ? 0 : null"
+                  (click)="carta.quantitaAltro > 0 && ingrandisciCarta(carta)"
+                  (keydown.enter)="carta.quantitaAltro > 0 && ingrandisciCarta(carta)"
+                >
+                  @if (carta.quantitaAltro > 0) {
+                    <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)" [nome]="carta.designNome" />
+                    @if (carta.quantitaAltro > 1) {
+                      <span class="carte-card-badge">×{{ carta.quantitaAltro }}</span>
+                    }
+                  } @else {
+                    <div class="carte-card-empty" aria-hidden="true"></div>
+                  }
+                  <p class="carte-card-nome">{{ carta.quantitaAltro > 0 ? carta.designNome : '???' }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+  }
+
+  @if (tab() === 'scambi') {
+    <section class="carte-trade-panel">
+      @if (tradesLoadError()) {
+        <p class="carte-error">Non è stato possibile caricare gli scambi.</p>
+      }
+      @if (tradeError()) {
+        <p class="carte-error">{{ tradeError() }}</p>
+      }
+
+      <h2>Proponi uno scambio</h2>
+      <div class="carte-trade-form">
+        <div class="carte-trade-form-col">
+          <p>Offri (le tue carte)</p>
+          <select [ngModel]="nuovaOffertaId()" (ngModelChange)="nuovaOffertaId.set($event)">
+            <option value="">— scegli una carta —</option>
+            @for (carta of carteMiePossedute(); track carta.definizioneId) {
+              <option [value]="carta.definizioneId">{{ carta.designNome }} · {{ finituraLabels[carta.finitura] }} (×{{ carta.quantitaMia }})</option>
+            }
+          </select>
+          <input type="number" min="1" [ngModel]="nuovaOffertaQuantita()" (ngModelChange)="nuovaOffertaQuantita.set($event)" />
+          <button type="button" class="btn" (click)="aggiungiOfferta()">Aggiungi</button>
+          <ul>
+            @for (item of offertaBozza(); track $index) {
+              <li>×{{ item.quantita }} — id {{ item.carteDefinizioneId }} <button type="button" class="btn" (click)="rimuoviOfferta($index)">Rimuovi</button></li>
+            }
+          </ul>
+        </div>
+
+        <div class="carte-trade-form-col">
+          <p>Richiedi (dall'album di {{ otherLabel() }})</p>
+          <input type="text" placeholder="Id definizione carta" [ngModel]="nuovaRichiestaId()" (ngModelChange)="nuovaRichiestaId.set($event)" />
+          <input type="number" min="1" [ngModel]="nuovaRichiestaQuantita()" (ngModelChange)="nuovaRichiestaQuantita.set($event)" />
+          <button type="button" class="btn" (click)="aggiungiRichiesta()">Aggiungi</button>
+          <ul>
+            @for (item of richiestaBozza(); track $index) {
+              <li>×{{ item.quantita }} — id {{ item.carteDefinizioneId }} <button type="button" class="btn" (click)="rimuoviRichiesta($index)">Rimuovi</button></li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <textarea placeholder="Messaggio (opzionale)" [ngModel]="nuovoMessaggio()" (ngModelChange)="nuovoMessaggio.set($event)"></textarea>
+      <button type="button" class="btn btn-submit" [disabled]="proponendo()" (click)="proponiTrade()">
+        {{ proponendo() ? 'Invio…' : 'Proponi scambio' }}
+      </button>
+
+      <h2>I tuoi scambi</h2>
+      @for (trade of trades(); track trade.id) {
+        <div class="carte-trade-card">
+          <p class="carte-trade-meta">{{ tradeVerso(trade) }} — stato: <strong>{{ trade.stato }}</strong></p>
+          @if (trade.messaggio) {
+            <p class="carte-trade-messaggio">"{{ trade.messaggio }}"</p>
+          }
+          <p>Offerta: {{ trade.offerta.length }} carte · Richiesta: {{ trade.richiesta.length }} carte</p>
+          @if (trade.stato === 'proposto' && trade.destinatarioIdentity === ownIdentity()) {
+            <div class="carte-trade-azioni">
+              <button type="button" class="btn btn-submit" (click)="accettaTrade(trade.id)">Accetta</button>
+              <button type="button" class="btn" (click)="rifiutaTrade(trade.id)">Rifiuta</button>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  @if (tab() === 'editor' && canEdit()) {
+    <section class="carte-editor-panel">
+      @if (editorLoadError()) {
+        <p class="carte-error">Non è stato possibile caricare l'editor.</p>
+      }
+      @if (editorError()) {
+        <p class="carte-error">{{ editorError() }}</p>
+      }
+
+      <h2>Nuovo set</h2>
+      <input type="text" placeholder="Nome del set" [ngModel]="nuovoSetNome()" (ngModelChange)="nuovoSetNome.set($event)" />
+      <input type="text" placeholder="Descrizione (opzionale)" [ngModel]="nuovoSetDescrizione()" (ngModelChange)="nuovoSetDescrizione.set($event)" />
+      <button type="button" class="btn btn-submit" (click)="creaSet()">Crea set</button>
+
+      <h2>Nuova carta</h2>
+      <select [ngModel]="nuovoDesignSetId()" (ngModelChange)="nuovoDesignSetId.set($event)">
+        <option value="">— scegli un set —</option>
+        @for (set of sets(); track set.id) {
+          <option [value]="set.id">{{ set.nome }}</option>
+        }
+      </select>
+      <input type="text" placeholder="Nome della carta" [ngModel]="nuovoDesignNome()" (ngModelChange)="nuovoDesignNome.set($event)" />
+      <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onDesignFileSelected($event)" />
+      <button type="button" class="btn btn-submit" [disabled]="uploadingDesign()" (click)="creaDesign()">
+        {{ uploadingDesign() ? 'Caricamento…' : 'Crea carta' }}
+      </button>
+
+      @for (set of sets(); track set.id) {
+        <div class="carte-editor-set">
+          <h3>{{ set.nome }} <button type="button" class="btn" (click)="eliminaSet(set.id)">Elimina set</button></h3>
+          <ul>
+            @for (design of designsBySet().get(set.id) ?? []; track design.id) {
+              <li>{{ design.nome }} <button type="button" class="btn" (click)="eliminaDesign(design.id)">Elimina</button></li>
+            }
+          </ul>
+        </div>
+      }
+    </section>
+  }
+
+  <div class="modal" [class.hidden]="!carteAperte()" role="dialog" aria-modal="true" (click)="onModalBackdropClick($event)">
+    <div class="modal-card carte-reveal-card">
+      <h2>Hai pescato</h2>
+
+      <div class="carte-reveal-evidenza">
+        @if (cartaInEvidenza(); as carta) {
+          <div class="carte-reveal-evidenza-carta">
+            <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)" [nome]="carta.designNome" />
+            <p class="carte-slot-nome">{{ carta.designNome }}</p>
+            <p class="carte-slot-finitura">{{ finituraLabels[carta.finitura] }}</p>
+          </div>
+        } @else {
+          <p class="carte-reveal-completo">Bustina finita!</p>
+        }
+      </div>
+
+      <!-- Sempre presente (anche vuota): riserva già lo spazio di una riga di carte, così
+           quando la prima carta ci finisce dentro il layout non "salta" cambiando altezza. -->
+      <div class="carte-reveal-riga">
+        @for (carta of carteInRiga(); track carta.id) {
+          <div
+            class="carte-reveal-riga-carta"
+            role="button"
+            tabindex="0"
+            (click)="ingrandisciCarta(carta)"
+            (keydown.enter)="ingrandisciCarta(carta)"
+          >
+            <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)" [nome]="carta.designNome" />
+          </div>
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-submit" (click)="avantiReveal()">
+          {{ cartaInEvidenza() ? 'Avanti →' : 'Chiudi' }}
+        </button>
+        @if (cartaInEvidenza()) {
+          <button type="button" class="btn" (click)="apriTutteVeloce()">Apri tutte</button>
+        } @else if (bustineDisponibili() > 0) {
+          <button type="button" class="btn" (click)="apriBustina()">Apri la prossima</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" [class.hidden]="!cartaIngrandita()" role="dialog" aria-modal="true" (click)="onIngranditaBackdropClick($event)">
+    <div class="modal-card carte-ingrandita-card">
+      @if (cartaIngrandita(); as carta) {
+        <div class="carte-ingrandita-wrapper">
+          <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="carta.immagineUrl" [nome]="carta.nome" />
+        </div>
+        <p class="carte-slot-nome">{{ carta.nome }}</p>
+        <p class="carte-slot-finitura">{{ finituraLabels[carta.finitura] }}</p>
+      }
+      <div class="modal-actions">
+        <button type="button" class="btn btn-submit" (click)="chiudiCartaIngrandita()">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</app-shell>

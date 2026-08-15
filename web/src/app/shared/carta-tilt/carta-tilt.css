@@ -1,0 +1,93 @@
+:host {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  perspective: 900px;
+  container-type: size;
+}
+
+.carta-tilt-frame {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 35%;
+  --my: 28%;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: .7rem;
+  overflow: hidden;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+  box-shadow: 0 .3rem 1rem rgba(0, 0, 0, .35);
+}
+/* Mentre il puntatore è sopra, risposta immediata; al rilascio riprende la transizione morbida
+   sopra per il "ritorno a riposo". */
+.carta-tilt-frame.is-active { transition-duration: 80ms; }
+
+.carta-tilt-frame > app-metallic-foil {
+  position: absolute;
+  inset: 0;
+}
+
+.carta-tilt-image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: color-mix(in srgb, var(--panel-color) 80%, transparent);
+}
+
+.carta-tilt-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: min(45cqw, 45cqh, 12rem);
+  pointer-events: none;
+}
+
+/* Tint di base: una tinta costante della finitura sopra la foto, blend hard-light per un
+   aspetto di lastra colorata opaca indipendentemente da cosa c'è sotto (blend 'color' lasciava
+   troppo intatta la luminosità della foto, risultando "trasparentino" nelle zone chiare). */
+.carta-tilt-tint {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: hard-light;
+  pointer-events: none;
+}
+
+/* Il mosaico vero: poligoni SVG fissi, solo il fill di ciascuno cambia via JS (vedi
+   carta-tilt.ts/holo-mosaic.ts). overlay lascia trasparire la foto sotto invece di coprirla. */
+.carta-tilt-foil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.carta-tilt-foil polygon {
+  transition: fill 40ms linear, opacity 40ms linear;
+  shape-rendering: geometricPrecision;
+}
+
+/* Vetro: un riflesso morbido aggiuntivo che segue il mouse (non il mosaico, che resta fisso),
+   per dare profondità extra come una vera laminazione lucida sopra il foil. */
+.carta-tilt-glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.22) 0%, rgba(255,255,210,.09) 13%, rgba(255,255,255,.025) 30%, transparent 52%),
+    linear-gradient(115deg, transparent 20%, rgba(255,255,255,.04) 42%, rgba(255,255,255,.13) 49%, rgba(255,255,255,.035) 56%, transparent 75%);
+}
+
+.carta-tilt-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
+  pointer-events: none;
+}

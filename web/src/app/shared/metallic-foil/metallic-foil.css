@@ -1,0 +1,94 @@
+:host {
+  display: block;
+  position: relative;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+
+  --surface-x: 38%;
+  --surface-y: 30%;
+}
+
+:host > div {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.metal-image {
+  background-size: cover;
+  background-position: center;
+  background-color: color-mix(in srgb, var(--panel-color) 80%, transparent);
+}
+
+/*
+  Superficie metallica: UN SOLO gradiente che contiene sia le bande di colore sia i picchi
+  quasi bianchi (i "punti che catturano la luce"), non due strati separati (colore fermo +
+  riflesso mobile a parte) — quella separazione è esattamente ciò che Rory ha bocciato: si
+  vedeva "una texture ferma con sopra una riga di luce indipendente". Qui quando la superficie
+  si sposta (background-position, legata al tilt), si spostano insieme colore e luce: è la
+  stessa lastra che sembra catturare la luce in modo diverso, non un'entità a parte che le
+  scivola sopra.
+
+  repeating-linear-gradient (non un gradiente con inizio/fine) così qualunque posizione di
+  background-position mostra sempre pattern pieno, mai un bordo che "finisce" a tilt estremo
+  (bug già trovato e corretto in una versione precedente).
+*/
+.metal-surface {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgb(var(--metal-shadow)) 0%,
+    rgb(var(--metal-dark)) 8%,
+    rgb(var(--metal-mid)) 16%,
+    rgb(var(--metal-main)) 24%,
+    rgb(var(--metal-light)) 30%,
+    rgb(var(--metal-highlight)) 34%,
+    rgb(255 255 255) 37%,
+    rgb(var(--metal-highlight)) 40%,
+    rgb(var(--metal-light)) 44%,
+    rgb(var(--metal-main)) 52%,
+    rgb(var(--metal-mid)) 62%,
+    rgb(var(--metal-dark)) 74%,
+    rgb(var(--metal-shadow)) 86%,
+    rgb(var(--metal-dark)) 100%
+  );
+  background-size: 260% 260%;
+  background-position: var(--surface-x) var(--surface-y);
+  /* Completamente opaca (niente blend mode, niente alpha): deve essere una vera lastra di
+     metallo, non una tinta semi-trasparente sopra la foto — segnalato esplicitamente da Rory
+     ("deve essere totalmente opaca"). La foto sotto non è più visibile per le carte oro, come
+     una vera lamina metallica stampata sopra.
+
+     Transizione: NESSUNA durante il tracking attivo (posizione legata 1:1 al mouse,
+     fotogramma per fotogramma) — un `transition` riavviato ad ogni pointermove, che arrivano
+     ogni ~16ms, molto più spesso della durata della transizione, si accumula in un effetto a
+     scatti che sembra "aggiornarsi solo quando ti fermi" (segnalato da Rory): il valore
+     visibile rincorre sempre un bersaglio già cambiato. La transizione morbida si applica solo
+     al rilascio (regola sotto, quando manca .is-active), quando la posizione deve tornare a
+     riposo in modo fluido invece che di scatto. */
+  transition: none;
+}
+:host(:not(.is-active)) .metal-surface {
+  transition: background-position .5s cubic-bezier(.22, 1, .36, 1);
+}
+
+/* Micro-striature "brushed metal": fisse, non legate al mouse — sono una proprietà del
+   materiale (la direzione in cui è stato spazzolato), non una fonte di luce che si sposta. */
+.metal-brushed {
+  background:
+    repeating-linear-gradient(96deg, rgba(255,255,255,.035) 0px, rgba(255,255,255,.035) 1px, rgba(0,0,0,.025) 1.5px, transparent 3px, transparent 6px),
+    repeating-linear-gradient(87deg, transparent 0px, transparent 7px, rgba(255,255,255,.025) 8px, transparent 10px);
+  mix-blend-mode: overlay;
+  opacity: .7;
+}
+
+/* Micro-grana: molto debole, serve solo a rompere la perfezione del gradiente CSS. */
+.metal-grain {
+  background:
+    repeating-radial-gradient(circle at 17% 23%, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) .7px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(13deg, rgba(0,0,0,.018) 0, transparent 1px, transparent 4px);
+  mix-blend-mode: soft-light;
+  opacity: .65;
+}

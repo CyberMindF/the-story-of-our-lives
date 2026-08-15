@@ -1,0 +1,276 @@
+.carte-tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
+.carte-tab {
+  border: 1px solid var(--panel-border-color);
+  background: transparent;
+  color: inherit;
+  border-radius: .7rem;
+  padding: .5rem 1rem;
+  cursor: pointer;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+.carte-tab.is-active {
+  background: color-mix(in srgb, var(--accent-color) 55%, transparent);
+  border-color: var(--accent-color);
+}
+.carte-tab-badge {
+  background: var(--danger-text-color);
+  color: #fff;
+  border-radius: 999px;
+  font-size: .72rem;
+  line-height: 1;
+  padding: .2rem .45rem;
+}
+
+.carte-album-panel,
+.carte-trade-panel,
+.carte-editor-panel {
+  background: var(--panel-color);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--panel-border-color);
+  border-radius: 1rem;
+  padding: 1.2rem 1.4rem;
+  margin-block: 1.2rem;
+  display: grid;
+  gap: .8rem;
+}
+
+/* Fascia bustine in cima all'Album: prima era una tab a sé, sproporzionata per un solo
+   bottone e un contatore — la sua "casa" naturale è comunque l'album, dove finiscono le
+   carte appena aperte. */
+.carte-bustine-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .8rem;
+  padding-bottom: 1rem;
+  margin-bottom: .4rem;
+  border-bottom: 1px solid var(--panel-border-color);
+}
+.carte-bustine-count { margin: 0; font-size: 1.05rem; }
+.carte-error { margin: 0; color: var(--danger-text-color); font-size: .9rem; }
+
+.carte-finitura-tabs { display: flex; flex-wrap: wrap; gap: .5rem; }
+.carte-finitura-tab {
+  border: 1px solid var(--panel-border-color);
+  background: transparent;
+  color: inherit;
+  border-radius: 999px;
+  padding: .35rem 1rem;
+  cursor: pointer;
+  font: inherit;
+}
+.carte-finitura-tab.is-active {
+  background: color-mix(in srgb, var(--accent-color) 55%, transparent);
+  color: var(--text-color);
+  border-color: var(--accent-color);
+}
+
+/* Una "pagina" d'album per set: sfondo e bordo leggermente diversi dal pannello attorno, per
+   staccarsi visivamente come farebbe una vera pagina dentro un raccoglitore, non solo una
+   griglia nuda sul pannello di sfondo. */
+.carte-pagina {
+  background: color-mix(in srgb, var(--panel-color) 55%, transparent);
+  border: 1px solid var(--panel-border-color);
+  border-radius: 1.1rem;
+  padding: 1.2rem 1.3rem 1.4rem;
+  margin-block: 1.4rem;
+  box-shadow: 0 .2rem .6rem rgba(0, 0, 0, .12);
+}
+.carte-pagina-titolo {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  text-align: center;
+  padding-bottom: .6rem;
+  border-bottom: 1px solid var(--panel-border-color);
+}
+
+/* Le due sezioni (tuo album / album dell'altro) impilate, non affiancate: più leggibili su
+   schermi stretti e più facili da confrontare scorrendo invece di dividere l'attenzione in
+   orizzontale. */
+.carte-pagina-sezione + .carte-pagina-sezione { margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px dashed var(--panel-border-color); }
+.carte-pagina-proprietario { margin: 0 0 .7rem; font-size: .85rem; opacity: .8; text-align: center; }
+
+.carte-grid,
+.carte-reveal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 1rem 1.2rem;
+}
+
+/* Carta "piena": nessuna cornice/box attorno, solo la carta stessa (già arrotondata e con la
+   propria ombra via carta-tilt.css) e il nome sotto senza riquadro. */
+/* align-items: start è essenziale: senza, il comportamento di default dei grid item
+   (stretch) costringe app-carta-tilt ad adattarsi all'altezza della riga della griglia
+   esterna — quando la didascalia va su due righe la riga si allunga e la carta (che ha
+   aspect-ratio fisso) viene schiacciata/rimpicciolita per starci dentro invece di restare
+   della sua dimensione naturale. */
+.carte-card-wrap { display: grid; justify-items: center; align-items: start; gap: .4rem; position: relative; }
+.carte-card-wrap--clickable { cursor: pointer; }
+.carte-card-wrap--clickable app-carta-tilt { transition: transform .15s ease; }
+.carte-card-wrap--clickable:hover app-carta-tilt,
+.carte-card-wrap--clickable:focus-visible app-carta-tilt { transform: translateY(-.2rem); }
+.carte-card-wrap--clickable:focus-visible { outline: none; }
+
+app-carta-tilt { display: block; width: 100%; }
+
+/* Slot vuoto: la sagoma di una carta (stesse proporzioni), non un riquadro squadrato con un
+   punto interrogativo dentro — più vicino a una vera tasca vuota di un album. */
+.carte-card-empty {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border: 1px dashed var(--panel-border-color);
+  border-radius: .7rem;
+  background: color-mix(in srgb, var(--panel-color) 40%, transparent);
+}
+
+/* Altezza fissa a due righe (line-clamp), non "quante righe servono": così ogni cella della
+   griglia occupa lo stesso spazio a prescindere da quanto è lungo il nome della carta. */
+.carte-card-nome {
+  margin: 0;
+  font-size: .78rem;
+  opacity: .85;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.25;
+  min-height: calc(1.25em * 2);
+}
+
+.carte-card-badge {
+  position: absolute;
+  top: .4rem;
+  right: .4rem;
+  background: color-mix(in srgb, var(--accent-color) 75%, transparent);
+  color: var(--text-color);
+  border-radius: 999px;
+  font-size: .7rem;
+  padding: .05rem .45rem;
+  pointer-events: none;
+}
+
+.carte-slot {
+  border: 1px solid var(--panel-border-color);
+  border-radius: .8rem;
+  padding: .6rem;
+  display: grid;
+  justify-items: center;
+  gap: .3rem;
+  text-align: center;
+  position: relative;
+  background: color-mix(in srgb, var(--panel-color) 70%, transparent);
+}
+
+.carte-slot img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: .5rem; }
+
+.carte-slot--rara {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 1px var(--accent-color);
+}
+
+.carte-slot-nome { margin: 0; font-size: .8rem; }
+.carte-slot-finitura { margin: 0; font-size: .72rem; opacity: .75; text-transform: uppercase; letter-spacing: .04em; }
+
+.carte-trade-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 720px) { .carte-trade-form { grid-template-columns: 1fr; } }
+.carte-trade-form-col { display: grid; gap: .5rem; align-content: start; }
+.carte-trade-form-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; }
+
+.carte-trade-card {
+  border: 1px solid var(--panel-border-color);
+  border-radius: .8rem;
+  padding: .8rem 1rem;
+  margin-block: .6rem;
+  display: grid;
+  gap: .3rem;
+}
+.carte-trade-meta { margin: 0; }
+.carte-trade-messaggio { margin: 0; font-style: italic; opacity: .85; }
+.carte-trade-azioni { display: flex; gap: .6rem; margin-top: .4rem; }
+
+.carte-editor-set { margin-block: .8rem; }
+.carte-editor-set ul { list-style: none; margin: .4rem 0 0; padding: 0; display: grid; gap: .3rem; }
+
+.carte-trade-panel input,
+.carte-trade-panel select,
+.carte-trade-panel textarea,
+.carte-editor-panel input,
+.carte-editor-panel select,
+.carte-editor-panel textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-color);
+  border-radius: .7rem;
+  background: var(--input-bg);
+  color: var(--text-color);
+  font: inherit;
+  padding: .6rem .8rem;
+  margin-bottom: .5rem;
+}
+.carte-trade-panel input::placeholder,
+.carte-trade-panel textarea::placeholder,
+.carte-editor-panel input::placeholder { color: var(--muted-color); opacity: 1; }
+.carte-trade-panel h2,
+.carte-editor-panel h2 { margin-top: 1.4rem; }
+.carte-trade-panel h2:first-child,
+.carte-editor-panel h2:first-child { margin-top: 0; }
+
+.carte-slot--clickable { cursor: pointer; }
+.carte-slot--clickable:hover,
+.carte-slot--clickable:focus-visible { border-color: var(--accent-color); outline: none; }
+
+.carte-ingrandita-card { display: grid; justify-items: center; gap: .5rem; }
+.carte-ingrandita-wrapper { width: min(70vw, 22rem); }
+
+.carte-reveal-card { display: grid; justify-items: center; gap: 1rem; }
+
+/* L'altezza riservata deve combaciare con l'altezza REALE della carta (proporzioni 3:4, quindi
+   più alta che larga) più lo spazio delle due righe di didascalia sotto — non un quadrato
+   arbitrario. Con un valore troppo basso, quando la carta sparisce e resta solo il testo
+   "Bustina finita!" il contenitore si restringe fino al min-height quadrato (più basso della
+   carta vera) e tutto quello sotto (riga + bottoni) sale di scatto — esattamente il salto
+   segnalato da Rory. */
+.carte-reveal-evidenza {
+  width: min(60vw, 16rem);
+  min-height: calc(min(60vw, 16rem) * 4 / 3 + 2.3rem);
+  display: grid;
+  align-items: center;
+}
+
+/* Solo la carta, niente box/cornice attorno: nome e finitura sotto come semplice testo. */
+.carte-reveal-evidenza-carta { display: grid; justify-items: center; gap: .3rem; width: 100%; }
+.carte-reveal-evidenza-carta app-carta-tilt { width: 100%; animation: carte-reveal-in .35s ease; }
+@keyframes carte-reveal-in {
+  from { opacity: 0; transform: scale(.9) translateY(.5rem); }
+  to { opacity: 1; transform: none; }
+}
+.carte-reveal-completo { margin: 0; font-size: 1.1rem; opacity: .85; text-align: center; }
+
+/* Altezza riservata fin da subito (carta piccola + margine), sempre presente anche vuota:
+   altrimenti quando arriva la prima carta la riga spunta dal nulla e sposta tutto il resto
+   del modale, un salto di layout brutto da vedere. */
+.carte-reveal-riga {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .6rem;
+  max-width: 32rem;
+  min-height: 5.9rem;
+}
+.carte-reveal-riga-carta {
+  width: 4.2rem;
+  cursor: pointer;
+  animation: carte-reveal-riga-in .3s ease;
+}
+@keyframes carte-reveal-riga-in {
+  from { opacity: 0; transform: translateY(-.6rem) scale(.85); }
+  to { opacity: 1; transform: none; }
+}
+
+/* .btn-submit:disabled usa cursor:wait ovunque nel sito (giusto: sempre "sta salvando/
+   inviando"), ma questo bottone si disattiva anche solo perché non ci sono bustine da aprire,
+   non solo mentre sta caricando — in quel caso "wait" è fuorviante, non sta succedendo nulla. */
+.carte-bustina-btn--vuota { cursor: not-allowed; }

@@ -7,12 +7,21 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ## Da fare / in corso
 
 - [~] #34 — “Il Ricettario”: pagina realizzata con card lunghe, ingredienti, procedimento, filtri “Fatta insieme / Da provare” e collegamento ai Suggerimenti già preselezionato. Contiene le ricette del Piano Aprilia e le aggiunte richieste da Rory. **Da fare**: sostituire la ricetta placeholder del pollo al curry con la loro versione definitiva e ricostruire ingredienti/procedimento dei biscotti di pasta frolla.
-- #16 (continua) — seconda avventura del Gioco di Ruolo: la card "Coming soon" esiste già(vedi Fatto). Resta da scrivere l'avventura vera quando Rory ha titolo/testo/regole pronti — con l'editor GDR (12/08/2026) si può fare direttamente dal sito, un blocco alla volta, senza toccare codice.
-- #e4 - Un gioco nella sezione giochi di "carte" dove è possibile collezionare carte queste carte sono tipo, cose nostre, come stickers nostri o immagini nostre, le carte possono avere rarità maggiori (quindi carte dello stesso tipo ma con rarità diverse) e ce le possiamo scambiare, una bustina contiene 5 carte, casuali, e possiamo scambiarle in modo asincrono, poi c'è una pagina "album" dove è possibile vederle tutte. Una bustina si guadagna ogni 10 minuti passati sul sito, ma alla registrazione te ne da 3. Deve essere possibile guardare l'album dell'altro, con doppioni segnalati
+- #e4 (continua) — resta aperto solo il Blocco 5 del piano in `e4-carte-collezionabili.md`
+  (notifiche email dei trade): volutamente non fatto, dipende da #f5 che non esiste ancora nel
+  sito, si aggancia quando/se #f5 verrà implementato. Resta aperta anche l'idea della streak
+  "giorni di fila" proposta il 14/08/2026 (mai implementata, nessuna traccia nel codice). Il
+  resto della feature è concluso e rifinito, vedi voce completa più sotto nel Fatto.
+- #e14 (idea, non ancora concordata nei dettagli) — "Il Ricordo di Oggi": una piccola card che pesca un ricordo a caso dalla Bacheca o dalla Mappa. Proposta il 14/08/2026, Rory ha detto che gli piace ma **al momento non ci sono abbastanza ricordi scritti** perché valga la pena farla — da rivalutare quando la Bacheca/Mappa avranno più contenuto.
+- #e16 (idea, ripescata) — Playlist Spotify condivisa nelle Cuffiette: era già stata proposta come #e1 e scartata il 13/08/2026 perché non chiaro il senso. Rory ha chiarito il 14/08/2026: non un editoriale scritto, ma un vero embed di una playlist Spotify che lui cura nel tempo, aggiungendo canzoni man mano — più semplice da fare di una pagina editoriale (nessun CMS, nessun testo da scrivere, solo un iframe verso la playlist).
+- #e17 (idea) — Modalità di lettura pulita: un formato "solo testo, senza UI" per rileggere una sezione (es. le Lettere) senza bottoni/form/header visibili. Proposta il 14/08/2026, valutata fattibile e semplice (~15-30 righe): `AppShell` ha già un pattern di `@Input` per nascondere pezzi di chrome (`showBackLink`, `showSuggestLink`, ecc.), basterebbe estenderlo con un interruttore in più, letto da query param (es. `?clean=1`), niente route nuova.
+- #e15 (idea, da studiare meglio) — "Capsula del tempo": un messaggio/foto scritto oggi ma visibile solo a partire da una data futura scelta (compleanno, anniversario). Diverso dal Barattolo dei Pensieri (casuale e immediato): qui è mirato e programmato. Proposta il 14/08/2026, piace a Rory ma **da progettare meglio** prima di iniziare (come si sceglie la data, notifiche, dove vive nel sito).
 - #e6 - Test generalee fix finali mobile
 - [x] #e12 — **Il Barattolo dei Pensieri** (`/barattolo-dei-pensieri`, card e voce nell'Atlante del Mappamondo incluse, gruppo "ricordi"). Due barattoli (uno per "lui", uno per "lei"): ognuno vede il proprio con solo il bottone "Pesca", quello dell'altro con solo la form "Scrivi per…" — mai entrambe le azioni sullo stesso barattolo. Numeri sopra ciascun barattolo con il conteggio dei biglietti attivi. Rispetto alla descrizione iniziale, due semplificazioni concordate con Rory: **niente categorie/stati d'animo** (pesca sempre "a caso" su tutto il barattolo attivo) e **aggiunta diretta per entrambi** (chiunque abbia sessione valida può scrivere per il barattolo dell'altro — il vincolo "mai per il proprio" è strutturale lato server: `jarIdentity` è sempre derivato dall'identità opposta a quella della sessione, non arriva mai dal client, quindi non richiede validazione). Niente più canale via Suggerimenti, reso ridondante dall'aggiunta diretta. Coda mobile di esclusione delle ultime `min(10, attivi-1)` pesche per barattolo (si riduce da sola se il barattolo ha meno di 11 biglietti attivi) e casualità pesata verso i meno pescati (peso `1/√(draw_count+1)`), in `functions/api/pensieri-biglietti/pesca.js`. Dopo l'apertura solo `Rimetti nel barattolo` / `Pesca ancora`, nessun archivio. Telemetria solo con l'ID del biglietto, mai il testo (`barattolo_biglietto_pescato`). Il biglietto pescato appare in un modale con lo stesso stile "carta scritta a mano" delle Lettere (`card--handwritten` + `handwritten-text`, font Caveat) e la stessa leggera rotazione pseudo-casuale-ma-fissa per id (ora condivisa: `seededRotation()` in `web/src/app/shared/random.ts`, riusata anche da Lettere al posto della sua vecchia copia privata). **Niente animazione di apertura/chiusura**: dopo diversi tentativi (scale/clip-path, poi un vero foglio a 4 pannelli con cerniere 3D rotateX/rotateY) nessuno rendeva bene l'effetto "foglietto piegato in 4 che si spiega" voluto da Rory — il biglietto compare e scompare di scatto, vedi #f6 qui sotto per riprenderla in un secondo momento. Editor di gestione (modifica testo/titolo, attivo/non attivo, frecce + comando "Sposta…", cancellazione) **non** su una route admin separata come inizialmente pianificato, ma inline nella stessa pagina dietro `canEdit()` — scoperto durante l'implementazione che è il pattern dominante nel resto del sito (Linguaggio Segreto, card del Mondo Bianco), non la route dedicata usata invece per il playground di Prova a Dire No (quello è un sandbox per provare effetti, non un editor di contenuti). Tabelle `pensieri_biglietti` e `pensieri_estrazioni`, migrazione `0078_add_barattolo_dei_pensieri.sql`.
 - #f5 - Implementare invio di email per gli aggiornamenti che suppongo che non sarà automatico, oppure si chiedo all'AI: C'è un modo per mandarle in automatico quando aggiorniamo il sito? O aggiungiamo roba?
 - #f6 - Animazione di apertura/chiusura del biglietto nel Barattolo dei Pensieri (#e12): voluta come un vero foglietto piegato in 4 (due pieghe, orizzontale e verticale) che si spiega — tentativi fatti e scartati: scale()/clip-path (sembrava una copia in miniatura, non una piega), 4 pannelli reali con cerniere 3D rotateX/rotateY (geometricamente corretto ma troppo macchinoso/fragile da rifinire). Per ora il biglietto compare e scompare di scatto, senza animazione.
+- #e18 (pulizia interna, non urgente) — Duplicazione trovata il 14/08/2026 durante un'audit richiesta da Rory: (a) il metodo "sposta su/giù" è identico in 9 pagine (Bacheca, Barattolo dei Pensieri, Linguaggio Segreto, Cuffiette, Mappamondo, Mappa, Storie, Cruciverba, Ricettario) — stesso corpo di 3 righe, cambia solo endpoint e nome del metodo di reload; estrarlo in un helper condiviso è lavoro piccolo (~1h, basso rischio). (b) il pattern completo "Sposta…" (spostare un elemento in un altro contenitore/categoria: stessi signal `startMove*`/`cancelMove*`/`confirmMove*`, stesso blocco HTML con due select e bottoni Annulla/Sposta, stesso cluster di bottoni ⬆️⬇️↔️✏️🗑️) è ripetuto in 3 pagine (Bacheca, Barattolo dei Pensieri, Linguaggio Segreto) con nomi di campo diversi invece di essere un componente condiviso — lavoro medio (~mezza giornata: progettazione componente generico + migrazione delle 3 pagine + verifica Playwright). Nessuna delle due è urgente: non è un bug, non cambia nulla nell'uso del sito, solo manutenzione interna coerente con la regola "zero duplicazione" (CLAUDE.md). Rimandato per ora su richiesta di Rory (poco tempo disponibile).
+- #g1 - Pagina che ricrea omegle deve sembrare identico a omegle, si entra e parte una chat asincrona. All'inizio prima di entrare ci sarà una cosa tipo "ti va se ricominciamo tutto da capo?"
 ---
 
 ## Da non fare
@@ -25,6 +34,105 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ## Fatto
 
 ### Extra (fuori scaletta, chiesto il 14/08/2026)
+
+- [x] #e4 — Gioco di carte collezionabili, rifinitura finale (Blocchi 1-4 del piano in
+  `e4-carte-collezionabili.md` chiusi e verificati end-to-end, più un lungo giro di feedback
+  visivo che ha riscritto l'effetto delle carte da zero più volte). Schema DB, bustine con
+  accumulo/drop pesato, album, editor admin set/carte, scambi proponi/accetta/rifiuta con
+  badge — vedi impostazione generale già descritta in precedenza. Qui la cronaca della
+  rifinitura:
+
+  **Effetto foil, due componenti distinti** (non uno unico parametrizzato: Rory ha
+  chiesto esplicitamente due linguaggi visivi diversi per metalli e gemme, dopo aver
+  bocciato più tentativi di farli con lo stesso meccanismo).
+  - `MetallicFoil` (`shared/metallic-foil/`, riusabile fuori dal contesto carte) per oro e
+    argento: superficie di metallo continua, bande di colore strette e contrastate che si
+    spostano **tutte insieme** (non un riflesso indipendente sopra una texture ferma — la
+    prima versione a due strati separati sembrava "una riga di luce che scivola su una foto
+    ferma", bocciata). Palette derivabile da un solo colore hex (`metalPaletteFromColor`) oltre
+    ai 4 preset pronti (gold/silver/bronze/copper). Aggiornamento della posizione SENZA
+    transizione CSS durante il trascinamento attivo (un piccolo bug proprio: usare `transition`
+    anche mentre il mouse si muove, con eventi più frequenti della durata della transizione,
+    produceva un effetto "a scatti, sembra si aggiorni solo quando ti fermi").
+  - Mosaico olografico "crushed ice" (dentro `CartaTilt` stesso, `holo-mosaic.ts`) per
+    smeraldo/rubino/zaffiro/diamante: porting di un prototipo fornito da Rory con
+    triangolazione Delaunay reale (libreria `delaunator`) su una griglia di punti disturbata,
+    ogni triangolo con una "normale" ottica finta fissa — il colore di ogni frammento dipende
+    dal prodotto scalare tra la sua normale e la direzione del mouse, quindi muovendo il
+    cursore si accendono frammenti diversi invece che l'intera trama in blocco o un riflesso
+    che insegue il cursore. Geometria calcolata una sola volta e condivisa (cache di modulo)
+    tra tutte le carte della stessa sessione, per non ripetere una triangolazione di ~600
+    poligoni per ogni carta della griglia.
+  - Aggiunte le finiture **argento** (metallo) e **zaffiro** (gemma): richiesta la
+    migrazione `0092_add_argento_zaffiro_finiture.sql` per allargare il CHECK su
+    `carte_definizioni.finitura` — SQLite non permette di modificarlo con ALTER TABLE, e su D1
+    né `PRAGMA foreign_keys=OFF` né `defer_foreign_keys=ON` hanno avuto effetto tra le
+    istruzioni dello stesso file di migrazione (diverso dal comportamento di sqlite3 CLI puro),
+    quindi la migrazione ricostruisce l'intera catena (`carte_possesso`/`carte_trade_items`
+    dipendono da `carte_definizioni`) con backup/drop/ricrea espliciti invece di affidarsi ai
+    pragma. Drop rate esteso a 7 livelli (piramide ripida, pesi di argento/zaffiro non
+    concordati nel dettaglio con Rory, aggiustabili).
+
+  **Bug reali trovati durante le verifiche** (non solo rifiniture estetiche):
+  - `isFoil`/`palette` scritti come campi di classe invece che getter: i campi si valutano nel
+    costruttore, PRIMA che Angular assegni il valore reale degli `@Input` — risultato, il
+    mosaico non veniva mai costruito. Sempre usare getter per logica che dipende da `@Input`.
+  - Con due `@for` che iterano sulle stesse carte in punti diversi del template (album "mio" e
+    "dell'altro"), le istanze di `CartaTilt` del secondo blocco non ricevevano mai la chiamata
+    a `ngAfterViewInit` (causa esatta lato Angular non individuata) — mosaico mai costruito per
+    quelle carte. Sostituito con `ngAfterViewChecked` (gira ad ogni ciclo di change detection,
+    non solo una volta) con guardia per costruire una sola volta.
+  - Cambiando tab tra due finiture gemma sulla stessa carta (es. rubino → smeraldo), Angular
+    riusa la stessa istanza e lo stesso `<svg>` per lo stesso design invece di ricrearli — la
+    guardia "costruito sì/no" del fix precedente lasciava i colori della finitura vecchia sui
+    poligoni già esistenti ("carta con un po' di rubino dentro l'album smeraldo"). Corretto
+    distinguendo "SVG vuoto → costruisci" da "SVG pieno ma per un'altra finitura → ricolora
+    senza ricreare la geometria" (i triangoli sono identici per ogni gemma, cambia solo la
+    palette).
+  - La query dell'album (`carte-collezione`) generava gli slot delle finiture con
+    `SELECT ... UNION ALL` a più rami: con 7 finiture ha superato lo stesso limite di D1 già
+    scoperto sulla migrazione dei placeholder ("too many terms in compound SELECT"). Sostituito
+    con `VALUES`, che non ha quel limite.
+
+  **Album ridisegnato**: le due viste (proprio album / album dell'altro) impilate invece che
+  affiancate; carte "piene" senza box/cornice attorno (solo la carta con la sua ombra nativa +
+  nome sotto, non più un riquadro); slot vuoti come sagome tratteggiate a forma di carta
+  invece di riquadri pieni con un punto interrogativo; ogni set dentro una "pagina" con sfondo/
+  bordo propri invece di una griglia nuda sul pannello di sfondo. Bug di CSS trovato: senza
+  `align-items: start` sul contenitore della carta, il comportamento di default dei grid item
+  (stretch) scalava la carta più piccola quando il nome andava a capo su due righe.
+
+  **Apertura bustina ridisegnata**: da una griglia con le 5 carte già scoperte a una sequenza
+  "una alla volta" — la prima carta appare grande, "Avanti" la gira e la manda in una riga
+  sotto mostrando la prossima, "Apri tutte" salta direttamente alla fine. A bustina finita, se
+  ce ne sono altre disponibili compare anche "Apri la prossima" oltre a "Chiudi" (ordine:
+  Chiudi/Avanti prima, poi Apri tutte/Apri la prossima). Riservato lo spazio della carta e
+  della riga fin da subito (altezza calcolata sulle proporzioni reali 3:4 della carta, non un
+  quadrato arbitrario) per evitare salti di layout quando la carta o la riga compaiono/
+  scompaiono.
+
+  **Tab "Bustina" eliminata**: conteneva solo un contatore e un bottone, sproporzionata come
+  tab a sé rispetto alle altre; il contenuto è ora in cima alla tab Album, dove le carte aperte
+  finiscono comunque.
+
+  Verificato ad ogni passaggio con Playwright su account di prova (poi ripuliti dal D1 locale
+  condiviso): screenshot reali del foil metallico e a mosaico su più finiture, riproduzione
+  diretta di ciascun bug prima del fix e riverifica dopo.
+
+- [x] #16 — seconda avventura del Gioco di Ruolo, "La casa che trattiene il respiro": scritta
+  e pubblicata (era rimasta solo la card "Coming soon", vedi voce più sotto nel Fatto storico).
+  Avventura play-by-chat con incipit fisso pubblico (via editor GDR, blocchi CMS) e resto dello
+  script tenuto privato come materiale da Master, non contenuto CMS. Pannello di gioco condiviso
+  `GdrPanel` (bottom sheet a tab Personaggio/Regole/Appunti, docked come card su desktop e a
+  tutta larghezza su mobile), riusabile da future avventure — non ricostruito da zero per questa.
+  Scheda del personaggio resa condivisa tra i due account invece che privata per utente.
+  Editor appunti diventato rich text leggero (grassetto/sottolineato/colore) con
+  `GdrNotesEditor` condiviso, riusato anche da "I Tuoi Appunti" invece di duplicarlo. Bottone
+  "Disattiva tutte le animazioni" aggiunto nella Stanza dei Bottoni nello stesso giro. **Bug
+  corretto in un secondo commit**: l'editor admin dei blocchi (`GdrDocumentEditor`) esisteva già
+  su "Il Prezzo della Verità" ma non era mai stato montato sulla pagina della seconda avventura
+  — l'admin non poteva modificare l'incipit dal sito finché non aggiunto, stesso pattern
+  (pannello a sé sotto la pagina) usato altrove.
 
 - [x] #e5 — Chat asincrona nei Ponti: nuova pagina `/ponti-chat`, sostituisce il vecchio
   documento Google Docs linkato dalla card "Chat" (che comunque resta raggiungibile, come

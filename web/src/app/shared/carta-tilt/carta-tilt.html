@@ -1,0 +1,19 @@
+<div #frame class="carta-tilt-frame">
+  @if (isMetallo) {
+    <app-metallic-foil [preset]="metalPreset" [immagineUrl]="immagineUrl" />
+  } @else {
+    <div class="carta-tilt-image" [style.background-image]="backgroundImage"></div>
+
+    @if (isGemma) {
+      <div class="carta-tilt-tint" [style.background-image]="tintStyle"></div>
+      <svg #foilSvg class="carta-tilt-foil" viewBox="0 0 1 1" preserveAspectRatio="none"></svg>
+      <div class="carta-tilt-glass"></div>
+    }
+  }
+
+  @if (!immagineUrl) {
+    <span class="carta-tilt-fallback" aria-hidden="true">🃏</span>
+  }
+
+  <div class="carta-tilt-rim"></div>
+</div>

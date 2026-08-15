@@ -175,6 +175,11 @@ export const routes: Routes = [
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () =>
           import('./pages/prova-a-dire-no-playground/prova-a-dire-no-playground').then((m) => m.ProvaADireNoPlayground)
+      },
+      {
+        path: 'tavolo-da-gioco/carte',
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () => import('./pages/carte/carte').then((m) => m.Carte)
       }
     ]
   },
