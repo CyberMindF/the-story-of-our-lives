@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CleanModeService } from '../../core/clean-mode.service';
 import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
@@ -33,6 +34,7 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 
 })
 export class Lettere implements OnInit, OnDestroy {
   protected readonly submission = inject(FormSubmission);
+  protected readonly cleanMode = inject(CleanModeService);
   @ViewChild('letterDialog') private dialogRef?: ElementRef<HTMLDialogElement>;
   @ViewChild('dialogPaper') private dialogPaperRef?: ElementRef<HTMLDivElement>;
   @ViewChild('pagerViewport') private pagerViewportRef?: ElementRef<HTMLDivElement>;

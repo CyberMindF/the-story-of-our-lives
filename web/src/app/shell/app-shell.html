@@ -1,5 +1,5 @@
 <div class="place-shell" [class]="shellClass">
-  @if (showHeader) {
+  @if (resolvedShowHeader) {
   <app-world-header
     [homeHref]="homeHref"
     [homeAria]="homeAria"
@@ -16,7 +16,7 @@
   }
   <main>
     <ng-content />
-    @if (showBackLink) {
+    @if (resolvedShowBackLink) {
       <app-back-link [href]="homeHref" [label]="homeAria" />
     }
   </main>
