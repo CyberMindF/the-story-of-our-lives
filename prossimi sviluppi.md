@@ -75,6 +75,35 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ### Extra (fuori scaletta, chiesto il 15/08/2026)
 
+- [x] Riorganizzazione della home in 4 macro-luoghi esplorabili: le stesse 16 card "primary" di
+  `WORLD_PLACES` (`web/src/app/core/world-places.ts`) sono ora raggruppate sotto La Valle dei
+  Ricordi 🏞️, Il Giardino dei Pensieri 🌳, Il Prato delle Idee 🌾 e L'Osservatorio 🔭 (nuova
+  costante `HOME_AREAS`, campo `homeArea` su `WorldPlace`), invece della vecchia griglia piatta
+  4×4. In `mondo-bianco.ts`/`.html` ogni macro-luogo è una card-accordion (bottone header,
+  contenuto che si apre/chiude con `grid-template-rows` animato) che al suo interno riusa
+  esattamente il markup/CSS delle card di pagina già esistenti (`.world-place-card`), incluso
+  l'editing admin inline — nessuna nuova rotta introdotta, resta tutto sulla home. La vecchia
+  tassonomia `WORLD_PLACE_GROUPS`/`group` (usata anche dall'Atlante del Mappamondo, con una
+  suddivisione diversa) non è stata toccata. Contestualmente rinominata "La Stanza dei Bottoni"
+  in "Il Centro di Controllo" ovunque nell'interfaccia (route `/impostazioni-mondo` invariata):
+  `fallbackName` in `world-places.ts`, titolo della pagina, guida utente, e migrazione
+  `0099_rename_stanza_bottoni.sql` per l'eventuale override CMS in `mondo_bianco_cards`.
+  L'Atlante del Mappamondo (sezione "Ora, dove vuoi andare?" in `mappamondo.ts`/`.html`) resta
+  l'indice testuale completo di tutte le pagine del sito (link + breve descrizione, figli
+  inclusi) — verificato che continua a funzionare invariato dopo queste modifiche. Corretti nel
+  giro di verifica live tre bug CSS non visibili nella build: (1) `grid-template-rows: 0fr` da
+  solo non collassava davvero a zero (serve `minmax(0, 0fr)`), lasciava una sliver visibile
+  sotto le card chiuse; (2) le card della griglia si stiravano tutte alla stessa altezza di riga
+  quando una si apriva (serviva `align-items: start` su `.world-areas-grid`); (3) hover/focus
+  sul bottone header disegnavano un rettangolo tagliato bruscamente contro l'angolo arrotondato
+  della card (bottone senza `border-radius` proprio, corretto con `border-radius: inherit`).
+  Su richiesta di Rory, riscritte anche tutte le 24 descrizioni delle pagine mostrate
+  nell'Atlante del Mappamondo (file di lavoro temporaneo `descrizioni-mappamondo.md` in root,
+  compilato da Rory con "è così"/"deve essere così"): 16 aggiornate solo nel codice
+  (`fallbackDescription`), le altre 8 (Suggerimenti, Profilo, e i 5 giochi + Carte del Tavolo da
+  Gioco) avevano già una `description` non nulla salvata in `mondo_bianco_cards` da un editing
+  precedente nell'Atlante, quindi serviva anche una migrazione dedicata
+  (`0100_aggiorna_descrizioni_atlante.sql`) per allinearle.
 - [x] Palloncini e fuochi d'artificio (#f2/#f3) spostati dal gruppo "Festa" (eliminato, era l'ultimo della griglia) dentro "Consigliato per Night Sky" nella Stanza dei Bottoni, su richiesta di Rory. Nello stesso giro, sistemato lo spazio vuoto notato da Rory tra i gruppi di effetti: `.settings-effects-grid` era una `grid` a 2 colonne con `align-items:start`, che affianca gruppi di altezza diversa nella stessa riga lasciando un vuoto sotto quello più corto prima della riga successiva (non è masonry). Sostituita con `columns:2` (colonne CSS native, nessun JS): ogni gruppo (`break-inside:avoid`) scorre nella colonna più corta in quel momento, comportamento masonry senza libreria.
 - [x] #e12 — **Il Barattolo dei Pensieri** (`/barattolo-dei-pensieri`, card e voce nell'Atlante del Mappamondo incluse, gruppo "ricordi"). Due barattoli (uno per "lui", uno per "lei"): ognuno vede il proprio con solo il bottone "Pesca", quello dell'altro con solo la form "Scrivi per…" — mai entrambe le azioni sullo stesso barattolo. Numeri sopra ciascun barattolo con il conteggio dei biglietti attivi. Rispetto alla descrizione iniziale, due semplificazioni concordate con Rory: **niente categorie/stati d'animo** (pesca sempre "a caso" su tutto il barattolo attivo) e **aggiunta diretta per entrambi** (chiunque abbia sessione valida può scrivere per il barattolo dell'altro — il vincolo "mai per il proprio" è strutturale lato server: `jarIdentity` è sempre derivato dall'identità opposta a quella della sessione, non arriva mai dal client, quindi non richiede validazione). Niente più canale via Suggerimenti, reso ridondante dall'aggiunta diretta. Coda mobile di esclusione delle ultime `min(10, attivi-1)` pesche per barattolo (si riduce da sola se il barattolo ha meno di 11 biglietti attivi) e casualità pesata verso i meno pescati (peso `1/√(draw_count+1)`), in `functions/api/pensieri-biglietti/pesca.js`. Dopo l'apertura solo `Rimetti nel barattolo` / `Pesca ancora`, nessun archivio. Telemetria solo con l'ID del biglietto, mai il testo (`barattolo_biglietto_pescato`). Il biglietto pescato appare in un modale con lo stesso stile "carta scritta a mano" delle Lettere (`card--handwritten` + `handwritten-text`, font Caveat) e la stessa leggera rotazione pseudo-casuale-ma-fissa per id (ora condivisa: `seededRotation()` in `web/src/app/shared/random.ts`, riusata anche da Lettere al posto della sua vecchia copia privata). **Niente animazione di apertura/chiusura**: dopo diversi tentativi (scale/clip-path, poi un vero foglio a 4 pannelli con cerniere 3D rotateX/rotateY) nessuno rendeva bene l'effetto "foglietto piegato in 4 che si spiega" voluto da Rory — il biglietto compare e scompare di scatto, vedi #f6 più sopra per riprenderla in un secondo momento. Editor di gestione (modifica testo/titolo, attivo/non attivo, frecce + comando "Sposta…", cancellazione) **non** su una route admin separata come inizialmente pianificato, ma inline nella stessa pagina dietro `canEdit()` — scoperto durante l'implementazione che è il pattern dominante nel resto del sito (Linguaggio Segreto, card del Mondo Bianco), non la route dedicata usata invece per il playground di Prova a Dire No (quello è un sandbox per provare effetti, non un editor di contenuti). Tabelle `pensieri_biglietti` e `pensieri_estrazioni`, migrazione `0078_add_barattolo_dei_pensieri.sql`.
 - [x] #34 — Ricettario completato: sostituita la ricetta placeholder del pollo al curry con la

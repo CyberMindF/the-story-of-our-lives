@@ -78,20 +78,45 @@
 
     <!-- Emoji, rotta e ordine restano fissi nel codice (mondo-bianco.ts); nome e descrizione
          sono contenuto editoriale, letti da /api/mondo-bianco-cards (decisione #2
-         dell'inventario). -->
-    <div class="world-places-grid">
-      @for (place of places(); track place.id) {
-        <div class="world-place-card-wrap">
-          <a class="world-place-card card is-available" [routerLink]="place.route">
-            <span class="world-place-emoji">{{ place.emoji }}</span>
-            <strong>{{ place.name }}</strong>
-            @if (place.description) { <span class="world-place-description">{{ place.description }}</span> }
-            <small>Entra</small>
-          </a>
-          @if (canEdit()) {
-            <button type="button" class="btn world-place-edit-button" (click)="startEdit(place)">✏️</button>
-          }
-        </div>
+         dell'inventario). Riorganizzazione del 15/08/2026: le stesse card sono raggruppate
+         sotto 4 macro-luoghi esplorabili (HOME_AREAS in world-places.ts) invece di una griglia
+         piatta. -->
+    <div class="world-areas-grid">
+      @for (area of areas(); track area.id) {
+        <section class="world-area-card card">
+          <button
+            type="button"
+            class="world-area-header"
+            [attr.aria-expanded]="isAreaOpen(area.id)"
+            [attr.aria-controls]="'world-area-' + area.id"
+            (click)="toggleArea(area.id)"
+          >
+            <span class="world-area-emoji" aria-hidden="true">{{ area.emoji }}</span>
+            <span class="world-area-heading">
+              <strong>{{ area.label }}</strong>
+              <span class="world-area-description">{{ area.description }}</span>
+            </span>
+            <span class="world-area-chevron" aria-hidden="true">⌄</span>
+          </button>
+
+          <div class="world-area-children" [class.is-open]="isAreaOpen(area.id)" [id]="'world-area-' + area.id">
+            <div class="world-places-grid">
+              @for (place of area.places; track place.id) {
+                <div class="world-place-card-wrap">
+                  <a class="world-place-card card is-available" [routerLink]="place.route">
+                    <span class="world-place-emoji">{{ place.emoji }}</span>
+                    <strong>{{ place.name }}</strong>
+                    @if (place.description) { <span class="world-place-description">{{ place.description }}</span> }
+                    <small>Entra</small>
+                  </a>
+                  @if (canEdit()) {
+                    <button type="button" class="btn world-place-edit-button" (click)="startEdit(place)">✏️</button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </section>
       }
     </div>
 

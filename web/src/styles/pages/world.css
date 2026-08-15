@@ -125,6 +125,107 @@
   margin-bottom: 2rem;
 }
 
+/* Riorganizzazione home del 15/08/2026: 4 macro-luoghi esplorabili al posto della griglia
+   piatta di 16 card. Ogni card è un accordion (bottone header + contenuto che si apre) che
+   riusa .world-places-grid/.world-place-card per le pagine figlie, invariate. */
+.world-areas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 1.25rem;
+}
+
+.world-area-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.world-area-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.5rem;
+  border: none;
+  /* Il bottone stesso ha angoli arrotondati come .world-area-card: senza, hover/focus
+     disegnano un rettangolo che l'overflow:hidden della card tronca bruscamente contro
+     l'angolo tondo del contenitore, con un effetto "squadrato dentro il tondo". */
+  border-radius: inherit;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.world-area-header:hover {
+  background: var(--button-hover-bg);
+}
+
+.world-area-header:focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: -3px;
+}
+
+.world-area-emoji {
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.world-area-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.world-area-heading strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.world-area-description {
+  color: var(--muted-color);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.world-area-chevron {
+  font-size: 1.3rem;
+  color: var(--muted-color);
+  transition: transform 0.2s ease;
+}
+
+.world-area-header[aria-expanded='true'] .world-area-chevron {
+  transform: rotate(180deg);
+}
+
+.world-area-children {
+  display: grid;
+  grid-template-rows: minmax(0, 0fr);
+  overflow: hidden;
+  transition: grid-template-rows 0.28s ease;
+}
+
+.world-area-children.is-open {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.world-area-children > .world-places-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 0;
+  overflow: hidden;
+  padding: 0.5rem 1.5rem 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .world-areas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .world-places-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

@@ -6,7 +6,7 @@ import { AudioPlayer } from '../../shared/audio-player/audio-player';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
-import { WORLD_PLACES } from '../../core/world-places';
+import { HOME_AREAS, HomeAreaId, WORLD_PLACES } from '../../core/world-places';
 import { matchesTodayDayMonth } from '../../core/day-month';
 import { Block, DayContent } from '../bacheca-preview/bacheca.types';
 
@@ -26,6 +26,15 @@ interface PlaceView {
   fallbackName: string;
   name: string;
   description: string | null;
+  homeArea?: HomeAreaId;
+}
+
+interface AreaView {
+  id: HomeAreaId;
+  emoji: string;
+  label: string;
+  description: string;
+  places: PlaceView[];
 }
 
 interface CalendarEventApi {
@@ -106,6 +115,24 @@ export class MondoBianco {
       return { ...place, name: override?.name ?? place.fallbackName, description: override?.description ?? null };
     })
   );
+
+  // Riorganizzazione home del 15/08/2026: le 16 card "primary" restano le stesse, ma raggruppate
+  // sotto 4 macro-luoghi esplorabili (HOME_AREAS) invece di una griglia piatta.
+  protected readonly areas = computed<AreaView[]>(() => {
+    const places = this.places();
+    return HOME_AREAS.map((area) => ({ ...area, places: places.filter((place) => place.homeArea === area.id) }));
+  });
+
+  private readonly expandedAreas = signal<Set<HomeAreaId>>(new Set());
+  protected isAreaOpen(id: HomeAreaId): boolean {
+    return this.expandedAreas().has(id);
+  }
+  protected toggleArea(id: HomeAreaId): void {
+    const next = new Set(this.expandedAreas());
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    this.expandedAreas.set(next);
+  }
 
   protected readonly editingId = signal<string | null>(null);
   protected readonly draftName = signal('');
