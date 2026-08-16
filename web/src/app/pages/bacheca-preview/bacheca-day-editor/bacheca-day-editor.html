@@ -11,6 +11,12 @@
         <header class="bde-row-header">
           <span>Riga {{ rowIndex + 1 }} · {{ row.columns.length === 1 ? 'larghezza intera' : row.columns.length + ' colonne' }}</span>
           <div class="bde-row-actions">
+            <div class="bde-layout-switch" role="group" [attr.aria-label]="'Colonne della riga ' + (rowIndex + 1)">
+              <span>Layout</span>
+              <button type="button" class="btn" [class.is-active]="row.columns.length === 1" (click)="setRowColumnCount(rowIndex, 1)">1</button>
+              <button type="button" class="btn" [class.is-active]="row.columns.length === 2" (click)="setRowColumnCount(rowIndex, 2)">2</button>
+              <button type="button" class="btn" [class.is-active]="row.columns.length === 3" (click)="setRowColumnCount(rowIndex, 3)">3</button>
+            </div>
             <button type="button" class="btn" (click)="moveRow(rowIndex, 'up')">⬆️</button>
             <button type="button" class="btn" (click)="moveRow(rowIndex, 'down')">⬇️</button>
             <button type="button" class="btn" (click)="startMoveRow(rowIndex)">↔️ Sposta…</button>
@@ -66,9 +72,32 @@
                       <button type="button" class="btn" (click)="moveBlock(rowIndex, colIndex, blockIndex, 'up')">⬆️</button>
                       <button type="button" class="btn" (click)="moveBlock(rowIndex, colIndex, blockIndex, 'down')">⬇️</button>
                     }
+                    <button type="button" class="btn" (click)="startMoveBlock(rowIndex, colIndex, blockIndex)">↔️ Sposta…</button>
                     <button type="button" class="btn" (click)="startEditBlock(rowIndex, colIndex, blockIndex, block)">✏️ Modifica</button>
                     <button type="button" class="btn" (click)="requestDeleteBlock(rowIndex, colIndex, blockIndex)">🗑️ Elimina</button>
                   </div>
+
+                  @if (blockMoveTarget()?.rowIndex === rowIndex && blockMoveTarget()?.colIndex === colIndex && blockMoveTarget()?.blockIndex === blockIndex) {
+                    <div class="bde-block-move-form">
+                      <p>Sposta questo blocco senza ricaricare il file</p>
+                      <div class="bde-block-move-fields">
+                        <label class="form-field">
+                          <span>Riga di destinazione</span>
+                          <app-select [options]="rowSelectOptions()" [value]="blockMoveRow()" ariaLabel="Riga di destinazione"
+                            (valueChange)="selectBlockMoveRow($event)" />
+                        </label>
+                        <label class="form-field">
+                          <span>Colonna di destinazione</span>
+                          <app-select [options]="columnSelectOptions()" [value]="blockMoveColumn()" ariaLabel="Colonna di destinazione"
+                            (valueChange)="blockMoveColumn.set($event)" />
+                        </label>
+                      </div>
+                      <div class="bde-form-actions">
+                        <button type="button" class="btn" (click)="cancelMoveBlock()">Annulla</button>
+                        <button type="button" class="btn btn-submit" (click)="confirmMoveBlock()">Sposta blocco</button>
+                      </div>
+                    </div>
+                  }
                 </article>
               }
 

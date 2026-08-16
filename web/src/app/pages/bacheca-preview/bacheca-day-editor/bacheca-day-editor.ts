@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, computed, signal } from '@angul
 import { FormsModule } from '@angular/forms';
 import { AudioPlayer } from '../../../shared/audio-player/audio-player';
 import { ConfirmationDialog } from '../../../shared/confirmation-dialog/confirmation-dialog';
+import { AppSelect, AppSelectOption } from '../../../shared/app-select/app-select';
 import { Block, Column, DayContent, Row } from '../bacheca.types';
 
 type RowPreset = 'full' | 'two' | 'three' | 'photo-text' | 'text-photo';
@@ -101,6 +102,7 @@ function buildBlockFromForm(form: BlockFormState): Block | null {
 }
 
 const THUMBNAIL_MAX_WIDTH = 480;
+const MAX_BLOCKS_PER_COLUMN = 6;
 
 // Ridimensiona una foto lato browser per generare la miniatura: Cloudflare Workers non può
 // eseguire una libreria di resize nativa (sharp e simili sono binari, non funzionano nel
@@ -139,7 +141,7 @@ function createRow(preset: RowPreset): Row {
 @Component({
   selector: 'app-bacheca-day-editor',
   standalone: true,
-  imports: [FormsModule, AudioPlayer, ConfirmationDialog],
+  imports: [FormsModule, AudioPlayer, ConfirmationDialog, AppSelect],
   styleUrls: ['./bacheca-day-editor.css'],
   templateUrl: './bacheca-day-editor.html'
 })
@@ -163,6 +165,10 @@ export class BachecaDayEditor {
 
   protected readonly rowMoveTarget = signal<number | null>(null);
   protected readonly rowMoveAfter = signal<string>('');
+
+  protected readonly blockMoveTarget = signal<BlockTarget | null>(null);
+  protected readonly blockMoveRow = signal('');
+  protected readonly blockMoveColumn = signal('');
 
   protected readonly deleteRowTarget = signal<number | null>(null);
   protected readonly deleteBlockTarget = signal<BlockTarget | null>(null);
@@ -213,6 +219,29 @@ export class BachecaDayEditor {
     const targetIndex = direction === 'up' ? rowIndex - 1 : rowIndex + 1;
     if (targetIndex < 0 || targetIndex >= rows.length) return;
     [rows[rowIndex], rows[targetIndex]] = [rows[targetIndex], rows[rowIndex]];
+    this.draft.set({ rows });
+  }
+
+  protected setRowColumnCount(rowIndex: number, count: 1 | 2 | 3): void {
+    const rows = structuredClone(this.draft().rows);
+    const row = rows[rowIndex];
+    if (!row || row.columns.length === count) return;
+
+    if (count > row.columns.length) {
+      while (row.columns.length < count) row.columns.push({ width: 1 / count, blocks: [] });
+    } else {
+      const removedBlocks = row.columns.slice(count).flatMap((column) => column.blocks);
+      const destination = row.columns[count - 1];
+      if (destination.blocks.length + removedBlocks.length > MAX_BLOCKS_PER_COLUMN) {
+        this.saveError.set(`Non posso ridurre la riga ${rowIndex + 1}: l'ultima colonna supererebbe ${MAX_BLOCKS_PER_COLUMN} blocchi.`);
+        return;
+      }
+      destination.blocks.push(...removedBlocks);
+      row.columns.splice(count);
+    }
+
+    row.columns.forEach((column) => { column.width = 1 / count; });
+    this.saveError.set('');
     this.draft.set({ rows });
   }
 
@@ -358,6 +387,57 @@ export class BachecaDayEditor {
     if (targetIndex < 0 || targetIndex >= blocks.length) return;
     [blocks[blockIndex], blocks[targetIndex]] = [blocks[targetIndex], blocks[blockIndex]];
     this.draft.set({ rows });
+  }
+
+  protected startMoveBlock(rowIndex: number, colIndex: number, blockIndex: number): void {
+    this.blockMoveTarget.set({ rowIndex, colIndex, blockIndex });
+    this.blockMoveRow.set(String(rowIndex));
+    this.blockMoveColumn.set(String(colIndex));
+  }
+
+  protected cancelMoveBlock(): void {
+    this.blockMoveTarget.set(null);
+  }
+
+  protected readonly rowSelectOptions = computed<AppSelectOption[]>(() =>
+    this.draft().rows.map((_, index) => ({ value: String(index), label: `Riga ${index + 1}` }))
+  );
+
+  protected columnSelectOptions(): AppSelectOption[] {
+    const rowIndex = Number(this.blockMoveRow());
+    const row = this.draft().rows[rowIndex];
+    return row?.columns.map((_, index) => ({ value: String(index), label: `Colonna ${index + 1}` })) ?? [];
+  }
+
+  protected selectBlockMoveRow(value: string): void {
+    this.blockMoveRow.set(value);
+    this.blockMoveColumn.set('0');
+  }
+
+  protected confirmMoveBlock(): void {
+    const source = this.blockMoveTarget();
+    const targetRowIndex = Number(this.blockMoveRow());
+    const targetColIndex = Number(this.blockMoveColumn());
+    if (!source || source.blockIndex === null || !Number.isInteger(targetRowIndex) || !Number.isInteger(targetColIndex)) return;
+
+    const rows = structuredClone(this.draft().rows);
+    const sourceBlocks = rows[source.rowIndex]?.columns[source.colIndex]?.blocks;
+    const targetBlocks = rows[targetRowIndex]?.columns[targetColIndex]?.blocks;
+    if (!sourceBlocks || !targetBlocks) return;
+    if (source.rowIndex === targetRowIndex && source.colIndex === targetColIndex) {
+      this.blockMoveTarget.set(null);
+      return;
+    }
+    if (targetBlocks.length >= MAX_BLOCKS_PER_COLUMN) {
+      this.saveError.set(`La colonna di destinazione contiene già ${MAX_BLOCKS_PER_COLUMN} blocchi.`);
+      return;
+    }
+
+    const [block] = sourceBlocks.splice(source.blockIndex, 1);
+    targetBlocks.push(block);
+    this.saveError.set('');
+    this.draft.set({ rows });
+    this.blockMoveTarget.set(null);
   }
 
   // -------------------- Salvataggio --------------------
