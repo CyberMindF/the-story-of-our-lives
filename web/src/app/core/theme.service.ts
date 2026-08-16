@@ -138,9 +138,14 @@ export class ThemeService {
       THEMES[0];
 
     document.body.dataset['theme'] = theme.id;
-    document.documentElement.style.backgroundColor = getComputedStyle(document.body)
-      .getPropertyValue('--bg-color')
-      .trim();
+    const bodyStyle = getComputedStyle(document.body);
+    const rootStyle = document.documentElement.style;
+    rootStyle.backgroundColor = bodyStyle.getPropertyValue('--bg-color').trim();
+    rootStyle.backgroundImage = bodyStyle.backgroundImage;
+    rootStyle.backgroundPosition = bodyStyle.backgroundPosition;
+    rootStyle.backgroundSize = bodyStyle.backgroundSize;
+    rootStyle.backgroundRepeat = bodyStyle.backgroundRepeat;
+    rootStyle.backgroundAttachment = 'fixed';
     this.activeThemeId.set(theme.id);
 
     if (options.persistLocal !== false) {

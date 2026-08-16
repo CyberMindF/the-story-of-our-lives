@@ -18,8 +18,14 @@
         document.body.classList.add('world-atmosphere');
         var theme = localStorage.getItem('noi-crossword-theme-v15');
         if (theme) document.body.dataset.theme = theme;
+        var bodyStyle = getComputedStyle(document.body);
         document.documentElement.style.backgroundColor =
-          getComputedStyle(document.body).getPropertyValue('--bg-color').trim();
+          bodyStyle.getPropertyValue('--bg-color').trim();
+        document.documentElement.style.backgroundImage = bodyStyle.backgroundImage;
+        document.documentElement.style.backgroundPosition = bodyStyle.backgroundPosition;
+        document.documentElement.style.backgroundSize = bodyStyle.backgroundSize;
+        document.documentElement.style.backgroundRepeat = bodyStyle.backgroundRepeat;
+        document.documentElement.style.backgroundAttachment = 'fixed';
       } catch (e) {}
     })();
   </script>
