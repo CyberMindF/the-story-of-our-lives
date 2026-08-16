@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
@@ -29,6 +29,7 @@ const ACTIVITY_EVENTS = ['pointerdown', 'keydown'] as const;
 // Non scrivere su sessionStorage a ogni singolo click: un tocco al minuto basta per restare
 // entro la finestra di inattività di un'ora.
 const ACTIVITY_TOUCH_THROTTLE_MS = 60 * 1000;
+const VERSION_CHECK_INTERVAL_MS = 5 * 60 * 1000;
 
 const ROUTE_BODY_CLASSES = [
   'access-locked',
@@ -63,6 +64,9 @@ export class App {
   private readonly worldSettingsService = inject(WorldSettingsService);
   private readonly authService = inject(AuthService);
   private lastActivityTouchAt = 0;
+  private currentBuildVersion: string | null = null;
+  private checkingBuildVersion = false;
+  protected readonly updateAvailable = signal(false);
 
   constructor() {
     document.body.classList.add('world-atmosphere');
@@ -80,6 +84,49 @@ export class App {
     this.destroyRef.onDestroy(() => {
       ACTIVITY_EVENTS.forEach((eventName) => document.removeEventListener(eventName, onActivity));
     });
+
+    const checkBuildVersion = () => void this.checkBuildVersion();
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') checkBuildVersion();
+    };
+    const versionTimer = window.setInterval(() => {
+      if (document.visibilityState === 'visible') checkBuildVersion();
+    }, VERSION_CHECK_INTERVAL_MS);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    this.destroyRef.onDestroy(() => {
+      window.clearInterval(versionTimer);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    });
+    checkBuildVersion();
+  }
+
+  protected refreshForUpdate(): void {
+    window.location.reload();
+  }
+
+  private async checkBuildVersion(): Promise<void> {
+    if (this.checkingBuildVersion || this.updateAvailable()) return;
+    this.checkingBuildVersion = true;
+    try {
+      const response = await fetch(`/version.json?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { Accept: 'application/json' }
+      });
+      if (!response.ok) return;
+      const payload = await response.json() as { version?: unknown };
+      if (typeof payload.version !== 'string' || !payload.version) return;
+      if (this.currentBuildVersion === null) {
+        this.currentBuildVersion = payload.version;
+        return;
+      }
+      if (payload.version !== this.currentBuildVersion) {
+        this.updateAvailable.set(true);
+      }
+    } catch (error) {
+      console.warn('Impossibile controllare la versione del sito:', error);
+    } finally {
+      this.checkingBuildVersion = false;
+    }
   }
 
   // Rinnova lo sblocco della Chiave durante l'uso attivo, anche restando sulla stessa pagina
