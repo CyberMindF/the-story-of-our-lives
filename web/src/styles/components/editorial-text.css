@@ -21,10 +21,25 @@
 }
 
 .editorial-versions {
+  grid-column: 1 / -1;
+  align-self: start;
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
+  width: 100%;
   margin: 0 0 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 0.9rem;
+  background: var(--panel-color);
+}
+
+.editorial-versions-label {
+  margin-right: auto;
+  color: var(--muted-color);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .editorial-version-chip {
@@ -41,9 +56,11 @@
 .editorial-version-chip.is-active {
   color: var(--text-color);
   border-color: var(--focus-color);
+  background: var(--button-hover-bg);
 }
 
 .editorial-version-note {
+  grid-column: 1 / -1;
   font-size: 0.82rem;
   color: var(--muted-color);
   font-style: italic;

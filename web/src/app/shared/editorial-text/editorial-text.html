@@ -1,6 +1,7 @@
 @if (!editing()) {
   @if (isHistory() && versions().length > 1) {
     <nav class="editorial-versions" aria-label="Versioni del contenuto">
+      <span class="editorial-versions-label">Versioni del testo</span>
       @for (version of versions(); track version.id) {
         <button
           type="button"
