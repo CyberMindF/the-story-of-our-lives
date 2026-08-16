@@ -1,7 +1,7 @@
-<div class="modal" [class.hidden]="!crossword.completionModalOpen()" role="dialog" aria-modal="true" aria-labelledby="completion-letter-text" (click)="onCompletionBackdropClick($event)">
+<div class="modal" [class.hidden]="!crossword.completionModalOpen()" role="dialog" aria-modal="true" aria-labelledby="completion-letter-title" aria-describedby="completion-letter-text" (click)="onCompletionBackdropClick($event)">
   <div class="completion-letter card--handwritten">
-    <p id="completion-letter-text" class="completion-letter-body handwritten-text">Ho raccolto qui una parte di noi.
-Hai ritrovato tutti i nostri ricordi.</p>
+    <h2 id="completion-letter-title" class="completion-letter-title">Cruciverba completato!</h2>
+    <p id="completion-letter-text" class="completion-letter-body handwritten-text" [class.is-writing]="writingCompletionLetter()" [attr.aria-label]="loadedCompletionLetter()"><span aria-hidden="true">{{ displayedCompletionLetter() }}</span></p>
     <button type="button" class="btn completion-letter-close" (click)="crossword.closeCompletionModal()">Chiudi</button>
   </div>
 </div>

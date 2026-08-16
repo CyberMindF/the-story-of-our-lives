@@ -874,6 +874,12 @@ export class CrosswordService implements OnDestroy {
     this.completionModalOpen.set(false);
   }
 
+  // Anteprima riservata ai controlli admin: mostra il finale senza modificare o sincronizzare
+  // le risposte reali del cruciverba.
+  previewCompletionLetter(): void {
+    this.completionModalOpen.set(true);
+  }
+
   resetProgress(): void {
     this.progress.set({});
     this.validationMarks.set({});

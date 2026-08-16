@@ -11,8 +11,10 @@
     <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M8.5 14.5C6.9 13.4 6 11.7 6 9.7A6 6 0 0 1 18 9.7c0 2-.9 3.7-2.5 4.8-.8.6-1.1 1.3-1.1 2.2H9.6c0-.9-.3-1.6-1.1-2.2Z" /></svg>
     <span class="control-label">Suggerimento</span>
   </button>
-  <button class="control-button developer-control" type="button" aria-label="Rivela tutto il cruciverba" hidden>
-    <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg>
-    <span class="control-label">Rivela</span>
-  </button>
+  @if (crossword.isComplete()) {
+    <button class="control-button" type="button" aria-label="Rileggi la lettera finale" (click)="crossword.previewCompletionLetter()">
+      <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H4Z" /><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H14v18a3 3 0 0 1 3-3h3Z" /></svg>
+      <span class="control-label">Rileggi la lettera</span>
+    </button>
+  }
 </div>

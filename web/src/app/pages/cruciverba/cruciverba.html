@@ -34,6 +34,11 @@
       </div>
 
       @if (adminPanelOpen()) {
+        <section class="word-admin-letter" aria-labelledby="word-admin-letter-title">
+          <h3 id="word-admin-letter-title">Lettera finale</h3>
+          <app-editorial-text contentKey="cruciverba.lettera-finale" />
+        </section>
+
         @if (editingId() === null) {
           <button type="button" class="btn" (click)="startCreate()">➕ Aggiungi definizione</button>
         }

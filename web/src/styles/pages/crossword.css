@@ -292,18 +292,41 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
    superficie di carta invecchiata di Lettere (.card--handwritten), qui con rotazione e
    dimensioni proprie della finestra di completamento. */
 .completion-letter {
-  max-width: 26rem;
+  width: min(46rem, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
   padding: clamp(2rem, 6vw, 2.75rem);
   border-radius: 2px;
-  text-align: center;
+  text-align: left;
   transform: rotate(-1.4deg);
+}
+
+.completion-letter-title {
+  margin: 0 0 1.5rem;
+  text-align: center;
 }
 
 .completion-letter-body {
   margin: 0 0 1.75rem;
-  font-size: clamp(1.3rem, 2.8vw, 1.55rem);
-  line-height: 1.6;
+  min-height: 1.6em;
+  font-size: clamp(1.15rem, 2.5vw, 1.4rem);
+  line-height: 1.5;
   white-space: pre-line;
+}
+
+.completion-letter-body.is-writing::after {
+  content: '';
+  display: inline-block;
+  width: 0.08em;
+  height: 0.9em;
+  margin-left: 0.08em;
+  background: currentColor;
+  vertical-align: -0.05em;
+  animation: completion-caret 0.8s steps(1, end) infinite;
+}
+
+@keyframes completion-caret {
+  50% { opacity: 0; }
 }
 
 .completion-letter-close {
@@ -311,6 +334,12 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
   border-color: rgba(43, 38, 32, 0.28);
   background: rgba(43, 38, 32, 0.08);
   color: #2b2620;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .completion-letter-body.is-writing::after {
+    animation: none;
+  }
 }
 
 .completion-letter-close:hover {
@@ -596,6 +625,8 @@ body[data-theme="green-of-me"] .cell.is-error .cell-input {
 /* Editor amministrativo delle definizioni (documentazione/cms/planning-editor-contenuti.md, Fase 7). */
 .word-admin-section { margin-top: 2rem; display: grid; gap: 1rem; }
 .word-admin-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; }
+.word-admin-letter { display: grid; gap: .8rem; padding: 1rem 1.2rem; border: 1px solid var(--border-color); border-radius: .9rem; }
+.word-admin-letter h3 { margin: 0; }
 .word-admin-form { display: grid; gap: 1rem; padding: 1.4rem; }
 .word-admin-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
 .word-admin-form-error { margin: 0; color: var(--danger-text-color); font-size: .85rem; }
