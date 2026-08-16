@@ -95,8 +95,9 @@ export function isLightTheme(themeId: string): boolean {
   return LIGHT_THEME_IDS.has(themeId);
 }
 
-// Porting di assets/js/shared/theme.js: stessa applicazione (document.body.dataset.theme,
-// letto dalle custom properties in themes.css), stato esposto come signal.
+// Porting di assets/js/shared/theme.js: il tema viene applicato sia alla radice sia al body.
+// La radice serve a Chrome mobile quando ridimensiona la viewport nascondendo le sue barre:
+// se restasse sul blu di default, apparirebbe una banda durante lo scroll dei temi chiari.
 //
 // Il tema è condiviso tra i due account (#a8, 11/08/2026): world_settings è la fonte di
 // verità, localStorage resta solo come cache dell'ultimo tema noto per applicarlo prima del
@@ -136,6 +137,7 @@ export class ThemeService {
       THEMES.find((entry) => entry.id === DEFAULT_THEME_ID) ??
       THEMES[0];
 
+    document.documentElement.dataset['theme'] = theme.id;
     document.body.dataset['theme'] = theme.id;
     this.activeThemeId.set(theme.id);
 

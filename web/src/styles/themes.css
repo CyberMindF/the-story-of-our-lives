@@ -35,7 +35,7 @@
   --shadow: 0 24px 52px rgba(0, 0, 0, 0.4);
 }
 
-body[data-theme="velvet"] {
+:is(html, body)[data-theme="velvet"] {
   --bg-color: #1c151f;
   --panel-color: rgba(46, 34, 46, 0.05);
   --panel-border-color: rgba(240, 199, 212, 0.14);
@@ -65,7 +65,7 @@ body[data-theme="velvet"] {
   --shadow: 0 22px 48px rgba(0, 0, 0, 0.42);
 }
 
-body[data-theme="sea"] {
+:is(html, body)[data-theme="sea"] {
   --bg-color: #e4efed;
   --panel-color: rgba(238, 246, 243, 0.05);
   --panel-border-color: rgba(56, 92, 90, 0.1);
@@ -95,7 +95,7 @@ body[data-theme="sea"] {
   --shadow: 0 14px 36px rgba(47, 86, 82, 0.12);
 }
 
-body[data-theme="red-of-you"] {
+:is(html, body)[data-theme="red-of-you"] {
   --bg-color: #5f0d19;
   --panel-color: rgba(103, 18, 30, 0.05);
   --panel-border-color: rgba(255, 211, 219, 0.16);
@@ -131,7 +131,7 @@ body[data-theme="red-of-you"] {
   --shadow: 0 24px 52px rgba(33, 4, 10, 0.42);
 }
 
-body[data-theme="green-of-me"] {
+:is(html, body)[data-theme="green-of-me"] {
   --bg-color: #203429;
   --panel-color: rgba(33, 53, 41, 0.05);
   --panel-border-color: rgba(198, 220, 205, 0.12);
@@ -165,7 +165,7 @@ body[data-theme="green-of-me"] {
 
 /* L'id storico "the-white-world" oggi corrisponde a Night Sky. Resta il default per
    compatibilità con preferenze e dati già salvati; il nuovo tema chiaro usa "white-world". */
-body[data-theme="the-white-world"] {
+:is(html, body)[data-theme="the-white-world"] {
   --bg-color: #141f32;
   --panel-color: rgba(255, 255, 255, 0.05);
   --panel-border-color: rgba(255, 255, 255, 0.14);
@@ -195,7 +195,7 @@ body[data-theme="the-white-world"] {
   --shadow: 0 24px 52px rgba(0, 0, 0, 0.4);
 }
 
-body[data-theme="white-world"] {
+:is(html, body)[data-theme="white-world"] {
   --bg-color: #f1ede5;
   --panel-color: rgba(255, 255, 255, 0.05);
   --panel-border-color: rgba(113, 101, 91, 0.18);
@@ -225,7 +225,7 @@ body[data-theme="white-world"] {
   --shadow: 0 18px 44px rgba(91, 78, 66, 0.14);
 }
 
-body[data-theme="love"] {
+:is(html, body)[data-theme="love"] {
   --bg-color: #f2cbd2;
   --panel-color: rgba(255, 247, 245, 0.05);
   --panel-border-color: rgba(127, 54, 75, 0.2);
