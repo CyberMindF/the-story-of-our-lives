@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { FormStatus } from '../../shared/form-status/form-status';
 import { FormSubmission } from '../../shared/form-submission/form-submission';
@@ -35,6 +36,8 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 
 export class Lettere implements OnInit, OnDestroy {
   protected readonly submission = inject(FormSubmission);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
   @ViewChild('letterDialog') private dialogRef?: ElementRef<HTMLDialogElement>;
   @ViewChild('dialogPaper') private dialogPaperRef?: ElementRef<HTMLDivElement>;
   @ViewChild('pagerViewport') private pagerViewportRef?: ElementRef<HTMLDivElement>;
@@ -121,6 +124,7 @@ export class Lettere implements OnInit, OnDestroy {
     this.letterPage.set(0);
 
     dialog.showModal();
+    this.updateLetterInUrl(letter.id);
 
     // Doppio rAF: il primo lascia ad Angular il tempo di aggiornare il DOM con la nuova
     // lettera, il secondo lascia al browser il tempo di calcolare il layout delle colonne
@@ -165,6 +169,7 @@ export class Lettere implements OnInit, OnDestroy {
 
     if (!dialog || !paper || !envelopeEl || !dialog.open) {
       dialog?.close();
+      this.updateLetterInUrl(null);
       return;
     }
 
@@ -180,8 +185,20 @@ export class Lettere implements OnInit, OnDestroy {
       paper.style.transition = '';
       paper.style.transform = '';
       paper.style.opacity = '';
+      this.updateLetterInUrl(null);
     };
     paper.addEventListener('transitionend', onEnd);
+  }
+
+  // L'URL della pagina è anche il link condivisibile della lettera aperta. Aggiorniamo la
+  // cronologia direttamente, senza una navigazione Router che riporterebbe la pagina in alto.
+  private updateLetterInUrl(letterId: number | null): void {
+    const urlTree = this.router.createUrlTree([], {
+      relativeTo: this.route,
+      queryParams: { lettera: letterId },
+      queryParamsHandling: 'merge'
+    });
+    this.location.replaceState(this.router.serializeUrl(urlTree));
   }
 
   // Il column-width della pagina è il testo stesso a "chiederlo": si legge quanto è largo il
