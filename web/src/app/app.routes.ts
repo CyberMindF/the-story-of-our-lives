@@ -133,9 +133,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/ponti-chat/ponti-chat').then((m) => m.PontiChat)
       },
       {
-        path: 'stranger-chat',
+        path: 'fake-omegle',
         data: { bodyClasses: ['stranger-chat-page'] },
         loadComponent: () => import('./pages/stranger-chat/stranger-chat').then((m) => m.StrangerChat)
+      },
+      {
+        path: 'stranger-chat',
+        redirectTo: 'fake-omegle',
+        pathMatch: 'full'
       },
       {
         path: 'cose-da-fare-insieme',

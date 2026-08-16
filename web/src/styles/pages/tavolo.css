@@ -29,8 +29,7 @@
 .tavolo-game-card small { align-self: start; color: var(--muted-color); }
 .tavolo-game-card.is-pending { border-style: dashed; opacity: .72; }
 .tavolo-game-card.is-pending small { max-width: 23rem; line-height: 1.45; }
-.tavolo-game-card.is-available { border-color: color-mix(in srgb, var(--focus-color) 55%, var(--border-color)); background: color-mix(in srgb, var(--focus-color) 18%, var(--panel-color)); }
-.tavolo-game-card.is-available:hover { background-color: var(--button-hover-bg); }
+.tavolo-game-card.is-available:hover { border-color: var(--focus-color); background: var(--button-hover-bg); }
 
 
 .tavolo-game-card:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
