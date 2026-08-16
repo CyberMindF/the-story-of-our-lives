@@ -6,6 +6,9 @@
 
 .bde-rows { display: grid; gap: 1.5rem; }
 .bde-row { border: 1px solid var(--panel-border-color); border-radius: 1rem; padding: 1rem; display: grid; gap: 1rem; }
+.bde-row-insert { display: grid; justify-items: center; gap: .75rem; margin: -.75rem 0; }
+.bde-row-insert-button { width: 2.2rem; height: 2.2rem; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.15rem; }
+.bde-row-insert .bde-row-presets { width: min(100%, 42rem); }
 .bde-row-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem; color: var(--muted-color); font-size: .85rem; }
 .bde-row-actions { display: flex; flex-wrap: wrap; gap: .4rem; }
 .bde-row-actions .btn { padding: .35rem .65rem; font-size: .8rem; }

@@ -161,7 +161,7 @@ export class BachecaDayEditor {
   protected readonly dirty = computed(() => JSON.stringify(this.draft()) !== this.originalContent());
   protected readonly saveError = signal('');
 
-  protected readonly addingRow = signal(false);
+  protected readonly addingRowAt = signal<number | null>(null);
 
   protected readonly blockTarget = signal<BlockTarget | null>(null);
   protected readonly blockForm = signal<BlockFormState>(emptyBlockForm());
@@ -200,18 +200,21 @@ export class BachecaDayEditor {
 
   // -------------------- Righe --------------------
 
-  protected startAddRow(): void {
-    this.addingRow.set(true);
+  protected startAddRow(index: number): void {
+    this.addingRowAt.set(index);
   }
 
   protected cancelAddRow(): void {
-    this.addingRow.set(false);
+    this.addingRowAt.set(null);
   }
 
   protected addRow(preset: RowPreset): void {
-    const current = this.draft();
-    this.draft.set({ rows: [...current.rows, createRow(preset)] });
-    this.addingRow.set(false);
+    const index = this.addingRowAt();
+    if (index === null) return;
+    const rows = [...this.draft().rows];
+    rows.splice(index, 0, createRow(preset));
+    this.draft.set({ rows });
+    this.addingRowAt.set(null);
   }
 
   protected requestDeleteRow(rowIndex: number): void {

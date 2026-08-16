@@ -6,6 +6,25 @@
   <p class="bde-error">{{ saveError() }}</p>
 
   <div class="bde-rows">
+    @if (draft().rows.length > 0) {
+      <div class="bde-row-insert">
+        <button type="button" class="btn bde-row-insert-button" (click)="startAddRow(0)"
+          aria-label="Aggiungi una riga all'inizio">＋</button>
+        @if (addingRowAt() === 0) {
+          <div class="bde-row-presets card">
+            <p>Scegli il layout della nuova riga</p>
+            <div class="bde-preset-buttons">
+              <button type="button" class="btn" (click)="addRow('full')">Larghezza intera</button>
+              <button type="button" class="btn" (click)="addRow('two')">Due colonne</button>
+              <button type="button" class="btn" (click)="addRow('three')">Tre colonne</button>
+              <button type="button" class="btn" (click)="addRow('photo-text')">Foto + testo</button>
+              <button type="button" class="btn" (click)="addRow('text-photo')">Testo + foto</button>
+            </div>
+            <button type="button" class="btn" (click)="cancelAddRow()">Annulla</button>
+          </div>
+        }
+      </div>
+    }
     @for (row of draft().rows; track $index; let rowIndex = $index) {
       <section class="bde-row">
         <header class="bde-row-header">
@@ -231,10 +250,28 @@
           }
         </div>
       </section>
+
+      <div class="bde-row-insert">
+        <button type="button" class="btn bde-row-insert-button" (click)="startAddRow(rowIndex + 1)"
+          [attr.aria-label]="'Aggiungi una riga dopo la riga ' + (rowIndex + 1)">＋</button>
+        @if (addingRowAt() === rowIndex + 1) {
+          <div class="bde-row-presets card">
+            <p>Scegli il layout della nuova riga</p>
+            <div class="bde-preset-buttons">
+              <button type="button" class="btn" (click)="addRow('full')">Larghezza intera</button>
+              <button type="button" class="btn" (click)="addRow('two')">Due colonne</button>
+              <button type="button" class="btn" (click)="addRow('three')">Tre colonne</button>
+              <button type="button" class="btn" (click)="addRow('photo-text')">Foto + testo</button>
+              <button type="button" class="btn" (click)="addRow('text-photo')">Testo + foto</button>
+            </div>
+            <button type="button" class="btn" (click)="cancelAddRow()">Annulla</button>
+          </div>
+        }
+      </div>
     }
   </div>
 
-  @if (addingRow()) {
+  @if (draft().rows.length === 0 && addingRowAt() === 0) {
     <div class="bde-row-presets card">
       <p>Scegli il layout della nuova riga</p>
       <div class="bde-preset-buttons">
@@ -246,8 +283,8 @@
       </div>
       <button type="button" class="btn" (click)="cancelAddRow()">Annulla</button>
     </div>
-  } @else {
-    <button type="button" class="btn" (click)="startAddRow()">➕ Aggiungi riga</button>
+  } @else if (draft().rows.length === 0) {
+    <button type="button" class="btn" (click)="startAddRow(0)">➕ Aggiungi riga</button>
   }
 
   <div class="bde-toolbar">
