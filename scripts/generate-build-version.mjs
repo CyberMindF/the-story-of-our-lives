@@ -1,7 +1,9 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const outputDirectory = path.resolve('dist/web/browser');
+const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const outputDirectory = path.join(repositoryRoot, 'web/dist/web/browser');
 const version =
   process.env.CF_PAGES_COMMIT_SHA?.trim()
   || process.env.GITHUB_SHA?.trim()
