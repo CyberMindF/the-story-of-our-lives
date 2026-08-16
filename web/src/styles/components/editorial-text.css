@@ -25,30 +25,19 @@
   align-self: start;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  width: 100%;
-  margin: 0 0 0.75rem;
-  padding: 0.7rem 0.8rem;
-  border: 1px solid var(--panel-border-color);
-  border-radius: 0.9rem;
-  background: var(--panel-color);
-}
-
-.editorial-versions-label {
-  margin-right: auto;
-  color: var(--muted-color);
-  font-size: 0.78rem;
-  font-weight: 700;
+  gap: 0.35rem;
+  margin: 0 0 0.35rem;
 }
 
 .editorial-version-chip {
-  padding: 0.35rem 0.85rem;
+  padding: 0.25rem 0.65rem;
   border: 1px solid var(--border-color);
   border-radius: 999px;
   background: var(--button-bg);
   color: var(--muted-color);
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   font-weight: 700;
   cursor: pointer;
 }
