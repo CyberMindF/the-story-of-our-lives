@@ -109,6 +109,7 @@
   will-change: transform;
 }
 .letter-paper-body { margin: 0; font-size: clamp(1.35rem, 2.6vw, 1.6rem); line-height: 1.6; white-space: pre-wrap; }
+.letter-dialog[data-letter-size="foglio-a4"] .letter-paper-body { font-size: 1rem; line-height: 1.65; }
 .letter-paper-signature { margin: 1.5rem 0 0; font-size: 1.6rem; color: #7a5c3a; text-align: right; }
 
 .letter-pager-arrow {

@@ -134,7 +134,7 @@ export class App {
       const fileName = value.split('/').pop()?.split('?')[0] || '';
       return /^(main|polyfills|styles)-[^/]+\.(js|css)$/.test(fileName);
     });
-    return assets.sort().join('|');
+    return [...new Set(assets)].sort().join('|');
   }
 
   // Rinnova lo sblocco della Chiave durante l'uso attivo, anche restando sulla stessa pagina
