@@ -80,7 +80,7 @@ interface CartaDesign {
 
 const IDENTITY_LABELS: Record<UserIdentity, string> = { lui: 'lui', lei: 'lei' };
 
-// Route + card di #e4 (gioco di carte collezionabili) — vedi e4-carte-collezionabili.md per il
+// Route + card di #e4 (gioco di carte collezionabili) — vedi documentazione/e4-carte-collezionabili.md per il
 // design completo. Un'unica pagina a tab (Bustina/Album/Scambi/+Editor per l'admin) invece di
 // route separate: stesso principio già usato dal pannello GDR, evita di duplicare shell/hero
 // per una feature che è concettualmente un solo posto. L'editor è inline dietro canEdit(),

@@ -1,5 +1,5 @@
 // Scambi del gioco di carte collezionabili (#e4), Blocco 2 del piano in
-// e4-carte-collezionabili.md. Le identità sono sempre 'lui'/'lei' derivate dalla sessione lato
+// documentazione/e4-carte-collezionabili.md. Le identità sono sempre 'lui'/'lei' derivate dalla sessione lato
 // server (mai dal client), stesso principio di pensieri-biglietti e ponti-chat.
 
 export const MAX_MESSAGGIO_LENGTH = 500;

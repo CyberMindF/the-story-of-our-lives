@@ -11,7 +11,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   "coperto" disegnato); (b) una **texture per la bustina** stessa (oggi solo un'emoji 🧧 nel
   bottone "Apri una bustina" e nel contatore, nessuna illustrazione). Segnate su richiesta di
   Rory, da progettare quando ci sarà tempo — nessun dettaglio deciso su stile o formato.
-- #e4 (continua) — il Blocco 5 del piano in `e4-carte-collezionabili.md` (notifiche email dei
+- #e4 (continua) — il Blocco 5 del piano in `documentazione/e4-carte-collezionabili.md` (notifiche email dei
   trade) è **implementato il 15/08/2026** insieme a #f5, agganciato a
   proponi/accetta/rifiuta/controproponi in `functions/api/carte-trade/` (vedi voce #f5 più sotto
   per i dettagli). **Non ancora verificabile end-to-end**: c'è un solo account registrato
@@ -36,7 +36,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `--mx`/`--my`, quindi il riflesso (sia sulle standard che sulle gemme) restava bloccato
   all'ultima posizione del mouse invece di tornare al centro quando il puntatore usciva dalla
   carta. Dettagli e percorso completo (comprese le versioni scartate) in
-  `e4-carte-collezionabili.md`. Il resto della feature è concluso e rifinito, vedi voce completa
+  `documentazione/e4-carte-collezionabili.md`. Il resto della feature è concluso e rifinito, vedi voce completa
   più sotto nel Fatto.
 - #e16 (idea, ripescata) — Playlist Spotify condivisa nelle Cuffiette: era già stata proposta come #e1 e scartata il 13/08/2026 perché non chiaro il senso. Rory ha chiarito il 14/08/2026: non un editoriale scritto, ma un vero embed di una playlist Spotify che lui cura nel tempo, aggiungendo canzoni man mano — più semplice da fare di una pagina editoriale (nessun CMS, nessun testo da scrivere, solo un iframe verso la playlist).
 - [x] #f5 — Infrastruttura email (Resend) implementata il 15/08/2026, dominio `il-mondo-bianco.com`
@@ -98,8 +98,8 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   sul bottone header disegnavano un rettangolo tagliato bruscamente contro l'angolo arrotondato
   della card (bottone senza `border-radius` proprio, corretto con `border-radius: inherit`).
   Su richiesta di Rory, riscritte anche tutte le 24 descrizioni delle pagine mostrate
-  nell'Atlante del Mappamondo (file di lavoro temporaneo `descrizioni-mappamondo.md` in root,
-  compilato da Rory con "è così"/"deve essere così"): 16 aggiornate solo nel codice
+  nell'Atlante del Mappamondo (partendo da un file di lavoro temporaneo compilato da Rory con
+  "è così"/"deve essere così"): 16 aggiornate solo nel codice
   (`fallbackDescription`), le altre 8 (Suggerimenti, Profilo, e i 5 giochi + Carte del Tavolo da
   Gioco) avevano già una `description` non nulla salvata in `mondo_bianco_cards` da un editing
   precedente nell'Atlante, quindi serviva anche una migrazione dedicata
@@ -178,7 +178,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 ### Extra (fuori scaletta, chiesto il 14/08/2026)
 
 - [x] #e4 — Gioco di carte collezionabili, rifinitura finale (Blocchi 1-4 del piano in
-  `e4-carte-collezionabili.md` chiusi e verificati end-to-end, più un lungo giro di feedback
+  `documentazione/e4-carte-collezionabili.md` chiusi e verificati end-to-end, più un lungo giro di feedback
   visivo che ha riscritto l'effetto delle carte da zero più volte). Schema DB, bustine con
   accumulo/drop pesato, album, editor admin set/carte, scambi proponi/accetta/rifiuta con
   badge — vedi impostazione generale già descritta in precedenza. Qui la cronaca della

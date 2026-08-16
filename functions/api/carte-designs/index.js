@@ -5,7 +5,7 @@ import { recordEvent } from "../_shared/events.js";
 // Editor admin dei design (#e4, Blocco 3): un soggetto concreto (foto/sticker/emoji) dentro un
 // set. L'immagine è unica per design e condivisa dalle 5 finiture (COALESCE già gestito da
 // GET /api/carte-collezione) — caricare artwork distinti per finitura non è ancora deciso con
-// Rory (vedi "Cosa NON è ancora deciso" in e4-carte-collezionabili.md), quindi non è
+// Rory (vedi "Cosa NON è ancora deciso" in documentazione/e4-carte-collezionabili.md), quindi non è
 // supportato qui: si può aggiungere dopo senza rompere niente, la colonna immagine_key su
 // carte_definizioni esiste già per quel caso.
 export async function onRequestGet(context) {

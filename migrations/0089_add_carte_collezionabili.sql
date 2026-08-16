@@ -1,5 +1,5 @@
 -- Gioco di carte collezionabili (#e4), design concordato con Rory il 14/08/2026 dopo una
--- sessione dedicata di domande — vedi e4-carte-collezionabili.md per il documento completo
+-- sessione dedicata di domande — vedi documentazione/e4-carte-collezionabili.md per il documento completo
 -- (modello, drop rate, flusso trade, piano di lavoro a blocchi).
 --
 -- Modello a tre livelli: set (contenitore tematico esplicito, es. "Settembre 2026") > design

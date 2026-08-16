@@ -1,6 +1,6 @@
 -- Dodici carte segnaposto (#e4) per rendere bustine/album/scambi provabili davvero prima che
 -- arrivino le foto vere di Rory (vedi "Lavori che solo Rory può fare" in
--- e4-carte-collezionabili.md, punto 1 — nessuna AI può scegliere le foto reali). Nomi
+-- documentazione/e4-carte-collezionabili.md, punto 1 — nessuna AI può scegliere le foto reali). Nomi
 -- riconoscibili invece di "Carta 1..12" così è ovvio a colpo d'occhio cosa è ancora finto;
 -- niente immagine_key: la UI mostra già il fallback 🃏 quando manca (gestito in carte.html).
 -- Da eliminare con l'editor admin non appena arriva il primo set vero. INSERT singoli invece di
