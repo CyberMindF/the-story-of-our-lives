@@ -15,6 +15,52 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+/* La distanza dall'header al primo contenuto appartiene alla shell, non alle singole pagine.
+   Il flag evita di applicarla ai layout autonomi senza header, come Fake Omegle. */
+.place-shell.has-place-header > main {
+  padding-top: clamp(2rem, 6vw, 4rem);
+}
+
+/* I blocchi iniziali conservano il proprio spazio inferiore e l'eventuale padding interno,
+   ma non aggiungono una seconda distanza sopra a quella condivisa dalla shell. */
+.place-shell.has-place-header > main > :is(
+  .world-opening,
+  .jars-hero,
+  .calendar-hero,
+  .capsule-hero,
+  .chat-hero,
+  .cifrato-hero,
+  .contenuti-hero,
+  .domande-hero,
+  .globe-hero,
+  .lettere-hero,
+  .linguaggio-hero,
+  .log-hero,
+  .map-hero,
+  .music-hero,
+  .pand-hero,
+  .ponti-hero,
+  .profilo-hero,
+  .settings-hero,
+  .stories-hero,
+  .suggerimenti-hero,
+  .tavolo-hero,
+  .avventura-hero,
+  .recipe-page,
+  .together-page
+) {
+  padding-top: 0;
+}
+
+.place-shell.has-place-header > main > .memory-hero {
+  margin-top: 0;
+}
+
+.place-shell.has-place-header > main > .playground-header,
+.place-shell.has-place-header > main > .sky-title {
+  margin-top: 0;
+}
+
 .place-home-link {
   display: inline-flex;
   gap: 0.6rem;

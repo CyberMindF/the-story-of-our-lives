@@ -1,4 +1,4 @@
-<div class="place-shell" [class]="shellClass">
+<div class="place-shell" [class]="shellClass" [class.has-place-header]="showHeader">
   @if (showHeader) {
   <app-world-header
     [homeHref]="homeHref"
@@ -14,6 +14,7 @@
     [beforeLogout]="beforeLogout"
   />
   }
+  <app-page-wip />
   <main>
     <ng-content />
     @if (showBackLink) {

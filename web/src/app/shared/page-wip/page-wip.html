@@ -1,0 +1,17 @@
+@if (loaded() && (enabled() || canEdit())) {
+  <section class="page-wip" [class.is-enabled]="enabled()" aria-label="Stato della pagina">
+    @if (enabled()) {
+      <p><span aria-hidden="true">🚧</span> Sto ancora lavorando a questa pagina, quindi potresti trovare qualcosa che non è ancora come dovrebbe essere. La sistemerò nei prossimi giorni</p>
+    }
+
+    @if (canEdit()) {
+      <button type="button" class="btn page-wip-toggle" [disabled]="saving()" (click)="toggle()">
+        {{ saving() ? 'Salvataggio…' : (enabled() ? 'Togli WIP' : 'Segna come WIP') }}
+      </button>
+    }
+
+    @if (errorMessage()) {
+      <p class="page-wip-error" role="status">{{ errorMessage() }}</p>
+    }
+  </section>
+}
