@@ -50,9 +50,9 @@
 .envelope-flap-behind { z-index: 0; opacity: 0; }
 .letter-card:hover .envelope-flap-behind, .letter-card:focus-visible .envelope-flap-behind { opacity: 1; }
 
-.envelope-seal { position: absolute; top: 54%; left: 50%; width: 1.9rem; height: 1.9rem; border-radius: 50%; background: #a5473f; box-shadow: 0 .25rem .5rem rgba(0,0,0,.35), inset 0 -.15rem .25rem rgba(0,0,0,.25); transform: translate(-50%, -50%); z-index: 4; transition: opacity .2s ease, transform .2s ease; }
+.envelope-seal { position: absolute; top: 54%; left: 50%; width: 1.9rem; height: 1.9rem; border-radius: 50%; background: #a5473f; box-shadow: 0 .25rem .5rem rgba(0,0,0,.35), inset 0 -.15rem .25rem rgba(0,0,0,.25); transform: translate(-50%, -50%); z-index: 4; transition: opacity .2s ease .55s, transform .2s ease .55s; }
 .envelope-seal::before { position: absolute; inset: 0; display: grid; place-items: center; color: #f3ddc4; font-size: .95rem; content: "♡"; }
-.letter-card:hover .envelope-seal, .letter-card:focus-visible .envelope-seal { opacity: 0; transform: translate(-50%, -50%) scale(.6); }
+.letter-card:hover .envelope-seal, .letter-card:focus-visible .envelope-seal { opacity: 0; transform: translate(-50%, -50%) scale(.6); transition-delay: 0s; }
 
 .letter-card.is-unread .envelope-seal { background: #c0392b; }
 .letter-card.is-unread .envelope-seal::before { color: #fbe6d6; }
