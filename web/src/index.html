@@ -17,10 +17,9 @@
       try {
         document.body.classList.add('world-atmosphere');
         var theme = localStorage.getItem('noi-crossword-theme-v15');
-        if (theme) {
-          document.documentElement.dataset.theme = theme;
-          document.body.dataset.theme = theme;
-        }
+        if (theme) document.body.dataset.theme = theme;
+        document.documentElement.style.backgroundColor =
+          getComputedStyle(document.body).getPropertyValue('--bg-color').trim();
       } catch (e) {}
     })();
   </script>
