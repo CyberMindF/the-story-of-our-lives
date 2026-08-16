@@ -1,3 +1,5 @@
+import { notifyLoggedEvent } from "./email.js";
+
 const ALLOWED_EVENTS = new Set([
   "register",
   "login_success",
@@ -81,6 +83,19 @@ export async function recordEvent(env, actor, event) {
     .run();
 
   const recorded = Number(result.meta.changes || 0) > 0;
+
+  if (recorded) {
+    try {
+      await notifyLoggedEvent(env, { section, eventType });
+    } catch (error) {
+      // Il log deve restare affidabile anche se l'avviso email o il suo cooldown falliscono.
+      console.error(JSON.stringify({
+        event: "event_email_notification_error",
+        message: error.message
+      }));
+    }
+  }
+
   return { id: recorded ? result.meta.last_row_id : null, recorded };
 }
 

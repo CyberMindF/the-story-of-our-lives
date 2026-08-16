@@ -1,0 +1,60 @@
+<nav class="world-navigation-rail" aria-label="Navigazione rapida">
+  <button class="world-navigation-action" type="button" aria-label="Vai all'inizio della pagina" title="Inizio pagina" (click)="scrollToTop()">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 15 7-7 7 7" /></svg>
+  </button>
+  @if (showBack) {
+    <a class="world-navigation-action" [routerLink]="parentHref" [attr.aria-label]="parentLabel" [title]="parentLabel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7" /></svg>
+    </a>
+  }
+  <button class="world-navigation-action is-primary" type="button" aria-label="Apri tutti i luoghi" title="Tutti i luoghi" (click)="open()">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>
+  </button>
+  <a class="world-navigation-action" routerLink="/" aria-label="Vai al Mondo Bianco" title="Il Mondo Bianco">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9" /></svg>
+  </a>
+  <button class="world-navigation-action" type="button" aria-label="Vai alla fine della pagina" title="Fine pagina" (click)="scrollToBottom()">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7" /></svg>
+  </button>
+</nav>
+
+<dialog #navigationDialog class="world-navigation-dialog" aria-labelledby="world-navigation-title" (click)="onDialogClick($event)">
+  <div class="world-navigation-sheet">
+    <header class="world-navigation-heading">
+      <a id="world-navigation-title" routerLink="/"><span aria-hidden="true">⭕</span> Il Mondo Bianco</a>
+      <button type="button" class="world-navigation-close" aria-label="Chiudi i luoghi" (click)="close()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+    </header>
+
+    <div class="world-navigation-groups">
+      @for (group of groups; track group.id) {
+        <section class="world-navigation-group">
+          <h3><span aria-hidden="true">{{ group.emoji }}</span> {{ group.label }}</h3>
+          <div class="world-navigation-links">
+            @for (entry of group.entries; track entry.place.id) {
+              <div class="world-navigation-entry">
+                <a [routerLink]="entry.place.route" [class.is-current]="isCurrent(entry.place.route)" [attr.aria-current]="isCurrent(entry.place.route) ? 'page' : null">
+                  <span aria-hidden="true">{{ entry.place.emoji }}</span>
+                  <span>{{ entry.place.fallbackName }}</span>
+                </a>
+                @for (place of entry.children; track place.id) {
+                  <a class="is-secondary" [routerLink]="place.route" [class.is-current]="isCurrent(place.route)" [attr.aria-current]="isCurrent(place.route) ? 'page' : null">
+                    <span aria-hidden="true">{{ place.emoji }}</span>
+                    <span>{{ place.fallbackName }}</span>
+                  </a>
+                }
+              </div>
+            }
+            @for (place of group.secondaryPlaces; track place.id) {
+              <a class="is-secondary is-unparented" [routerLink]="place.route" [class.is-current]="isCurrent(place.route)" [attr.aria-current]="isCurrent(place.route) ? 'page' : null">
+                <span aria-hidden="true">{{ place.emoji }}</span>
+                <span>{{ place.fallbackName }}</span>
+              </a>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  </div>
+</dialog>

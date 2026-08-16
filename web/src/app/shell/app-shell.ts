@@ -2,12 +2,13 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { TelemetryService } from '../core/telemetry.service';
 import { BackLink } from '../layout/back-link/back-link';
 import { WorldHeader } from '../layout/world-header/world-header';
+import { WorldNavigation } from '../layout/world-navigation/world-navigation';
 import { PageWip } from '../shared/page-wip/page-wip';
 
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [BackLink, WorldHeader, PageWip],
+  imports: [BackLink, WorldHeader, WorldNavigation, PageWip],
   templateUrl: './app-shell.html'
 })
 export class AppShell implements OnInit {

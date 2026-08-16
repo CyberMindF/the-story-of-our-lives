@@ -6,6 +6,12 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
+- #e19 — Presenza online leggera: aggiornare un campo `last_seen_at` sfruttando soltanto le
+  chiamate API che l'utente effettua già mentre usa il sito, senza introdurre un heartbeat o
+  richieste periodiche dedicate. Mostrare uno stato indicativo (per esempio "Online", "Online
+  poco fa", "Offline") in base al tempo trascorso dall'ultima attività. È intenzionalmente una
+  stima: chi resta fermo a leggere una pagina potrebbe risultare offline anche se ha ancora il
+  sito aperto, ma non si generano chiamate inutili solo per segnalarne la presenza.
 - #e4 (idee proposte il 15/08/2026, non ancora fatte) — grafica delle carte: (a) un **retro
   della carta** vero (oggi le carte non ancora rivelate/nell'album non hanno un fronte
   "coperto" disegnato); (b) una **texture per la bustina** stessa (oggi solo un'emoji 🧧 nel
