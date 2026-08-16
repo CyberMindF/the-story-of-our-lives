@@ -64,7 +64,7 @@ export class App {
   private readonly worldSettingsService = inject(WorldSettingsService);
   private readonly authService = inject(AuthService);
   private lastActivityTouchAt = 0;
-  private currentBuildVersion: string | null = null;
+  private readonly currentAssetSignature = this.assetSignature(document);
   private checkingBuildVersion = false;
   protected readonly updateAvailable = signal(false);
 
@@ -108,18 +108,14 @@ export class App {
     if (this.checkingBuildVersion || this.updateAvailable()) return;
     this.checkingBuildVersion = true;
     try {
-      const response = await fetch(`/version.json?t=${Date.now()}`, {
+      const response = await fetch(`/?t=${Date.now()}`, {
         cache: 'no-store',
-        headers: { Accept: 'application/json' }
+        headers: { Accept: 'text/html' }
       });
       if (!response.ok) return;
-      const payload = await response.json() as { version?: unknown };
-      if (typeof payload.version !== 'string' || !payload.version) return;
-      if (this.currentBuildVersion === null) {
-        this.currentBuildVersion = payload.version;
-        return;
-      }
-      if (payload.version !== this.currentBuildVersion) {
+      const latestDocument = new DOMParser().parseFromString(await response.text(), 'text/html');
+      const latestAssetSignature = this.assetSignature(latestDocument);
+      if (latestAssetSignature && latestAssetSignature !== this.currentAssetSignature) {
         this.updateAvailable.set(true);
       }
     } catch (error) {
@@ -127,6 +123,18 @@ export class App {
     } finally {
       this.checkingBuildVersion = false;
     }
+  }
+
+  private assetSignature(root: Document): string {
+    const assets = [
+      ...Array.from(root.querySelectorAll<HTMLScriptElement>('script[src]')).map((element) => element.getAttribute('src')),
+      ...Array.from(root.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"][href]')).map((element) => element.getAttribute('href'))
+    ].filter((value): value is string => {
+      if (!value) return false;
+      const fileName = value.split('/').pop()?.split('?')[0] || '';
+      return /^(main|polyfills|styles)-[^/]+\.(js|css)$/.test(fileName);
+    });
+    return assets.sort().join('|');
   }
 
   // Rinnova lo sblocco della Chiave durante l'uso attivo, anche restando sulla stessa pagina
