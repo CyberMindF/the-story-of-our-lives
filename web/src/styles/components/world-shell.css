@@ -1,4 +1,10 @@
 /* Cornice condivisa dalle pagine interne del Mondo Bianco. */
+app-world-header,
+app-world-user-bar {
+  display: block;
+  min-width: 0;
+}
+
 .place-shell {
   position: relative;
   z-index: 1;
@@ -63,6 +69,7 @@
 
 .place-home-link {
   display: inline-flex;
+  min-width: 0;
   gap: 0.6rem;
   align-items: center;
   color: var(--text-color);
@@ -75,6 +82,7 @@
   gap: 0.45rem;
   align-items: center;
   min-height: 2.5rem;
+  max-width: 100%;
   margin: 0;
   padding: 0.3rem 0.35rem 0.3rem 0.8rem;
   border: 1px solid var(--panel-border-color);
@@ -86,12 +94,16 @@
 }
 
 .place-userbar .user-greeting {
+  min-width: 0;
+  overflow: hidden;
   margin: 0;
   color: var(--muted-color);
   font-size: 0.92rem;
   font-weight: 650;
   line-height: 1;
   text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .userbar-admin-toggle {
