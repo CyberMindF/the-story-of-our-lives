@@ -7,6 +7,7 @@ import { CartaTilt } from '../../shared/carta-tilt/carta-tilt';
 import { CARTA_FINITURE, CARTA_FINITURA_LABELS, CartaFinitura } from '../../shared/carta-finiture';
 import { CartaBack } from '../../shared/carta-back/carta-back';
 import { CartaPack } from '../../shared/carta-pack/carta-pack';
+import { CartaAlbumPicker, CartaAlbumPickerItem } from '../../shared/carta-album-picker/carta-album-picker';
 
 // Stessa formula di streakDayBonus() in functions/api/carte-bustine/_shared.js — qui serve solo
 // per disegnare il calendario, il bonus vero lo assegna sempre il server. Ogni giorno dà
@@ -87,7 +88,7 @@ const IDENTITY_LABELS: Record<UserIdentity, string> = { lui: 'lui', lei: 'lei' }
 @Component({
   selector: 'app-carte',
   standalone: true,
-  imports: [AppShell, FormsModule, CartaTilt, CartaBack, CartaPack],
+  imports: [AppShell, FormsModule, CartaTilt, CartaBack, CartaPack, CartaAlbumPicker],
   styleUrls: ['../../../styles/components/modal.css', '../../../styles/pages/carte.css'],
   templateUrl: './carte.html'
 })
@@ -182,6 +183,21 @@ export class Carte implements OnInit, OnDestroy {
 
   // Carte possedute (quantità mia > 0), per i selettori di offerta nella proposta di trade.
   protected readonly carteMiePossedute = computed(() => this.collezione().filter((c) => c.quantitaMia > 0));
+  protected readonly carteAltroPossedute = computed(() => this.collezione().filter((c) => c.quantitaAltro > 0));
+  protected readonly carteMiePicker = computed<CartaAlbumPickerItem[]>(() => this.carteMiePossedute().map((carta) => ({
+    id: carta.definizioneId ?? '',
+    nome: carta.designNome,
+    finitura: carta.finitura,
+    immagineUrl: this.immagineUrl(carta.immagineKey),
+    quantita: carta.quantitaMia
+  })));
+  protected readonly carteAltroPicker = computed<CartaAlbumPickerItem[]>(() => this.carteAltroPossedute().map((carta) => ({
+    id: carta.definizioneId ?? '',
+    nome: carta.designNome,
+    finitura: carta.finitura,
+    immagineUrl: this.immagineUrl(carta.immagineKey),
+    quantita: carta.quantitaAltro
+  })));
 
   // --- Scambi ---
   protected readonly trades = signal<Trade[]>([]);
@@ -403,7 +419,13 @@ export class Carte implements OnInit, OnDestroy {
     const id = this.nuovaOffertaId();
     const quantita = this.nuovaOffertaQuantita();
     if (!id || quantita < 1) return;
-    this.offertaBozza.set([...this.offertaBozza(), { carteDefinizioneId: id, quantita }]);
+    const carta = this.carteMiePossedute().find((item) => item.definizioneId === id);
+    if (!carta || quantita > carta.quantitaMia) {
+      this.tradeError.set('Non possiedi abbastanza copie di questa carta.');
+      return;
+    }
+    this.offertaBozza.update((items) => this.aggiungiOAccorpa(items, id, quantita, carta.quantitaMia));
+    this.tradeError.set('');
     this.nuovaOffertaId.set('');
     this.nuovaOffertaQuantita.set(1);
   }
@@ -416,7 +438,13 @@ export class Carte implements OnInit, OnDestroy {
     const id = this.nuovaRichiestaId();
     const quantita = this.nuovaRichiestaQuantita();
     if (!id || quantita < 1) return;
-    this.richiestaBozza.set([...this.richiestaBozza(), { carteDefinizioneId: id, quantita }]);
+    const carta = this.carteAltroPossedute().find((item) => item.definizioneId === id);
+    if (!carta || quantita > carta.quantitaAltro) {
+      this.tradeError.set(`${this.otherLabel()} non possiede abbastanza copie di questa carta.`);
+      return;
+    }
+    this.richiestaBozza.update((items) => this.aggiungiOAccorpa(items, id, quantita, carta.quantitaAltro));
+    this.tradeError.set('');
     this.nuovaRichiestaId.set('');
     this.nuovaRichiestaQuantita.set(1);
   }
@@ -484,6 +512,36 @@ export class Carte implements OnInit, OnDestroy {
     const destinatario = trade.destinatarioIdentity === this.ownIdentity() ? 'te' : this.otherLabel();
     const proponente = trade.proponenteIdentity === this.ownIdentity() ? 'tu' : this.otherLabel();
     return `Da ${proponente} a ${destinatario}`;
+  }
+
+  protected cartaPerId(id: string): CartaCollezione | undefined {
+    return this.collezione().find((carta) => carta.definizioneId === id);
+  }
+
+  protected tradeStatoLabel(stato: TradeStato): string {
+    return {
+      proposto: 'In attesa',
+      accettato: 'Accettato',
+      rifiutato: 'Rifiutato',
+      controproposto: 'Controproposto'
+    }[stato];
+  }
+
+  protected tradeData(iso: string): string {
+    return new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+  }
+
+  private aggiungiOAccorpa(
+    items: { carteDefinizioneId: string; quantita: number }[],
+    id: string,
+    quantita: number,
+    massimo: number
+  ): { carteDefinizioneId: string; quantita: number }[] {
+    const corrente = items.find((item) => item.carteDefinizioneId === id);
+    if (!corrente) return [...items, { carteDefinizioneId: id, quantita }];
+    return items.map((item) => item.carteDefinizioneId === id
+      ? { ...item, quantita: Math.min(item.quantita + quantita, massimo) }
+      : item);
   }
 
   // --- Editor admin ---

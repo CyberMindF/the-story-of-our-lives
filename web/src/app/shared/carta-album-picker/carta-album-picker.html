@@ -1,0 +1,39 @@
+<button type="button" class="carta-picker-trigger" (click)="open.set(true)">
+  @if (selected; as card) {
+  <app-carta-tilt [finitura]="card.finitura" [immagineUrl]="card.immagineUrl" [nome]="card.nome" />
+  <span><strong>{{ card.nome }}</strong><small>{{ labels[card.finitura] }} · ×{{ card.quantita }}</small></span>
+  <span class="carta-picker-change">Cambia</span>
+  } @else {
+  <span class="carta-picker-trigger-icon" aria-hidden="true">▦</span>
+  <span><strong>{{ buttonLabel }}</strong><small>{{ cards.length }} carte disponibili</small></span>
+  <span class="carta-picker-change">Apri</span>
+  }
+</button>
+
+@if (open()) {
+<div class="carta-picker-backdrop" role="presentation" (click)="closeOnBackdrop($event)">
+  <section class="carta-picker-dialog" role="dialog" aria-modal="true" [attr.aria-label]="title">
+    <header>
+      <div><p>Album</p><h3>{{ title }}</h3></div>
+      <button type="button" class="carta-picker-close" (click)="close()" aria-label="Chiudi">×</button>
+    </header>
+    <nav class="carta-picker-filters" aria-label="Filtra per finitura">
+      <button type="button" [class.is-active]="finitura() === 'tutte'" (click)="finitura.set('tutte')">Tutte</button>
+      @for (item of finiture; track item) {
+      <button type="button" [class.is-active]="finitura() === item" (click)="finitura.set(item)">{{ labels[item] }}</button>
+      }
+    </nav>
+    <div class="carta-picker-grid">
+      @for (card of filteredCards; track card.id) {
+      <button type="button" class="carta-picker-card" [class.is-selected]="card.id === selectedId" (click)="choose(card)">
+        <app-carta-tilt [finitura]="card.finitura" [immagineUrl]="card.immagineUrl" [nome]="card.nome" />
+        <strong>{{ card.nome }}</strong>
+        <small>{{ labels[card.finitura] }} · ×{{ card.quantita }}</small>
+      </button>
+      } @empty {
+      <p class="carta-picker-empty">Non ci sono carte con questa finitura.</p>
+      }
+    </div>
+  </section>
+</div>
+}

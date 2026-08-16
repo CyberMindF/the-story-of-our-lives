@@ -100,19 +100,19 @@ export async function checkStreak(env, ownerIdentity) {
   return { streakCorrente, streakMigliore, bustineBonus, primaVisitaOggi: true };
 }
 
-// Piramide ripida (scelta esplicita di Rory tra le opzioni proposte), estesa con argento
-// (metallo, subito sotto l'oro), onice (prima gemma, tra oro e smeraldo) e zaffiro (gemma,
-// subito sopra il diamante). Il peso 10 dell'onice mantiene la progressione tra oro (15) e
-// smeraldo (8), coerente con l'ordine di rarita' richiesto.
+// Le bustine maturano molto facilmente e contengono cinque carte: le finiture alte devono
+// quindi essere eventi davvero rari. Pesi su 10.000 estrazioni: oltre il 98% resta tra Bianca,
+// Argento e Oro; ogni gradino successivo e' strettamente piu' raro del precedente. Diamante e'
+// circa 1 carta ogni 2.000 (circa 1 bustina ogni 400, in media).
 const FINITURA_WEIGHTS = [
-  ["flat", 45],
-  ["argento", 20],
-  ["oro", 15],
-  ["onice", 10],
-  ["smeraldo", 8],
-  ["rubino", 6],
-  ["zaffiro", 4],
-  ["diamante", 2]
+  ["flat", 8692],
+  ["argento", 900],
+  ["oro", 250],
+  ["onice", 100],
+  ["smeraldo", 30],
+  ["rubino", 15],
+  ["zaffiro", 8],
+  ["diamante", 5]
 ];
 const TOTAL_WEIGHT = FINITURA_WEIGHTS.reduce((sum, [, weight]) => sum + weight, 0);
 
