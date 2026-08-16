@@ -4,9 +4,9 @@
   </section>
 
   <div class="tavolo-intro">
-    <p>Mi piaceva l'idea di avere un giochino di carte collezionabili, come una volta con Monopoly GO. Solo che
-      ovviamente come non potevo fare carte nostre? Con le nostre foto, i nostri simboli e i nostri meme. Quindi eccoci
-      qui.</p>
+    <p>Mi piaceva l'idea di avere un giochino di carte collezionabili, come una volta con Monopoly GO, ti ricordi? Solo
+      che ovviamente come non potevo fare carte nostre? Con le nostre foto, i nostri simboli e i nostri meme. Quindi
+      eccoci qui ahaha</p>
   </div>
 
   <aside class="carte-coming-soon card" aria-label="Nuove carte in arrivo">
@@ -36,14 +36,15 @@
   @if (tab() === 'album') {
   <section class="carte-album-panel">
     <div class="carte-bustine-strip">
-        <app-carta-pack size="display" />
-        <div class="carte-bustine-left">
-          <div class="carte-bustine-info">
-            <p class="carte-bustine-count">
-              <app-carta-pack /> Bustine disponibili: <strong>{{ bustineDisponibili() }}</strong>
-            </p>
-            <p class="carte-bustine-hint">Ottieni una nuova bustina ogni 10 minuti trascorsi nel Mondo Bianco. Il tempo si accumula anche tra visite diverse.</p>
-          </div>
+      <app-carta-pack size="display" />
+      <div class="carte-bustine-left">
+        <div class="carte-bustine-info">
+          <p class="carte-bustine-count">
+            <app-carta-pack /> Bustine disponibili: <strong>{{ bustineDisponibili() }}</strong>
+          </p>
+          <p class="carte-bustine-hint">Ottieni una nuova bustina ogni 10 minuti trascorsi nel Mondo Bianco. Il tempo si
+            accumula anche tra visite diverse.</p>
+        </div>
         @if (bustineLoadError()) {
         <p class="carte-error">Non è stato possibile leggere le bustine disponibili.</p>
         }
@@ -159,18 +160,21 @@
           (selectedIdChange)="nuovaOffertaId.set($event)" />
         <div class="carte-trade-add-row">
           <label><span>Quantità</span><input type="number" min="1" [ngModel]="nuovaOffertaQuantita()"
-            (ngModelChange)="nuovaOffertaQuantita.set($event)" /></label>
+              (ngModelChange)="nuovaOffertaQuantita.set($event)" /></label>
           <button type="button" class="btn" [disabled]="!nuovaOffertaId()" (click)="aggiungiOfferta()">Aggiungi</button>
         </div>
         <div class="carte-trade-draft" aria-label="Carte offerte">
           @for (item of offertaBozza(); track $index) {
-            @if (cartaPerId(item.carteDefinizioneId); as carta) {
-            <article class="carte-trade-draft-item">
-              <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)" [nome]="carta.designNome" />
-              <div><strong>{{ carta.designNome }}</strong><small>{{ finituraLabels[carta.finitura] }} · ×{{ item.quantita }}</small></div>
-              <button type="button" class="carte-trade-remove" (click)="rimuoviOfferta($index)" aria-label="Rimuovi {{ carta.designNome }}">×</button>
-            </article>
-            }
+          @if (cartaPerId(item.carteDefinizioneId); as carta) {
+          <article class="carte-trade-draft-item">
+            <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)"
+              [nome]="carta.designNome" />
+            <div><strong>{{ carta.designNome }}</strong><small>{{ finituraLabels[carta.finitura] }} · ×{{ item.quantita
+                }}</small></div>
+            <button type="button" class="carte-trade-remove" (click)="rimuoviOfferta($index)"
+              aria-label="Rimuovi {{ carta.designNome }}">×</button>
+          </article>
+          }
           } @empty {
           <p class="carte-trade-empty">Nessuna carta aggiunta</p>
           }
@@ -190,18 +194,22 @@
           (selectedIdChange)="nuovaRichiestaId.set($event)" />
         <div class="carte-trade-add-row">
           <label><span>Quantità</span><input type="number" min="1" [ngModel]="nuovaRichiestaQuantita()"
-            (ngModelChange)="nuovaRichiestaQuantita.set($event)" /></label>
-          <button type="button" class="btn" [disabled]="!nuovaRichiestaId()" (click)="aggiungiRichiesta()">Aggiungi</button>
+              (ngModelChange)="nuovaRichiestaQuantita.set($event)" /></label>
+          <button type="button" class="btn" [disabled]="!nuovaRichiestaId()"
+            (click)="aggiungiRichiesta()">Aggiungi</button>
         </div>
         <div class="carte-trade-draft" aria-label="Carte richieste">
           @for (item of richiestaBozza(); track $index) {
-            @if (cartaPerId(item.carteDefinizioneId); as carta) {
-            <article class="carte-trade-draft-item">
-              <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)" [nome]="carta.designNome" />
-              <div><strong>{{ carta.designNome }}</strong><small>{{ finituraLabels[carta.finitura] }} · ×{{ item.quantita }}</small></div>
-              <button type="button" class="carte-trade-remove" (click)="rimuoviRichiesta($index)" aria-label="Rimuovi {{ carta.designNome }}">×</button>
-            </article>
-            }
+          @if (cartaPerId(item.carteDefinizioneId); as carta) {
+          <article class="carte-trade-draft-item">
+            <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)"
+              [nome]="carta.designNome" />
+            <div><strong>{{ carta.designNome }}</strong><small>{{ finituraLabels[carta.finitura] }} · ×{{ item.quantita
+                }}</small></div>
+            <button type="button" class="carte-trade-remove" (click)="rimuoviRichiesta($index)"
+              aria-label="Rimuovi {{ carta.designNome }}">×</button>
+          </article>
+          }
           } @empty {
           <p class="carte-trade-empty">Nessuna carta aggiunta</p>
           }
@@ -213,12 +221,18 @@
       <label for="trade-messaggio">Aggiungi un messaggio <span>(facoltativo)</span></label>
       <textarea id="trade-messaggio" placeholder="Perché proprio questa carta?" [ngModel]="nuovoMessaggio()"
         (ngModelChange)="nuovoMessaggio.set($event)"></textarea>
-      <button type="button" class="btn btn-submit" [disabled]="proponendo() || (!offertaBozza().length && !richiestaBozza().length)" (click)="proponiTrade()">
+      <button type="button" class="btn btn-submit"
+        [disabled]="proponendo() || (!offertaBozza().length && !richiestaBozza().length)" (click)="proponiTrade()">
         {{ proponendo() ? 'Invio…' : 'Invia la proposta' }}
       </button>
     </div>
 
-    <div class="carte-trade-history-heading"><div><p class="carte-trade-eyebrow">Le trattative</p><h2>I tuoi scambi</h2></div></div>
+    <div class="carte-trade-history-heading">
+      <div>
+        <p class="carte-trade-eyebrow">Le trattative</p>
+        <h2>I tuoi scambi</h2>
+      </div>
+    </div>
     @for (trade of trades(); track trade.id) {
     <article class="carte-trade-card" [class.is-pending]="trade.stato === 'proposto'">
       <header class="carte-trade-card-header">
@@ -231,13 +245,17 @@
       <div class="carte-trade-exchange">
         <div class="carte-trade-items"><small>Chi propone offre</small>
           @for (item of trade.offerta; track item.carteDefinizioneId) {
-          <div class="carte-trade-item"><app-carta-tilt [finitura]="item.finitura" [immagineUrl]="immagineUrl(item.immagineKey)" [nome]="item.designNome" /><span><strong>{{ item.designNome }}</strong><small>{{ finituraLabels[item.finitura] }} · ×{{ item.quantita }}</small></span></div>
+          <div class="carte-trade-item"><app-carta-tilt [finitura]="item.finitura"
+              [immagineUrl]="immagineUrl(item.immagineKey)" [nome]="item.designNome" /><span><strong>{{ item.designNome
+                }}</strong><small>{{ finituraLabels[item.finitura] }} · ×{{ item.quantita }}</small></span></div>
           } @empty { <p class="carte-trade-empty">Nessuna carta</p> }
         </div>
         <span class="carte-trade-exchange-arrow" aria-hidden="true">→</span>
         <div class="carte-trade-items"><small>In cambio riceve</small>
           @for (item of trade.richiesta; track item.carteDefinizioneId) {
-          <div class="carte-trade-item"><app-carta-tilt [finitura]="item.finitura" [immagineUrl]="immagineUrl(item.immagineKey)" [nome]="item.designNome" /><span><strong>{{ item.designNome }}</strong><small>{{ finituraLabels[item.finitura] }} · ×{{ item.quantita }}</small></span></div>
+          <div class="carte-trade-item"><app-carta-tilt [finitura]="item.finitura"
+              [immagineUrl]="immagineUrl(item.immagineKey)" [nome]="item.designNome" /><span><strong>{{ item.designNome
+                }}</strong><small>{{ finituraLabels[item.finitura] }} · ×{{ item.quantita }}</small></span></div>
           } @empty { <p class="carte-trade-empty">Nessuna carta</p> }
         </div>
       </div>
@@ -248,7 +266,8 @@
       </div>
       }
     </article>
-    } @empty { <p class="carte-trade-history-empty">Non ci sono ancora scambi. La prima proposta può partire da qui.</p> }
+    } @empty { <p class="carte-trade-history-empty">Non ci sono ancora scambi. La prima proposta può partire da qui.</p>
+    }
   </section>
   }
 
