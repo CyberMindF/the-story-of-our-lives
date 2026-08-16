@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AudioPlayer } from '../../../shared/audio-player/audio-player';
 import { ConfirmationDialog } from '../../../shared/confirmation-dialog/confirmation-dialog';
@@ -147,12 +147,18 @@ function createRow(preset: RowPreset): Row {
 })
 export class BachecaDayEditor {
   @Input({ required: true }) set content(value: DayContent) {
-    this.draft.set(structuredClone(value));
+    const copy = structuredClone(value);
+    this.originalContent.set(JSON.stringify(copy));
+    this.draft.set(copy);
   }
+  @Input() saving = false;
   @Output() save = new EventEmitter<DayContent>();
   @Output() cancelled = new EventEmitter<void>();
+  @Output() dirtyChange = new EventEmitter<boolean>();
 
   protected readonly draft = signal<DayContent>({ rows: [] });
+  private readonly originalContent = signal('');
+  protected readonly dirty = computed(() => JSON.stringify(this.draft()) !== this.originalContent());
   protected readonly saveError = signal('');
 
   protected readonly addingRow = signal(false);
@@ -176,6 +182,17 @@ export class BachecaDayEditor {
   protected readonly hasEmptyColumns = computed(() =>
     this.draft().rows.some((row) => row.columns.some((col) => col.blocks.length === 0))
   );
+
+  constructor() {
+    effect(() => this.dirtyChange.emit(this.dirty()));
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  protected warnBeforeLeaving(event: BeforeUnloadEvent): void {
+    if (!this.dirty()) return;
+    event.preventDefault();
+    event.returnValue = '';
+  }
 
   protected mediaUrl(key: string): string {
     return `/api/media/${key}`;
@@ -361,6 +378,9 @@ export class BachecaDayEditor {
     }
     this.draft.set({ rows });
     this.blockTarget.set(null);
+    // Il vecchio flusso richiedeva anche "Salva giorno" dopo "Salva blocco": la bozza
+    // sembrava salvata ma spariva al refresh. Un blocco confermato ora persiste subito.
+    this.submit();
   }
 
   protected requestDeleteBlock(rowIndex: number, colIndex: number, blockIndex: number): void {
@@ -443,6 +463,7 @@ export class BachecaDayEditor {
   // -------------------- Salvataggio --------------------
 
   protected submit(): void {
+    if (this.saving) return;
     if (this.hasEmptyColumns()) {
       this.saveError.set('Ogni colonna deve avere almeno un blocco prima di salvare.');
       return;

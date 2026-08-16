@@ -81,6 +81,9 @@ export class BachecaPreview implements OnInit, AfterViewInit {
 
   // -------------------- Editor del contenuto di un giorno --------------------
   protected readonly editingDayId = signal<string | null>(null);
+  protected readonly contentDirty = signal(false);
+  protected readonly contentSaving = signal(false);
+  protected readonly contentSaveError = signal('');
 
   // -------------------- Admin: periodi --------------------
   protected readonly periodEditingId = signal<string | null>(null);
@@ -273,21 +276,36 @@ export class BachecaPreview implements OnInit, AfterViewInit {
   // -------------------- Editor del contenuto --------------------
 
   protected toggleContentEditor(dayId: string): void {
+    if (this.editingDayId() === dayId && this.contentDirty()
+      && !window.confirm('Ci sono modifiche non salvate. Vuoi davvero chiudere l’editor?')) {
+      return;
+    }
+    this.contentDirty.set(false);
+    this.contentSaveError.set('');
     this.editingDayId.set(this.editingDayId() === dayId ? null : dayId);
   }
 
   protected async saveDayContent(dayId: string, content: DayContent): Promise<void> {
     const day = this.rawDays().find((d) => d.id === dayId);
-    if (!day) return;
-    const ok = await this.api.sendAuthenticatedJson(`/api/bacheca-days/${dayId}`, {
-      slug: day.slug,
-      title: day.title,
-      content,
-      memoryDate: day.memoryDate
-    }, 'PUT');
-    if (ok) {
+    if (!day || this.contentSaving()) return;
+    this.contentSaving.set(true);
+    this.contentSaveError.set('');
+    try {
+      const ok = await this.api.sendAuthenticatedJson(`/api/bacheca-days/${dayId}`, {
+        slug: day.slug,
+        title: day.title,
+        content,
+        memoryDate: day.memoryDate
+      }, 'PUT');
+      if (!ok) {
+        this.contentSaveError.set('Il salvataggio non è riuscito. Le modifiche sono ancora nell’editor: riprova prima di uscire.');
+        return;
+      }
+      this.contentDirty.set(false);
       this.editingDayId.set(null);
       await this.loadLayout();
+    } finally {
+      this.contentSaving.set(false);
     }
   }
 

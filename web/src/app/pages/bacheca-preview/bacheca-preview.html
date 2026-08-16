@@ -80,9 +80,14 @@
             }
 
             @if (editingDayId() === day.id) {
+              @if (contentSaveError()) {
+                <app-content-message [message]="contentSaveError()" tone="error" [panel]="true" />
+              }
               <app-bacheca-day-editor
                 [content]="{ rows: day.rows }"
+                [saving]="contentSaving()"
                 (save)="saveDayContent(day.id, $event)"
+                (dirtyChange)="contentDirty.set($event)"
                 (cancelled)="toggleContentEditor(day.id)"
               />
             } @else {

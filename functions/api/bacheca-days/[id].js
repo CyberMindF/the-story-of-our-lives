@@ -15,7 +15,7 @@ export async function onRequestPut(context) {
       return json({ error: "Non autorizzato." }, 403);
     }
 
-    const existing = await env.DB.prepare("SELECT id, period_id FROM bacheca_days WHERE id = ?").bind(params.id).first();
+    const existing = await env.DB.prepare("SELECT * FROM bacheca_days WHERE id = ?").bind(params.id).first();
     if (!existing) {
       return json({ error: "Giorno non trovato." }, 404);
     }
@@ -35,10 +35,19 @@ export async function onRequestPut(context) {
     if (memoryDate === undefined) return json({ error: "Data non valida." }, 400);
 
     const now = new Date().toISOString();
-    await env.DB
-      .prepare("UPDATE bacheca_days SET slug = ?, title = ?, content = ?, updated_at = ?, memory_date = ? WHERE id = ?")
-      .bind(slug, title, JSON.stringify(content), now, memoryDate, params.id)
-      .run();
+    await env.DB.batch([
+      env.DB.prepare(`
+        INSERT INTO bacheca_day_versions
+          (day_id, period_id, slug, title, content, memory_date, action, saved_by, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, 'update', ?, ?)
+      `).bind(
+        existing.id, existing.period_id, existing.slug, existing.title, existing.content,
+        existing.memory_date, session.user.id, now
+      ),
+      env.DB
+        .prepare("UPDATE bacheca_days SET slug = ?, title = ?, content = ?, updated_at = ?, memory_date = ? WHERE id = ?")
+        .bind(slug, title, JSON.stringify(content), now, memoryDate, params.id)
+    ]);
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
       section: "bacheca",
@@ -63,12 +72,23 @@ export async function onRequestDelete(context) {
       return json({ error: "Non autorizzato." }, 403);
     }
 
-    const existing = await env.DB.prepare("SELECT id FROM bacheca_days WHERE id = ?").bind(params.id).first();
+    const existing = await env.DB.prepare("SELECT * FROM bacheca_days WHERE id = ?").bind(params.id).first();
     if (!existing) {
       return json({ error: "Giorno non trovato." }, 404);
     }
 
-    await env.DB.prepare("DELETE FROM bacheca_days WHERE id = ?").bind(params.id).run();
+    const now = new Date().toISOString();
+    await env.DB.batch([
+      env.DB.prepare(`
+        INSERT INTO bacheca_day_versions
+          (day_id, period_id, slug, title, content, memory_date, action, saved_by, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, 'delete', ?, ?)
+      `).bind(
+        existing.id, existing.period_id, existing.slug, existing.title, existing.content,
+        existing.memory_date, session.user.id, now
+      ),
+      env.DB.prepare("DELETE FROM bacheca_days WHERE id = ?").bind(params.id)
+    ]);
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
       section: "bacheca",
