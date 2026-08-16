@@ -53,7 +53,7 @@
   <button class="letter-dialog-close" type="button" aria-label="Chiudi" (click)="closeLetterAnimated()">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
   </button>
-  <div #dialogPaper class="letter-paper card--handwritten" [style.--letter-rotation]="dialogRotation() + 'deg'">
+  <div #dialogPaper class="letter-paper card--handwritten" [class.is-turning-next]="pageTurnDirection() === 'next'" [class.is-turning-previous]="pageTurnDirection() === 'previous'" [style.--letter-rotation]="dialogRotation() + 'deg'">
     @if (dialogLetter(); as letter) {
       <p class="letter-paper-date">{{ formatDate(letter.createdAt) }}</p>
       <div class="letter-pager">
@@ -62,17 +62,23 @@
             <p class="letter-paper-body">{{ letter.body }}</p>
           </div>
         </div>
+      </div>
+      <footer class="letter-paper-footer">
         @if (letterPageCount() > 1) {
-          <button type="button" class="letter-pager-arrow letter-pager-prev" [disabled]="letterPage() === 0" (click)="prevPage()" aria-label="Pagina precedente">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
-          </button>
-          <button type="button" class="letter-pager-arrow letter-pager-next" [disabled]="letterPage() === letterPageCount() - 1" (click)="nextPage()" aria-label="Pagina successiva">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
-          </button>
           <p class="letter-pager-indicator">{{ letterPage() + 1 }} / {{ letterPageCount() }}</p>
         }
-      </div>
-      <p class="letter-paper-signature handwritten-text">~ {{ letter.author }}</p>
+        @if (letterPage() === letterPageCount() - 1) {
+          <p class="letter-paper-signature handwritten-text">~ {{ letter.author }}</p>
+        }
+      </footer>
     }
   </div>
+  @if (dialogLetter() && letterPageCount() > 1) {
+    <button type="button" class="letter-pager-arrow letter-pager-prev" [disabled]="letterPage() === 0 || pageTurnDirection() !== null" (click)="prevPage()" aria-label="Pagina precedente">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+    </button>
+    <button type="button" class="letter-pager-arrow letter-pager-next" [disabled]="letterPage() === letterPageCount() - 1 || pageTurnDirection() !== null" (click)="nextPage()" aria-label="Pagina successiva">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+    </button>
+  }
 </dialog>

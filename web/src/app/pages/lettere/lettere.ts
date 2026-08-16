@@ -52,7 +52,10 @@ export class Lettere implements OnInit, OnDestroy {
   // DOM per calcolare quante pagine ci sono e di quanto traslare la striscia di colonne.
   protected readonly letterPage = signal(0);
   protected readonly letterPageCount = signal(1);
+  protected readonly pageTurnDirection = signal<'next' | 'previous' | null>(null);
   private pageStridePx = 0;
+  private pageTurnSwapTimer?: number;
+  private pageTurnEndTimer?: number;
 
   private activeCardEl: HTMLElement | null = null;
   private readonly onWindowResize = () => this.recomputePages();
@@ -65,6 +68,7 @@ export class Lettere implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.clearPageTurnTimers();
     window.removeEventListener('resize', this.onWindowResize);
     document.fonts?.removeEventListener?.('loadingdone', this.onFontsLoaded);
   }
@@ -152,6 +156,9 @@ export class Lettere implements OnInit, OnDestroy {
   }
 
   protected closeLetterAnimated(): void {
+    if (this.pageTurnDirection()) {
+      return;
+    }
     const dialog = this.dialogRef?.nativeElement;
     const paper = this.dialogPaperRef?.nativeElement;
     const envelopeEl = this.activeCardEl?.querySelector('.envelope');
@@ -206,15 +213,36 @@ export class Lettere implements OnInit, OnDestroy {
   }
 
   protected nextPage(): void {
-    this.letterPage.update((page) => Math.min(page + 1, this.letterPageCount() - 1));
+    this.turnPage('next');
   }
 
   protected prevPage(): void {
-    this.letterPage.update((page) => Math.max(page - 1, 0));
+    this.turnPage('previous');
+  }
+
+  private turnPage(direction: 'next' | 'previous'): void {
+    if (this.pageTurnDirection()) return;
+    const delta = direction === 'next' ? 1 : -1;
+    const destination = this.letterPage() + delta;
+    if (destination < 0 || destination >= this.letterPageCount()) return;
+
+    this.pageTurnDirection.set(direction);
+    this.pageTurnSwapTimer = window.setTimeout(() => this.letterPage.set(destination), 180);
+    this.pageTurnEndTimer = window.setTimeout(() => {
+      this.pageTurnDirection.set(null);
+      this.clearPageTurnTimers();
+    }, 420);
+  }
+
+  private clearPageTurnTimers(): void {
+    if (this.pageTurnSwapTimer !== undefined) window.clearTimeout(this.pageTurnSwapTimer);
+    if (this.pageTurnEndTimer !== undefined) window.clearTimeout(this.pageTurnEndTimer);
+    this.pageTurnSwapTimer = undefined;
+    this.pageTurnEndTimer = undefined;
   }
 
   protected onDialogClick(event: MouseEvent): void {
-    if (event.target === this.dialogRef?.nativeElement) {
+    if (!this.pageTurnDirection() && event.target === this.dialogRef?.nativeElement) {
       this.closeLetterAnimated();
     }
   }
