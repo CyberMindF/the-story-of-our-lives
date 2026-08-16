@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AccessMode, AuthService, AuthUser } from '../core/auth.service';
 import { NavigationService } from '../core/navigation.service';
+import { ContentMessage } from '../shared/content-message/content-message';
 import { PasswordField } from '../shared/password-field/password-field';
 import { VisitsService } from '../core/visits.service';
 
@@ -13,7 +14,7 @@ import { VisitsService } from '../core/visits.service';
 @Component({
   selector: 'app-portone',
   standalone: true,
-  imports: [FormsModule, PasswordField],
+  imports: [FormsModule, PasswordField, ContentMessage],
   styleUrls: [
     '../../styles/components/access-gate.css',
     '../../styles/pages/portone.css'

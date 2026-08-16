@@ -35,11 +35,25 @@ const THEME_PRESET: Record<string, WorldSettingKey[]> = {
 // perdere la scelta già salvata quando vengono aggiunti nuovi temi.
 const THEMES: ThemeDefinition[] = [
   {
+    id: 'white-world',
+    label: 'White World',
+    swatch: '#eee9df',
+    icon: 'pearl',
+    description: 'Bianco perla, avorio e luce morbida.'
+  },
+  {
     id: 'the-white-world',
     label: 'Night Sky',
     swatch: '#141f32',
     icon: 'night',
     description: 'Blu profondo e cielo notturno.'
+  },
+  {
+    id: 'love',
+    label: 'Love',
+    swatch: '#dc8294',
+    icon: 'heart',
+    description: 'Fragola, panna e rosa delicato.'
   },
   {
     id: 'sea',
@@ -70,20 +84,6 @@ const THEMES: ThemeDefinition[] = [
     icon: 'letter',
     iconText: 'R',
     description: 'Il mio verde, calmo e profondo.'
-  },
-  {
-    id: 'white-world',
-    label: 'White World',
-    swatch: '#eee9df',
-    icon: 'pearl',
-    description: 'Bianco perla, avorio e luce morbida.'
-  },
-  {
-    id: 'love',
-    label: 'Love',
-    swatch: '#dc8294',
-    icon: 'heart',
-    description: 'Fragola, panna e rosa delicato.'
   }
 ];
 

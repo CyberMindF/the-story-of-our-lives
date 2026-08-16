@@ -11,11 +11,8 @@
       </div>
 
       <figure class="portone-figure">
-        <img
-          class="portone-image"
-          src="assets/images/portone/portone.webp"
-          alt="Un portone in legno circondato da rose, margherite e tulipani"
-        />
+        <img class="portone-image" src="assets/images/portone/portone.webp"
+          alt="Un portone in legno circondato da rose, margherite e tulipani" />
       </figure>
 
       <details class="portone-hint">
@@ -30,61 +27,44 @@
       <h1 id="access-title">{{ title() }}</h1>
       <p id="access-text">{{ text() }}</p>
 
+      <div class="portone-mobile-notice">
+        <app-content-message
+          message="Piccolo avviso: sto ancora sistemando alcune cose, soprattutto da telefono. Se qualcosa non funziona o sembra strano, probabilmente non è colpa tua ahaha. Se ti va prendi il pc e guardalo da lì" />
+      </div>
+
       @if (!isKeyOnly()) {
-        <div id="access-mode-switcher" class="access-mode-switcher" role="group" aria-label="Scegli se accedere o registrarti">
-          <button type="button" [attr.aria-pressed]="mode() === 'login'" (click)="setMode('login')">Accedi</button>
-          <button type="button" [attr.aria-pressed]="isRegister()" (click)="setMode('register')">Registrati</button>
-        </div>
+      <div id="access-mode-switcher" class="access-mode-switcher" role="group"
+        aria-label="Scegli se accedere o registrarti">
+        <button type="button" [attr.aria-pressed]="mode() === 'login'" (click)="setMode('login')">Accedi</button>
+        <button type="button" [attr.aria-pressed]="isRegister()" (click)="setMode('register')">Registrati</button>
+      </div>
 
-        <div id="access-account-fields" class="access-account-fields">
-          <label class="access-field">
-            <span>Email</span>
-            <input
-              type="email"
-              autocomplete="email"
-              autocapitalize="none"
-              spellcheck="false"
-              required
-              name="email"
-              [(ngModel)]="email"
-            />
-          </label>
+      <div id="access-account-fields" class="access-account-fields">
+        <label class="access-field">
+          <span>Email</span>
+          <input type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required name="email"
+            [(ngModel)]="email" />
+        </label>
 
-          <label class="access-field">
-            <span>Password</span>
-            <app-password-field name="password" autocomplete="off" [value]="password" (valueChange)="password = $event" />
-          </label>
-        </div>
+        <label class="access-field">
+          <span>Password</span>
+          <app-password-field name="password" autocomplete="off" [value]="password" (valueChange)="password = $event" />
+        </label>
+      </div>
       }
 
       @if (isRegister()) {
-        <label id="access-nickname-field" class="access-field">
-          <span>Imposta un nome</span>
-          <input
-            type="text"
-            maxlength="40"
-            autocomplete="off"
-            autocapitalize="words"
-            spellcheck="false"
-            name="nickname"
-            [(ngModel)]="nickname"
-          />
-        </label>
+      <label id="access-nickname-field" class="access-field">
+        <span>Imposta un nome</span>
+        <input type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false" name="nickname"
+          [(ngModel)]="nickname" />
+      </label>
       }
 
       <label class="access-field">
         <span>La chiave</span>
-        <input
-          type="text"
-          autocomplete="one-time-code"
-          autocapitalize="none"
-          spellcheck="false"
-          required
-          data-1p-ignore
-          data-lpignore="true"
-          name="worldKey"
-          [(ngModel)]="worldKey"
-        />
+        <input type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" required data-1p-ignore
+          data-lpignore="true" name="worldKey" [(ngModel)]="worldKey" />
       </label>
 
       <button id="access-submit-button" class="access-submit-button" type="submit" [disabled]="loading()">
@@ -92,10 +72,10 @@
       </button>
 
       @if (isRegister()) {
-        <label id="access-notify-field" class="access-checkbox-field">
-          <input type="checkbox" name="notifyEmailUpdates" [(ngModel)]="notifyEmailUpdates" />
-          <span>Avvisami via email se ci sono aggiornamenti</span>
-        </label>
+      <label id="access-notify-field" class="access-checkbox-field">
+        <input type="checkbox" name="notifyEmailUpdates" [(ngModel)]="notifyEmailUpdates" />
+        <span>Avvisami via email se ci sono aggiornamenti</span>
+      </label>
       }
 
       <p id="access-error" class="access-error" aria-live="polite">{{ errorMessage() }}</p>
