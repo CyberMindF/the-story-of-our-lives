@@ -24,41 +24,57 @@
 /* Mentre il puntatore è sopra, risposta immediata; al rilascio riprende la transizione morbida
    sopra per il "ritorno a riposo". */
 .carta-tilt-frame.is-active { transition-duration: 80ms; }
+.carta-tilt-frame.is-entering { transition-duration: 140ms; transition-timing-function: ease-out; }
 
 .carta-tilt-frame > app-metallic-foil {
   position: absolute;
   inset: 0;
 }
 
-.carta-tilt-image {
+.carta-tilt-bianca-surface,
+.carta-tilt-gem-base {
   position: absolute;
   inset: 0;
-  background-size: cover;
+}
+
+.carta-tilt-bianca-surface {
+  background:
+    radial-gradient(ellipse at 18% 17%, rgba(255,255,255,.9), transparent 30%),
+    radial-gradient(ellipse at 86% 74%, rgba(255,255,255,.78), transparent 34%),
+    linear-gradient(155deg, #fdfaf0, #ebe6d8 52%, #f8f1dc);
+}
+.carta-tilt-bianca-surface::before,
+.carta-tilt-bianca-surface::after {
+  content: '';
+  position: absolute;
+  width: 68%;
+  height: 17%;
+  border-radius: 999px;
+  background: rgba(255,255,255,.62);
+  filter: blur(clamp(2px, 1cqw, 4px));
+  box-shadow: .3em -.28em 0 -.08em rgba(255,255,255,.68), -.24em -.1em 0 -.08em rgba(255,255,255,.58);
+}
+.carta-tilt-bianca-surface::before { top: 15%; left: -28%; }
+.carta-tilt-bianca-surface::after { right: -30%; bottom: 13%; transform: scale(.86); }
+
+.carta-tilt-art {
+  position: absolute;
+  z-index: 2;
+  inset: 9% 8% 14%;
+  display: grid;
+  place-items: center;
+  background-size: contain;
   background-position: center;
-  background-color: color-mix(in srgb, var(--panel-color) 80%, transparent);
+  background-repeat: no-repeat;
 }
 
 .carta-tilt-fallback {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
   font-size: min(45cqw, 45cqh, 12rem);
   pointer-events: none;
 }
 
-/* Tint di base: una tinta costante della finitura sopra la foto, blend hard-light per un
-   aspetto di lastra colorata opaca indipendentemente da cosa c'è sotto (blend 'color' lasciava
-   troppo intatta la luminosità della foto, risultando "trasparentino" nelle zone chiare). */
-.carta-tilt-tint {
-  position: absolute;
-  inset: 0;
-  mix-blend-mode: hard-light;
-  pointer-events: none;
-}
-
 /* Il mosaico vero: poligoni SVG fissi, solo il fill di ciascuno cambia via JS (vedi
-   carta-tilt.ts/holo-mosaic.ts). overlay lascia trasparire la foto sotto invece di coprirla. */
+   carta-tilt.ts/holo-mosaic.ts). E' il materiale della carta attorno alla finestra comune. */
 .carta-tilt-foil {
   position: absolute;
   inset: 0;
@@ -68,34 +84,30 @@
   pointer-events: none;
 }
 .carta-tilt-foil polygon {
-  transition: fill 40ms linear, opacity 40ms linear;
+  transition: none;
   shape-rendering: geometricPrecision;
 }
 
-/* Vetro delle GEMME (solo smeraldo/rubino/zaffiro/diamante, mai flat): un riflesso morbido
+/* Vetro delle GEMME (onice/smeraldo/rubino/zaffiro/diamante): un riflesso morbido
    aggiuntivo che segue il mouse, sopra il mosaico olografico che resta fisso — dà profondità
    extra come una vera laminazione lucida sopra il foil. NON toccare per modifiche al lucido
-   plastica delle carte standard: quello vive in .carta-tilt-gloss qui sotto, elemento separato
-   apposta dopo che una versione precedente li aveva confusi (15/08/2026). */
+   della Bianca: quello vive in .carta-tilt-gloss qui sotto. */
 .carta-tilt-glass {
   position: absolute;
   inset: 0;
   pointer-events: none;
   mix-blend-mode: screen;
-  background:
-    radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.22) 0%, rgba(255,255,210,.09) 13%, rgba(255,255,255,.025) 30%, transparent 52%),
-    linear-gradient(115deg, transparent 20%, rgba(255,255,255,.04) 42%, rgba(255,255,255,.13) 49%, rgba(255,255,255,.035) 56%, transparent 75%);
+  background: radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.22) 0%, rgba(255,255,210,.09) 13%, rgba(255,255,255,.025) 30%, transparent 52%);
 }
 
-/* Lucido plastica delle carte STANDARD (flat) soltanto, aggiunto il 15/08/2026: stesse
+/* Vernice lucida della carta BIANCA (flat): stesse
    posizioni di banda di .metal-surface (metallic-foil.css, stop per stop) e stesso movimento
    (background-position legata a --mx/--my, già calcolate da CartaTilt.onPointerMove — nessuna
    logica di tracking duplicata), ma alpha reale invece di colore opaco: shadow/dark/mid/main a
    trasparenza totale, solo la fascia light→white→highlight resta visibile — "deve essere
    totalmente trasparente, rimangono visibili solo gli effetti di luce" (Rory, 15/08/2026). Un
    div semplice, non un componente con isolation propria: verificato che il blend funziona qui
-   (sibling diretto nello stesso stacking context di .carta-tilt-image), a differenza del
-   tentativo con MetallicFoil riusato in overlay (vedi commento in carta-tilt.html). */
+   (sibling diretto nello stesso stacking context della finestra illustrazione). */
 .carta-tilt-gloss {
   position: absolute;
   inset: 0;
@@ -119,6 +131,10 @@
 }
 .carta-tilt-frame:not(.is-active) .carta-tilt-gloss {
   transition: background-position .5s cubic-bezier(.22, 1, .36, 1);
+}
+.carta-tilt-frame.is-entering .carta-tilt-gloss {
+  transition-duration: 140ms;
+  transition-timing-function: ease-out;
 }
 
 .carta-tilt-rim {

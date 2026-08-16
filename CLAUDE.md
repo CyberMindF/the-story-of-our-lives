@@ -12,4 +12,16 @@ Regola fissata il 09/08/2026: la duplicazione di codice (HTML, CSS, JS) deve ten
 - UI e logica condivise: usare `AppShell`, i componenti in `web/src/app/shared/` e i servizi in `web/src/app/core/`; non copiare header, userbar, autenticazione, temi o telemetria nei componenti pagina.
 - `legacy-archive/` è sola documentazione storica: non correggere il nuovo frontend importando codice da lì. Se serve recuperare un comportamento, portarlo esplicitamente in TypeScript e verificarlo.
 
+## Colori e componenti del design system
+
+- I colori dell'interfaccia devono usare sempre variabili semantiche definite in
+  `web/src/styles/themes.css`. Non inserire colori letterali nei CSS di una pagina o di un
+  componente quando il valore appartiene al tema (testo, sfondo, bordo, stato, overlay).
+- Se manca un token, aggiungerlo a tutti i temi con un nome legato al suo significato, non al
+  colore concreto. Le palette fisse sono ammesse solo dentro illustrazioni/effetti che
+  rappresentano un oggetto con colori propri e non fanno parte della UI tematica.
+- Un comportamento o uno stile comune va risolto nella primitiva o nel componente condiviso.
+  Le pagine dichiarano soltanto le varianti semantiche necessarie e non duplicano correzioni
+  locali del design system.
+
 Vedi `prossimi sviluppi.md` per le cose ancora aperte sul progetto.

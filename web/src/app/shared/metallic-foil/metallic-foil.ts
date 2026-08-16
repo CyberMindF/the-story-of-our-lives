@@ -1,5 +1,6 @@
-import { Component, ElementRef, HostListener, Input, NgZone, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, NgZone, OnDestroy, inject } from '@angular/core';
 import { METAL_PRESETS, MetalPalette, MetalPreset, metalPaletteFromColor } from './metal-palette';
+import { beginCartaPointerTracking, endCartaPointerTracking } from '../carta-pointer';
 
 // Foil metallico (superficie continua) — componente a sé, indipendente dal mosaico
 // olografico "crushed ice" (<app-carta-tilt> per le finiture pietrose usa quello, non questo).
@@ -18,7 +19,7 @@ import { METAL_PRESETS, MetalPalette, MetalPreset, metalPaletteFromColor } from 
   styleUrl: './metallic-foil.css',
   templateUrl: './metallic-foil.html'
 })
-export class MetallicFoil {
+export class MetallicFoil implements OnDestroy {
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly zone = inject(NgZone);
 
@@ -42,24 +43,37 @@ export class MetallicFoil {
     const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
     const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
 
-    this.zone.runOutsideAngular(() => {
-      const el = this.host.nativeElement;
-      // Un solo parametro di posizione per l'intera lastra: niente più --mouse-x/--mouse-y
-      // separati per riflesso/hotspot che potevano muoversi in modo percepito come slegato.
-      el.style.setProperty('--surface-x', `${x * 100}%`);
-      el.style.setProperty('--surface-y', `${y * 100}%`);
-      el.classList.add('is-active');
-    });
+    this.setPointer(x, y);
   }
 
   @HostListener('pointerleave')
   protected onPointerLeave(): void {
     if (!this.interactive) return;
+    this.resetPointer();
+  }
+
+  // Chiamati anche dal contenitore CartaTilt: il tilt e la superficie metallica devono
+  // reagire allo STESSO evento sullo stesso hitbox, non a due pointermove indipendenti.
+  setPointer(x: number, y: number): void {
+    this.zone.runOutsideAngular(() => {
+      const el = this.host.nativeElement;
+      // Stessa macchina entering → active usata dal frame della carta e dal gloss Standard.
+      beginCartaPointerTracking(el);
+      el.style.setProperty('--surface-x', `${x * 100}%`);
+      el.style.setProperty('--surface-y', `${y * 100}%`);
+    });
+  }
+
+  resetPointer(): void {
     this.zone.runOutsideAngular(() => {
       const el = this.host.nativeElement;
       el.style.setProperty('--surface-x', '38%');
       el.style.setProperty('--surface-y', '30%');
-      el.classList.remove('is-active');
+      endCartaPointerTracking(el);
     });
+  }
+
+  ngOnDestroy(): void {
+    endCartaPointerTracking(this.host.nativeElement);
   }
 }

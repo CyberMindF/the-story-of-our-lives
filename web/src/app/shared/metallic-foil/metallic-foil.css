@@ -70,8 +70,15 @@
      riposo in modo fluido invece che di scatto. */
   transition: none;
 }
+:host(.is-entering) .metal-surface {
+  transition: background-position 140ms ease-out;
+}
 :host(:not(.is-active)) .metal-surface {
   transition: background-position .5s cubic-bezier(.22, 1, .36, 1);
+}
+:host(.is-entering) .metal-surface {
+  transition-duration: 140ms;
+  transition-timing-function: ease-out;
 }
 
 /* Micro-striature "brushed metal": fisse, non legate al mouse — sono una proprietà del

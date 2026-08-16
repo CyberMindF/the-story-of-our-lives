@@ -8,6 +8,10 @@
     "dev": "bash scripts/dev.sh",
     "dev:api": "wrangler pages dev web/dist/web/browser --port 8788",
     "audit:angular": "node scripts/audit-angular-routes.mjs",
+    "review:carte": "node scripts/review-carte-images.mjs",
+    "import:carte:local": "node scripts/import-carte-local.mjs",
+    "generate:carte:migration": "node scripts/generate-carte-migration.mjs",
+    "upload:carte:prod": "node scripts/upload-carte-assets.mjs --remote",
     "analyze:export": "node scripts/analyze-notion-export.mjs",
     "verify:links": "node scripts/verify-external-links.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"

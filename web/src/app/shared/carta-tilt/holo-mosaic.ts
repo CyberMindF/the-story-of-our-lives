@@ -45,7 +45,16 @@ export interface HoloPalette {
 // solo le tappe dell'interpolazione verso il bianco, non colori letterali. L'oro NON è più qui:
 // è metallo liscio (superficie continua), usa <app-metallic-foil> invece del mosaico — vedi
 // metallic-foil/ e il commento in carta-tilt.ts sul perché sono due componenti distinti.
-export const HOLO_PALETTES: Record<'smeraldo' | 'rubino' | 'zaffiro' | 'diamante', HoloPalette> = {
+export const HOLO_PALETTES: Record<'onice' | 'smeraldo' | 'rubino' | 'zaffiro' | 'diamante', HoloPalette> = {
+  onice: {
+    shadow: [5, 7, 9],
+    dark: [17, 19, 22],
+    base: [38, 40, 44],
+    bright: [72, 73, 76],
+    lime: [122, 116, 105],
+    warm: [205, 190, 155],
+    white: [252, 246, 226]
+  },
   smeraldo: {
     shadow: [43, 82, 7],
     dark: [70, 111, 10],

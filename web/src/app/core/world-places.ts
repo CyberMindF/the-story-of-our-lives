@@ -16,17 +16,17 @@ export interface WorldPlace {
 // I 4 macro-luoghi della home (riorganizzazione del 15/08/2026): raggruppano le stesse 16
 // destinazioni "primary" di WORLD_PLACES sotto card esplorabili, senza introdurre nuove rotte.
 export const HOME_AREAS: readonly { id: HomeAreaId; emoji: string; label: string; description: string }[] = [
-  { id: 'valle', emoji: '🏞️', label: 'La Valle dei Ricordi', description: 'Ciò che racconta, conserva e rappresenta la nostra storia e il nostro immaginario condiviso.' },
-  { id: 'giardino', emoji: '🌳', label: 'Il Giardino dei Pensieri', description: 'L’area più intima, dedicata a comunicazione, pensieri, domande e strumenti per mantenere il legame.' },
-  { id: 'prato', emoji: '🌾', label: 'Il Prato delle Idee', description: 'Le cose da fare, provare, organizzare o vivere insieme — anche già realizzate, non solo future.' },
-  { id: 'osservatorio', emoji: '🔭', label: 'L’Osservatorio', description: 'Non i contenuti della relazione, ma il mondo stesso: ciò che si può osservare e controllare.' }
+  { id: 'valle', emoji: '🏞️', label: 'La Valle dei Ricordi', description: 'Il luogo che conserva e racconta le nostre storie' },
+  { id: 'giardino', emoji: '🌳', label: 'Il Giardino dei Pensieri', description: 'Il luogo della comunicazione e dell\'esserci sempre' },
+  { id: 'prato', emoji: '🌾', label: 'Il Prato delle Idee', description: 'Il luogo dove teniamo tutte le nostre idee e i nostri piani futuri' },
+  { id: 'osservatorio', emoji: '🔭', label: 'L’Osservatorio', description: 'il luogo dove si può controllare e osservare il mondo' }
 ];
 
 export const WORLD_PLACE_GROUPS: readonly { id: WorldPlaceGroup; label: string; description: string }[] = [
-  { id: 'ricordi', label: 'Per ritrovare noi', description: 'Ricordi, parole e pezzi della nostra storia.' },
-  { id: 'insieme', label: 'Per immaginare il dopo', description: 'Idee, mete e cose ancora da vivere.' },
-  { id: 'giochi', label: 'Per giocare', description: 'Piccole sfide e avventure da attraversare insieme.' },
-  { id: 'mondo', label: 'Per cambiare il mondo', description: 'Il cielo, il suo aspetto e gli spazi personali.' }
+  { id: 'ricordi', label: 'Per ritrovare noi', description: 'Ricordi, parole e pezzi della nostra storia' },
+  { id: 'insieme', label: 'Per immaginare il dopo', description: 'Idee, mete e cose ancora da vivere' },
+  { id: 'giochi', label: 'Per giocare', description: 'Piccole sfide e avventure da attraversare insieme' },
+  { id: 'mondo', label: 'Per cambiare il mondo', description: 'Il cielo, il suo aspetto e gli spazi personali' }
 ];
 
 // Registro funzionale condiviso da home e atlante. Rotte, disponibilità e icone vivono qui;

@@ -1,31 +1,30 @@
 <div #frame class="carta-tilt-frame">
   @if (isMetallo) {
-    <app-metallic-foil [preset]="metalPreset" [immagineUrl]="immagineUrl" />
+    <app-metallic-foil [preset]="metalPreset" [interactive]="false" />
+  } @else if (isGemma) {
+    <div class="carta-tilt-gem-base" [style.background-image]="gemMaterialStyle"></div>
+    <svg #foilSvg class="carta-tilt-foil" viewBox="0 0 1 1" preserveAspectRatio="none"></svg>
   } @else {
-    <div class="carta-tilt-image" [style.background-image]="backgroundImage"></div>
-
-    @if (isGemma) {
-      <div class="carta-tilt-tint" [style.background-image]="tintStyle"></div>
-      <svg #foilSvg class="carta-tilt-foil" viewBox="0 0 1 1" preserveAspectRatio="none"></svg>
-      <div class="carta-tilt-glass"></div>
-    } @else {
-      <!-- Lucido plastica SOLO per le carte standard (flat). Provato a riusare MetallicFoil
-           con un overlay trasparente (stesso componente del metallo, preset grigio) — non
-           funziona: MetallicFoil ha `isolation: isolate` sull'host per isolare i suoi stessi
-           blend interni (metal-brushed/metal-grain), e un mix-blend-mode sull'host isolato non
-           blenda con gli elementi FUORI dal componente (verificato pixel alla mano: restava
-           opaco anche disattivando isolation). Qui invece un div semplice, sibling diretto
-           della foto nello stesso stacking context: stesse posizioni di banda di
-           .metal-surface, stesso movimento (--mx/--my, già calcolate da CartaTilt), ma solo
-           alpha di bianco nei picchi (shadow/dark/mid/main a alpha 0, "solo effetti di luce
-           visibili" richiesto esplicitamente da Rory) invece delle bande colorate opache. -->
-      <div class="carta-tilt-gloss"></div>
-    }
+    <div class="carta-tilt-bianca-surface"></div>
   }
 
-  @if (!immagineUrl) {
-    <span class="carta-tilt-fallback" aria-hidden="true">🃏</span>
+  <!-- La finestra dell'illustrazione e' identica per TUTTE le rarita': cambia soltanto il
+       materiale dietro e attorno. In questo modo lo stesso design mantiene sempre composizione
+       e dimensioni, da Bianca a Diamante. -->
+  <div class="carta-tilt-art" [style.background-image]="backgroundImage">
+    @if (!immagineUrl) {
+      <span class="carta-tilt-fallback" aria-hidden="true">🃏</span>
+    }
+  </div>
+
+  @if (isGemma) {
+    <div class="carta-tilt-glass"></div>
+  } @else if (!isMetallo) {
+    <!-- Vernice lucida trasparente della Bianca: e' una finitura superficiale sopra carta
+         avorio opaca, non una lamincard di plastica trasparente. -->
+    <div class="carta-tilt-gloss"></div>
   }
 
   <div class="carta-tilt-rim"></div>
+  <app-carta-nameplate [nome]="nome" />
 </div>

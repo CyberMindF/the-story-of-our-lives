@@ -9,7 +9,7 @@
   display: grid;
   place-items: center;
   padding: 1rem;
-  background: rgba(5, 10, 19, 0.72);
+  background: var(--modal-overlay-bg);
   backdrop-filter: blur(3px);
   z-index: 200;
 }
@@ -20,7 +20,7 @@
 
 .modal-card {
   max-width: 28rem;
-  color: var(--text-color);
+  color: var(--modal-text-color);
   padding: 1.5rem;
   text-align: center;
 }

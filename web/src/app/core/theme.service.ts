@@ -10,8 +10,10 @@ export interface ThemeDefinition {
   description: string;
 }
 
-const STORAGE_KEY = 'noi-crossword-theme-v15';
-const DEFAULT_THEME_ID = 'the-white-world';
+// v16 scarta l'eventuale vecchio tema in cache: prima della risposta condivisa del server la
+// pagina deve aprirsi già nel White World, senza un lampo del precedente tema predefinito.
+const STORAGE_KEY = 'noi-crossword-theme-v16';
+const DEFAULT_THEME_ID = 'white-world';
 
 // Ogni tema è un vero preset (#b3-b, chiarito da Rory dopo il primo tentativo — "tipo ocean
 // disattiva tutto tranne mare"): scegliere un tema accende i suoi effetti e spegne tutti gli

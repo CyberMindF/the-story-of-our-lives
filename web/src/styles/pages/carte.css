@@ -1,4 +1,28 @@
 .carte-tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
+.tavolo-hero-text-only { padding-top: 2rem; }
+.carte-coming-soon {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 1.1rem;
+  padding: .8rem 1rem;
+  border-color: color-mix(in srgb, var(--accent-color) 45%, var(--panel-border-color));
+  background: color-mix(in srgb, var(--panel-color) 88%, var(--accent-color));
+}
+.carte-coming-soon-mark {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent-color) 24%, transparent);
+  color: var(--accent-color);
+}
+.carte-coming-soon strong { color: var(--text-color); }
+.carte-coming-soon p { margin: .15rem 0 0; color: var(--muted-color); line-height: 1.45; }
 .carte-tab {
   border: 1px solid var(--panel-border-color);
   background: transparent;
@@ -50,6 +74,7 @@
   margin-bottom: .4rem;
   border-bottom: 1px solid var(--panel-border-color);
 }
+.carte-bustine-strip > app-carta-pack { margin-inline: .2rem -.15rem; }
 /* Blocco di sinistra (titolo + bottone "Apri una bustina"): un gruppo unico, cosi lo streak a
    destra (.carte-streak-badge) resta staccato invece di infilarsi in mezzo quando la riga va
    a capo su schermi stretti. */
@@ -59,7 +84,10 @@
   flex-wrap: wrap;
   gap: .8rem;
 }
-.carte-bustine-count { margin: 0; font-size: 1.05rem; }
+.carte-bustine-info { display: grid; gap: .2rem; }
+.carte-bustine-left .btn { display: inline-flex; align-items: center; gap: .4rem; }
+.carte-bustine-count { margin: 0; font-size: 1.05rem; display: inline-flex; align-items: center; gap: .45rem; }
+.carte-bustine-hint { max-width: 36rem; margin: 0; color: var(--muted-color); font-size: .82rem; line-height: 1.45; }
 
 /* Stesso .btn di tutti gli altri bottoni della pagina (dimensioni/pillola coerenti), qui solo
    sfondo trasparente per distinguerlo come indicatore/toggle piuttosto che un'azione primaria. */
@@ -161,22 +189,10 @@
    della sua dimensione naturale. */
 .carte-card-wrap { display: grid; justify-items: center; align-items: start; gap: .4rem; position: relative; }
 .carte-card-wrap--clickable { cursor: pointer; }
-.carte-card-wrap--clickable app-carta-tilt { transition: transform .15s ease; }
-.carte-card-wrap--clickable:hover app-carta-tilt,
-.carte-card-wrap--clickable:focus-visible app-carta-tilt { transform: translateY(-.2rem); }
 .carte-card-wrap--clickable:focus-visible { outline: none; }
 
-app-carta-tilt { display: block; width: 100%; }
-
-/* Slot vuoto: la sagoma di una carta (stesse proporzioni), non un riquadro squadrato con un
-   punto interrogativo dentro — più vicino a una vera tasca vuota di un album. */
-.carte-card-empty {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  border: 1px dashed var(--panel-border-color);
-  border-radius: .7rem;
-  background: color-mix(in srgb, var(--panel-color) 40%, transparent);
-}
+app-carta-tilt,
+app-carta-back { display: block; width: 100%; }
 
 /* Altezza fissa a due righe (line-clamp), non "quante righe servono": così ogni cella della
    griglia occupa lo stesso spazio a prescindere da quanto è lungo il nome della carta. */
@@ -275,9 +291,48 @@ app-carta-tilt { display: block; width: 100%; }
 .carte-slot--clickable:focus-visible { border-color: var(--accent-color); outline: none; }
 
 .carte-ingrandita-card { display: grid; justify-items: center; gap: .5rem; }
-.carte-ingrandita-wrapper { width: min(70vw, 22rem); }
+.carte-ingrandita-card .carte-slot-finitura { color: var(--modal-muted-color); opacity: 1; }
+.carte-ingrandita-wrapper { width: min(70vw, 22rem); aspect-ratio: 3 / 4; perspective: 1100px; }
+.carte-ingrandita-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.2, .72, .25, 1); }
+.carte-ingrandita-wrapper.is-back .carte-ingrandita-inner { transform: rotateY(180deg); }
+.carte-ingrandita-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.carte-ingrandita-face--back { transform: rotateY(180deg); }
+.carte-ingrandita-face app-carta-tilt,
+.carte-ingrandita-face app-carta-back { width: 100%; height: 100%; }
 
 .carte-reveal-card { display: grid; justify-items: center; gap: 1rem; }
+.carte-reveal-card .carte-slot-finitura { color: var(--modal-muted-color); opacity: 1; }
+
+.carte-pack-opening {
+  position: relative;
+  width: min(60vw, 16rem);
+  min-height: calc(min(60vw, 16rem) * 4 / 3 + 10rem);
+  display: grid;
+  place-items: end center;
+  overflow: hidden;
+}
+.carte-pack-opening > app-carta-pack { position: relative; z-index: 2; margin-bottom: .8rem; }
+.carte-pack-opening-cards {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 7rem;
+  width: 46%;
+  aspect-ratio: 3 / 4;
+  transform: translateX(-50%);
+}
+.carte-pack-opening-cards app-carta-back { position: absolute; inset: 0; }
+.carte-pack-opening-cards app-carta-back { transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .carte-pack-opening-cards { animation: carte-pack-cards-out 1.8s cubic-bezier(.2, .72, .25, 1) forwards; }
+  .carte-pack-opening { animation: carte-pack-stage 1.85s ease forwards; }
+  @keyframes carte-pack-cards-out {
+    0%, 24% { transform: translate(-50%, 88%) scale(.72); opacity: 0; }
+    40% { opacity: 1; }
+    76%, 100% { transform: translate(-50%, 0) scale(.78); opacity: 1; }
+  }
+  @keyframes carte-pack-stage { 0%, 91% { opacity: 1; } 100% { opacity: 0; } }
+}
 
 /* L'altezza riservata deve combaciare con l'altezza REALE della carta (proporzioni 3:4, quindi
    più alta che larga) più lo spazio delle due righe di didascalia sotto — non un quadrato
@@ -294,10 +349,40 @@ app-carta-tilt { display: block; width: 100%; }
 
 /* Solo la carta, niente box/cornice attorno: nome e finitura sotto come semplice testo. */
 .carte-reveal-evidenza-carta { display: grid; justify-items: center; gap: .3rem; width: 100%; }
-.carte-reveal-evidenza-carta app-carta-tilt { width: 100%; animation: carte-reveal-in .35s ease; }
+.carte-reveal-flip {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  perspective: 1000px;
+}
+.carte-reveal-flip.is-promoting { animation: carte-promote-from-deck .55s cubic-bezier(.2, .72, .25, 1); }
+.carte-reveal-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .7s cubic-bezier(.2, .72, .25, 1);
+}
+.carte-reveal-flip.is-revealed .carte-reveal-flip-inner { transform: rotateY(180deg); }
+.carte-reveal-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.carte-reveal-face--front { transform: rotateY(180deg); }
+.carte-reveal-face app-carta-tilt,
+.carte-reveal-face app-carta-back { width: 100%; height: 100%; }
 @keyframes carte-reveal-in {
   from { opacity: 0; transform: scale(.9) translateY(.5rem); }
   to { opacity: 1; transform: none; }
+}
+@keyframes carte-promote-from-deck {
+  from { opacity: .65; transform: translateY(48%) scale(.28); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carte-reveal-flip-inner,
+  .carte-ingrandita-inner { transition: none; }
 }
 .carte-reveal-completo { margin: 0; font-size: 1.1rem; opacity: .85; text-align: center; }
 
@@ -316,6 +401,29 @@ app-carta-tilt { display: block; width: 100%; }
   width: 4.2rem;
   cursor: pointer;
   animation: carte-reveal-riga-in .3s ease;
+}
+.carte-reveal-pending {
+  position: relative;
+  width: 4.2rem;
+  aspect-ratio: 3 / 4;
+}
+.carte-reveal-pending app-carta-back { position: absolute; inset: 0; }
+.carte-reveal-pending app-carta-back:nth-child(n + 2) { transform: translate(.09rem, -.09rem); }
+.carte-reveal-pending app-carta-back:nth-child(n + 3) { transform: translate(.18rem, -.18rem); }
+.carte-reveal-pending-count {
+  position: absolute;
+  z-index: 3;
+  right: -.35rem;
+  bottom: -.25rem;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent-color);
+  color: var(--bg-color);
+  font-size: .68rem;
+  font-weight: 800;
 }
 @keyframes carte-reveal-riga-in {
   from { opacity: 0; transform: translateY(-.6rem) scale(.85); }

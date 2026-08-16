@@ -101,13 +101,14 @@ export async function checkStreak(env, ownerIdentity) {
 }
 
 // Piramide ripida (scelta esplicita di Rory tra le opzioni proposte), estesa con argento
-// (metallo, subito sotto l'oro) e zaffiro (gemma, subito sopra il diamante) quando le due
-// finiture sono state aggiunte. Pesi di argento/zaffiro scelti di default, non discussi
-// esplicitamente con Rory: da aggiustare se la piramide risulta troppo/poco generosa.
+// (metallo, subito sotto l'oro), onice (prima gemma, tra oro e smeraldo) e zaffiro (gemma,
+// subito sopra il diamante). Il peso 10 dell'onice mantiene la progressione tra oro (15) e
+// smeraldo (8), coerente con l'ordine di rarita' richiesto.
 const FINITURA_WEIGHTS = [
   ["flat", 45],
   ["argento", 20],
   ["oro", 15],
+  ["onice", 10],
   ["smeraldo", 8],
   ["rubino", 6],
   ["zaffiro", 4],

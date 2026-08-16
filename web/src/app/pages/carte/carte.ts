@@ -1,9 +1,12 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService, UserIdentity } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 import { CartaTilt } from '../../shared/carta-tilt/carta-tilt';
+import { CARTA_FINITURE, CARTA_FINITURA_LABELS, CartaFinitura } from '../../shared/carta-finiture';
+import { CartaBack } from '../../shared/carta-back/carta-back';
+import { CartaPack } from '../../shared/carta-pack/carta-pack';
 
 // Stessa formula di streakDayBonus() in functions/api/carte-bustine/_shared.js — qui serve solo
 // per disegnare il calendario, il bonus vero lo assegna sempre il server. Ogni giorno dà
@@ -12,7 +15,7 @@ function streakDayBonus(day: number): number {
   return Math.floor((day - 1) / 3) + 1;
 }
 
-type Finitura = 'flat' | 'argento' | 'oro' | 'smeraldo' | 'rubino' | 'zaffiro' | 'diamante';
+type Finitura = CartaFinitura;
 type Tab = 'album' | 'scambi' | 'editor';
 type TradeStato = 'proposto' | 'accettato' | 'rifiutato' | 'controproposto';
 
@@ -74,16 +77,6 @@ interface CartaDesign {
   position: number;
 }
 
-const FINITURE: Finitura[] = ['flat', 'argento', 'oro', 'smeraldo', 'rubino', 'zaffiro', 'diamante'];
-const FINITURA_LABELS: Record<Finitura, string> = {
-  flat: 'Standard',
-  argento: 'Argento',
-  oro: 'Oro',
-  smeraldo: 'Smeraldo',
-  rubino: 'Rubino',
-  zaffiro: 'Zaffiro',
-  diamante: 'Diamante'
-};
 const IDENTITY_LABELS: Record<UserIdentity, string> = { lui: 'lui', lei: 'lei' };
 
 // Route + card di #e4 (gioco di carte collezionabili) — vedi e4-carte-collezionabili.md per il
@@ -94,11 +87,11 @@ const IDENTITY_LABELS: Record<UserIdentity, string> = { lui: 'lui', lei: 'lei' }
 @Component({
   selector: 'app-carte',
   standalone: true,
-  imports: [AppShell, FormsModule, CartaTilt],
+  imports: [AppShell, FormsModule, CartaTilt, CartaBack, CartaPack],
   styleUrls: ['../../../styles/components/modal.css', '../../../styles/pages/carte.css'],
   templateUrl: './carte.html'
 })
-export class Carte implements OnInit {
+export class Carte implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly api = inject(ApiService);
 
@@ -134,6 +127,13 @@ export class Carte implements OnInit {
   // sono in riga e il pulsante "Avanti" diventa "Chiudi" — svelamento una alla volta invece di
   // una griglia con tutte le carte già scoperte, richiesto esplicitamente da Rory.
   protected readonly cartaRivelataIndex = signal(0);
+  protected readonly animazioneBustina = signal(false);
+  protected readonly cartaInPromozione = signal(false);
+  private animazioneBustinaTimer?: ReturnType<typeof setTimeout>;
+  // La carta corrente entra sempre coperta: il retro e' universale e non anticipa la
+  // finitura. Dopo "Rivela" resta visibile il fronte; il click successivo passa alla carta
+  // seguente, nuovamente coperta.
+  protected readonly cartaInEvidenzaCoperta = signal(true);
 
   // Carta mostrata in grande al centro (quella non ancora in riga); null quando sono già
   // state rivelate tutte.
@@ -149,17 +149,25 @@ export class Carte implements OnInit {
     return carte ? carte.slice(0, this.cartaRivelataIndex()) : [];
   });
 
+  // Carte ancora dentro il mazzetto sotto la carta grande. La carta corrente e' gia' stata
+  // promossa al centro, quindi il mazzo parte dall'elemento successivo.
+  protected readonly carteAncoraCoperte = computed(() => {
+    const carte = this.carteAperte();
+    return carte ? carte.slice(this.cartaRivelataIndex() + 1) : [];
+  });
+
   // Vista a schermo intero di una singola carta (click su uno slot dell'album): stessa
   // finitura/immagine, solo più grande, per vedere davvero il foil che a dimensione slot è
   // troppo piccolo per giudicare (richiesta esplicita di Rory dopo aver visto l'album).
   protected readonly cartaIngrandita = signal<{ finitura: Finitura; immagineUrl: string | null; nome: string } | null>(null);
+  protected readonly cartaIngranditaGirata = signal(false);
 
   // --- Album ---
   protected readonly collezione = signal<CartaCollezione[]>([]);
   protected readonly albumLoadError = signal(false);
   protected readonly finituraAttiva = signal<Finitura>('flat');
-  protected readonly finiture = FINITURE;
-  protected readonly finituraLabels = FINITURA_LABELS;
+  protected readonly finiture = CARTA_FINITURE;
+  protected readonly finituraLabels = CARTA_FINITURA_LABELS;
 
   protected readonly fogli = computed(() => {
     const finitura = this.finituraAttiva();
@@ -274,6 +282,8 @@ export class Carte implements OnInit {
       }
 
       this.cartaRivelataIndex.set(0);
+      this.cartaInEvidenzaCoperta.set(true);
+      this.avviaAnimazioneBustina();
       this.carteAperte.set(result.carte ?? []);
       this.bustineDisponibili.set(result.quantitaDisponibile ?? 0);
       await this.loadCollezione();
@@ -288,7 +298,14 @@ export class Carte implements OnInit {
   // già tutte in riga (niente più da girare), lo stesso pulsante chiude il riepilogo.
   protected avantiReveal(): void {
     if (this.cartaInEvidenza()) {
-      this.cartaRivelataIndex.update((i) => i + 1);
+      if (this.cartaInEvidenzaCoperta()) {
+        this.cartaInEvidenzaCoperta.set(false);
+      } else {
+        this.cartaInPromozione.set(false);
+        this.cartaRivelataIndex.update((i) => i + 1);
+        this.cartaInEvidenzaCoperta.set(true);
+        requestAnimationFrame(() => this.cartaInPromozione.set(true));
+      }
     } else {
       this.chiudiReveal();
     }
@@ -301,8 +318,29 @@ export class Carte implements OnInit {
   }
 
   protected chiudiReveal(): void {
+    if (this.animazioneBustinaTimer) clearTimeout(this.animazioneBustinaTimer);
+    this.animazioneBustinaTimer = undefined;
+    this.animazioneBustina.set(false);
+    this.cartaInPromozione.set(false);
     this.carteAperte.set(null);
     this.cartaRivelataIndex.set(0);
+    this.cartaInEvidenzaCoperta.set(true);
+  }
+
+  private avviaAnimazioneBustina(): void {
+    if (this.animazioneBustinaTimer) clearTimeout(this.animazioneBustinaTimer);
+    this.animazioneBustina.set(true);
+    this.cartaInPromozione.set(false);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.animazioneBustinaTimer = setTimeout(() => {
+      this.animazioneBustina.set(false);
+      this.cartaInPromozione.set(true);
+      this.animazioneBustinaTimer = undefined;
+    }, reduceMotion ? 80 : 1850);
+  }
+
+  ngOnDestroy(): void {
+    if (this.animazioneBustinaTimer) clearTimeout(this.animazioneBustinaTimer);
   }
 
   protected onModalBackdropClick(event: MouseEvent): void {
@@ -331,11 +369,17 @@ export class Carte implements OnInit {
   }
 
   protected ingrandisciCarta(carta: { finitura: Finitura; immagineKey: string | null; designNome: string }): void {
+    this.cartaIngranditaGirata.set(false);
     this.cartaIngrandita.set({ finitura: carta.finitura, immagineUrl: this.immagineUrl(carta.immagineKey), nome: carta.designNome });
+  }
+
+  protected giraCartaIngrandita(): void {
+    this.cartaIngranditaGirata.update((girata) => !girata);
   }
 
   protected chiudiCartaIngrandita(): void {
     this.cartaIngrandita.set(null);
+    this.cartaIngranditaGirata.set(false);
   }
 
   protected onIngranditaBackdropClick(event: MouseEvent): void {

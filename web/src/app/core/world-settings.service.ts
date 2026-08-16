@@ -9,7 +9,9 @@ interface WorldSettingsResponse {
   error?: string;
 }
 
-const CACHE_KEY = 'noi-world-settings-cache-v1';
+// v2 scarta la vecchia cache che poteva contenere tutti gli effetti accesi. In assenza di
+// uno stato già caricato, la prima schermata deve essere calma: solo la Seta è visibile.
+const CACHE_KEY = 'noi-world-settings-cache-v2';
 
 interface SettingsCache {
   settings: Partial<Record<WorldSettingKey, boolean>>;
@@ -45,27 +47,27 @@ function writeCache(cache: SettingsCache): void {
 export class WorldSettingsService {
   private readonly api = inject(ApiService);
 
-  // true finché non si dimostra il contrario: gli effetti restano visibili durante il primo
-  // caricamento invece di lampeggiare "spenti" mentre la richiesta è in volo. Sovrascritto
-  // subito sotto dalla cache locale, se esiste, per non lampeggiare invece "tutti accesi".
+  // Stato visivo sicuro prima della risposta del server: White World usa soltanto la Seta.
+  // La cache dell'ultimo stato condiviso può poi sostituirlo senza mostrare, al primo accesso,
+  // tutti gli effetti contemporaneamente.
   readonly settings = signal<Record<WorldSettingKey, boolean>>({
-    lanterns: true,
-    stars: true,
-    shootingStars: true,
-    moon: true,
+    lanterns: false,
+    stars: false,
+    shootingStars: false,
+    moon: false,
     theme: true,
-    sparkles: true,
-    leaves: true,
-    waves: true,
-    petals: true,
-    fish: true,
-    bubbles: true,
-    hearts: true,
-    pearlShimmers: true,
+    sparkles: false,
+    leaves: false,
+    waves: false,
+    petals: false,
+    fish: false,
+    bubbles: false,
+    hearts: false,
+    pearlShimmers: false,
     silk: true,
-    stickers: true,
-    balloons: true,
-    fireworks: true,
+    stickers: false,
+    balloons: false,
+    fireworks: false,
     ...readCache()?.settings
   });
   // Solo alcune chiavi hanno un value (es. la fase della luna o la forma dei fiori, "auto"/

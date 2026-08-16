@@ -7,10 +7,10 @@ import { getAuthenticatedSession, json } from "../auth/_shared.js";
 // griglie sincronizzate) non ha bisogno di una seconda chiamata o di un endpoint dedicato a
 // "guardare l'album dell'altro" — sono sempre e solo le due identità della coppia.
 //
-// Ogni design ha uno slot per ciascuna delle 5 finiture fisse, anche se nessuno l'ha ancora mai
+// Ogni design ha uno slot per ciascuna delle finiture fisse, anche se nessuno l'ha ancora mai
 // pescata (carta_definizione_id null in quel caso): l'album mostra comunque lo slot vuoto
 // (richiesta esplicita di Rory, "griglia fissa con slot vuoti").
-const FINITURE = ["flat", "argento", "oro", "smeraldo", "rubino", "zaffiro", "diamante"];
+const FINITURE = ["flat", "argento", "oro", "onice", "smeraldo", "rubino", "zaffiro", "diamante"];
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -33,10 +33,10 @@ export async function onRequestGet(context) {
          FROM carte_designs des
          JOIN carte_sets s ON s.id = des.set_id
          CROSS JOIN (
-           -- VALUES invece di più SELECT ... UNION ALL: con 7 finiture il compound SELECT
+           -- VALUES invece di più SELECT ... UNION ALL: con molte finiture il compound SELECT
            -- supera il limite imposto da D1 ("too many terms in compound SELECT"), VALUES no.
            SELECT column1 AS finitura FROM (
-             VALUES ('flat'), ('argento'), ('oro'), ('smeraldo'), ('rubino'), ('zaffiro'), ('diamante')
+             VALUES ('flat'), ('argento'), ('oro'), ('onice'), ('smeraldo'), ('rubino'), ('zaffiro'), ('diamante')
            )
          ) f
          LEFT JOIN carte_definizioni cd ON cd.design_id = des.id AND cd.finitura = f.finitura

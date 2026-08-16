@@ -11,6 +11,9 @@
   --panel-border-color: rgba(255, 255, 255, 0.14);
   --text-color: #f4f7fb;
   --muted-color: #d1dde6;
+  --modal-overlay-bg: rgba(5, 10, 19, 0.72);
+  --modal-text-color: #f4f7fb;
+  --modal-muted-color: #d1dde6;
   --border-color: rgba(255, 255, 255, 0.18);
   --selection-color: rgba(255, 255, 255, 0.12);
   --active-color: rgba(255, 255, 255, 0.16);
@@ -38,6 +41,9 @@ body[data-theme="velvet"] {
   --panel-border-color: rgba(240, 199, 212, 0.14);
   --text-color: #f7f1f3;
   --muted-color: #ccb8c0;
+  --modal-overlay-bg: rgba(20, 14, 20, 0.76);
+  --modal-text-color: #f7f1f3;
+  --modal-muted-color: #dccbd2;
   --border-color: #5d4452;
   --selection-color: #4a3341;
   --active-color: #674658;
@@ -65,6 +71,9 @@ body[data-theme="sea"] {
   --panel-border-color: rgba(56, 92, 90, 0.1);
   --text-color: #355154;
   --muted-color: #6b8381;
+  --modal-overlay-bg: rgba(24, 44, 45, 0.76);
+  --modal-text-color: #f2f8f6;
+  --modal-muted-color: #cbdad7;
   --border-color: #b4cac7;
   --selection-color: #d4e8e2;
   --active-color: #b4d4cc;
@@ -92,6 +101,9 @@ body[data-theme="red-of-you"] {
   --panel-border-color: rgba(255, 211, 219, 0.16);
   --text-color: #fff3f5;
   --muted-color: #e5b0b7;
+  --modal-overlay-bg: rgba(39, 5, 12, 0.76);
+  --modal-text-color: #fff3f5;
+  --modal-muted-color: #e5b0b7;
   --border-color: #a53e52;
   --selection-color: #8e2037;
   --active-color: #bf3553;
@@ -125,6 +137,9 @@ body[data-theme="green-of-me"] {
   --panel-border-color: rgba(198, 220, 205, 0.12);
   --text-color: #eef6ef;
   --muted-color: #bdd0c1;
+  --modal-overlay-bg: rgba(10, 22, 14, 0.76);
+  --modal-text-color: #eef6ef;
+  --modal-muted-color: #c7d8ca;
   --border-color: #5f7a64;
   --selection-color: #35513f;
   --active-color: #486a53;
@@ -156,6 +171,9 @@ body[data-theme="the-white-world"] {
   --panel-border-color: rgba(255, 255, 255, 0.14);
   --text-color: #f4f7fb;
   --muted-color: #d1dde6;
+  --modal-overlay-bg: rgba(5, 10, 19, 0.72);
+  --modal-text-color: #f4f7fb;
+  --modal-muted-color: #d1dde6;
   --border-color: rgba(255, 255, 255, 0.18);
   --selection-color: rgba(255, 255, 255, 0.12);
   --active-color: rgba(255, 255, 255, 0.16);
@@ -183,6 +201,9 @@ body[data-theme="white-world"] {
   --panel-border-color: rgba(113, 101, 91, 0.18);
   --text-color: #383431;
   --muted-color: #716b65;
+  --modal-overlay-bg: rgba(45, 41, 38, 0.76);
+  --modal-text-color: #f8f4ee;
+  --modal-muted-color: #dcd4ca;
   --border-color: #d5cdc2;
   --selection-color: #e7dfd5;
   --active-color: #d8cec2;
@@ -210,6 +231,9 @@ body[data-theme="love"] {
   --panel-border-color: rgba(127, 54, 75, 0.2);
   --text-color: #552f39;
   --muted-color: #845b65;
+  --modal-overlay-bg: rgba(60, 30, 38, 0.74);
+  --modal-text-color: #fff4f5;
+  --modal-muted-color: #ebced5;
   --border-color: #dba8b3;
   --selection-color: #f4dce0;
   --active-color: #e8b7c1;
