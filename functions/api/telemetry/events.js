@@ -37,7 +37,7 @@ export async function onRequestPost(context) {
       return json({ error: result.error }, 400);
     }
 
-    return json({ saved: true, id: result.id }, 201);
+    return json({ saved: result.recorded, id: result.id }, 201);
   } catch (error) {
     console.error(JSON.stringify({ event: "telemetry_event_error", message: error.message }));
     return json({ error: "Errore interno del server." }, 500);

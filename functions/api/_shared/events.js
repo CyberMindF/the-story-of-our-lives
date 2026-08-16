@@ -70,12 +70,18 @@ export async function recordEvent(env, actor, event) {
   const result = await env.DB
     .prepare(`
       INSERT INTO events (user_id, session_id, section, event_type, event_version, metadata)
-      VALUES (?, ?, ?, ?, 1, ?)
+      SELECT ?, ?, ?, ?, 1, ?
+      WHERE EXISTS (
+        SELECT 1
+        FROM users
+        WHERE users.id = ? AND users.identity = 'lei'
+      )
     `)
-    .bind(actor.userId, actor.sessionId || null, section, eventType, metadata)
+    .bind(actor.userId, actor.sessionId || null, section, eventType, metadata, actor.userId)
     .run();
 
-  return { id: result.meta.last_row_id };
+  const recorded = Number(result.meta.changes || 0) > 0;
+  return { id: recorded ? result.meta.last_row_id : null, recorded };
 }
 
 // Accetta identificatori semplici e prevedibili, adatti anche alle sezioni future.
