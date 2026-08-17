@@ -20,6 +20,9 @@
       <button type="button" role="tab" [class.is-active]="activeTab() === 'appunti'" (click)="setTab('appunti')">
         <span aria-hidden="true">✏️</span> Appunti
       </button>
+      <button type="button" role="tab" [class.is-active]="activeTab() === 'dadi'" (click)="setTab('dadi')">
+        <span aria-hidden="true">🎲</span> Dadi
+      </button>
     </div>
 
     <div class="gdr-panel-content">
@@ -77,6 +80,9 @@
         }
         @case ('appunti') {
           <app-gdr-notes-editor [adventure]="adventure" />
+        }
+        @case ('dadi') {
+          <app-gdr-dice-roller />
         }
       }
     </div>

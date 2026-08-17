@@ -34,8 +34,8 @@
   overflow-y: auto;
 }
 
-.gdr-admin-errors { margin: 0; padding-left: 1.2rem; color: #ffb4b4; font-size: .85rem; display: grid; gap: .3rem; }
-.gdr-admin-form-error { margin: 0; color: #ffb4b4; font-size: .85rem; }
+.gdr-admin-errors { margin: 0; padding-left: 1.2rem; color: var(--danger-text-color); font-size: .85rem; display: grid; gap: .3rem; }
+.gdr-admin-form-error { margin: 0; color: var(--danger-text-color); font-size: .85rem; }
 .gdr-admin-form-error:empty { display: none; }
 .gdr-admin-form-actions { display: flex; justify-content: flex-end; gap: .6rem; }
 

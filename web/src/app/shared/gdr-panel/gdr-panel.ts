@@ -4,6 +4,7 @@ import { GdrBlocks } from '../gdr-blocks/gdr-blocks';
 import { GdrDocumentEditor } from '../gdr-blocks/gdr-document-editor';
 import { GdrBlockRow, GdrDocumentKey } from '../gdr-blocks/gdr-block.types';
 import { GdrNotesEditor } from '../gdr-notes/gdr-notes-editor';
+import { GdrDiceRoller } from '../gdr-dice-roller/gdr-dice-roller';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
 
@@ -17,7 +18,7 @@ export interface GdrCharacterField {
   default?: string | number;
 }
 
-type GdrPanelTab = 'personaggio' | 'regole' | 'appunti';
+type GdrPanelTab = 'personaggio' | 'regole' | 'appunti' | 'dadi';
 
 // Pannello di gioco condiviso tra le avventure GDR: prima erano pagine separate ("La Tua
 // Maga", regole, "I Tuoi Appunti"), qui diventano tab di un bottom sheet consultabile senza
@@ -31,7 +32,7 @@ type GdrPanelTab = 'personaggio' | 'regole' | 'appunti';
 @Component({
   selector: 'app-gdr-panel',
   standalone: true,
-  imports: [FormsModule, GdrBlocks, GdrDocumentEditor, GdrNotesEditor],
+  imports: [FormsModule, GdrBlocks, GdrDocumentEditor, GdrNotesEditor, GdrDiceRoller],
   templateUrl: './gdr-panel.html',
   styleUrl: './gdr-panel.css'
 })

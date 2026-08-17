@@ -10,18 +10,19 @@
   gap: .5rem;
   padding: .8rem 1.3rem;
   border-radius: 999px;
-  border: 1px solid rgba(240, 219, 179, .45);
-  background: var(--panel-color);
+  border: 1px solid var(--panel-border-color);
+  background: color-mix(in srgb, var(--button-bg) 88%, transparent);
   backdrop-filter: blur(10px);
-  color: #f0dbb3;
+  color: var(--text-color);
   font: inherit;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1.02rem;
   cursor: pointer;
-  box-shadow: 0 .8rem 2rem rgba(0,0,0,.4);
-  transition: transform .15s ease;
+  box-shadow: var(--shadow);
+  transition: transform .15s ease, border-color .15s ease, background-color .15s ease;
 }
-.gdr-panel-trigger:hover { transform: translateY(-2px); }
+.gdr-panel-trigger:hover { border-color: var(--focus-color); background: var(--button-hover-bg); transform: translateY(-2px); }
+.gdr-panel-trigger:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
 
 /* Solo un livello invisibile per chiudere cliccando fuori — niente scurimento/sfocatura
    della pagina: deve restare leggibile e utilizzabile mentre il pannello è aperto. */
@@ -37,9 +38,10 @@
   z-index: 200;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, rgba(12,22,38,.98), rgba(8,15,27,.98));
-  border: 1px solid rgba(240, 219, 179, .3);
-  box-shadow: 0 -.5rem 3rem rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.3) inset;
+  background: color-mix(in srgb, var(--bg-color) 96%, var(--text-color) 4%);
+  border: 1px solid var(--panel-border-color);
+  color: var(--text-color);
+  box-shadow: var(--shadow), 0 0 0 1px color-mix(in srgb, var(--text-color) 4%, transparent) inset;
 
   /* Desktop: card ancorata in basso a destra, non un foglio che taglia tutto lo schermo —
      ancorata anche in alto (invece di un max-height percentuale) così si apre più alta. */
@@ -86,14 +88,14 @@
   gap: .5rem;
   padding: 1rem 1.1rem .6rem;
   flex: 0 0 auto;
-  border-bottom: 1px solid rgba(240, 219, 179, .16);
+  border-bottom: 1px solid var(--panel-border-color);
 }
 
 .gdr-panel-title {
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1.15rem;
   font-weight: 400;
-  color: #f0dbb3;
+  color: var(--text-color);
   letter-spacing: -.01em;
 }
 
@@ -107,15 +109,19 @@
   padding: .3rem .5rem;
 }
 .gdr-panel-close:hover { color: var(--text-color); }
+.gdr-panel-close:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 2px; }
 
 .gdr-panel-tabs {
   display: flex;
   gap: .4rem;
   padding: .75rem 1.1rem 0;
+  overflow-x: auto;
   flex: 0 0 auto;
+  scrollbar-width: none;
 }
+.gdr-panel-tabs::-webkit-scrollbar { display: none; }
 .gdr-panel-tabs button {
-  flex: 1;
+  flex: 1 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,10 +137,12 @@
   cursor: pointer;
 }
 .gdr-panel-tabs button.is-active {
-  color: #f0dbb3;
-  border-bottom-color: #f0dbb3;
-  background: rgba(240, 219, 179, .06);
+  color: var(--text-color);
+  border-bottom-color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
+.gdr-panel-tabs button:hover { color: var(--text-color); background: var(--button-bg); }
+.gdr-panel-tabs button:focus-visible { outline: 3px solid var(--focus-color); outline-offset: -2px; }
 
 .gdr-panel-content {
   overflow-y: auto;
@@ -149,7 +157,7 @@
   justify-content: space-between;
   gap: 1rem;
   padding: .8rem 0;
-  border-bottom: 1px solid rgba(240, 219, 179, .14);
+  border-bottom: 1px solid var(--panel-border-color);
 }
 .gdr-stat-row:last-of-type { border-bottom: none; }
 .gdr-stat-label { color: var(--text-color); font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; }
@@ -161,9 +169,9 @@
   padding: 0;
   margin: 0;
   border-radius: 50%;
-  border: 1px solid rgba(240, 219, 179, .35);
-  background: rgba(240, 219, 179, .08);
-  color: #f0dbb3;
+  border: 1px solid var(--panel-border-color);
+  background: var(--button-bg);
+  color: var(--text-color);
   font: inherit;
   font-size: 1.1rem;
   line-height: 1;
@@ -175,6 +183,7 @@
   cursor: pointer;
 }
 .gdr-stat-control button:disabled { opacity: .35; cursor: not-allowed; }
+.gdr-stat-control button:hover:not(:disabled) { border-color: var(--focus-color); background: var(--button-hover-bg); }
 .gdr-stat-value { min-width: 1.5rem; text-align: center; color: var(--text-color); font-variant-numeric: tabular-nums; font-size: 1.1rem; }
 
 .gdr-field-row {
@@ -183,7 +192,7 @@
   justify-content: space-between;
   gap: 1rem;
   padding: .8rem 0;
-  border-bottom: 1px solid rgba(240, 219, 179, .14);
+  border-bottom: 1px solid var(--panel-border-color);
 }
 .gdr-field-row:last-of-type { border-bottom: none; }
 .gdr-field-row-long { flex-direction: column; align-items: stretch; gap: .5rem; }
@@ -221,7 +230,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: #f0dbb3;
+  color: var(--accent-color);
   font: inherit;
   font-size: .85rem;
   text-decoration: underline;
@@ -231,7 +240,7 @@
 .gdr-schema-editor {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(240, 219, 179, .2);
+  border-top: 1px solid var(--panel-border-color);
 }
 
 .gdr-schema-textarea {
@@ -248,7 +257,7 @@
   resize: vertical;
 }
 
-.gdr-schema-error { margin: .5rem 0 0; color: #e28b8b; font-size: .85rem; }
+.gdr-schema-error { margin: .5rem 0 0; color: var(--danger-text-color); font-size: .85rem; }
 
 .gdr-schema-actions {
   display: flex;

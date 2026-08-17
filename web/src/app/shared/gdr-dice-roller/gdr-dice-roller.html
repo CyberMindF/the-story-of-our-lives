@@ -1,0 +1,56 @@
+<section class="dice-widget" aria-labelledby="dice-title">
+  <form class="dice-command" (submit)="$event.preventDefault(); applyExpression()">
+    <label id="dice-title" for="dice-expression">Tira i dadi</label>
+    <div class="dice-command-row">
+      <input id="dice-expression" type="text" inputmode="text" autocomplete="off" spellcheck="false"
+        [value]="expression()" (input)="updateExpression($event)" placeholder="es. 2d20 + 3" aria-describedby="dice-help" />
+      <button type="submit" [disabled]="rolling()">Tira</button>
+    </div>
+    <p id="dice-help" [class.is-error]="inputError()">{{ inputError() || 'Puoi scrivere anche 2d6 + 1d8 + 4' }}</p>
+  </form>
+
+  <div class="dice-results" [attr.aria-busy]="rolling()">
+    <div class="dice-total" aria-live="polite">
+      <span>Totale</span>
+      <strong>{{ rolls().length ? total() : '—' }}</strong>
+    </div>
+    <div class="dice-pool">
+      @if (rolls().length === 0) {
+        <p>Aggiungi un dado per iniziare</p>
+      } @else {
+        @for (die of rolls(); track $index) {
+          <button type="button" class="result-die" [class.is-rolling]="rolling()"
+            [attr.data-sides]="die.sides" [style.--die-index]="$index" [style.--die-x.px]="die.x"
+            [style.--die-spin.deg]="die.spin" [attr.aria-label]="'d' + die.sides + ': ' + die.value + '. Rimuovi'"
+            [disabled]="rolling()" (click)="removeDie($index)">
+            <span>{{ die.value }}</span>
+          </button>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="dice-toolbar" aria-label="Aggiungi dadi">
+    @for (die of dice; track die) {
+      <button type="button" class="add-die" [attr.data-sides]="die" [disabled]="rolling()" (click)="addDie(die)">
+        <span>d{{ die }}</span>
+      </button>
+    }
+    <button type="button" class="clear-dice" [disabled]="rolling() || rolls().length === 0" (click)="clear()" aria-label="Rimuovi tutti i dadi">↺</button>
+  </div>
+
+  <button type="button" class="roll-all" [disabled]="rolling() || rolls().length === 0" (click)="roll()">
+    {{ rolling() ? 'Sto tirando…' : 'Tira di nuovo' }}
+  </button>
+
+  @if (history().length > 1) {
+    <details class="dice-history">
+      <summary>Ultimi tiri</summary>
+      <ol>
+        @for (entry of history(); track entry.id) {
+          <li><span>{{ entry.notation }}</span><strong>{{ entry.total }}</strong></li>
+        }
+      </ol>
+    </details>
+  }
+</section>
