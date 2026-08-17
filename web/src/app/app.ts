@@ -1,8 +1,9 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from './core/auth.service';
+import { CarteBustineService } from './core/carte-bustine.service';
 import { ThemeService } from './core/theme.service';
 import { WorldSettingsService } from './core/world-settings.service';
 import { WorldFish } from './shared/world-fish';
@@ -63,15 +64,16 @@ export class App {
   private readonly themeService = inject(ThemeService);
   private readonly worldSettingsService = inject(WorldSettingsService);
   private readonly authService = inject(AuthService);
+  private readonly carteBustineService = inject(CarteBustineService);
   private lastActivityTouchAt = 0;
   private readonly currentAssetSignature = this.assetSignature(document);
   private checkingBuildVersion = false;
+  private worldSettingsLoadedForUserId: number | null = null;
   protected readonly updateAvailable = signal(false);
 
   constructor() {
     document.body.classList.add('world-atmosphere');
     this.themeService.applySavedTheme();
-    void this.worldSettingsService.load().then(() => this.themeService.applySharedTheme());
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -98,6 +100,35 @@ export class App {
       document.removeEventListener('visibilitychange', onVisibilityChange);
     });
     checkBuildVersion();
+
+    effect(() => {
+      const userId = this.authService.currentUser()?.id;
+      if (userId === undefined) {
+        this.carteBustineService.clear();
+        this.worldSettingsLoadedForUserId = null;
+        return;
+      }
+      void this.carteBustineService.load(userId).catch((error) => {
+        console.warn('Impossibile aggiornare la streak di accesso:', error);
+      });
+      if (this.worldSettingsLoadedForUserId !== userId) {
+        this.worldSettingsLoadedForUserId = userId;
+        void this.loadSharedWorldSettings(userId);
+      }
+    });
+  }
+
+  private async loadSharedWorldSettings(userId: number): Promise<void> {
+    const loaded = await this.worldSettingsService.load();
+    if (!loaded) {
+      if (this.worldSettingsLoadedForUserId === userId) this.worldSettingsLoadedForUserId = null;
+      return;
+    }
+    // Se nel frattempo è avvenuto il logout o è cambiato account, non applicare alla nuova
+    // sessione una risposta iniziata per quella precedente.
+    if (this.authService.currentUser()?.id === userId) {
+      this.themeService.applySharedTheme();
+    }
   }
 
   protected refreshForUpdate(): void {

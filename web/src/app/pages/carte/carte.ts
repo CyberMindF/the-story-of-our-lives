@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService, UserIdentity } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
+import { CarteBustineService } from '../../core/carte-bustine.service';
 import { CartaTilt } from '../../shared/carta-tilt/carta-tilt';
 import { CARTA_FINITURE, CARTA_FINITURA_LABELS, CartaFinitura } from '../../shared/carta-finiture';
 import { CartaBack } from '../../shared/carta-back/carta-back';
@@ -95,6 +96,7 @@ const IDENTITY_LABELS: Record<UserIdentity, string> = { lui: 'lui', lei: 'lei' }
 export class Carte implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly api = inject(ApiService);
+  private readonly carteBustineService = inject(CarteBustineService);
 
   protected readonly ownIdentity = computed<UserIdentity>(() => this.authService.currentUser()?.identity ?? 'lei');
   protected readonly otherIdentity = computed<UserIdentity>(() => (this.ownIdentity() === 'lui' ? 'lei' : 'lui'));
@@ -263,19 +265,15 @@ export class Carte implements OnInit, OnDestroy {
   // --- Bustina ---
   private async loadBustine(): Promise<void> {
     try {
-      const response = await fetch('/api/carte-bustine', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
-      if (!response.ok) throw new Error(`Caricamento fallito: ${response.status}`);
-      const data = (await response.json()) as {
-        quantitaDisponibile?: number;
-        streakCorrente?: number;
-        streakMigliore?: number;
-        streakBustineBonus?: number;
-        streakPrimaVisitaOggi?: boolean;
-      };
-      this.bustineDisponibili.set(data.quantitaDisponibile ?? 0);
-      this.streakCorrente.set(data.streakCorrente ?? 0);
-      this.streakMigliore.set(data.streakMigliore ?? 0);
-      this.streakBonusOttenuto.set(data.streakBustineBonus ?? 0);
+      const userId = this.authService.currentUser()?.id;
+      if (userId === undefined) throw new Error('Utente non disponibile.');
+      // Se l'accesso è appena avvenuto riusa la risposta globale; tornando qui più tardi
+      // aggiorna invece anche le bustine maturate nel frattempo.
+      const data = await this.carteBustineService.load(userId, 5000);
+      this.bustineDisponibili.set(data.quantitaDisponibile);
+      this.streakCorrente.set(data.streakCorrente);
+      this.streakMigliore.set(data.streakMigliore);
+      this.streakBonusOttenuto.set(data.streakBustineBonus);
       if (data.streakPrimaVisitaOggi) {
         this.streakModalOpen.set(true);
       }
@@ -302,6 +300,7 @@ export class Carte implements OnInit, OnDestroy {
       this.avviaAnimazioneBustina();
       this.carteAperte.set(result.carte ?? []);
       this.bustineDisponibili.set(result.quantitaDisponibile ?? 0);
+      this.carteBustineService.invalidate();
       await this.loadCollezione();
     } catch (error) {
       this.openError.set(error instanceof Error ? error.message : 'Non è stato possibile aprire la bustina.');

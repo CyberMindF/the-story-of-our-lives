@@ -82,14 +82,14 @@ export class WorldSettingsService {
     ...readCache()?.values
   });
 
-  async load(): Promise<void> {
+  async load(): Promise<boolean> {
     try {
       const response = await fetch('/api/world-settings', {
         method: 'GET',
         credentials: 'same-origin',
         headers: { Accept: 'application/json' }
       });
-      if (!response.ok) return;
+      if (!response.ok) return false;
 
       const result = (await this.api.readApiResponse<WorldSettingsResponse>(response)) as WorldSettingsResponse;
       if (result.settings) {
@@ -99,8 +99,10 @@ export class WorldSettingsService {
         this.values.set({ ...this.values(), ...result.values });
       }
       writeCache({ settings: this.settings(), values: this.values() });
+      return true;
     } catch (error) {
       console.warn('Impossibile caricare le impostazioni del mondo:', error);
+      return false;
     }
   }
 
