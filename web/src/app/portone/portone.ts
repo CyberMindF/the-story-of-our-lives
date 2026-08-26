@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AccessMode, AuthService, AuthUser } from '../core/auth.service';
 import { NavigationService } from '../core/navigation.service';
 import { ContentMessage } from '../shared/content-message/content-message';
@@ -26,22 +26,34 @@ export class Portone implements OnInit {
   private readonly navigationService = inject(NavigationService);
   private readonly visitsService = inject(VisitsService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly mode = signal<AccessMode>('register');
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly unlocked = signal(false);
+  protected readonly recoveryMode = signal<'none' | 'request' | 'confirm'>('none');
+  protected readonly successMessage = signal('');
 
   protected email = '';
   protected password = '';
   protected nickname = '';
   protected notifyEmailUpdates = false;
   protected worldKey = '';
+  protected resetToken = '';
+  protected newPassword = '';
+  protected confirmNewPassword = '';
 
   protected readonly isKeyOnly = computed(() => this.mode() === 'key');
   protected readonly isRegister = computed(() => this.mode() === 'register');
 
   protected readonly title = computed(() => {
+    if (this.recoveryMode() === 'request') {
+      return 'Ritrova la tua password';
+    }
+    if (this.recoveryMode() === 'confirm') {
+      return 'Scegli una nuova password';
+    }
     switch (this.mode()) {
       case 'key':
         return 'Ti ricordi della chiave?';
@@ -53,6 +65,12 @@ export class Portone implements OnInit {
   });
 
   protected readonly text = computed(() => {
+    if (this.recoveryMode() === 'request') {
+      return 'Inserisci la tua email e ti invieremo un link per rientrare.';
+    }
+    if (this.recoveryMode() === 'confirm') {
+      return 'Il link ti permette di sostituire la password dimenticata.';
+    }
     switch (this.mode()) {
       case 'key':
         return 'Come la prima volta inseriscila nella serratura e il mondo si aprirà.';
@@ -67,6 +85,12 @@ export class Portone implements OnInit {
     if (this.loading()) {
       return 'Attendi…';
     }
+    if (this.recoveryMode() === 'request') {
+      return 'Invia il link';
+    }
+    if (this.recoveryMode() === 'confirm') {
+      return 'Salva la nuova password';
+    }
     if (this.mode() === 'key') {
       return 'Entra';
     }
@@ -77,6 +101,11 @@ export class Portone implements OnInit {
   });
 
   ngOnInit(): void {
+    const token = this.route.snapshot.queryParamMap.get('resetToken');
+    if (token) {
+      this.resetToken = token;
+      this.recoveryMode.set('confirm');
+    }
     void this.initialize();
   }
 
@@ -84,6 +113,10 @@ export class Portone implements OnInit {
   private async initialize(): Promise<void> {
     this.navigationService.rememberRequestedDestination();
     await this.visitsService.captureAnonymousVisit();
+
+    if (this.recoveryMode() !== 'none') {
+      return;
+    }
 
     const session = await this.authService.loadAuthSession();
     if (!session.authenticated) {
@@ -99,8 +132,60 @@ export class Portone implements OnInit {
   }
 
   protected setMode(mode: AccessMode): void {
+    this.recoveryMode.set('none');
     this.mode.set(mode);
     this.errorMessage.set('');
+    this.successMessage.set('');
+  }
+
+  protected showPasswordRecovery(): void {
+    this.recoveryMode.set('request');
+    this.errorMessage.set('');
+    this.successMessage.set('');
+  }
+
+  protected cancelPasswordRecovery(): void {
+    this.recoveryMode.set('none');
+    this.mode.set('login');
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    void this.router.navigate(['/login'], { replaceUrl: true });
+  }
+
+  protected async submitPasswordRecovery(): Promise<void> {
+    this.loading.set(true);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
+    try {
+      if (this.recoveryMode() === 'request') {
+        const { response, result } = await this.authService.requestPasswordReset(this.email.trim());
+        if (!response.ok) {
+          throw new Error(result.error || 'Impossibile inviare il link.');
+        }
+        this.successMessage.set(result.message || 'Se l’indirizzo è registrato, riceverai un’email.');
+        return;
+      }
+
+      if (this.newPassword !== this.confirmNewPassword) {
+        throw new Error('Le due password non coincidono.');
+      }
+
+      const { response, result } = await this.authService.resetPassword(this.resetToken, this.newPassword);
+      if (!response.ok) {
+        throw new Error(result.error || 'Impossibile reimpostare la password.');
+      }
+
+      this.password = this.newPassword;
+      this.recoveryMode.set('none');
+      this.mode.set('login');
+      this.successMessage.set(result.message || 'Password aggiornata. Ora puoi accedere.');
+      await this.router.navigate(['/login'], { replaceUrl: true });
+    } catch (error) {
+      this.errorMessage.set(error instanceof Error ? error.message : 'Impossibile reimpostare la password.');
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   // Invia i dati richiesti dalla modalità corrente e completa l'accesso quando sono validi.

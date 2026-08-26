@@ -136,6 +136,24 @@ body.access-locked .app-shell {
   opacity: 0.7;
 }
 
+.access-text-button {
+  display: block;
+  width: fit-content;
+  margin: 0.65rem 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted-color);
+  font: inherit;
+  font-size: 0.86rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.access-back-button {
+  margin: 0.75rem auto 0;
+}
+
 [hidden] {
   display: none !important;
 }
@@ -144,6 +162,13 @@ body.access-locked .app-shell {
   min-height: 1.25rem;
   margin: 0.65rem 0 0;
   color: var(--danger-text-color);
+  font-size: 0.9rem;
+}
+
+.access-success {
+  min-height: 1.25rem;
+  margin: 0.65rem 0 0;
+  color: var(--success-text-color, var(--text-color));
   font-size: 0.9rem;
 }
 

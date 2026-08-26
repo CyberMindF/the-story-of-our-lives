@@ -22,7 +22,8 @@
       </details>
     </section>
 
-    <form id="access-form" class="access-card portone-card" (ngSubmit)="submit()">
+    <form id="access-form" class="access-card portone-card"
+      (ngSubmit)="recoveryMode() === 'none' ? submit() : submitPasswordRecovery()">
       <img class="portone-seal" src="favicon.svg" alt="" />
       <h1 id="access-title">{{ title() }}</h1>
       <p id="access-text">{{ text() }}</p>
@@ -32,7 +33,7 @@
           message="Piccolo avviso: sto ancora sistemando alcune cose, soprattutto da telefono. Se qualcosa non funziona o sembra strano, probabilmente non è colpa tua ahaha. Se ti va prendi il pc e guardalo da lì" />
       </div>
 
-      @if (!isKeyOnly()) {
+      @if (recoveryMode() === 'none' && !isKeyOnly()) {
       <div id="access-mode-switcher" class="access-mode-switcher" role="group"
         aria-label="Scegli se accedere o registrarti">
         <button type="button" [attr.aria-pressed]="mode() === 'login'" (click)="setMode('login')">Accedi</button>
@@ -51,9 +52,36 @@
           <app-password-field name="password" autocomplete="off" [value]="password" (valueChange)="password = $event" />
         </label>
       </div>
+
+      @if (mode() === 'login') {
+      <button type="button" class="access-text-button" (click)="showPasswordRecovery()">Password dimenticata?</button>
+      }
       }
 
-      @if (isRegister()) {
+      @if (recoveryMode() === 'request') {
+      <label class="access-field">
+        <span>Email</span>
+        <input type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required
+          name="recoveryEmail" [(ngModel)]="email" />
+      </label>
+      }
+
+      @if (recoveryMode() === 'confirm') {
+      <div class="access-account-fields">
+        <label class="access-field">
+          <span>Nuova password</span>
+          <app-password-field name="newPassword" autocomplete="new-password" [value]="newPassword"
+            (valueChange)="newPassword = $event" />
+        </label>
+        <label class="access-field">
+          <span>Conferma nuova password</span>
+          <app-password-field name="confirmNewPassword" autocomplete="new-password" [value]="confirmNewPassword"
+            (valueChange)="confirmNewPassword = $event" />
+        </label>
+      </div>
+      }
+
+      @if (recoveryMode() === 'none' && isRegister()) {
       <label id="access-nickname-field" class="access-field">
         <span>Imposta un nome</span>
         <input type="text" maxlength="40" autocomplete="off" autocapitalize="words" spellcheck="false" name="nickname"
@@ -61,24 +89,33 @@
       </label>
       }
 
+      @if (recoveryMode() === 'none') {
       <label class="access-field">
         <span>La chiave</span>
         <input type="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" required data-1p-ignore
           data-lpignore="true" name="worldKey" [(ngModel)]="worldKey" />
       </label>
+      }
 
       <button id="access-submit-button" class="access-submit-button" type="submit" [disabled]="loading()">
         {{ submitLabel() }}
       </button>
 
-      @if (isRegister()) {
+      @if (recoveryMode() === 'none' && isRegister()) {
       <label id="access-notify-field" class="access-checkbox-field">
         <input type="checkbox" name="notifyEmailUpdates" [(ngModel)]="notifyEmailUpdates" />
         <span>Avvisami via email se ci sono aggiornamenti</span>
       </label>
       }
 
+      @if (recoveryMode() !== 'none') {
+      <button type="button" class="access-text-button access-back-button" (click)="cancelPasswordRecovery()">
+        Torna all’accesso
+      </button>
+      }
+
       <p id="access-error" class="access-error" aria-live="polite">{{ errorMessage() }}</p>
+      <p class="access-success" aria-live="polite">{{ successMessage() }}</p>
     </form>
   </div>
 </main>

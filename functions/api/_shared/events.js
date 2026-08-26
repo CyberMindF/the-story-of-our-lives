@@ -76,10 +76,11 @@ export async function recordEvent(env, actor, event) {
       WHERE EXISTS (
         SELECT 1
         FROM users
-        WHERE users.id = ? AND users.identity = 'lei'
+        WHERE users.id = ?
+          AND (users.identity = 'lei' OR ? = 'password_changed')
       )
     `)
-    .bind(actor.userId, actor.sessionId || null, section, eventType, metadata, actor.userId)
+    .bind(actor.userId, actor.sessionId || null, section, eventType, metadata, actor.userId, eventType)
     .run();
 
   const recorded = Number(result.meta.changes || 0) > 0;

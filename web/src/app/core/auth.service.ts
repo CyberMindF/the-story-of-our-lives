@@ -37,6 +37,12 @@ export interface ProfilePasswordResponse {
   error?: string;
 }
 
+export interface PasswordResetResponse {
+  success?: boolean;
+  message?: string;
+  error?: string;
+}
+
 const ACCESS_SESSION_KEY = 'noi-crossword-access-session-v1';
 const ACCESS_SESSION_TOUCHED_AT_KEY = 'noi-crossword-access-session-touched-at-v1';
 const KNOWN_ACCOUNT_STORAGE_KEY = 'noi-crossword-known-account-v1';
@@ -113,6 +119,28 @@ export class AuthService {
     });
 
     return { response, result: (await this.api.readApiResponse<ProfilePasswordResponse>(response)) as ProfilePasswordResponse };
+  }
+
+  async requestPasswordReset(email: string): Promise<{ response: Response; result: PasswordResetResponse }> {
+    const response = await fetch('/api/auth/password-reset/request', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    return { response, result: (await this.api.readApiResponse<PasswordResetResponse>(response)) as PasswordResetResponse };
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ response: Response; result: PasswordResetResponse }> {
+    const response = await fetch('/api/auth/password-reset/confirm', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, newPassword })
+    });
+
+    return { response, result: (await this.api.readApiResponse<PasswordResetResponse>(response)) as PasswordResetResponse };
   }
 
   // Accende/spegne la Modalità admin per la sessione corrente. Solo chi ha già role "admin"

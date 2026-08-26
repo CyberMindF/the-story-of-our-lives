@@ -47,8 +47,11 @@ export async function onRequestPost(context) {
       metadata: getAuthEventMetadata(request, { previousPassword: user.password })
     });
 
-    if (eventResult.error) {
-      console.error(JSON.stringify({ event: "auth_password_change_log_error", message: eventResult.error }));
+    if (eventResult.error || !eventResult.recorded) {
+      console.error(JSON.stringify({
+        event: "auth_password_change_log_error",
+        message: eventResult.error || "event_not_recorded"
+      }));
       return json({ error: "Impossibile registrare la memoria del cambio password." }, 500);
     }
 

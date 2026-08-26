@@ -54,7 +54,7 @@ export function isWorldKeyValid(value, expectedValue) {
 
 // Genera una sessione, ne salva l'hash in D1 e restituisce il cookie con il token originale.
 export async function createSession(request, env, userId) {
-  const token = randomToken();
+  const token = createRandomToken();
   const tokenHash = await hashToken(token);
   const expiresAt = new Date(Date.now() + SESSION_DURATION_SECONDS * 1000).toISOString();
 
@@ -159,13 +159,13 @@ function buildSessionCookie(request, token) {
 }
 
 // Crea un token casuale crittograficamente sicuro per identificare una nuova sessione.
-function randomToken() {
+export function createRandomToken() {
   const bytes = crypto.getRandomValues(new Uint8Array(32));
   return bytesToBase64Url(bytes);
 }
 
 // Calcola l'hash SHA-256 del token prima del confronto o del salvataggio nel database.
-async function hashToken(token) {
+export async function hashToken(token) {
   const bytes = new TextEncoder().encode(token);
   const hash = await crypto.subtle.digest("SHA-256", bytes);
   return bytesToBase64Url(new Uint8Array(hash));
