@@ -1,5 +1,6 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
+import { notifyRealtime } from "../_shared/realtime.js";
 
 // Segna una lettera come letta, solo se chi la apre non è chi l'ha scritta.
 export async function onRequestPost(context) {
@@ -37,6 +38,12 @@ export async function onRequestPost(context) {
       { userId: session.user.id, sessionId: session.sessionId },
       { section: "lettere", eventType: "letter_read", metadata: { letterId } }
     ));
+    context.waitUntil(notifyRealtime(context.env, {
+      type: "letters:changed",
+      action: "read",
+      actorUserId: session.user.id,
+      letterId
+    }));
 
     return json({ readAt });
   } catch (error) {

@@ -7,6 +7,10 @@
     "build": "npm --prefix web run build",
     "dev": "bash scripts/dev.sh",
     "dev:api": "wrangler pages dev web/dist/web/browser --port 8788",
+    "dev:realtime": "wrangler dev --config realtime-worker/wrangler.jsonc --port 8790",
+    "dev:api:realtime": "wrangler pages dev web/dist/web/browser --port 8788 --do REALTIME=RealtimeRoom@the-white-world-realtime",
+    "deploy:realtime": "wrangler deploy --config realtime-worker/wrangler.jsonc",
+    "check:realtime": "wrangler deploy --config realtime-worker/wrangler.jsonc --dry-run",
     "audit:angular": "node scripts/audit-angular-routes.mjs",
     "review:carte": "node scripts/review-carte-images.mjs",
     "import:carte:local": "node scripts/import-carte-local.mjs",
@@ -29,6 +33,7 @@
   },
   "homepage": "https://github.com/CyberMindF/the-story-of-our-lives#readme",
   "devDependencies": {
+    "@types/node": "^26.3.0",
     "playwright": "^1.62.1",
     "playwright-core": "^1.62.1",
     "sharp": "^0.35.3",

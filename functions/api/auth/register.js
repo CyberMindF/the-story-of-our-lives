@@ -37,7 +37,8 @@ export async function onRequestPost(context) {
       return json({ error: "Chiave del Mondo non valida." }, 403);
     }
 
-    // Impedisce soltanto di registrare due volte la stessa email; non limita il numero di account.
+    // La registrazione pubblica serve soltanto al secondo account reale. Gli account di prova
+    // vengono creati separatamente dall'admin e non alterano il modello a due persone.
     const existingUser = await env.DB
       .prepare("SELECT id FROM users WHERE email = ?")
       .bind(email)
@@ -45,6 +46,13 @@ export async function onRequestPost(context) {
 
     if (existingUser) {
       return json({ error: "Esiste già un account con questa email." }, 409);
+    }
+
+    const existingPartner = await env.DB
+      .prepare("SELECT id FROM users WHERE identity = 'lei' AND is_test = 0 LIMIT 1")
+      .first();
+    if (existingPartner) {
+      return json({ error: "I due account principali sono già stati creati." }, 409);
     }
 
     // Chi si registra può scegliere come farsi chiamare; senza scelta, si usa l'email come prima.
@@ -79,7 +87,7 @@ export async function onRequestPost(context) {
 
     return json(
       {
-        user: { id: userId, email, nickname, identity: "lei", role: "member" },
+        user: { id: userId, email, nickname, identity: "lei", role: "member", isTest: false },
         expiresAt: session.expiresAt,
         adminModeEnabled: false
       },

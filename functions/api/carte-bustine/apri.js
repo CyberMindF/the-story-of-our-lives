@@ -13,8 +13,8 @@ export async function onRequestPost(context) {
     const session = await getAuthenticatedSession(request, env);
     if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
 
-    const ownerIdentity = session.user.identity;
-    const state = await accrueBustine(env, ownerIdentity);
+    const userId = session.user.id;
+    const state = await accrueBustine(env, userId);
     if (state.quantitaDisponibile < 1) {
       return json({ error: "Nessuna bustina disponibile." }, 409);
     }
@@ -46,19 +46,19 @@ export async function onRequestPost(context) {
 
     const statements = [
       env.DB
-        .prepare("UPDATE carte_bustine SET quantita_disponibile = quantita_disponibile - 1, updated_at = ? WHERE owner_identity = ?")
-        .bind(now, ownerIdentity)
+        .prepare("UPDATE carte_bustine SET quantita_disponibile = quantita_disponibile - 1, updated_at = ? WHERE user_id = ?")
+        .bind(now, userId)
     ];
     for (const definizioneId of drawn) {
       statements.push(
         env.DB
           .prepare(
-            `INSERT INTO carte_possesso (owner_identity, carta_definizione_id, quantita, updated_at)
+            `INSERT INTO carte_possesso (user_id, carta_definizione_id, quantita, updated_at)
              VALUES (?, ?, 1, ?)
-             ON CONFLICT(owner_identity, carta_definizione_id)
+             ON CONFLICT(user_id, carta_definizione_id)
              DO UPDATE SET quantita = quantita + 1, updated_at = excluded.updated_at`
           )
-          .bind(ownerIdentity, definizioneId, now)
+          .bind(userId, definizioneId, now)
       );
     }
     await env.DB.batch(statements);

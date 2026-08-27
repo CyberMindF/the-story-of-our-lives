@@ -1,5 +1,6 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
+import { notifyRealtime } from "../_shared/realtime.js";
 
 function toMessageView(row) {
   return {
@@ -51,6 +52,12 @@ export async function onRequestPost(context) {
       section: "stranger-chat",
       eventType: "chat_message_sent",
       metadata: { messageId: created.id }
+    }));
+    context.waitUntil(notifyRealtime(env, {
+      type: "stranger-chat:changed",
+      action: "created",
+      actorUserId: session.user.id,
+      messageId: created.id
     }));
 
     return json(toMessageView(created), 201);

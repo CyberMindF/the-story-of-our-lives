@@ -40,9 +40,8 @@ function writeCache(cache: SettingsCache): void {
 }
 
 // Interruttori condivisi tra i due account (non per dispositivo come il tema, vedi
-// ThemeService): chi li accende/spegne li vede cambiare anche per l'altro, al prossimo
-// caricamento della pagina — nessun push in tempo reale, solo lettura al bootstrap dell'app
-// (stesso schema di ThemeService.applySavedTheme, chiamato da App).
+// ThemeService): chi li accende/spegne li vede cambiare anche per l'altro. Il bootstrap e il
+// canale realtime rileggono entrambi questa stessa fonte, senza duplicare lo stato condiviso.
 @Injectable({ providedIn: 'root' })
 export class WorldSettingsService {
   private readonly api = inject(ApiService);

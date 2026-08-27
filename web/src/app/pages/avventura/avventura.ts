@@ -1,4 +1,5 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { ContentMessage } from '../../shared/content-message/content-message';
@@ -8,6 +9,8 @@ import { GdrDocumentEditor } from '../../shared/gdr-blocks/gdr-document-editor';
 import { GdrPanel } from '../../shared/gdr-panel/gdr-panel';
 import { GdrBlockRow } from '../../shared/gdr-blocks/gdr-block.types';
 import { ApiService } from '../../core/api.service';
+import { AuthService } from '../../core/auth.service';
+import { RealtimeService } from '../../core/realtime.service';
 
 const ADVENTURE = 'il-prezzo-della-verita';
 
@@ -39,6 +42,9 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
 })
 export class Avventura implements OnInit {
   private readonly api = inject(ApiService);
+  private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly realtime = inject(RealtimeService);
   protected readonly submission = inject(FormSubmission);
   protected readonly turns = signal<Turn[]>([]);
   protected readonly loadError = signal(false);
@@ -52,6 +58,13 @@ export class Avventura implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await Promise.all([this.loadTurns(), this.loadBlocks()]);
+    this.realtime.on('gdr-turns:changed')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event['adventure'] === ADVENTURE && event['actorUserId'] !== this.authService.currentUser()?.id) {
+          void this.loadTurns();
+        }
+      });
   }
 
   private async loadBlocks(): Promise<void> {

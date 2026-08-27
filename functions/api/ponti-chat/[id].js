@@ -1,8 +1,9 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
+import { notifyRealtime } from "../_shared/realtime.js";
 
-// Un messaggio si può eliminare solo se inviato dalla propria identità (non serve un ruolo
-// admin: qui i due unici utenti sono anche gli unici autori possibili dei propri messaggi).
+// Un messaggio si può eliminare solo dall'account che lo ha creato. L'identità lui/lei è
+// una label narrativa e non partecipa mai ai controlli di proprietà.
 export async function onRequestDelete(context) {
   const { env, request, params } = context;
   try {
@@ -14,7 +15,7 @@ export async function onRequestDelete(context) {
 
     const existing = await env.DB.prepare("SELECT * FROM ponti_chat_messages WHERE id = ?").bind(id).first();
     if (!existing) return json({ error: "Messaggio non trovato." }, 404);
-    if (existing.sender_identity !== session.user.identity) {
+    if (existing.created_by !== session.user.id) {
       return json({ error: "Non puoi eliminare un messaggio che non hai scritto." }, 403);
     }
 
@@ -27,6 +28,12 @@ export async function onRequestDelete(context) {
       section: "ponti-chat",
       eventType: "chat_message_deleted",
       metadata: { messageId: id }
+    }));
+    context.waitUntil(notifyRealtime(env, {
+      type: "ponti-chat:changed",
+      action: "deleted",
+      actorUserId: session.user.id,
+      messageId: id
     }));
 
     return json({ deleted: true });

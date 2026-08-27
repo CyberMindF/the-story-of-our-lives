@@ -1,5 +1,6 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
+import { notifyRealtime } from "../_shared/realtime.js";
 
 const MAX_BODY_LENGTH = 20000;
 const DEFAULT_ADVENTURE = "il-prezzo-della-verita";
@@ -64,6 +65,13 @@ export async function onRequestPost(context) {
       { userId: session.user.id, sessionId: session.sessionId },
       { section: "gdr", eventType: "gdr_turn_submitted", metadata: { adventure } }
     ));
+    context.waitUntil(notifyRealtime(context.env, {
+      type: "gdr-turns:changed",
+      action: "created",
+      actorUserId: session.user.id,
+      adventure,
+      turnId: result.meta.last_row_id
+    }));
 
     return json(
       { saved: true, turnId: result.meta.last_row_id, author: session.user.nickname, createdAt },

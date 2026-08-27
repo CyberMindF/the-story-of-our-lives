@@ -1,4 +1,5 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
+import { notifyRealtime } from "../_shared/realtime.js";
 
 // Segna come lette tutte le righe dell'altra identità non ancora lette — chiamato
 // all'apertura della pagina, silenzioso (nessun evento di telemetria: sarebbe rumoroso
@@ -11,10 +12,18 @@ export async function onRequestPost(context) {
     if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
 
     const now = new Date().toISOString();
-    await env.DB
+    const result = await env.DB
       .prepare("UPDATE ponti_chat_messages SET read_at = ? WHERE sender_identity != ? AND read_at IS NULL")
       .bind(now, session.user.identity)
       .run();
+
+    if (result.meta.changes > 0) {
+      context.waitUntil(notifyRealtime(env, {
+        type: "ponti-chat:changed",
+        action: "read",
+        actorUserId: session.user.id
+      }));
+    }
 
     return json({ ok: true });
   } catch (error) {

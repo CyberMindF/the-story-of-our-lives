@@ -15,8 +15,7 @@ export async function onRequestGet(context) {
     const trade = await env.DB.prepare("SELECT * FROM carte_trade WHERE id = ?").bind(tradeId).first();
     if (!trade) return json({ error: "Scambio non trovato." }, 404);
 
-    const identity = session.user.identity;
-    if (trade.proponente_identity !== identity && trade.destinatario_identity !== identity) {
+    if (trade.proponente_user_id !== session.user.id && trade.destinatario_user_id !== session.user.id) {
       return json({ error: "Non autorizzato." }, 403);
     }
 

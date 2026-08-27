@@ -1,5 +1,6 @@
 import { getAuthenticatedSession, json, readJson } from "./auth/_shared.js";
 import { recordEvent } from "./_shared/events.js";
+import { notifyRealtime } from "./_shared/realtime.js";
 
 // Chiavi note: allowlist esplicita invece di accettare qualunque stringa dal client, per non
 // lasciare che "world_settings" accumuli righe arbitrarie mai lette da nessuna UI.
@@ -112,6 +113,12 @@ export async function onRequestPost(context) {
         metadata: { key, enabled: enabled === 1, ...(value === null ? {} : { value }) }
       }
     ));
+    context.waitUntil(notifyRealtime(context.env, {
+      type: "world-settings:changed",
+      action: "updated",
+      actorUserId: session.user.id,
+      key
+    }));
 
     return json({ key, enabled: enabled === 1, value });
   } catch (error) {

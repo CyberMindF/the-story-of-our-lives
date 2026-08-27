@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/ro
 import { filter } from 'rxjs';
 import { AuthService } from './core/auth.service';
 import { CarteBustineService } from './core/carte-bustine.service';
+import { RealtimeService } from './core/realtime.service';
 import { ThemeService } from './core/theme.service';
 import { WorldSettingsService } from './core/world-settings.service';
 import { WorldFish } from './shared/world-fish';
@@ -65,6 +66,7 @@ export class App {
   private readonly worldSettingsService = inject(WorldSettingsService);
   private readonly authService = inject(AuthService);
   private readonly carteBustineService = inject(CarteBustineService);
+  private readonly realtimeService = inject(RealtimeService);
   private lastActivityTouchAt = 0;
   private readonly currentAssetSignature = this.assetSignature(document);
   private checkingBuildVersion = false;
@@ -101,13 +103,23 @@ export class App {
     });
     checkBuildVersion();
 
+    this.realtimeService.on('world-settings:changed')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event['actorUserId'] === this.authService.currentUser()?.id) return;
+        const userId = this.authService.currentUser()?.id;
+        if (userId !== undefined) void this.loadSharedWorldSettings(userId);
+      });
+
     effect(() => {
       const userId = this.authService.currentUser()?.id;
       if (userId === undefined) {
         this.carteBustineService.clear();
+        this.realtimeService.disconnect();
         this.worldSettingsLoadedForUserId = null;
         return;
       }
+      this.realtimeService.connect();
       void this.carteBustineService.load(userId).catch((error) => {
         console.warn('Impossibile aggiornare la streak di accesso:', error);
       });

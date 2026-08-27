@@ -1,6 +1,7 @@
 import { getAuthenticatedSession, json } from "./auth/_shared.js";
 import { recordEvent } from "./_shared/events.js";
 import { normalizeRequiredText } from "./_shared/text.js";
+import { notifyRealtime } from "./_shared/realtime.js";
 
 const MAX_BODY_LENGTH = 20000;
 
@@ -59,6 +60,12 @@ export async function onRequestPost(context) {
       { userId: session.user.id, sessionId: session.sessionId },
       { section: "lettere", eventType: "letter_sent", metadata: { bodyLength: text.length } }
     ));
+    context.waitUntil(notifyRealtime(context.env, {
+      type: "letters:changed",
+      action: "created",
+      actorUserId: session.user.id,
+      letterId: result.meta.last_row_id
+    }));
 
     return json(
       { saved: true, letterId: result.meta.last_row_id, author: session.user.nickname, createdAt },

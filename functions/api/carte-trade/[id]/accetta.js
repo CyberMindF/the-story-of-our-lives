@@ -1,6 +1,7 @@
 import { getAuthenticatedSession, json } from "../../auth/_shared.js";
 import { recordEvent } from "../../_shared/events.js";
 import { notifyOtherIdentity } from "../../_shared/email.js";
+import { notifyRealtime } from "../../_shared/realtime.js";
 import { findInsufficientItem, toTradeView, transferStatements } from "../_shared.js";
 
 // Solo il destinatario può accettare una proposta "proposto". Sposta davvero le carte tra i
@@ -17,7 +18,7 @@ export async function onRequestPost(context) {
 
     const trade = await env.DB.prepare("SELECT * FROM carte_trade WHERE id = ?").bind(tradeId).first();
     if (!trade) return json({ error: "Scambio non trovato." }, 404);
-    if (trade.destinatario_identity !== session.user.identity) {
+    if (trade.destinatario_user_id !== session.user.id) {
       return json({ error: "Non autorizzato." }, 403);
     }
     if (trade.stato !== "proposto") {
@@ -29,16 +30,16 @@ export async function onRequestPost(context) {
     const richiestaItems = view.richiesta.map((item) => ({ carteDefinizioneId: Number(item.carteDefinizioneId), quantita: item.quantita }));
 
     // Ri-verifica appena prima di scrivere: lo stato può essere cambiato tra la proposta e ora.
-    const missingOfferta = await findInsufficientItem(env, trade.proponente_identity, offertaItems);
-    const missingRichiesta = await findInsufficientItem(env, trade.destinatario_identity, richiestaItems);
+    const missingOfferta = await findInsufficientItem(env, trade.proponente_user_id, offertaItems);
+    const missingRichiesta = await findInsufficientItem(env, trade.destinatario_user_id, richiestaItems);
     if (missingOfferta || missingRichiesta) {
       return json({ error: "Le carte coinvolte non sono più disponibili." }, 409);
     }
 
     const now = new Date().toISOString();
     const statements = [
-      ...transferStatements(env, trade.proponente_identity, trade.destinatario_identity, offertaItems, now),
-      ...transferStatements(env, trade.destinatario_identity, trade.proponente_identity, richiestaItems, now),
+      ...transferStatements(env, trade.proponente_user_id, trade.destinatario_user_id, offertaItems, now),
+      ...transferStatements(env, trade.destinatario_user_id, trade.proponente_user_id, richiestaItems, now),
       env.DB
         .prepare("UPDATE carte_trade SET stato = 'accettato', risolto_at = ? WHERE id = ? AND stato = 'proposto'")
         .bind(now, tradeId)
@@ -60,6 +61,12 @@ export async function onRequestPost(context) {
     context.waitUntil(notifyOtherIdentity(env, session.user.id, {
       subject: `${session.user.nickname} ha accettato il tuo scambio di carte`,
       html: `<p>${session.user.nickname} ha accettato il tuo scambio nel gioco di carte.</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`
+    }));
+    context.waitUntil(notifyRealtime(env, {
+      type: "carte-trade:changed",
+      action: "accepted",
+      actorUserId: session.user.id,
+      tradeId
     }));
 
     return json(await toTradeView(env, updated));

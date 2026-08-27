@@ -1,6 +1,7 @@
 import { getAuthenticatedSession, json, readJson } from "../../auth/_shared.js";
 import { recordEvent } from "../../_shared/events.js";
 import { notifyOtherIdentity } from "../../_shared/email.js";
+import { notifyRealtime } from "../../_shared/realtime.js";
 import {
   definizioniExist,
   findInsufficientItem,
@@ -24,7 +25,7 @@ export async function onRequestPost(context) {
 
     const trade = await env.DB.prepare("SELECT * FROM carte_trade WHERE id = ?").bind(tradeId).first();
     if (!trade) return json({ error: "Scambio non trovato." }, 404);
-    if (trade.destinatario_identity !== session.user.identity) {
+    if (trade.destinatario_user_id !== session.user.id) {
       return json({ error: "Non autorizzato." }, 403);
     }
     if (trade.stato !== "proposto") {
@@ -42,8 +43,8 @@ export async function onRequestPost(context) {
     }
     if (messaggio === undefined) return json({ error: "Il messaggio non è valido." }, 400);
 
-    const nuovoProponente = trade.destinatario_identity;
-    const nuovoDestinatario = trade.proponente_identity;
+    const nuovoProponente = trade.destinatario_user_id;
+    const nuovoDestinatario = trade.proponente_user_id;
 
     const allItems = [...offerta, ...richiesta];
     if (!(await definizioniExist(env, allItems))) {
@@ -68,7 +69,7 @@ export async function onRequestPost(context) {
     const nuovoTrade = await env.DB
       .prepare(
         `INSERT INTO carte_trade
-           (proponente_identity, destinatario_identity, stato, messaggio, trade_precedente_id, created_at)
+           (proponente_user_id, destinatario_user_id, stato, messaggio, trade_precedente_id, created_at)
          VALUES (?, ?, 'proposto', ?, ?, ?) RETURNING *`
       )
       .bind(nuovoProponente, nuovoDestinatario, messaggio, tradeId, now)
@@ -90,6 +91,13 @@ export async function onRequestPost(context) {
     context.waitUntil(notifyOtherIdentity(env, session.user.id, {
       subject: `${session.user.nickname} ti ha fatto una controproposta di scambio`,
       html: `<p>${session.user.nickname} ti ha fatto una controproposta nel gioco di carte.</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`
+    }));
+    context.waitUntil(notifyRealtime(env, {
+      type: "carte-trade:changed",
+      action: "countered",
+      actorUserId: session.user.id,
+      tradeId: nuovoTrade.id,
+      previousTradeId: tradeId
     }));
 
     return json(await toTradeView(env, nuovoTrade), 201);

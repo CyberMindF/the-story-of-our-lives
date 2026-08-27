@@ -10,6 +10,7 @@ export interface AuthUser {
   nickname: string;
   identity: UserIdentity;
   role: UserRole;
+  isTest: boolean;
 }
 
 export interface AuthSessionResponse {

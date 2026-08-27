@@ -1,9 +1,11 @@
-import { Component, ElementRef, Injector, OnInit, ViewChild, afterNextRender, computed, inject, runInInjectionContext, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, Injector, OnInit, ViewChild, afterNextRender, computed, inject, runInInjectionContext, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService, UserIdentity } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
+import { RealtimeService } from '../../core/realtime.service';
 
 interface ChatMessage {
   id: string;
@@ -26,6 +28,8 @@ export class StrangerChat implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly api = inject(ApiService);
   private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly realtime = inject(RealtimeService);
 
   @ViewChild('log') private log?: ElementRef<HTMLElement>;
 
@@ -45,6 +49,11 @@ export class StrangerChat implements OnInit {
     // Basta caricare la cronologia già al montaggio: è leggera (solo testo) e la schermata
     // d'ingresso resta comunque il primo passaggio obbligato per l'utente.
     await this.loadMessages();
+    this.realtime.on('stranger-chat:changed')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event['actorUserId'] !== this.authService.currentUser()?.id) void this.loadMessages();
+      });
   }
 
   protected enter(): void {
@@ -65,7 +74,9 @@ export class StrangerChat implements OnInit {
       if (!response.ok) throw new Error(`Caricamento fallito: ${response.status}`);
       const data = await this.api.readApiResponse<{ messages?: ChatMessage[] }>(response);
       this.messages.set(data.messages ?? []);
+      this.loadError.set(false);
       this.loading.set(false);
+      if (this.entered()) this.scrollToBottom();
     } catch (error) {
       console.error('Errore nel caricamento della chat:', error);
       this.loadError.set(true);

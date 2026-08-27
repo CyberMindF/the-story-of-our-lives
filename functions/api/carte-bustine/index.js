@@ -11,9 +11,8 @@ export async function onRequestGet(context) {
     const session = await getAuthenticatedSession(request, env);
     if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
 
-    const ownerIdentity = session.user.identity;
-    const state = await accrueBustine(env, ownerIdentity);
-    const streak = await checkStreak(env, ownerIdentity);
+    const state = await accrueBustine(env, session.user.id);
+    const streak = await checkStreak(env, session.user.id);
     const quantitaDisponibile = state.quantitaDisponibile + streak.bustineBonus;
     return json({
       quantitaDisponibile,

@@ -1,4 +1,5 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +9,8 @@ import { FormSubmission } from '../../shared/form-submission/form-submission';
 import { ContentMessage } from '../../shared/content-message/content-message';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
 import { seededRotation } from '../../shared/random';
+import { AuthService } from '../../core/auth.service';
+import { RealtimeService } from '../../core/realtime.service';
 
 interface Letter {
   id: number;
@@ -38,6 +41,9 @@ export class Lettere implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
+  private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly realtime = inject(RealtimeService);
   @ViewChild('letterDialog') private dialogRef?: ElementRef<HTMLDialogElement>;
   @ViewChild('dialogPaper') private dialogPaperRef?: ElementRef<HTMLDivElement>;
   @ViewChild('pagerViewport') private pagerViewportRef?: ElementRef<HTMLDivElement>;
@@ -66,6 +72,11 @@ export class Lettere implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     await this.loadLetters();
+    this.realtime.on('letters:changed')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event['actorUserId'] !== this.authService.currentUser()?.id) void this.loadLetters(false);
+      });
     window.addEventListener('resize', this.onWindowResize);
     document.fonts?.addEventListener?.('loadingdone', this.onFontsLoaded);
   }
@@ -269,7 +280,7 @@ export class Lettere implements OnInit, OnDestroy {
     this.closeLetterAnimated();
   }
 
-  private async loadLetters(): Promise<void> {
+  private async loadLetters(openDeepLink = true): Promise<void> {
     try {
       const response = await fetch('/api/letters', { credentials: 'same-origin' });
       if (!response.ok) {
@@ -277,7 +288,8 @@ export class Lettere implements OnInit, OnDestroy {
       }
       const data = (await response.json()) as { letters?: Letter[] };
       this.letters.set(data.letters || []);
-      this.openRequestedLetter();
+      this.loadError.set(false);
+      if (openDeepLink) this.openRequestedLetter();
     } catch (error) {
       console.error('Errore nel caricamento delle lettere:', error);
       this.loadError.set(true);

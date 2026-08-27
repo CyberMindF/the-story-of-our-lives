@@ -1,15 +1,16 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
 import { notifyOtherIdentity } from "../_shared/email.js";
+import { notifyRealtime } from "../_shared/realtime.js";
 import {
   definizioniExist,
   findInsufficientItem,
   itemInsertStatements,
   normalizeMessaggio,
-  otherIdentity,
   parseItems,
   toTradeView
 } from "./_shared.js";
+import { findTradePartner } from "./_users.js";
 
 const VALID_STATI = new Set(["proposto", "accettato", "rifiutato", "controproposto"]);
 
@@ -27,15 +28,15 @@ export async function onRequestGet(context) {
       return json({ error: "Stato non valido." }, 400);
     }
 
-    const identity = session.user.identity;
+    const userId = session.user.id;
     const { results } = await env.DB
       .prepare(
         `SELECT * FROM carte_trade
-         WHERE (proponente_identity = ? OR destinatario_identity = ?)
+         WHERE (proponente_user_id = ? OR destinatario_user_id = ?)
          ${stato ? "AND stato = ?" : ""}
          ORDER BY created_at DESC`
       )
-      .bind(...(stato ? [identity, identity, stato] : [identity, identity]))
+      .bind(...(stato ? [userId, userId, stato] : [userId, userId]))
       .all();
 
     const trades = await Promise.all(results.map((trade) => toTradeView(env, trade)));
@@ -65,15 +66,17 @@ export async function onRequestPost(context) {
     }
     if (messaggio === undefined) return json({ error: "Il messaggio non è valido." }, 400);
 
-    const proponenteIdentity = session.user.identity;
-    const destinatarioIdentity = otherIdentity(proponenteIdentity);
+    const partner = await findTradePartner(env, session.user);
+    if (!partner) {
+      return json({ error: "Non esiste ancora un altro account a cui proporre lo scambio." }, 409);
+    }
 
     const allItems = [...offerta, ...richiesta];
     if (!(await definizioniExist(env, allItems))) {
       return json({ error: "Una delle carte selezionate non esiste più." }, 400);
     }
 
-    const missing = await findInsufficientItem(env, proponenteIdentity, offerta);
+    const missing = await findInsufficientItem(env, session.user.id, offerta);
     if (missing) {
       return json({ error: "Non possiedi abbastanza copie di una delle carte offerte." }, 409);
     }
@@ -81,10 +84,10 @@ export async function onRequestPost(context) {
     const now = new Date().toISOString();
     const trade = await env.DB
       .prepare(
-        `INSERT INTO carte_trade (proponente_identity, destinatario_identity, stato, messaggio, created_at)
+        `INSERT INTO carte_trade (proponente_user_id, destinatario_user_id, stato, messaggio, created_at)
          VALUES (?, ?, 'proposto', ?, ?) RETURNING *`
       )
-      .bind(proponenteIdentity, destinatarioIdentity, messaggio, now)
+      .bind(session.user.id, partner.id, messaggio, now)
       .first();
 
     const itemStatements = [
@@ -103,6 +106,12 @@ export async function onRequestPost(context) {
     context.waitUntil(notifyOtherIdentity(env, session.user.id, {
       subject: `${session.user.nickname} ti ha proposto uno scambio di carte`,
       html: `<p>${session.user.nickname} ti ha proposto uno scambio nel gioco di carte.</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`
+    }));
+    context.waitUntil(notifyRealtime(env, {
+      type: "carte-trade:changed",
+      action: "created",
+      actorUserId: session.user.id,
+      tradeId: trade.id
     }));
 
     return json(await toTradeView(env, trade), 201);

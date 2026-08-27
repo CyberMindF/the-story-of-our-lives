@@ -1,10 +1,12 @@
-import { Component, ElementRef, Injector, OnInit, ViewChild, afterNextRender, computed, inject, runInInjectionContext, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, Injector, OnInit, ViewChild, afterNextRender, computed, inject, runInInjectionContext, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService, UserIdentity } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
+import { RealtimeService } from '../../core/realtime.service';
 
 interface ChatMessage {
   id: string;
@@ -30,6 +32,8 @@ export class PontiChat implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly api = inject(ApiService);
   private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly realtime = inject(RealtimeService);
 
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
   @ViewChild('log') private log?: ElementRef<HTMLElement>;
@@ -54,6 +58,16 @@ export class PontiChat implements OnInit {
   async ngOnInit(): Promise<void> {
     await this.loadMessages();
     void this.markRead();
+    this.realtime.on('ponti-chat:changed')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event['actorUserId'] !== this.authService.currentUser()?.id) void this.reloadFromRealtime();
+      });
+  }
+
+  private async reloadFromRealtime(): Promise<void> {
+    await this.loadMessages();
+    void this.markRead();
   }
 
   private async loadMessages(): Promise<void> {
@@ -62,6 +76,7 @@ export class PontiChat implements OnInit {
       if (!response.ok) throw new Error(`Caricamento fallito: ${response.status}`);
       const data = await this.api.readApiResponse<{ messages?: ChatMessage[] }>(response);
       this.messages.set(data.messages ?? []);
+      this.loadError.set(false);
       this.loading.set(false);
       this.scrollToBottom();
     } catch (error) {

@@ -1,12 +1,8 @@
 // Scambi del gioco di carte collezionabili (#e4), Blocco 2 del piano in
-// documentazione/e4-carte-collezionabili.md. Le identità sono sempre 'lui'/'lei' derivate dalla sessione lato
-// server (mai dal client), stesso principio di pensieri-biglietti e ponti-chat.
+// documentazione/e4-carte-collezionabili.md. Proprietà e autorizzazioni usano sempre users.id;
+// identity resta soltanto metadato narrativo restituito alla UI.
 
 export const MAX_MESSAGGIO_LENGTH = 500;
-
-export function otherIdentity(identity) {
-  return identity === "lui" ? "lei" : "lui";
-}
 
 // Messaggio libero e opzionale (richiesta esplicita di Rory nel design doc): stringa vuota o
 // assente diventa null, non un errore.
@@ -36,14 +32,14 @@ export function parseItems(raw) {
   return [...byId.entries()].map(([carteDefinizioneId, quantita]) => ({ carteDefinizioneId, quantita }));
 }
 
-// Verifica che ownerIdentity possieda almeno la quantità richiesta di ciascuna carta elencata.
+// Verifica che userId possieda almeno la quantità richiesta di ciascuna carta elencata.
 // Usata sia in proposta (soft-check) sia subito prima di accettare/controproporre (hard-check,
 // lo stato può essere cambiato nel frattempo).
-export async function findInsufficientItem(env, ownerIdentity, items) {
+export async function findInsufficientItem(env, userId, items) {
   for (const item of items) {
     const row = await env.DB
-      .prepare("SELECT quantita FROM carte_possesso WHERE owner_identity = ? AND carta_definizione_id = ?")
-      .bind(ownerIdentity, item.carteDefinizioneId)
+      .prepare("SELECT quantita FROM carte_possesso WHERE user_id = ? AND carta_definizione_id = ?")
+      .bind(userId, item.carteDefinizioneId)
       .first();
     if (!row || row.quantita < item.quantita) return item;
   }
@@ -74,23 +70,23 @@ export function itemInsertStatements(env, tradeId, lato, items) {
 // dà, incrementa (o crea) quello di chi riceve. Il CHECK (quantita >= 0) di carte_possesso fa
 // fallire l'intero batch se il pre-check con findInsufficientItem non è più valido (race tra
 // la verifica e l'accettazione), quindi la scrittura resta comunque coerente.
-export function transferStatements(env, fromIdentity, toIdentity, items, now) {
+export function transferStatements(env, fromUserId, toUserId, items, now) {
   const statements = [];
   for (const item of items) {
     statements.push(
       env.DB
-        .prepare("UPDATE carte_possesso SET quantita = quantita - ?, updated_at = ? WHERE owner_identity = ? AND carta_definizione_id = ?")
-        .bind(item.quantita, now, fromIdentity, item.carteDefinizioneId)
+        .prepare("UPDATE carte_possesso SET quantita = quantita - ?, updated_at = ? WHERE user_id = ? AND carta_definizione_id = ?")
+        .bind(item.quantita, now, fromUserId, item.carteDefinizioneId)
     );
     statements.push(
       env.DB
         .prepare(
-          `INSERT INTO carte_possesso (owner_identity, carta_definizione_id, quantita, updated_at)
+          `INSERT INTO carte_possesso (user_id, carta_definizione_id, quantita, updated_at)
            VALUES (?, ?, ?, ?)
-           ON CONFLICT(owner_identity, carta_definizione_id)
+           ON CONFLICT(user_id, carta_definizione_id)
            DO UPDATE SET quantita = quantita + excluded.quantita, updated_at = excluded.updated_at`
         )
-        .bind(toIdentity, item.carteDefinizioneId, item.quantita, now)
+        .bind(toUserId, item.carteDefinizioneId, item.quantita, now)
     );
   }
   return statements;
@@ -120,15 +116,26 @@ async function fetchItems(env, tradeId, lato) {
 }
 
 export async function toTradeView(env, trade) {
-  const [offerta, richiesta] = await Promise.all([
+  const [offerta, richiesta, users] = await Promise.all([
     fetchItems(env, trade.id, "offerta"),
-    fetchItems(env, trade.id, "richiesta")
+    fetchItems(env, trade.id, "richiesta"),
+    env.DB
+      .prepare("SELECT id, identity, nickname FROM users WHERE id IN (?, ?)")
+      .bind(trade.proponente_user_id, trade.destinatario_user_id)
+      .all()
   ]);
+  const byId = new Map(users.results.map((user) => [user.id, user]));
+  const proponente = byId.get(trade.proponente_user_id);
+  const destinatario = byId.get(trade.destinatario_user_id);
 
   return {
     id: String(trade.id),
-    proponenteIdentity: trade.proponente_identity,
-    destinatarioIdentity: trade.destinatario_identity,
+    proponenteUserId: trade.proponente_user_id,
+    destinatarioUserId: trade.destinatario_user_id,
+    proponenteIdentity: proponente?.identity ?? null,
+    destinatarioIdentity: destinatario?.identity ?? null,
+    proponenteNickname: proponente?.nickname ?? null,
+    destinatarioNickname: destinatario?.nickname ?? null,
     stato: trade.stato,
     messaggio: trade.messaggio,
     tradePrecedenteId: trade.trade_precedente_id !== null ? String(trade.trade_precedente_id) : null,

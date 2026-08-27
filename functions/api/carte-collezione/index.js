@@ -1,4 +1,5 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
+import { findTradePartner } from "../carte-trade/_users.js";
 
 // Endpoint di sola lettura per Album e Apertura (#e4, Blocco 3) — distinto dagli endpoint CRUD
 // dell'editor admin (carte-sets/carte-designs/carte-definizioni), che restano di competenza di
@@ -18,8 +19,9 @@ export async function onRequestGet(context) {
     const session = await getAuthenticatedSession(request, env);
     if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
 
-    const identityMia = session.user.identity;
-    const identityAltro = identityMia === "lui" ? "lei" : "lui";
+    const partner = await findTradePartner(env, session.user);
+    const userIdMio = session.user.id;
+    const userIdAltro = partner?.id ?? -1;
 
     const { results } = await env.DB
       .prepare(
@@ -40,11 +42,11 @@ export async function onRequestGet(context) {
            )
          ) f
          LEFT JOIN carte_definizioni cd ON cd.design_id = des.id AND cd.finitura = f.finitura
-         LEFT JOIN carte_possesso pm ON pm.carta_definizione_id = cd.id AND pm.owner_identity = ?
-         LEFT JOIN carte_possesso pa ON pa.carta_definizione_id = cd.id AND pa.owner_identity = ?
+         LEFT JOIN carte_possesso pm ON pm.carta_definizione_id = cd.id AND pm.user_id = ?
+         LEFT JOIN carte_possesso pa ON pa.carta_definizione_id = cd.id AND pa.user_id = ?
          ORDER BY s.position, des.position`
       )
-      .bind(identityMia, identityAltro)
+      .bind(userIdMio, userIdAltro)
       .all();
 
     const finituraRank = new Map(FINITURE.map((finitura, index) => [finitura, index]));
@@ -62,7 +64,13 @@ export async function onRequestGet(context) {
       }))
       .sort((a, b) => finituraRank.get(a.finitura) - finituraRank.get(b.finitura));
 
-    return json({ identityMia, identityAltro, carte });
+    return json({
+      identityMia: session.user.identity,
+      identityAltro: partner?.identity ?? null,
+      altroUserId: partner?.id ?? null,
+      altroNickname: partner?.nickname ?? null,
+      carte
+    });
   } catch (error) {
     console.error(JSON.stringify({ event: "carte_collezione_error", message: error.message }));
     return json({ error: "Non è stato possibile leggere la collezione." }, 500);

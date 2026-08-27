@@ -37,7 +37,18 @@ export async function sendEmail(env, { to, subject, html, text }) {
 // solo se ha attivato la preferenza `notify_email_updates` alla registrazione.
 export async function notifyOtherIdentity(env, actorUserId, { subject, html }) {
   const recipient = await env.DB
-    .prepare("SELECT email FROM users WHERE id != ? AND notify_email_updates = 1")
+    .prepare(`
+      SELECT recipient.email
+      FROM users actor
+      JOIN users recipient
+        ON recipient.identity = CASE actor.identity WHEN 'lui' THEN 'lei' ELSE 'lui' END
+       AND recipient.is_test = 0
+      WHERE actor.id = ?
+        AND recipient.id != actor.id
+        AND recipient.notify_email_updates = 1
+      ORDER BY recipient.id
+      LIMIT 1
+    `)
     .bind(actorUserId)
     .first();
 

@@ -3,6 +3,11 @@ name = "the-white-world"
 pages_build_output_dir = "web/dist/web/browser"
 compatibility_date = "2026-08-07"
 
+[[durable_objects.bindings]]
+name = "REALTIME"
+class_name = "RealtimeRoom"
+script_name = "the-white-world-realtime"
+
 [[d1_databases]]
 database_id = "88ced79e-291f-42d0-a114-68473edbc5e7"
 binding = "DB"
@@ -20,3 +25,8 @@ bucket_name = "the-white-world-media"
 [[env.production.r2_buckets]]
 binding = "MEDIA"
 bucket_name = "the-white-world-media"
+
+[[env.production.durable_objects.bindings]]
+name = "REALTIME"
+class_name = "RealtimeRoom"
+script_name = "the-white-world-realtime"

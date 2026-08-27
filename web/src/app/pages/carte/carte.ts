@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService, UserIdentity } from '../../core/auth.service';
@@ -9,6 +10,7 @@ import { CARTA_FINITURE, CARTA_FINITURA_LABELS, CartaFinitura } from '../../shar
 import { CartaBack } from '../../shared/carta-back/carta-back';
 import { CartaPack } from '../../shared/carta-pack/carta-pack';
 import { CartaAlbumPicker, CartaAlbumPickerItem } from '../../shared/carta-album-picker/carta-album-picker';
+import { RealtimeService } from '../../core/realtime.service';
 
 // Stessa formula di streakDayBonus() in functions/api/carte-bustine/_shared.js — qui serve solo
 // per disegnare il calendario, il bonus vero lo assegna sempre il server. Ogni giorno dà
@@ -52,8 +54,12 @@ interface TradeItem {
 
 interface Trade {
   id: string;
+  proponenteUserId: number;
+  destinatarioUserId: number;
   proponenteIdentity: UserIdentity;
   destinatarioIdentity: UserIdentity;
+  proponenteNickname: string | null;
+  destinatarioNickname: string | null;
   stato: TradeStato;
   messaggio: string | null;
   tradePrecedenteId: string | null;
@@ -97,11 +103,14 @@ export class Carte implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly api = inject(ApiService);
   private readonly carteBustineService = inject(CarteBustineService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly realtime = inject(RealtimeService);
 
   protected readonly ownIdentity = computed<UserIdentity>(() => this.authService.currentUser()?.identity ?? 'lei');
   protected readonly otherIdentity = computed<UserIdentity>(() => (this.ownIdentity() === 'lui' ? 'lei' : 'lui'));
   protected readonly ownLabel = computed(() => IDENTITY_LABELS[this.ownIdentity()]);
   protected readonly otherLabel = computed(() => IDENTITY_LABELS[this.otherIdentity()]);
+  protected readonly partnerNickname = signal<string | null>(null);
   protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
 
   protected readonly tab = signal<Tab>('album');
@@ -241,6 +250,13 @@ export class Carte implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     await Promise.all([this.loadBustine(), this.loadCollezione(), this.loadTrades()]);
+    this.realtime.on('carte-trade:changed')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event['actorUserId'] !== this.authService.currentUser()?.id) {
+          void Promise.all([this.loadTrades(), this.loadCollezione()]);
+        }
+      });
     if (this.canEdit()) {
       await this.loadEditorData();
     }
@@ -371,8 +387,9 @@ export class Carte implements OnInit, OnDestroy {
     try {
       const response = await fetch('/api/carte-collezione', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
       if (!response.ok) throw new Error(`Caricamento fallito: ${response.status}`);
-      const data = (await response.json()) as { carte?: CartaCollezione[] };
+      const data = (await response.json()) as { carte?: CartaCollezione[]; altroNickname?: string | null };
       this.collezione.set(data.carte ?? []);
+      this.partnerNickname.set(data.altroNickname ?? null);
     } catch (error) {
       console.error("Errore nel caricamento dell'album:", error);
       this.albumLoadError.set(true);
@@ -439,7 +456,7 @@ export class Carte implements OnInit, OnDestroy {
     if (!id || quantita < 1) return;
     const carta = this.carteAltroPossedute().find((item) => item.definizioneId === id);
     if (!carta || quantita > carta.quantitaAltro) {
-      this.tradeError.set(`${this.otherLabel()} non possiede abbastanza copie di questa carta.`);
+      this.tradeError.set(`${this.partnerNickname() ?? this.otherLabel()} non possiede abbastanza copie di questa carta.`);
       return;
     }
     this.richiestaBozza.update((items) => this.aggiungiOAccorpa(items, id, quantita, carta.quantitaAltro));
@@ -508,8 +525,9 @@ export class Carte implements OnInit, OnDestroy {
   }
 
   protected tradeVerso(trade: Trade): string {
-    const destinatario = trade.destinatarioIdentity === this.ownIdentity() ? 'te' : this.otherLabel();
-    const proponente = trade.proponenteIdentity === this.ownIdentity() ? 'tu' : this.otherLabel();
+    const ownUserId = this.authService.currentUser()?.id;
+    const destinatario = trade.destinatarioUserId === ownUserId ? 'te' : (trade.destinatarioNickname ?? this.otherLabel());
+    const proponente = trade.proponenteUserId === ownUserId ? 'tu' : (trade.proponenteNickname ?? this.otherLabel());
     return `Da ${proponente} a ${destinatario}`;
   }
 

@@ -1,6 +1,7 @@
 import { getAuthenticatedSession, json } from "../../auth/_shared.js";
 import { recordEvent } from "../../_shared/events.js";
 import { notifyOtherIdentity } from "../../_shared/email.js";
+import { notifyRealtime } from "../../_shared/realtime.js";
 import { toTradeView } from "../_shared.js";
 
 // Solo il destinatario può rifiutare una proposta "proposto". Nessuna carta si muove.
@@ -15,7 +16,7 @@ export async function onRequestPost(context) {
 
     const trade = await env.DB.prepare("SELECT * FROM carte_trade WHERE id = ?").bind(tradeId).first();
     if (!trade) return json({ error: "Scambio non trovato." }, 404);
-    if (trade.destinatario_identity !== session.user.identity) {
+    if (trade.destinatario_user_id !== session.user.id) {
       return json({ error: "Non autorizzato." }, 403);
     }
     if (trade.stato !== "proposto") {
@@ -36,6 +37,12 @@ export async function onRequestPost(context) {
     context.waitUntil(notifyOtherIdentity(env, session.user.id, {
       subject: `${session.user.nickname} ha rifiutato il tuo scambio di carte`,
       html: `<p>${session.user.nickname} ha rifiutato il tuo scambio nel gioco di carte.</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`
+    }));
+    context.waitUntil(notifyRealtime(env, {
+      type: "carte-trade:changed",
+      action: "rejected",
+      actorUserId: session.user.id,
+      tradeId
     }));
 
     const updated = await env.DB.prepare("SELECT * FROM carte_trade WHERE id = ?").bind(tradeId).first();

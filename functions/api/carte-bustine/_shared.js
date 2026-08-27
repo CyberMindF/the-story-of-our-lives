@@ -4,25 +4,25 @@
 // principio della pulizia media di ponti_chat_messages), niente Cron Trigger dedicato.
 const MINUTES_PER_PACK = 10;
 
-export async function accrueBustine(env, ownerIdentity) {
+export async function accrueBustine(env, userId) {
   const row = await env.DB
-    .prepare("SELECT owner_identity, quantita_disponibile, minuti_residui, updated_at FROM carte_bustine WHERE owner_identity = ?")
-    .bind(ownerIdentity)
+    .prepare("SELECT user_id, quantita_disponibile, minuti_residui, updated_at FROM carte_bustine WHERE user_id = ?")
+    .bind(userId)
     .first();
 
   const now = new Date();
   if (!row) {
     const iso = now.toISOString();
     await env.DB
-      .prepare("INSERT INTO carte_bustine (owner_identity, quantita_disponibile, minuti_residui, updated_at) VALUES (?, 0, 0, ?)")
-      .bind(ownerIdentity, iso)
+      .prepare("INSERT INTO carte_bustine (user_id, quantita_disponibile, minuti_residui, updated_at) VALUES (?, 0, 0, ?)")
+      .bind(userId, iso)
       .run();
-    return { ownerIdentity, quantitaDisponibile: 0, minutiResidui: 0 };
+    return { userId, quantitaDisponibile: 0, minutiResidui: 0 };
   }
 
   const elapsedMinutes = Math.max(0, Math.floor((now.getTime() - new Date(row.updated_at).getTime()) / 60000));
   if (elapsedMinutes === 0) {
-    return { ownerIdentity, quantitaDisponibile: row.quantita_disponibile, minutiResidui: row.minuti_residui };
+    return { userId, quantitaDisponibile: row.quantita_disponibile, minutiResidui: row.minuti_residui };
   }
 
   const totalMinutes = row.minuti_residui + elapsedMinutes;
@@ -32,11 +32,11 @@ export async function accrueBustine(env, ownerIdentity) {
   const iso = now.toISOString();
 
   await env.DB
-    .prepare("UPDATE carte_bustine SET quantita_disponibile = ?, minuti_residui = ?, updated_at = ? WHERE owner_identity = ?")
-    .bind(quantitaDisponibile, remainingMinutes, iso, ownerIdentity)
+    .prepare("UPDATE carte_bustine SET quantita_disponibile = ?, minuti_residui = ?, updated_at = ? WHERE user_id = ?")
+    .bind(quantitaDisponibile, remainingMinutes, iso, userId)
     .run();
 
-  return { ownerIdentity, quantitaDisponibile, minutiResidui: remainingMinutes };
+  return { userId, quantitaDisponibile, minutiResidui: remainingMinutes };
 }
 
 // Streak "giorni di fila" (#e4, dettagliata il 15/08/2026, rivista lo stesso giorno): premia
@@ -62,10 +62,10 @@ function daysBetween(fromIso, toIso) {
   return Math.round((to.getTime() - from.getTime()) / 86400000);
 }
 
-export async function checkStreak(env, ownerIdentity) {
+export async function checkStreak(env, userId) {
   const row = await env.DB
-    .prepare("SELECT streak_corrente, streak_migliore, ultimo_giorno FROM carte_streak WHERE owner_identity = ?")
-    .bind(ownerIdentity)
+    .prepare("SELECT streak_corrente, streak_migliore, ultimo_giorno FROM carte_streak WHERE user_id = ?")
+    .bind(userId)
     .first();
 
   const now = new Date();
@@ -86,14 +86,14 @@ export async function checkStreak(env, ownerIdentity) {
   const statements = [
     row
       ? env.DB
-          .prepare("UPDATE carte_streak SET streak_corrente = ?, streak_migliore = ?, ultimo_giorno = ?, updated_at = ? WHERE owner_identity = ?")
-          .bind(streakCorrente, streakMigliore, today, iso, ownerIdentity)
+          .prepare("UPDATE carte_streak SET streak_corrente = ?, streak_migliore = ?, ultimo_giorno = ?, updated_at = ? WHERE user_id = ?")
+          .bind(streakCorrente, streakMigliore, today, iso, userId)
       : env.DB
-          .prepare("INSERT INTO carte_streak (owner_identity, streak_corrente, streak_migliore, ultimo_giorno, updated_at) VALUES (?, ?, ?, ?, ?)")
-          .bind(ownerIdentity, streakCorrente, streakMigliore, today, iso),
+          .prepare("INSERT INTO carte_streak (user_id, streak_corrente, streak_migliore, ultimo_giorno, updated_at) VALUES (?, ?, ?, ?, ?)")
+          .bind(userId, streakCorrente, streakMigliore, today, iso),
     env.DB
-      .prepare("UPDATE carte_bustine SET quantita_disponibile = quantita_disponibile + ?, updated_at = ? WHERE owner_identity = ?")
-      .bind(bustineBonus, iso, ownerIdentity)
+      .prepare("UPDATE carte_bustine SET quantita_disponibile = quantita_disponibile + ?, updated_at = ? WHERE user_id = ?")
+      .bind(bustineBonus, iso, userId)
   ];
   await env.DB.batch(statements);
 

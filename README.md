@@ -51,12 +51,24 @@ non interferire con un server che l'utente potrebbe avere già aperto.
 
 Gli endpoint sono organizzati in `functions/api/auth/`:
 
-- `POST /api/auth/register`: registra un nuovo utente e crea una sessione. Il nickname è scelto liberamente in fase di registrazione (facoltativo: se vuoto, resta la parte dell'email prima della chiocciola). La preferenza `notify_email_updates` è impostabile solo qui, non al login, perché prima dell'autenticazione non si conosce ancora l'utente per pre-spuntarla correttamente; salva solo la preferenza, l'invio delle email non è implementato.
+- `POST /api/auth/register`: registra il secondo e ultimo account principale e crea una sessione. Il nickname è scelto liberamente in fase di registrazione (facoltativo: se vuoto, resta la parte dell'email prima della chiocciola). La preferenza `notify_email_updates` è impostabile solo qui, non al login, perché prima dell'autenticazione non si conosce ancora l'utente per pre-spuntarla correttamente; salva solo la preferenza, l'invio delle email non è implementato.
 - `POST /api/auth/login`: verifica email, password e chiave, poi crea una sessione.
 - `GET /api/auth/session`: controlla se il token è ancora valido.
 - `POST /api/auth/session`: con token valido, verifica nuovamente la chiave.
 
 Il token originale viene inviato in un cookie `HttpOnly`; D1 conserva soltanto il suo hash. La sessione scade dopo 7 giorni e viene rinnovata per altri 7 giorni soltanto quando la chiave viene inviata correttamente. Il controllo automatico eseguito all'apertura non prolunga la sessione. La verifica della chiave vale solo per la scheda corrente tramite `sessionStorage`, quindi viene richiesta nuovamente dopo la chiusura della sessione browser.
+
+### Account di prova e rollback
+
+`identity` (`lui`/`lei`) è soltanto una label narrativa. Proprietà e autorizzazioni usano sempre
+`users.id`; anche carte, bustine, streak e scambi appartengono quindi all'account preciso.
+
+Con Modalità admin attiva, `POST /api/auth/test-account` crea un account marcato `is_test=1` e
+`GET /api/auth/test-account` li elenca. Un account test può scrivere soltanto dati personali o
+additivi esplicitamente annullabili: chat testuale, lettere, turni e appunti GDR, cruciverba,
+suggerimenti e bustine. Media, scambi, ricevute di lettura, contenuti editoriali e impostazioni
+condivise sono bloccati. `DELETE /api/auth/test-account/:id` elimina account, sessioni, telemetria
+e tutte le righe che quel test era autorizzato a creare.
 
 ### Pagine protette e ritorno dopo l'accesso
 
@@ -198,6 +210,45 @@ Collega il repository GitHub a Cloudflare Pages usando `npm run build` come coma
 4. esegui un nuovo deployment.
 
 GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1.
+
+## Realtime passivo
+
+L'infrastruttura WebSocket è predisposta e collegata ai flussi selezionati, ma rimane passiva
+finché Worker e binding non vengono pubblicati.
+Il Worker separato `the-white-world-realtime` ospita il Durable Object SQLite-backed
+`RealtimeRoom`; Pages espone `/api/realtime`, autenticato con la sessione esistente, e Angular
+dispone di `RealtimeService`. L'app lo avvia solo se l'endpoint conferma che il binding è attivo.
+
+Le API REST e D1 restano la fonte ufficiale. Quando un flusso verrà abilitato, la relativa
+Function potrà chiamare `notifyRealtime()` soltanto dopo il salvataggio riuscito e il browser
+ricevente usera' l'evento come segnale per ricaricare i dati tramite il normale endpoint GET.
+
+Sono già collegati al canale, ma restano inattivi finché manca il binding: Ponti Chat (nuovi
+messaggi, eliminazioni e letture), Stranger Chat, i turni delle due avventure GDR, Lettere
+(invio e lettura), proposte/risposte agli scambi di carte e Impostazioni del Mondo condivise.
+L'evento contiene l'utente che ha originato la modifica, così la sua stessa scheda non esegue
+un secondo caricamento ridondante.
+
+Per validare e pubblicare il Worker:
+
+```bash
+npm run check:realtime
+npm run deploy:realtime
+```
+
+Il binding Pages è configurato sia per l'ambiente principale sia per `env.production`:
+
+```toml
+[[durable_objects.bindings]]
+name = "REALTIME"
+class_name = "RealtimeRoom"
+script_name = "the-white-world-realtime"
+```
+
+Se il binding non è disponibile, `/api/realtime` risponde intenzionalmente con `503` e il resto
+del sito non è coinvolto. Lo sviluppo locale completo richiede due terminali:
+`npm run dev:realtime` e, dopo la build, `npm run dev:api:realtime`; Angular continua a usare
+il normale `npm start`.
 
 ## Analisi dell'export originale
 
