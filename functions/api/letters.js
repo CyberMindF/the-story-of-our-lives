@@ -14,7 +14,7 @@ export async function onRequestGet(context) {
     const result = await context.env.DB
       .prepare(`
         SELECT letters.id, letters.author_id, users.nickname AS author_nickname,
-               letters.body, letters.created_at, letters.read_at
+               letters.body, letters.created_at, letters.updated_at, letters.read_at
         FROM letters
         INNER JOIN users ON users.id = letters.author_id
         ORDER BY letters.created_at DESC, letters.id DESC
@@ -27,6 +27,7 @@ export async function onRequestGet(context) {
       isMine: row.author_id === session.user.id,
       body: row.body,
       createdAt: row.created_at,
+      updatedAt: row.updated_at,
       readAt: row.read_at
     }));
 
@@ -50,10 +51,14 @@ export async function onRequestPost(context) {
     }
 
     const createdAt = new Date().toISOString();
-    const result = await context.env.DB
-      .prepare("INSERT INTO letters (author_id, body, created_at) VALUES (?, ?, ?)")
-      .bind(session.user.id, text, createdAt)
-      .run();
+    const [result] = await context.env.DB.batch([
+      context.env.DB
+        .prepare("INSERT INTO letters (author_id, body, created_at) VALUES (?, ?, ?)")
+        .bind(session.user.id, text, createdAt),
+      context.env.DB
+        .prepare("DELETE FROM letter_drafts WHERE user_id = ?")
+        .bind(session.user.id)
+    ]);
 
     context.waitUntil(recordEvent(
       context.env,

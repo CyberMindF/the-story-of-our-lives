@@ -7,6 +7,8 @@ const SAFE_TEST_MUTATIONS = [
   { method: "DELETE", pattern: /^\/api\/ponti-chat\/\d+$/ },
   { method: "POST", pattern: /^\/api\/stranger-chat$/ },
   { method: "POST", pattern: /^\/api\/letters$/ },
+  { method: "PUT", pattern: /^\/api\/letters\/draft$/ },
+  { method: "PUT", pattern: /^\/api\/letters\/\d+$/ },
   { method: "POST", pattern: /^\/api\/gdr\/turns$/ },
   { method: "POST", pattern: /^\/api\/gdr\/notes$/ },
   { method: "POST", pattern: /^\/api\/suggestions$/ },

@@ -31,6 +31,7 @@ export async function onRequestDelete(context) {
       "DELETE FROM ponti_chat_messages WHERE created_by = ?",
       "DELETE FROM stranger_chat_messages WHERE created_by = ?",
       "DELETE FROM letters WHERE author_id = ?",
+      "DELETE FROM letter_drafts WHERE user_id = ?",
       "DELETE FROM gdr_turns WHERE author_id = ?",
       "DELETE FROM gdr_notes WHERE user_id = ?",
       "DELETE FROM gdr_characters WHERE user_id = ?",

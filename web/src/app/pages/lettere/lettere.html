@@ -8,12 +8,15 @@
   <form class="letter-form" aria-label="Scrivi una lettera" #letterForm (ngSubmit)="submitLetter(letterForm)">
     <label class="letter-field">
       <span>La tua lettera</span>
-      <textarea name="body" required maxlength="20000" placeholder="Scrivi qui..."></textarea>
+      <textarea name="body" required maxlength="20000" placeholder="Scrivi qui..." [ngModel]="draftBody()" (ngModelChange)="onDraftInput($event)"></textarea>
     </label>
     <div class="letter-submit-row">
       <button type="submit" class="btn btn-submit" [disabled]="submission.submitting()">Invia lettera</button>
     </div>
     <app-form-status [message]="submission.message()" [status]="submission.status()" />
+    @if (draftStatus()) {
+      <p class="letter-draft-status" aria-live="polite">{{ draftStatus() }}</p>
+    }
   </form>
 
   <section class="lettere-archive" aria-labelledby="archive-title">
@@ -56,21 +59,35 @@
   <div #dialogPaper class="letter-paper card--handwritten" [class.is-turning-next]="pageTurnDirection() === 'next'" [class.is-turning-previous]="pageTurnDirection() === 'previous'" [style.--letter-rotation]="dialogRotation() + 'deg'">
     @if (dialogLetter(); as letter) {
       <p class="letter-paper-date">{{ formatDate(letter.createdAt) }}</p>
-      <div class="letter-pager">
-        <div #pagerViewport class="letter-pager-viewport">
-          <div #pagerContent class="letter-pager-content handwritten-text" [style.transform]="pagerTransform()">
-            <p class="letter-paper-body">{{ letter.body }}</p>
+      @if (editingLetter()) {
+        <div class="letter-edit">
+          <textarea maxlength="20000" [ngModel]="editBody()" (ngModelChange)="editBody.set($event)" aria-label="Modifica il testo della lettera"></textarea>
+          @if (editError()) { <p class="letter-edit-error">{{ editError() }}</p> }
+          <div class="letter-edit-actions">
+            <button type="button" class="btn" (click)="cancelEditingLetter()" [disabled]="editSaving()">Annulla</button>
+            <button type="button" class="btn btn-submit" (click)="saveEditedLetter()" [disabled]="editSaving() || !editBody().trim()">{{ editSaving() ? 'Salvataggio…' : 'Salva modifica' }}</button>
           </div>
         </div>
-      </div>
-      <footer class="letter-paper-footer">
-        @if (letterPageCount() > 1) {
-          <p class="letter-pager-indicator">{{ letterPage() + 1 }} / {{ letterPageCount() }}</p>
-        }
-        @if (letterPage() === letterPageCount() - 1) {
-          <p class="letter-paper-signature handwritten-text">~ {{ letter.author }}</p>
-        }
-      </footer>
+      } @else {
+        <div class="letter-pager">
+          <div #pagerViewport class="letter-pager-viewport">
+            <div #pagerContent class="letter-pager-content handwritten-text" [style.transform]="pagerTransform()">
+              <p class="letter-paper-body">{{ letter.body }}</p>
+            </div>
+          </div>
+        </div>
+        <footer class="letter-paper-footer">
+          @if (letterPageCount() > 1) {
+            <p class="letter-pager-indicator">{{ letterPage() + 1 }} / {{ letterPageCount() }}</p>
+          }
+          @if (letter.isMine) {
+            <button type="button" class="letter-edit-button" (click)="startEditingLetter()">Modifica</button>
+          }
+          @if (letterPage() === letterPageCount() - 1) {
+            <p class="letter-paper-signature handwritten-text">~ {{ letter.author }}</p>
+          }
+        </footer>
+      }
     }
   </div>
   @if (dialogLetter() && letterPageCount() > 1) {

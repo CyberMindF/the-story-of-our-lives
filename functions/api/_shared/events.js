@@ -22,6 +22,7 @@ const ALLOWED_EVENTS = new Set([
   // Gli appunti (autosalvati a ogni pausa di scrittura) restano esclusi: sarebbero rumorosi
   // quanto tracciare i tasti, l'apertura della pagina è già coperta da world_page_opened.
   "letter_sent",
+  "letter_edited",
   "gdr_turn_submitted",
   "gdr_character_saved",
   "suggestion_sent",
