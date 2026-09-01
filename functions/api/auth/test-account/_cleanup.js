@@ -41,7 +41,6 @@ export async function clearTestAccountData(env, userId) {
     own("DELETE FROM events WHERE user_id = ?"),
     own("DELETE FROM visit_session_links WHERE user_id = ?"),
     own("DELETE FROM password_reset_tokens WHERE user_id = ?"),
-    own("DELETE FROM user_access_ips WHERE user_id = ?"),
     own("DELETE FROM sessions WHERE user_id = ?")
   ]);
 
