@@ -44,7 +44,7 @@
         </label>
         <label class="form-field global-chat-text-field">
           <textarea name="globalChatText" rows="1" maxlength="2000" aria-label="Messaggio" placeholder="Scrivi un messaggio…"
-            [ngModel]="text()" (ngModelChange)="text.set($event)"></textarea>
+            [ngModel]="text()" (ngModelChange)="text.set($event)" (keydown)="onComposerKeydown($event)"></textarea>
         </label>
         <button class="btn btn-submit global-chat-send" type="submit" [disabled]="sending() || (!text().trim() && !pendingFile())" aria-label="Invia messaggio">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.4 20.4 18-8a.45.45 0 0 0 0-.82l-18-8A.45.45 0 0 0 2.8 4l1.8 6.55L14 12l-9.4 1.45L2.8 20a.45.45 0 0 0 .6.4Z"/></svg>

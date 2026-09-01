@@ -19,7 +19,9 @@
   box-shadow: none;
   backdrop-filter: blur(20px) saturate(145%);
   -webkit-backdrop-filter: blur(20px) saturate(145%);
-  transform: translate(-1px, -50%);
+  /* Sovrapposizione intenzionale: evita che l'arrotondamento sub-pixel durante la
+     transizione mostri una fessura tra il foglio e la sua maniglia. */
+  transform: translate(-3px, -50%);
 }
 
 .world-navigation-action {
@@ -110,15 +112,15 @@
 
 .world-navigation-sheet {
   box-sizing: border-box;
-  width: calc(100% - 3.4rem);
+  width: calc(100% - 3.35rem);
   height: 100%;
   padding: max(1.2rem, env(safe-area-inset-top)) 1.15rem max(1.5rem, env(safe-area-inset-bottom));
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
-  border-right: 1px solid var(--panel-border-color);
+  border-right: 0;
   background: var(--navigation-sheet-bg);
-  box-shadow: var(--shadow);
+  box-shadow: none;
   backdrop-filter: blur(20px) saturate(145%);
   -webkit-backdrop-filter: blur(20px) saturate(145%);
 }

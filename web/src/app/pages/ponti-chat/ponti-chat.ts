@@ -180,6 +180,12 @@ export class PontiChat implements OnInit {
     }
   }
 
+  protected onComposerKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter' || event.shiftKey) return;
+    event.preventDefault();
+    void this.send();
+  }
+
   protected mediaUrl(message: ChatMessage): string {
     return `/api/media/${message.mediaKey}`;
   }

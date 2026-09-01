@@ -48,6 +48,12 @@ export class GlobalChatWidget {
     afterNextRender(() => this.scrollToBottom());
   }
 
+  protected onComposerKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter' || event.shiftKey) return;
+    event.preventDefault();
+    void this.send();
+  }
+
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];

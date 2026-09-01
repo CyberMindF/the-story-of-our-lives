@@ -54,7 +54,7 @@
           <input #fileInput type="file" accept="image/*,video/*" (change)="onFileSelected($event)" hidden />
         </label>
         <textarea class="chat-compose-input" [ngModel]="composeText()" (ngModelChange)="composeText.set($event)"
-          name="composeText" maxlength="2000" placeholder="Scrivi un messaggio..."></textarea>
+          name="composeText" maxlength="2000" placeholder="Scrivi un messaggio..." (keydown)="onComposerKeydown($event)"></textarea>
         <button type="submit" class="btn btn-submit" [disabled]="sending() || (!composeText().trim() && !pendingFile())">
           {{ uploading() ? 'Invio allegato…' : sending() ? 'Invio…' : 'Invia' }}
         </button>
