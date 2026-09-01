@@ -69,6 +69,21 @@
           @if (activityLoggingMessage()) { <p class="profilo-test-message" role="status">{{ activityLoggingMessage() }}</p> }
         </div>
 
+        <form class="profilo-admin-notify" aria-label="Avvisa via email" (ngSubmit)="submitNotify()">
+          <div>
+            <h3>Avvisa via email</h3>
+            <p class="profilo-admin-note">Manda un’email per far sapere che c’è qualcosa di nuovo. Arriva solo se l’altra persona ha attivato le notifiche email.</p>
+          </div>
+          <label class="form-field">
+            <span>Messaggio (facoltativo)</span>
+            <textarea name="notifyMessage" rows="3" maxlength="500" [(ngModel)]="notifyMessage" placeholder="Ci sono novità sul Mondo Bianco."></textarea>
+          </label>
+          <div class="form-submit-row">
+            <button type="submit" class="btn btn-submit" [disabled]="notifyLoading()">Manda avviso</button>
+          </div>
+          <app-form-status [message]="notifyResultMessage()" [status]="notifyStatus()" />
+        </form>
+
         <div class="profilo-test-accounts">
           <div>
             <h3>Account di collaudo</h3>
@@ -122,19 +137,6 @@
       }
     </section>
   }
-
-  <form class="profilo-form card" aria-label="Avvisa via email" (ngSubmit)="submitNotify()">
-    <h2>Avvisa via email</h2>
-    <p class="profilo-admin-note">Manda un'email per far sapere che c'è qualcosa di nuovo. Arriva solo se l'altra persona ha attivato le notifiche email.</p>
-    <label class="form-field">
-      <span>Messaggio (facoltativo)</span>
-      <textarea name="notifyMessage" rows="3" maxlength="500" [(ngModel)]="notifyMessage" placeholder="Ci sono novità sul Mondo Bianco."></textarea>
-    </label>
-    <div class="form-submit-row">
-      <button type="submit" class="btn btn-submit" [disabled]="notifyLoading()">Manda avviso</button>
-    </div>
-    <app-form-status [message]="notifyResultMessage()" [status]="notifyStatus()" />
-  </form>
 
   <app-confirmation-dialog dialogId="test-account-action"
     [title]="testAction() === 'reset' ? 'Ripulire i dati di questo account?' : 'Eliminare definitivamente questo account?'"

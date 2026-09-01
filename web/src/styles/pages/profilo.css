@@ -22,6 +22,8 @@
 .profilo-logging-user { padding: .75rem !important; border: 1px solid var(--panel-border-color); border-radius: .85rem; background: var(--button-bg); }
 .profilo-logging-user .settings-toggle-title { font-size: .9rem; }
 .profilo-logging-user .settings-toggle-description { overflow-wrap: anywhere; }
+.profilo-admin-notify { display: grid; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--panel-border-color); }
+.profilo-admin-notify h3 { margin: 0 0 .35rem; font-size: 1rem; }
 .profilo-test-accounts { display: grid; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--panel-border-color); }
 .profilo-test-accounts h3 { margin: 0 0 .35rem; font-size: 1rem; }
 .profilo-test-create { display: grid; gap: .8rem; }

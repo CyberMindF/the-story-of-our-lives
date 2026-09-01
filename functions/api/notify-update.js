@@ -1,16 +1,20 @@
 import { getAuthenticatedSession, json } from "./auth/_shared.js";
 import { recordEvent } from "./_shared/events.js";
 import { notifyOtherIdentity } from "./_shared/email.js";
+import { hasPermission } from "./_shared/permissions.js";
 import { normalizeRequiredText } from "./_shared/text.js";
 
 const MAX_MESSAGE_LENGTH = 500;
 
-// Notifica manuale: chi è loggato avvisa l'altra identità di un aggiornamento sul sito.
+// Notifica manuale riservata all'admin: avvisa l'altra identità di un aggiornamento sul sito.
 // Non invia nulla se l'altra identità non ha attivato notify_email_updates alla registrazione.
 export async function onRequestPost(context) {
   try {
     const session = await getAuthenticatedSession(context.request, context.env);
     if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
+    if (!session.adminModeEnabled || !hasPermission(session.user.role, "content.edit")) {
+      return json({ error: "Non autorizzato." }, 403);
+    }
 
     const body = await context.request.json().catch(() => null);
     const message = normalizeRequiredText(body?.message, MAX_MESSAGE_LENGTH) || "Ci sono novità sul Mondo Bianco.";
