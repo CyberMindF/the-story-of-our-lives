@@ -6,6 +6,33 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
+- #e20 — Commenti di Desy sulle foto della Bacheca (**prima di UNO**): permettere a lei di
+  lasciare un commento direttamente sulla singola foto, mantenendo distinta la didascalia
+  editoriale già presente. Il commento deve appartenere all'account tramite `user_id` (mai alla
+  label `lui`/`lei`) e riferirsi a un identificatore stabile della foto, non alla sua posizione
+  nel layout, così riordini e modifiche della giornata non lo scollegano. Da decidere in fase di
+  implementazione se consentire un solo commento modificabile per account/foto o un piccolo
+  thread; per il bisogno attuale è preferibile la prima variante, più semplice e intima.
+  Progettare il modello come annotazione riutilizzabile, con etichette diverse a seconda del
+  luogo: pensiero su una Storia, ricordo associato a una canzone delle Cuffiette, nota su una
+  Ricetta o un'attività dell'Agenda, ed eventualmente pensiero successivo a un evento del
+  Calendario. Non aggiungerlo a Lettere, GDR, Ponti, Stranger Chat, scambi o Capsule, dove
+  duplicherebbe flussi già esistenti o ne snaturerebbe il senso.
+- #e22 — Chat globale e notifiche: riusare la Chat dei Ponti come **unica conversazione** e
+  renderla accessibile da tutte le pagine tramite un widget compatto nel guscio condiviso,
+  simile al Messenger di Facebook (pulsante flottante, pannello espandibile, composer allineato,
+  cronologia recente e link alla vista completa). Nessun iframe e nessuna seconda tabella di
+  messaggi: stesso endpoint, stessi media, stesso realtime. Prima uniformare messaggi e
+  autorizzazioni su `sender_user_id`/`users.id`, lasciando `sender_identity` solo come label.
+  Aggiungere unread per account e badge globale; come primo livello, notifiche in-app e titolo
+  della scheda. Le notifiche browser vanno richieste solo con consenso esplicito e sono una fase
+  successiva; evitare email per ogni messaggio.
+- #e21 — UNO nativo del Mondo Bianco, successivo ai commenti foto: mini-app nostra eventualmente
+  isolata in un iframe same-origin, senza servizi o giochi esterni. Pages Functions per
+  creazione/storico, Durable Object come stato autorevole della partita e WebSocket per turni,
+  mosse e riconnessione; D1 conserva partite concluse e statistiche. Deve riusare la sessione
+  esistente, inviare a ogni account soltanto la propria mano e restare separato dai flussi
+  normali del sito. Prima versione pensata per Rory e Desy, senza spettatori o matchmaking.
 - #e19 — Presenza online leggera: aggiornare un campo `last_seen_at` sfruttando soltanto le
   chiamate API che l'utente effettua già mentre usa il sito, senza introdurre un heartbeat o
   richieste periodiche dedicate. Mostrare uno stato indicativo (per esempio "Online", "Online
