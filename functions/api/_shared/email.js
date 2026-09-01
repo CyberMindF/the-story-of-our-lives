@@ -17,7 +17,13 @@ export async function sendEmail(env, { to, subject, html, text }) {
         Authorization: `Bearer ${env.RESEND_API_KEY}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ from: FROM_ADDRESS, to: [to], subject, html, text })
+      body: JSON.stringify({
+        from: FROM_ADDRESS,
+        to: [to],
+        subject,
+        html: renderEmailTemplate({ subject, content: html }),
+        text
+      })
     });
 
     if (!response.ok) {
@@ -31,6 +37,56 @@ export async function sendEmail(env, { to, subject, html, text }) {
     console.error(JSON.stringify({ event: "email_send_error", message: error.message }));
     return { sent: false };
   }
+}
+
+// Un solo involucro per tutte le email: i singoli flussi devono fornire soltanto il loro
+// contenuto. Gli stili sono inline perché restano la soluzione più affidabile tra Gmail,
+// Apple Mail e gli altri client che eliminano o limitano i fogli di stile nell'HTML.
+export function renderEmailTemplate({ subject, content }) {
+  const safeSubject = escapeHtml(subject);
+  const decoratedContent = String(content || "")
+    .replace(/<p>/g, '<p style="margin:0 0 18px;color:#d1dde6;font-size:16px;line-height:1.65;">')
+    .replace(
+      /<a\s/g,
+      '<a style="display:inline-block;padding:12px 20px;border-radius:999px;background:#e9cf9d;color:#141f32;font-weight:700;text-decoration:none;" '
+    );
+
+  return `<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>${safeSubject}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#0d1626;font-family:Arial,Helvetica,sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#0d1626;">
+      <tr>
+        <td align="center" style="padding:36px 16px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#141f32;border:1px solid #334056;border-radius:22px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.28);">
+            <tr>
+              <td style="padding:28px 34px 22px;border-bottom:1px solid #334056;text-align:center;">
+                <div style="margin-bottom:8px;color:#e9cf9d;font-size:12px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;">Un messaggio dal</div>
+                <div style="color:#f4f7fb;font-family:Georgia,'Times New Roman',serif;font-size:27px;font-weight:700;">Il Mondo Bianco</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:32px 34px 20px;">
+                <h1 style="margin:0 0 22px;color:#f4f7fb;font-family:Georgia,'Times New Roman',serif;font-size:25px;line-height:1.3;">${safeSubject}</h1>
+                ${decoratedContent}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 34px 28px;border-top:1px solid #334056;color:#8fa0b5;font-size:12px;line-height:1.55;text-align:center;">
+                Questa email arriva dal vostro spazio nel Mondo Bianco.<br>
+                <a href="https://il-mondo-bianco.com" style="color:#e9cf9d;text-decoration:none;">il-mondo-bianco.com</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
 }
 
 // Avvisa l'altra identità (rispetto a chi ha compiuto l'azione) di un aggiornamento sul sito,
