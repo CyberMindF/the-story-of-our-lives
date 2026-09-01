@@ -6,16 +6,18 @@
 .world-navigation-rail {
   position: fixed;
   top: 50%;
-  left: max(0.7rem, env(safe-area-inset-left));
+  left: 0;
   z-index: 70;
   display: grid;
   gap: 0.38rem;
-  padding: 0.38rem;
+  padding: 0.48rem 0.48rem 0.48rem max(0.34rem, env(safe-area-inset-left));
   border: 1px solid var(--panel-border-color);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--panel-color) 88%, transparent);
+  border-left: 0;
+  border-radius: 0 1.65rem 1.65rem 0;
+  background: color-mix(in srgb, var(--bg-color) 68%, transparent);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px) saturate(135%);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
   transform: translateY(-50%);
 }
 
@@ -61,6 +63,7 @@
 }
 
 .world-navigation-dialog {
+  --navigation-closed-transform: translateX(-100%);
   box-sizing: border-box;
   width: min(25rem, calc(100% - 1rem));
   max-width: none;
@@ -76,11 +79,43 @@
   background: color-mix(in srgb, var(--bg-color) 96%, var(--text-color) 4%);
   color: var(--text-color);
   box-shadow: var(--shadow);
+  opacity: 0;
+  transform: var(--navigation-closed-transform);
+  transition:
+    transform 300ms cubic-bezier(.22, .8, .28, 1),
+    opacity 180ms ease,
+    display 300ms allow-discrete,
+    overlay 300ms allow-discrete;
+}
+
+.world-navigation-dialog[open] {
+  opacity: 1;
+  transform: translate(0);
 }
 
 .world-navigation-dialog::backdrop {
   background: color-mix(in srgb, var(--text-color) 32%, transparent);
   backdrop-filter: blur(3px);
+  opacity: 0;
+  transition:
+    opacity 240ms ease,
+    display 300ms allow-discrete,
+    overlay 300ms allow-discrete;
+}
+
+.world-navigation-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .world-navigation-dialog[open] {
+    opacity: 0;
+    transform: var(--navigation-closed-transform);
+  }
+
+  .world-navigation-dialog[open]::backdrop {
+    opacity: 0;
+  }
 }
 
 .world-navigation-sheet {
@@ -193,27 +228,24 @@
   box-shadow: inset 0 0 0 1px var(--focus-color);
 }
 
-@media (max-width: 1100px) {
-  .world-navigation-rail {
-    top: auto;
-    bottom: max(0.65rem, env(safe-area-inset-bottom));
-    left: 50%;
-    grid-auto-flow: column;
-    transform: translateX(-50%);
-  }
-}
-
 @media (max-width: 680px) {
   .world-navigation-dialog {
-    width: 100%;
-    height: min(78dvh, 42rem);
-    margin: auto 0 0;
-    border-top: 1px solid var(--panel-border-color);
-    border-right: 0;
-    border-radius: 1.35rem 1.35rem 0 0;
+    width: min(25rem, calc(100% - 0.75rem));
+    height: 100dvh;
+    margin: 0 auto 0 0;
+    border-top: 0;
+    border-right: 1px solid var(--panel-border-color);
+    border-radius: 0 1.35rem 1.35rem 0;
   }
 
   .world-navigation-sheet {
     padding-top: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-navigation-dialog,
+  .world-navigation-dialog::backdrop {
+    transition-duration: 1ms;
   }
 }
