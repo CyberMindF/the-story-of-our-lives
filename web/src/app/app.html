@@ -21,3 +21,6 @@
   </aside>
 }
 <router-outlet />
+@if (authService.currentUser()) {
+  <app-global-chat-widget />
+}

@@ -3,20 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { AppShell } from '../../shell/app-shell';
-import { AuthService, UserIdentity } from '../../core/auth.service';
+import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { RealtimeService } from '../../core/realtime.service';
-
-interface ChatMessage {
-  id: string;
-  senderIdentity: UserIdentity;
-  body: string | null;
-  mediaKey: string | null;
-  mediaType: 'photo' | 'video' | null;
-  readAt: string | null;
-  createdAt: string;
-}
+import { ChatMessage } from '../../core/global-chat.service';
 
 const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 200 * 1024 * 1024;
@@ -38,7 +29,7 @@ export class PontiChat implements OnInit {
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
   @ViewChild('log') private log?: ElementRef<HTMLElement>;
 
-  protected readonly ownIdentity = computed<UserIdentity>(() => this.authService.currentUser()?.identity ?? 'lei');
+  protected readonly ownUserId = computed(() => this.authService.currentUser()?.id ?? null);
 
   protected readonly messages = signal<ChatMessage[]>([]);
   protected readonly loading = signal(true);

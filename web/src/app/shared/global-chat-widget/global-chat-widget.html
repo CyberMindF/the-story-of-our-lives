@@ -1,0 +1,33 @@
+<aside class="global-chat" [class.is-open]="open()">
+  @if (open()) {
+    <section class="global-chat-panel" aria-label="Chat globale">
+      <header class="global-chat-header">
+        <div><strong>Chat</strong><small>La conversazione dei Ponti</small></div>
+        <button type="button" class="global-chat-close" (click)="toggle()" aria-label="Chiudi chat">×</button>
+      </header>
+      <div class="global-chat-log" #log aria-live="polite">
+        @if (chat.loading()) { <p class="global-chat-empty">Caricamento…</p> }
+        @if (!chat.loading() && chat.messages().length === 0) { <p class="global-chat-empty">Ancora nessun messaggio.</p> }
+        @for (message of chat.messages(); track message.id) {
+          <article class="global-chat-message" [class.is-own]="message.senderUserId === chat.ownUserId()">
+            @if (message.mediaType === 'photo' && message.mediaKey) { <img [src]="mediaUrl(message)" alt="" /> }
+            @if (message.mediaType === 'video' && message.mediaKey) { <span class="global-chat-attachment">🎬 Video allegato</span> }
+            @if (message.body) { <p>{{ message.body }}</p> }
+            <time>{{ message.createdAt | date: 'HH:mm' }}</time>
+          </article>
+        }
+      </div>
+      <form class="global-chat-compose" (ngSubmit)="send()">
+        <textarea name="globalChatText" rows="1" maxlength="2000" placeholder="Scrivi un messaggio…"
+          [ngModel]="text()" (ngModelChange)="text.set($event)"></textarea>
+        <button class="btn btn-submit" type="submit" [disabled]="sending() || !text().trim()" aria-label="Invia messaggio">➤</button>
+      </form>
+      @if (error()) { <p class="global-chat-error" role="status">{{ error() }}</p> }
+      <a class="global-chat-full" routerLink="/ponti-chat" (click)="toggle()">Apri la conversazione completa</a>
+    </section>
+  }
+  <button type="button" class="global-chat-trigger" (click)="toggle()" [attr.aria-expanded]="open()" aria-label="Apri la chat globale">
+    <span aria-hidden="true">💬</span>
+    @if (chat.unreadCount()) { <strong class="global-chat-badge">{{ chat.unreadCount() > 99 ? '99+' : chat.unreadCount() }}</strong> }
+  </button>
+</aside>

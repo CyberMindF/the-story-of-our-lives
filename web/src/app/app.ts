@@ -23,6 +23,8 @@ import { WorldShootingStars } from './shared/world-shooting-stars';
 import { WorldStickers } from './shared/world-stickers';
 import { WorldBalloons } from './shared/world-balloons';
 import { WorldFireworks } from './shared/world-fireworks';
+import { GlobalChatWidget } from './shared/global-chat-widget/global-chat-widget';
+import { GlobalChatService } from './core/global-chat.service';
 
 // Eventi usati come "prova di attività" per rinnovare lo sblocco della Chiave (vedi
 // AuthService.touchAccessUnlock) — non serve seguire ogni movimento del mouse, basta sapere
@@ -54,7 +56,7 @@ const ROUTE_BODY_CLASSES = [
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, WorldStars, WorldShootingStars, WorldLanterns, WorldMoon, WorldSparkles, WorldLeaves, WorldWaves, WorldFish, WorldPetals, WorldBubbles, WorldHearts, WorldPearlShimmers, WorldSilk, WorldStickers, WorldBalloons, WorldFireworks],
+  imports: [RouterOutlet, GlobalChatWidget, WorldStars, WorldShootingStars, WorldLanterns, WorldMoon, WorldSparkles, WorldLeaves, WorldWaves, WorldFish, WorldPetals, WorldBubbles, WorldHearts, WorldPearlShimmers, WorldSilk, WorldStickers, WorldBalloons, WorldFireworks],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -64,9 +66,10 @@ export class App {
   private readonly destroyRef = inject(DestroyRef);
   private readonly themeService = inject(ThemeService);
   private readonly worldSettingsService = inject(WorldSettingsService);
-  private readonly authService = inject(AuthService);
+  protected readonly authService = inject(AuthService);
   private readonly carteBustineService = inject(CarteBustineService);
   private readonly realtimeService = inject(RealtimeService);
+  private readonly globalChat = inject(GlobalChatService);
   private lastActivityTouchAt = 0;
   private readonly currentAssetSignature = this.assetSignature(document);
   private checkingBuildVersion = false;
@@ -114,12 +117,14 @@ export class App {
     effect(() => {
       const userId = this.authService.currentUser()?.id;
       if (userId === undefined) {
+        this.globalChat.clear();
         this.carteBustineService.clear();
         this.realtimeService.disconnect();
         this.worldSettingsLoadedForUserId = null;
         return;
       }
       this.realtimeService.connect();
+      void this.globalChat.startForCurrentUser();
       void this.carteBustineService.load(userId).catch((error) => {
         console.warn('Impossibile aggiornare la streak di accesso:', error);
       });

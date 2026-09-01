@@ -15,7 +15,7 @@
       @if (!loading() && messages().length === 0) { <p class="content-message">Ancora nessun messaggio.</p> }
 
       @for (message of messages(); track message.id) {
-      <article class="chat-bubble" [class.chat-bubble--own]="message.senderIdentity === ownIdentity()">
+      <article class="chat-bubble" [class.chat-bubble--own]="message.senderUserId === ownUserId()">
         @if (message.mediaType === 'photo' && message.mediaKey) {
         <img class="chat-media chat-media--photo" [src]="mediaUrl(message)" alt="" />
         }
@@ -28,7 +28,7 @@
         @if (message.body) { <p class="chat-bubble-text">{{ message.body }}</p> }
         <div class="chat-bubble-meta">
           <time>{{ message.createdAt | date: 'dd/MM HH:mm' }}</time>
-          @if (message.senderIdentity === ownIdentity()) {
+          @if (message.senderUserId === ownUserId()) {
           <button type="button" class="chat-delete-btn" (click)="requestDelete(message.id)" aria-label="Elimina messaggio">🗑️</button>
           }
         </div>

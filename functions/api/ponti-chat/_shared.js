@@ -22,6 +22,7 @@ export function mediaExpiryFromNow() {
 export function toMessageView(row) {
   return {
     id: String(row.id),
+    senderUserId: row.sender_user_id,
     senderIdentity: row.sender_identity,
     body: row.body,
     mediaKey: row.media_key,

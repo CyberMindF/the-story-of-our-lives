@@ -15,7 +15,7 @@ export async function onRequestDelete(context) {
 
     const existing = await env.DB.prepare("SELECT * FROM ponti_chat_messages WHERE id = ?").bind(id).first();
     if (!existing) return json({ error: "Messaggio non trovato." }, 404);
-    if (existing.created_by !== session.user.id) {
+    if (existing.sender_user_id !== session.user.id) {
       return json({ error: "Non puoi eliminare un messaggio che non hai scritto." }, 403);
     }
 

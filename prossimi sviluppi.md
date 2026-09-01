@@ -6,6 +6,14 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
+- #e23 — Aggiornamento del sito notificato in diretta via WebSocket: quando viene pubblicata una
+  nuova build, inviare ai client connessi un evento realtime con l'identificatore della versione,
+  così l'avviso "Ho aggiornato il Mondo Bianco" compare subito senza aspettare il controllo
+  periodico attuale (ogni 5 minuti) o il ritorno della scheda in primo piano. Il segnale deve essere
+  emesso dal flusso di deploy solo dopo che la nuova versione è effettivamente disponibile; il client
+  confronta l'identificatore ricevuto con quello della build caricata e ignora eventi duplicati o
+  relativi alla stessa versione. Conservare il controllo HTTP già esistente come fallback per chi era
+  offline, si collega dopo il deploy o perde l'evento WebSocket; nessun polling aggiuntivo.
 - #e20 — Commenti di Desy sulle foto della Bacheca (**prima di UNO**): permettere a lei di
   lasciare un commento direttamente sulla singola foto, mantenendo distinta la didascalia
   editoriale già presente. Il commento deve appartenere all'account tramite `user_id` (mai alla
@@ -18,7 +26,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Ricetta o un'attività dell'Agenda, ed eventualmente pensiero successivo a un evento del
   Calendario. Non aggiungerlo a Lettere, GDR, Ponti, Stranger Chat, scambi o Capsule, dove
   duplicherebbe flussi già esistenti o ne snaturerebbe il senso.
-- #e22 — Chat globale e notifiche: riusare la Chat dei Ponti come **unica conversazione** e
+- [x] #e22 — Chat globale e notifiche: riusare la Chat dei Ponti come **unica conversazione** e
   renderla accessibile da tutte le pagine tramite un widget compatto nel guscio condiviso,
   simile al Messenger di Facebook (pulsante flottante, pannello espandibile, composer allineato,
   cronologia recente e link alla vista completa). Nessun iframe e nessuna seconda tabella di
@@ -26,7 +34,13 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   autorizzazioni su `sender_user_id`/`users.id`, lasciando `sender_identity` solo come label.
   Aggiungere unread per account e badge globale; come primo livello, notifiche in-app e titolo
   della scheda. Le notifiche browser vanno richieste solo con consenso esplicito e sono una fase
-  successiva; evitare email per ogni messaggio.
+  successiva; evitare email per ogni messaggio. **Implementato il 01/09/2026**: widget globale
+  Messenger-style montato alla radice della SPA per ogni sessione autenticata, cronologia recente,
+  invio testuale e link alla vista completa (che conserva allegati e cancellazione). La tabella
+  messaggi resta unica; `sender_user_id` e la tabella `ponti_chat_reads` rendono proprietà e unread
+  per-account, con backfill dei messaggi esistenti da `created_by`. Realtime aggiorna widget e badge;
+  il numero di non letti compare anche nel titolo della scheda. Nessuna richiesta di permesso browser
+  e nessuna email, come previsto per questo primo livello.
 - #e21 — UNO nativo del Mondo Bianco, successivo ai commenti foto: mini-app nostra eventualmente
   isolata in un iframe same-origin, senza servizi o giochi esterni. Pages Functions per
   creazione/storico, Durable Object come stato autorevole della partita e WebSocket per turni,

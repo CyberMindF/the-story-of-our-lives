@@ -1,20 +1,22 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { notifyRealtime } from "../_shared/realtime.js";
 
-// Segna come lette tutte le righe dell'altra identità non ancora lette — chiamato
-// all'apertura della pagina, silenzioso (nessun evento di telemetria: sarebbe rumoroso
-// quanto tracciare l'apertura di ogni singolo messaggio, la pagina è già coperta da
-// world_page_opened).
+// Conserva per ogni account il punto fino al quale la conversazione e' stata letta.
 export async function onRequestPost(context) {
   const { env, request } = context;
   try {
     const session = await getAuthenticatedSession(request, env);
     if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
 
+    const latest = await env.DB.prepare("SELECT COALESCE(MAX(id), 0) AS id FROM ponti_chat_messages").first();
     const now = new Date().toISOString();
     const result = await env.DB
-      .prepare("UPDATE ponti_chat_messages SET read_at = ? WHERE sender_identity != ? AND read_at IS NULL")
-      .bind(now, session.user.identity)
+      .prepare(`INSERT INTO ponti_chat_reads (user_id, last_read_message_id, updated_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET
+          last_read_message_id = MAX(last_read_message_id, excluded.last_read_message_id),
+          updated_at = excluded.updated_at`)
+      .bind(session.user.id, latest.id, now)
       .run();
 
     if (result.meta.changes > 0) {
