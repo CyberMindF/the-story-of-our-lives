@@ -18,16 +18,18 @@ export async function onRequestPost(context) {
 
     const body = await context.request.json().catch(() => null);
     const message = normalizeRequiredText(body?.message, MAX_MESSAGE_LENGTH) || "Ci sono novità sul Mondo Bianco.";
+    const force = body?.force === true;
 
     const result = await notifyOtherIdentity(context.env, session.user.id, {
       subject: `${session.user.nickname} ti ha lasciato una novità sul Mondo Bianco`,
-      html: `<p>${escapeHtml(message)}</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`
+      html: `<p>${escapeHtml(message)}</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`,
+      force
     });
 
     context.waitUntil(recordEvent(
       context.env,
       { userId: session.user.id, sessionId: session.sessionId },
-      { section: "notifiche", eventType: "content_updated", metadata: { channel: "email_manual", sent: result.sent } }
+      { section: "notifiche", eventType: "content_updated", metadata: { channel: "email_manual", sent: result.sent, force } }
     ));
 
     return json({ sent: result.sent });

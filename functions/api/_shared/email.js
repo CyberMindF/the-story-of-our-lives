@@ -91,8 +91,9 @@ export function renderEmailTemplate({ subject, content }) {
 }
 
 // Avvisa l'altra identità (rispetto a chi ha compiuto l'azione) di un aggiornamento sul sito,
-// solo se ha attivato la preferenza `notify_email_updates` alla registrazione.
-export async function notifyOtherIdentity(env, actorUserId, { subject, html }) {
+// solo se ha attivato la preferenza `notify_email_updates` alla registrazione. `force` è
+// riservato alle azioni amministrative che hanno già verificato permessi e modalità Admin.
+export async function notifyOtherIdentity(env, actorUserId, { subject, html, force = false }) {
   const recipient = await env.DB
     .prepare(`
       SELECT recipient.email
@@ -102,11 +103,11 @@ export async function notifyOtherIdentity(env, actorUserId, { subject, html }) {
        AND recipient.is_test = 0
       WHERE actor.id = ?
         AND recipient.id != actor.id
-        AND recipient.notify_email_updates = 1
+        AND (? = 1 OR recipient.notify_email_updates = 1)
       ORDER BY recipient.id
       LIMIT 1
     `)
-    .bind(actorUserId)
+    .bind(actorUserId, force ? 1 : 0)
     .first();
 
   if (!recipient) {

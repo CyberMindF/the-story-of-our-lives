@@ -57,6 +57,7 @@ export class Profilo {
   protected readonly passwordMessage = signal('');
 
   protected notifyMessage = '';
+  protected notifyForce = false;
   protected readonly notifyLoading = signal(false);
   protected readonly notifyStatus = signal<SubmissionStatus>('');
   protected readonly notifyResultMessage = signal('');
@@ -161,12 +162,16 @@ export class Profilo {
     this.notifyResultMessage.set('');
 
     try {
-      const sent = await this.notifyService.notifyUpdate(this.notifyMessage.trim() || undefined);
+      const force = this.notifyForce;
+      const sent = await this.notifyService.notifyUpdate(this.notifyMessage.trim() || undefined, force);
       this.notifyStatus.set('success');
       this.notifyResultMessage.set(
-        sent ? 'Avviso inviato.' : "Nessuna email inviata: l'altra persona non ha attivato le notifiche."
+        sent
+          ? force ? 'Avviso forzato e inviato.' : 'Avviso inviato.'
+          : force ? 'Invio forzato non riuscito.' : "Nessuna email inviata: l'altra persona non ha attivato le notifiche."
       );
       this.notifyMessage = '';
+      this.notifyForce = false;
     } catch {
       this.notifyStatus.set('error');
       this.notifyResultMessage.set("Non è stato possibile inviare l'avviso.");

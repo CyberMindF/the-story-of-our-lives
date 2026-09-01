@@ -78,6 +78,14 @@
             <span>Messaggio (facoltativo)</span>
             <textarea name="notifyMessage" rows="3" maxlength="500" [(ngModel)]="notifyMessage" placeholder="Ci sono novità sul Mondo Bianco."></textarea>
           </label>
+          <label class="settings-toggle profilo-notify-force">
+            <span class="settings-toggle-info">
+              <span class="settings-toggle-title">Forza invio</span>
+              <span class="settings-toggle-description">Invia questa email anche se il destinatario non ha attivato le notifiche.</span>
+            </span>
+            <input class="settings-toggle-input" type="checkbox" name="notifyForce" [(ngModel)]="notifyForce" />
+            <span class="settings-toggle-switch" aria-hidden="true"></span>
+          </label>
           <div class="form-submit-row">
             <button type="submit" class="btn btn-submit" [disabled]="notifyLoading()">Manda avviso</button>
           </div>
