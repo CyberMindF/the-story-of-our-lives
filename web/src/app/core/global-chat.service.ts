@@ -66,7 +66,6 @@ export class GlobalChatService {
   }
 
   async markRead(): Promise<void> {
-    if (!this.unreadCount()) return;
     const succeeded = await this.api.sendAuthenticatedJson('/api/ponti-chat/read', {}, 'POST');
     if (succeeded) {
       this.unreadCount.set(0);
@@ -94,12 +93,22 @@ export class GlobalChatService {
     if (!response.ok) return false;
     const created = await this.api.readApiResponse<ChatMessage>(response) as ChatMessage;
     this.messages.update((messages) => [...messages, created]);
+    await this.markRead();
     return true;
   }
 
   async sendText(body: string): Promise<boolean> { return this.send(body); }
 
   mediaUrl(message: ChatMessage): string { return `/api/media/${message.mediaKey}`; }
+
+  startsNewDay(index: number): boolean {
+    if (index === 0) return true;
+    const current = new Date(this.messages()[index].createdAt);
+    const previous = new Date(this.messages()[index - 1].createdAt);
+    return current.getFullYear() !== previous.getFullYear()
+      || current.getMonth() !== previous.getMonth()
+      || current.getDate() !== previous.getDate();
+  }
 
   private updateTitle(): void {
     const current = document.title.replace(/^\(\d+\)\s*/, '');

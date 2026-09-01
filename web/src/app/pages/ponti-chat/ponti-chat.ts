@@ -7,7 +7,7 @@ import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { RealtimeService } from '../../core/realtime.service';
-import { ChatMessage } from '../../core/global-chat.service';
+import { ChatMessage, GlobalChatService } from '../../core/global-chat.service';
 
 const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 200 * 1024 * 1024;
@@ -25,6 +25,7 @@ export class PontiChat implements OnInit {
   private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
   private readonly realtime = inject(RealtimeService);
+  private readonly globalChat = inject(GlobalChatService);
 
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
   @ViewChild('log') private log?: ElementRef<HTMLElement>;
@@ -78,7 +79,7 @@ export class PontiChat implements OnInit {
   }
 
   private async markRead(): Promise<void> {
-    await this.api.sendAuthenticatedJson('/api/ponti-chat/read', {}, 'POST');
+    await this.globalChat.markRead();
   }
 
   // afterNextRender (non queueMicrotask/setTimeout) perché deve leggere scrollHeight solo
@@ -167,6 +168,7 @@ export class PontiChat implements OnInit {
       }
 
       this.messages.set([...this.messages(), result as ChatMessage]);
+      await this.markRead();
       this.composeText.set('');
       this.clearPendingFile();
       this.scrollToBottom();
@@ -180,6 +182,15 @@ export class PontiChat implements OnInit {
 
   protected mediaUrl(message: ChatMessage): string {
     return `/api/media/${message.mediaKey}`;
+  }
+
+  protected startsNewDay(index: number): boolean {
+    if (index === 0) return true;
+    const current = new Date(this.messages()[index].createdAt);
+    const previous = new Date(this.messages()[index - 1].createdAt);
+    return current.getFullYear() !== previous.getFullYear()
+      || current.getMonth() !== previous.getMonth()
+      || current.getDate() !== previous.getDate();
   }
 
   protected requestDelete(id: string): void {

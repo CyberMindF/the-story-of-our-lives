@@ -10,6 +10,12 @@ export async function onRequestPost(context) {
 
     const latest = await env.DB.prepare("SELECT COALESCE(MAX(id), 0) AS id FROM ponti_chat_messages").first();
     const now = new Date().toISOString();
+    await env.DB
+      .prepare(`UPDATE ponti_chat_messages
+        SET read_at = COALESCE(read_at, ?)
+        WHERE sender_user_id != ? AND id <= ?`)
+      .bind(now, session.user.id, latest.id)
+      .run();
     const result = await env.DB
       .prepare(`INSERT INTO ponti_chat_reads (user_id, last_read_message_id, updated_at)
         VALUES (?, ?, ?)

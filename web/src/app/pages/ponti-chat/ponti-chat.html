@@ -14,7 +14,10 @@
       @if (loading()) { <p class="content-message">Caricamento…</p> }
       @if (!loading() && messages().length === 0) { <p class="content-message">Ancora nessun messaggio.</p> }
 
-      @for (message of messages(); track message.id) {
+      @for (message of messages(); track message.id; let index = $index) {
+      @if (startsNewDay(index)) {
+      <div class="chat-day-divider"><span>{{ message.createdAt | date: 'EEEE d MMMM y' }}</span></div>
+      }
       <article class="chat-bubble" [class.chat-bubble--own]="message.senderUserId === ownUserId()">
         @if (message.mediaType === 'photo' && message.mediaKey) {
         <img class="chat-media chat-media--photo" [src]="mediaUrl(message)" alt="" />
@@ -29,6 +32,7 @@
         <div class="chat-bubble-meta">
           <time>{{ message.createdAt | date: 'dd/MM HH:mm' }}</time>
           @if (message.senderUserId === ownUserId()) {
+          <span class="chat-read-status" [class.is-read]="message.readAt" [attr.aria-label]="message.readAt ? 'Letto' : 'Inviato'">✓</span>
           <button type="button" class="chat-delete-btn" (click)="requestDelete(message.id)" aria-label="Elimina messaggio">🗑️</button>
           }
         </div>

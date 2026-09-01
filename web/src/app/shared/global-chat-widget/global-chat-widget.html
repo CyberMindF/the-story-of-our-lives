@@ -13,12 +13,20 @@
       <div class="global-chat-log" #log aria-live="polite">
         @if (chat.loading()) { <p class="global-chat-empty">Caricamento…</p> }
         @if (!chat.loading() && chat.messages().length === 0) { <p class="global-chat-empty">Ancora nessun messaggio.</p> }
-        @for (message of chat.messages(); track message.id) {
+        @for (message of chat.messages(); track message.id; let index = $index) {
+          @if (chat.startsNewDay(index)) {
+            <div class="global-chat-day"><span>{{ message.createdAt | date: 'EEEE d MMMM' }}</span></div>
+          }
           <article class="global-chat-message" [class.is-own]="message.senderUserId === chat.ownUserId()">
             @if (message.mediaType === 'photo' && message.mediaKey) { <img [src]="mediaUrl(message)" alt="" /> }
             @if (message.mediaType === 'video' && message.mediaKey) { <span class="global-chat-attachment">🎬 Video allegato</span> }
             @if (message.body) { <p>{{ message.body }}</p> }
-            <time>{{ message.createdAt | date: 'HH:mm' }}</time>
+            <div class="global-chat-message-meta">
+              <time>{{ message.createdAt | date: 'HH:mm' }}</time>
+              @if (message.senderUserId === chat.ownUserId()) {
+                <span class="global-chat-read" [class.is-read]="message.readAt" [attr.aria-label]="message.readAt ? 'Letto' : 'Inviato'">✓</span>
+              }
+            </div>
           </article>
         }
       </div>

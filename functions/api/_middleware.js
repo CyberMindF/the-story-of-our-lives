@@ -5,6 +5,7 @@ import { getAuthenticatedSession, json } from "./auth/_shared.js";
 const SAFE_TEST_MUTATIONS = [
   { method: "POST", pattern: /^\/api\/ponti-chat$/ },
   { method: "POST", pattern: /^\/api\/ponti-chat\/media$/ },
+  { method: "POST", pattern: /^\/api\/ponti-chat\/read$/ },
   { method: "DELETE", pattern: /^\/api\/ponti-chat\/\d+$/ },
   { method: "POST", pattern: /^\/api\/stranger-chat$/ },
   { method: "POST", pattern: /^\/api\/letters$/ },

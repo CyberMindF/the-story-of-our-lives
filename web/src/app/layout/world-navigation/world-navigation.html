@@ -1,25 +1,32 @@
-<nav class="world-navigation-rail" aria-label="Navigazione rapida">
-  <button class="world-navigation-action" type="button" aria-label="Vai all'inizio della pagina" title="Inizio pagina" (click)="scrollToTop()">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 15 7-7 7 7" /></svg>
-  </button>
-  @if (showBack) {
-    <a class="world-navigation-action" [routerLink]="parentHref" [attr.aria-label]="parentLabel" [title]="parentLabel">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7" /></svg>
-    </a>
-  }
-  <button class="world-navigation-action is-primary" type="button" aria-label="Apri il pannello con tutti i luoghi" title="Apri tutti i luoghi" (click)="open()">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>
-  </button>
-  <a class="world-navigation-action" routerLink="/" aria-label="Vai al Mondo Bianco" title="Il Mondo Bianco">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9" /></svg>
-  </a>
-  <button class="world-navigation-action" type="button" aria-label="Vai alla fine della pagina" title="Fine pagina" (click)="scrollToBottom()">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7" /></svg>
-  </button>
-</nav>
+<button type="button" class="world-navigation-backdrop" [class.is-visible]="navigationOpen()"
+  [attr.aria-hidden]="navigationOpen() ? null : true" [attr.tabindex]="navigationOpen() ? 0 : -1"
+  aria-label="Chiudi il pannello dei luoghi" (click)="close()"></button>
 
-<dialog #navigationDialog class="world-navigation-dialog" aria-labelledby="world-navigation-title" (click)="onDialogClick($event)">
-  <div class="world-navigation-sheet">
+<aside class="world-navigation-drawer" [class.is-open]="navigationOpen()" aria-labelledby="world-navigation-title">
+  <nav class="world-navigation-rail" aria-label="Navigazione rapida">
+    <button class="world-navigation-action" type="button" aria-label="Vai all'inizio della pagina" title="Inizio pagina" (click)="scrollToTop()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 15 7-7 7 7" /></svg>
+    </button>
+    @if (showBack) {
+      <a class="world-navigation-action" [routerLink]="parentHref" [attr.aria-label]="parentLabel" [title]="parentLabel">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7" /></svg>
+      </a>
+    }
+    <button class="world-navigation-action is-primary" type="button"
+      [attr.aria-label]="navigationOpen() ? 'Chiudi il pannello dei luoghi' : 'Apri il pannello con tutti i luoghi'"
+      [title]="navigationOpen() ? 'Chiudi tutti i luoghi' : 'Apri tutti i luoghi'"
+      [attr.aria-expanded]="navigationOpen()" (click)="toggle()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>
+    </button>
+    <a class="world-navigation-action" routerLink="/" aria-label="Vai al Mondo Bianco" title="Il Mondo Bianco">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9" /></svg>
+    </a>
+    <button class="world-navigation-action" type="button" aria-label="Vai alla fine della pagina" title="Fine pagina" (click)="scrollToBottom()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7" /></svg>
+    </button>
+  </nav>
+
+  <div class="world-navigation-sheet" [attr.aria-hidden]="navigationOpen() ? null : true" [attr.inert]="navigationOpen() ? null : ''">
     <header class="world-navigation-heading">
       <a id="world-navigation-title" routerLink="/"><span aria-hidden="true">⭕</span> Il Mondo Bianco</a>
       <button type="button" class="world-navigation-close" aria-label="Chiudi i luoghi" (click)="close()">
@@ -57,4 +64,4 @@
       }
     </div>
   </div>
-</dialog>
+</aside>

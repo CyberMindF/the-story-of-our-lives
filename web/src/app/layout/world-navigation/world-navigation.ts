@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, Input, ViewChild, inject, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, Input, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
@@ -23,10 +23,9 @@ export class WorldNavigation {
   @Input() parentLabel = 'Torna indietro';
   @Input() showBack = true;
 
-  @ViewChild('navigationDialog') private dialogRef?: ElementRef<HTMLDialogElement>;
-
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly navigationOpen = signal(false);
   protected readonly currentPath = signal(this.pathFromUrl(this.router.url));
   protected readonly groups = HOME_AREAS.map((area) => {
     const areaPlaces = WORLD_PLACES.filter((place) =>
@@ -61,15 +60,20 @@ export class WorldNavigation {
   }
 
   protected open(): void {
-    this.dialogRef?.nativeElement.showModal();
+    this.navigationOpen.set(true);
   }
 
   protected close(): void {
-    this.dialogRef?.nativeElement.close();
+    this.navigationOpen.set(false);
   }
 
-  protected onDialogClick(event: MouseEvent): void {
-    if (event.target === this.dialogRef?.nativeElement) this.close();
+  protected toggle(): void {
+    this.navigationOpen.update((open) => !open);
+  }
+
+  @HostListener('document:keydown.escape')
+  protected closeOnEscape(): void {
+    this.close();
   }
 
   protected scrollToTop(): void {
