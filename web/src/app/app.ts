@@ -75,6 +75,7 @@ export class App {
   private checkingBuildVersion = false;
   private worldSettingsLoadedForUserId: number | null = null;
   protected readonly updateAvailable = signal(false);
+  protected readonly showGlobalChat = signal(this.router.url.split('?')[0] !== '/ponti-chat');
 
   constructor() {
     document.body.classList.add('world-atmosphere');
@@ -84,7 +85,12 @@ export class App {
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(() => this.applyRouteBodyClasses());
+      .subscribe((event) => {
+        this.applyRouteBodyClasses();
+        const showChat = event.urlAfterRedirects.split('?')[0] !== '/ponti-chat';
+        this.showGlobalChat.set(showChat);
+        if (!showChat) this.globalChat.panelOpen.set(false);
+      });
 
     const onActivity = () => this.touchAccessUnlockThrottled();
     ACTIVITY_EVENTS.forEach((eventName) => document.addEventListener(eventName, onActivity, { passive: true }));

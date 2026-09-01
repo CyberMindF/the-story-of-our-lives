@@ -29,6 +29,7 @@ export class GlobalChatService {
   readonly loading = signal(false);
   readonly panelOpen = signal(false);
   readonly ownUserId = computed(() => this.auth.currentUser()?.id ?? null);
+  readonly contactName = computed(() => this.auth.currentUser()?.identity === 'lui' ? 'Desy' : 'Rory');
 
   constructor() {
     this.realtime.on('ponti-chat:changed').pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => void this.loadRecent());
@@ -73,16 +74,30 @@ export class GlobalChatService {
     }
   }
 
-  async sendText(body: string): Promise<boolean> {
+  async send(body: string, file?: File): Promise<boolean> {
+    let mediaKey: string | undefined;
+    let mediaType: 'photo' | 'video' | undefined;
+    if (file) {
+      mediaType = file.type.startsWith('image/') ? 'photo' : 'video';
+      const upload = await fetch(`/api/ponti-chat/media?type=${mediaType}`, {
+        method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': file.type }, body: file
+      });
+      if (!upload.ok) return false;
+      const uploaded = await this.api.readApiResponse<{ key?: string }>(upload);
+      mediaKey = 'key' in uploaded ? uploaded.key : undefined;
+      if (!mediaKey) return false;
+    }
     const response = await fetch('/api/ponti-chat', {
       method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body })
+      body: JSON.stringify({ body: body || undefined, mediaKey, mediaType })
     });
     if (!response.ok) return false;
     const created = await this.api.readApiResponse<ChatMessage>(response) as ChatMessage;
     this.messages.update((messages) => [...messages, created]);
     return true;
   }
+
+  async sendText(body: string): Promise<boolean> { return this.send(body); }
 
   mediaUrl(message: ChatMessage): string { return `/api/media/${message.mediaKey}`; }
 
