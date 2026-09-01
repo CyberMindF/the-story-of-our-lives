@@ -22,7 +22,7 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   D1, sessioni, telemetria, ricevute unread e gli oggetti R2 collegati ai messaggi; per questo gli
   account test possono ora provare anche gli allegati senza lasciare file orfani. Email, scambi e
   scritture sui contenuti condivisi restano bloccati.
-- #e23 — Aggiornamento del sito notificato in diretta via WebSocket: quando viene pubblicata una
+- [x] #e23 — Aggiornamento del sito notificato in diretta via WebSocket: quando viene pubblicata una
   nuova build, inviare ai client connessi un evento realtime con l'identificatore della versione,
   così l'avviso "Ho aggiornato il Mondo Bianco" compare subito senza aspettare il controllo
   periodico attuale (ogni 5 minuti) o il ritorno della scheda in primo piano. Il segnale deve essere
@@ -30,6 +30,14 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   confronta l'identificatore ricevuto con quello della build caricata e ignora eventi duplicati o
   relativi alla stessa versione. Conservare il controllo HTTP già esistente come fallback per chi era
   offline, si collega dopo il deploy o perde l'evento WebSocket; nessun polling aggiuntivo.
+  **Implementato il 01/09/2026**: ogni build viene marcata con `CF_PAGES_COMMIT_SHA`; il workflow
+  GitHub avviato dal push aspetta che `/build-version.json` esponga davvero quel commit sul dominio
+  principale e soltanto allora chiama `/api/deploy-notify`, che verifica autonomamente la versione
+  pubblicata e trasmette
+  `site-version:changed` tramite il Durable Object realtime. Il client confronta il commit con
+  quello incorporato nel proprio HTML, ignora duplicati e stessa versione, e conserva il controllo
+  HTTP precedente come fallback. Non richiede secret: l'endpoint può annunciare soltanto il commit
+  che Pages sta servendo davvero e i client ignorano eventi duplicati o relativi alla stessa build.
 - #e20 — Commenti di Desy sulle foto della Bacheca (**prima di UNO**): permettere a lei di
   lasciare un commento direttamente sulla singola foto, mantenendo distinta la didascalia
   editoriale già presente. Il commento deve appartenere all'account tramite `user_id` (mai alla

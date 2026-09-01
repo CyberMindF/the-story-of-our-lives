@@ -211,6 +211,17 @@ Collega il repository GitHub a Cloudflare Pages usando `npm run build` come coma
 3. applica le migrazioni al database remoto;
 4. esegui un nuovo deployment.
 
+### Avviso di nuova versione in diretta
+
+La build aggiunge `CF_PAGES_COMMIT_SHA` all'HTML e a `/build-version.json`. Dopo ogni push su
+`main`, il workflow `.github/workflows/notify-deployment.yml` aspetta che quel commit sia davvero
+servito da `https://il-mondo-bianco.com`, quindi chiama `POST /api/deploy-notify`: la Function
+verifica a sua volta che il commit coincida con `/build-version.json`, pubblica
+`site-version:changed` sul canale realtime e i client della vecchia build mostrano subito “Ho
+aggiornato il Mondo Bianco”. L'endpoint non richiede secret perché può annunciare soltanto una
+versione realmente online; eventi ripetuti vengono ignorati dal client. Il controllo HTTP ogni
+cinque minuti e al ritorno sulla scheda resta attivo come fallback.
+
 GitHub Pages da solo non può eseguire l'autenticazione, le Pages Functions o D1.
 
 ## Realtime passivo

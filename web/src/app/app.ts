@@ -72,6 +72,7 @@ export class App {
   private readonly globalChat = inject(GlobalChatService);
   private lastActivityTouchAt = 0;
   private readonly currentAssetSignature = this.assetSignature(document);
+  private readonly currentDeploymentVersion = document.querySelector<HTMLMetaElement>('meta[name="app-version"]')?.content || '';
   private checkingBuildVersion = false;
   private worldSettingsLoadedForUserId: number | null = null;
   protected readonly updateAvailable = signal(false);
@@ -111,6 +112,18 @@ export class App {
       document.removeEventListener('visibilitychange', onVisibilityChange);
     });
     checkBuildVersion();
+
+    this.realtimeService.on('site-version:changed')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        const version = typeof event['version'] === 'string' ? event['version'] : '';
+        if (!version || version === this.currentDeploymentVersion || this.updateAvailable()) return;
+        if (this.currentDeploymentVersion) {
+          this.updateAvailable.set(true);
+        } else {
+          void this.checkBuildVersion();
+        }
+      });
 
     this.realtimeService.on('world-settings:changed')
       .pipe(takeUntilDestroyed(this.destroyRef))

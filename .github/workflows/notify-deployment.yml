@@ -1,0 +1,16 @@
+name: Notifica nuova versione
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Attendi Pages e invia l'evento realtime
+        env:
+          DEPLOY_VERSION: ${{ github.sha }}
+          DEPLOY_SITE_URL: https://il-mondo-bianco.com
+        run: node scripts/announce-deployment.mjs
