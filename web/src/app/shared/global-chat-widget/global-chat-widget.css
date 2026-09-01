@@ -1,6 +1,8 @@
 :host { position: fixed; z-index: 1100; right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom)); }
 .global-chat { display: flex; flex-direction: column; align-items: flex-end; gap: .75rem; }
-.global-chat-trigger { position: relative; width: 3.5rem; height: 3.5rem; border: 1px solid var(--accent-color); border-radius: 50%; background: var(--accent-color); color: var(--bg-color); box-shadow: var(--shadow); cursor: pointer; font-size: 1.45rem; }
+.global-chat-trigger { position: relative; width: 3.5rem; height: 3.5rem; display: grid; place-items: center; padding: 0; border: 1px solid var(--border-color); border-radius: 50%; background: var(--button-bg); color: var(--text-color); box-shadow: var(--shadow); cursor: pointer; font-size: 1.45rem; transition: background-color 160ms ease, border-color 160ms ease; }
+.global-chat-trigger:hover { border-color: var(--focus-color); background: var(--button-hover-bg); }
+.global-chat-trigger:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
 .global-chat-badge { position: absolute; top: -.3rem; right: -.3rem; min-width: 1.35rem; height: 1.35rem; padding: 0 .25rem; display: grid; place-items: center; border-radius: 999px; background: var(--error-color); color: var(--text-color); font-size: .68rem; }
 .global-chat-panel { width: min(23rem, calc(100vw - 2rem)); height: min(34rem, calc(100vh - 6.5rem)); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--panel-border-color); border-radius: 1rem; background: color-mix(in srgb, var(--bg-color) 92%, transparent); box-shadow: var(--shadow); backdrop-filter: blur(18px); }
 .global-chat-header { display: flex; align-items: center; justify-content: space-between; min-height: 2.9rem; padding: .55rem .7rem .55rem 1rem; border-bottom: 1px solid var(--panel-border-color); }
