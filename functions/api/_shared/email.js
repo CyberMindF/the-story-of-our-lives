@@ -66,7 +66,7 @@ export function renderEmailTemplate({ subject, content }) {
             <tr>
               <td style="padding:28px 34px 22px;border-bottom:1px solid #334056;text-align:center;">
                 <div style="margin-bottom:8px;color:#e9cf9d;font-size:12px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;">Un messaggio dal</div>
-                <div style="color:#f4f7fb;font-family:Georgia,'Times New Roman',serif;font-size:27px;font-weight:700;">Il Mondo Bianco</div>
+                <div style="color:#f4f7fb;font-family:Georgia,'Times New Roman',serif;font-size:27px;font-weight:700;">Mondo Bianco</div>
               </td>
             </tr>
             <tr>
@@ -77,7 +77,8 @@ export function renderEmailTemplate({ subject, content }) {
             </tr>
             <tr>
               <td style="padding:20px 34px 28px;border-top:1px solid #334056;color:#8fa0b5;font-size:12px;line-height:1.55;text-align:center;">
-                Questa email arriva dal vostro spazio nel Mondo Bianco.<br>
+                Questa email arriva dal nostro posto: il Mondo Bianco.<br>
+                Se ti è arrivata per errore, è un bug, fammelo sapere.<br>
                 <a href="https://il-mondo-bianco.com" style="color:#e9cf9d;text-decoration:none;">il-mondo-bianco.com</a>
               </td>
             </tr>
