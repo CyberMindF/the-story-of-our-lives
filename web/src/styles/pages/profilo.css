@@ -16,3 +16,19 @@
 .profilo-admin-note { margin: 0; color: var(--muted-color); font-size: .88rem; line-height: 1.5; }
 .profilo-form .settings-toggle { padding: 0; }
 .profilo-admin-links { display: flex; flex-wrap: wrap; gap: .6rem; }
+.profilo-test-accounts { display: grid; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--panel-border-color); }
+.profilo-test-accounts h3 { margin: 0 0 .35rem; font-size: 1rem; }
+.profilo-test-create { display: grid; gap: .8rem; }
+.profilo-test-list { display: grid; gap: .65rem; }
+.profilo-test-account { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem; border: 1px solid var(--panel-border-color); border-radius: .85rem; background: var(--button-bg); }
+.profilo-test-account > div:first-child { min-width: 0; display: grid; gap: .2rem; }
+.profilo-test-account small { color: var(--muted-color); overflow-wrap: anywhere; }
+.profilo-test-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; }
+.profilo-test-actions .btn { padding: .5rem .65rem; font-size: .75rem; }
+.profilo-test-message { margin: 0; color: var(--text-color); font-size: .85rem; }
+
+@media (max-width: 560px) {
+  .profilo-test-account { align-items: stretch; flex-direction: column; }
+  .profilo-test-actions { justify-content: stretch; }
+  .profilo-test-actions .btn { flex: 1; }
+}

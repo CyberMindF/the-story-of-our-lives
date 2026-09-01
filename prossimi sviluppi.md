@@ -6,6 +6,22 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
+- [x] #e24 — Coppia permanente di account di collaudo, **Test Rory** (`lui`) e **Test Desy**
+  (`lei`), per provare autonomamente in locale e negli ambienti autorizzati i flussi che richiedono
+  due persone (chat/realtime/unread, lettere, GDR, carte e funzionalità future) senza coinvolgere
+  Desy e senza usare gli account reali. Separare l'attuale rollback in due azioni: **Ripulisci dati**,
+  che elimina tutto ciò che gli account test hanno generato ma conserva account e credenziali per
+  riutilizzarli, ed **Elimina account**, distruttiva e da usare soltanto quando serve davvero.
+  Consentire anche gli allegati della chat agli account test solo dopo aver esteso la pulizia ai
+  relativi oggetti R2, evitando file orfani; mantenere disattivati email e qualunque altra
+  integrazione esterna. Il reset deve coprire anche sessioni, telemetria, ricevute di lettura e tutte
+  le tabelle personali/additive autorizzate, con verifica esplicita che non tocchi contenuti condivisi
+  o dati degli account reali. **Implementato il 01/09/2026** nel Profilo con Modalità admin:
+  creazione e lista degli account test, azioni separate “Ripulisci dati”/“Elimina account” e form
+  precompilato in base alla persona simulata. La pulizia è centralizzata lato server e comprende
+  D1, sessioni, telemetria, ricevute unread e gli oggetti R2 collegati ai messaggi; per questo gli
+  account test possono ora provare anche gli allegati senza lasciare file orfani. Email, scambi e
+  scritture sui contenuti condivisi restano bloccati.
 - #e23 — Aggiornamento del sito notificato in diretta via WebSocket: quando viene pubblicata una
   nuova build, inviare ai client connessi un evento realtime con l'identificatore della versione,
   così l'avviso "Ho aggiornato il Mondo Bianco" compare subito senza aspettare il controllo

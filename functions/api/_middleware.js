@@ -4,6 +4,7 @@ import { getAuthenticatedSession, json } from "./auth/_shared.js";
 // eliminabili dal rollback. Le letture restano libere come per gli account principali.
 const SAFE_TEST_MUTATIONS = [
   { method: "POST", pattern: /^\/api\/ponti-chat$/ },
+  { method: "POST", pattern: /^\/api\/ponti-chat\/media$/ },
   { method: "DELETE", pattern: /^\/api\/ponti-chat\/\d+$/ },
   { method: "POST", pattern: /^\/api\/stranger-chat$/ },
   { method: "POST", pattern: /^\/api\/letters$/ },

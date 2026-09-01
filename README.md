@@ -65,10 +65,12 @@ Il token originale viene inviato in un cookie `HttpOnly`; D1 conserva soltanto i
 
 Con Modalità admin attiva, `POST /api/auth/test-account` crea un account marcato `is_test=1` e
 `GET /api/auth/test-account` li elenca. Un account test può scrivere soltanto dati personali o
-additivi esplicitamente annullabili: chat testuale, lettere, turni e appunti GDR, cruciverba,
-suggerimenti e bustine. Media, scambi, ricevute di lettura, contenuti editoriali e impostazioni
-condivise sono bloccati. `DELETE /api/auth/test-account/:id` elimina account, sessioni, telemetria
-e tutte le righe che quel test era autorizzato a creare.
+additivi esplicitamente annullabili: chat e relativi allegati, lettere, turni e appunti GDR,
+cruciverba, suggerimenti e bustine. Scambi, contenuti editoriali e impostazioni condivise sono
+bloccati. `POST /api/auth/test-account/:id/reset` elimina sessioni, telemetria, ricevute di lettura,
+dati personali e oggetti R2 della chat, conservando account e credenziali; `DELETE
+/api/auth/test-account/:id` esegue la stessa pulizia e poi elimina definitivamente l'account.
+Entrambe le operazioni sono disponibili nel Profilo con Modalità admin attiva.
 
 ### Pagine protette e ritorno dopo l'accesso
 

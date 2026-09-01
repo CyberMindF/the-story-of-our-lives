@@ -48,9 +48,6 @@ export async function onRequestPost(context) {
     const mediaType = mediaKey && (payload?.mediaType === "photo" || payload?.mediaType === "video") ? payload.mediaType : null;
 
     if (body === undefined) return json({ error: "Testo del messaggio non valido." }, 400);
-    if (session.user.isTest && mediaKey) {
-      return json({ error: "Gli account di prova possono inviare solo messaggi di testo." }, 403);
-    }
     if (!body && !mediaKey) return json({ error: "Il messaggio è vuoto." }, 400);
     if (mediaKey && !mediaType) return json({ error: "Tipo di media mancante." }, 400);
 

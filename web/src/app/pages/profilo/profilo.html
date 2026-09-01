@@ -45,6 +45,55 @@
           <a class="btn" routerLink="/contenuti">📚 Indice dei contenuti</a>
           <a class="btn" routerLink="/log">🗂️ Log degli eventi</a>
         </div>
+
+        <div class="profilo-test-accounts">
+          <div>
+            <h3>Account di collaudo</h3>
+            <p class="profilo-admin-note">Crea Test Rory e Test Desy una volta sola, poi ripulisci i dati tra una prova e l'altra senza cancellare gli account.</p>
+          </div>
+
+          <form class="profilo-test-create" (ngSubmit)="createTestAccount()">
+            <label class="form-field">
+              <span>Persona simulata</span>
+              <select name="testIdentity" [ngModel]="testIdentity" (ngModelChange)="onTestIdentityChange($event)">
+                <option value="lui">Rory</option>
+                <option value="lei">Desy</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Nome</span>
+              <input name="testNickname" maxlength="40" required [(ngModel)]="testNickname" />
+            </label>
+            <label class="form-field">
+              <span>Email di test</span>
+              <input type="email" name="testEmail" autocomplete="off" required [(ngModel)]="testEmail" />
+            </label>
+            <label class="form-field">
+              <span>Password</span>
+              <app-password-field name="testPassword" autocomplete="new-password" [value]="testPassword" (valueChange)="testPassword = $event" />
+            </label>
+            <div class="form-submit-row">
+              <button type="submit" class="btn btn-submit" [disabled]="testPassword.length < 8">Crea account test</button>
+            </div>
+          </form>
+
+          <div class="profilo-test-list">
+            @if (testAccountsLoading()) { <p class="profilo-admin-note">Caricamento account…</p> }
+            @for (account of testAccounts(); track account.id) {
+              <article class="profilo-test-account">
+                <div>
+                  <strong>{{ account.nickname }}</strong>
+                  <small>{{ account.identity === 'lui' ? 'Rory' : 'Desy' }} · {{ account.email }}</small>
+                </div>
+                <div class="profilo-test-actions">
+                  <button type="button" class="btn" (click)="requestTestAction(account, 'reset')">Ripulisci dati</button>
+                  <button type="button" class="btn" (click)="requestTestAction(account, 'delete')">Elimina account</button>
+                </div>
+              </article>
+            }
+          </div>
+          @if (testAccountMessage()) { <p class="profilo-test-message" role="status">{{ testAccountMessage() }}</p> }
+        </div>
       } @else {
         <p class="profilo-admin-note">Attiva la modalità Admin dall’intestazione per accedere.</p>
       }
@@ -63,4 +112,12 @@
     </div>
     <app-form-status [message]="notifyResultMessage()" [status]="notifyStatus()" />
   </form>
+
+  <app-confirmation-dialog dialogId="test-account-action"
+    [title]="testAction() === 'reset' ? 'Ripulire i dati di questo account?' : 'Eliminare definitivamente questo account?'"
+    [description]="testAction() === 'reset'
+      ? 'Messaggi, allegati, progressi, sessioni e telemetria verranno rimossi. Account e credenziali resteranno disponibili.'
+      : 'Verranno eliminati sia tutti i dati di prova sia l’account e le sue credenziali.'"
+    [confirmLabel]="testAction() === 'reset' ? 'Ripulisci dati' : 'Elimina account'" cancelLabel="Annulla"
+    [open]="testActionTarget() !== null" (confirm)="confirmTestAction()" (cancel)="cancelTestAction()" />
 </app-shell>
