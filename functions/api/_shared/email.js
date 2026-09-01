@@ -59,15 +59,19 @@ export async function notifyOtherIdentity(env, actorUserId, { subject, html }) {
   return sendEmail(env, { to: recipient.email, subject, html });
 }
 
-// Avvisa Rory della prima attivita registrata di lei e silenzia gli avvisi successivi
+// Avvisa l'admin della prima attivita di un account monitorato e silenzia gli avvisi successivi
 // per due ore. Il claim in D1 e atomico, quindi eventi contemporanei non generano doppioni.
-export async function notifyLoggedEvent(env, { section, eventType }) {
+export async function notifyLoggedEvent(env, { actorUserId, section, eventType }) {
   const recipient = await env.DB
-    .prepare("SELECT email FROM users WHERE identity = 'lui' ORDER BY role = 'admin' DESC, id LIMIT 1")
+    .prepare("SELECT email FROM users WHERE role = 'admin' AND is_test = 0 ORDER BY id LIMIT 1")
+    .first();
+  const actor = await env.DB
+    .prepare("SELECT nickname, email FROM users WHERE id = ? AND activity_logging_enabled = 1")
+    .bind(actorUserId)
     .first();
 
-  if (!recipient?.email) {
-    return { sent: false, reason: "missing_recipient" };
+  if (!recipient?.email || !actor) {
+    return { sent: false, reason: "missing_recipient_or_actor" };
   }
 
   const claimedAt = new Date().toISOString();
@@ -90,7 +94,7 @@ export async function notifyLoggedEvent(env, { section, eventType }) {
     to: recipient.email,
     subject: "Nuova attività nel Mondo Bianco",
     html: `
-      <p>È stata registrata una nuova attività di Desy nel Mondo Bianco.</p>
+      <p>È stata registrata una nuova attività di ${escapeHtml(actor.nickname || actor.email)} nel Mondo Bianco.</p>
       <p><strong>Sezione:</strong> ${escapeHtml(section)}<br>
       <strong>Evento:</strong> ${escapeHtml(eventType)}</p>
       <p>Per le prossime due ore non riceverai altri avvisi, ma gli eventi continueranno a essere salvati.</p>

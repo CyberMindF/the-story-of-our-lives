@@ -46,6 +46,28 @@
           <a class="btn" routerLink="/log">🗂️ Log degli eventi</a>
         </div>
 
+        <div class="profilo-activity-logging">
+          <div>
+            <h3>Registrazione attività</h3>
+            <p class="profilo-admin-note">Scegli esplicitamente quali account registrare nel Log e notificare via email. L’identità Rory/Desy non decide più nulla.</p>
+          </div>
+          <div class="profilo-logging-list">
+            @for (user of activityLoggingUsers(); track user.id) {
+              <label class="settings-toggle profilo-logging-user">
+                <span class="settings-toggle-info">
+                  <span class="settings-toggle-title">{{ user.nickname }}</span>
+                  <span class="settings-toggle-description">{{ user.email }}{{ user.is_test ? ' · account test' : '' }}</span>
+                </span>
+                <input class="settings-toggle-input" type="checkbox"
+                  [checked]="user.activity_logging_enabled === 1"
+                  (change)="setActivityLogging(user, $any($event.target))" />
+                <span class="settings-toggle-switch" aria-hidden="true"></span>
+              </label>
+            }
+          </div>
+          @if (activityLoggingMessage()) { <p class="profilo-test-message" role="status">{{ activityLoggingMessage() }}</p> }
+        </div>
+
         <div class="profilo-test-accounts">
           <div>
             <h3>Account di collaudo</h3>

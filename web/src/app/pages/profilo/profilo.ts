@@ -20,6 +20,15 @@ interface TestAccount {
   created_at: string;
 }
 
+interface ActivityLoggingUser {
+  id: number;
+  email: string;
+  nickname: string;
+  identity: 'lui' | 'lei';
+  is_test: number;
+  activity_logging_enabled: number;
+}
+
 // Cambio nickname/password (backlog #2). Due form indipendenti (azioni separate lato
 // backend), stesso pattern manuale signal loading/status/message già usato in Portone —
 // non FormSubmission (lavora su FormData, qui serve JSON per parlare con AuthService).
@@ -61,11 +70,16 @@ export class Profilo {
   protected testIdentity: 'lui' | 'lei' = 'lui';
   protected readonly testActionTarget = signal<TestAccount | null>(null);
   protected readonly testAction = signal<'reset' | 'delete' | null>(null);
+  protected readonly activityLoggingUsers = signal<ActivityLoggingUser[]>([]);
+  protected readonly activityLoggingMessage = signal('');
   private testAccountsLoaded = false;
+  private activityLoggingLoaded = false;
 
   constructor() {
     effect(() => {
-      if (this.authService.adminModeEnabled() && !this.testAccountsLoaded) void this.loadTestAccounts();
+      if (!this.authService.adminModeEnabled()) return;
+      if (!this.testAccountsLoaded) void this.loadTestAccounts();
+      if (!this.activityLoggingLoaded) void this.loadActivityLoggingUsers();
     });
   }
 
@@ -211,6 +225,30 @@ export class Profilo {
     await this.loadTestAccounts();
   }
 
+  protected async setActivityLogging(user: ActivityLoggingUser, input: HTMLInputElement): Promise<void> {
+    const enabled = input.checked;
+    input.disabled = true;
+    this.activityLoggingMessage.set('');
+    try {
+      const response = await fetch('/api/auth/activity-logging', {
+        method: 'PUT', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, enabled })
+      });
+      if (!response.ok) throw new Error('Aggiornamento non riuscito');
+      this.activityLoggingUsers.update((users) => users.map((item) => item.id === user.id
+        ? { ...item, activity_logging_enabled: enabled ? 1 : 0 }
+        : item));
+      this.activityLoggingMessage.set(enabled
+        ? `Da ora registriamo le attività di ${user.nickname}.`
+        : `Le attività di ${user.nickname} non verranno più registrate né notificate via email.`);
+    } catch {
+      input.checked = !enabled;
+      this.activityLoggingMessage.set('Non è stato possibile aggiornare il logging.');
+    } finally {
+      input.disabled = false;
+    }
+  }
+
   private async loadTestAccounts(): Promise<void> {
     this.testAccountsLoading.set(true);
     try {
@@ -222,6 +260,15 @@ export class Profilo {
       }
     } finally {
       this.testAccountsLoading.set(false);
+    }
+  }
+
+  private async loadActivityLoggingUsers(): Promise<void> {
+    const response = await fetch('/api/auth/activity-logging', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+    const result = await this.api.readApiResponse<{ users?: ActivityLoggingUser[] }>(response);
+    if (response.ok && 'users' in result) {
+      this.activityLoggingUsers.set(result.users ?? []);
+      this.activityLoggingLoaded = true;
     }
   }
 

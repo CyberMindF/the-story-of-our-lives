@@ -78,17 +78,17 @@ export async function recordEvent(env, actor, event) {
         SELECT 1
         FROM users
         WHERE users.id = ?
-          AND (users.identity = 'lei' OR ? = 'password_changed')
+          AND users.activity_logging_enabled = 1
       )
     `)
-    .bind(actor.userId, actor.sessionId || null, section, eventType, metadata, actor.userId, eventType)
+    .bind(actor.userId, actor.sessionId || null, section, eventType, metadata, actor.userId)
     .run();
 
   const recorded = Number(result.meta.changes || 0) > 0;
 
   if (recorded) {
     try {
-      await notifyLoggedEvent(env, { section, eventType });
+      await notifyLoggedEvent(env, { actorUserId: actor.userId, section, eventType });
     } catch (error) {
       // Il log deve restare affidabile anche se l'avviso email o il suo cooldown falliscono.
       console.error(JSON.stringify({
