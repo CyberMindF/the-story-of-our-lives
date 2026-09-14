@@ -1,0 +1,233 @@
+<app-shell>
+  <main class="study-page">
+    <header class="study-hero">
+      <div>
+        <p class="study-eyebrow">Un posto tranquillo per ripassare</p>
+        <h1>🏫 L’Aula studio</h1>
+        <p>Raccogli domande e risposte in argomenti, poi ripassale come un mazzo di flash card.</p>
+      </div>
+
+      <button
+        type="button"
+        class="study-focus-toggle card"
+        [class.is-active]="focusMode.enabled()"
+        [attr.aria-pressed]="focusMode.enabled()"
+        (click)="toggleFocusMode()"
+      >
+        <span class="study-focus-icon" aria-hidden="true">{{
+          focusMode.enabled() ? '◉' : '○'
+        }}</span>
+        <span>
+          <strong>0 distrazioni</strong>
+          <small>{{
+            focusMode.enabled()
+              ? 'Sfondi spenti per questa sessione'
+              : 'Nascondi gli sfondi in quest’aula'
+          }}</small>
+        </span>
+      </button>
+    </header>
+
+    @if (studyingTopic(); as topic) {
+      <section class="study-session" aria-labelledby="study-session-title">
+        <header class="study-session-heading">
+          <div>
+            <p class="study-eyebrow">Ripasso in ordine casuale</p>
+            <h2 id="study-session-title">{{ topic.title }}</h2>
+          </div>
+          <button type="button" class="btn" (click)="closeStudy()">Chiudi</button>
+        </header>
+
+        @if (currentCard(); as card) {
+          <p class="study-progress">Carta {{ studyPosition() + 1 }} di {{ topic.cards.length }}</p>
+          <button
+            type="button"
+            class="flash-card"
+            [class.is-flipped]="flipped()"
+            [attr.aria-label]="flipped() ? 'Mostra la domanda' : 'Mostra la risposta'"
+            (click)="flipped.set(!flipped())"
+          >
+            <span class="flash-card-inner">
+              <span class="flash-card-face flash-card-front">
+                <small>Domanda</small>
+                <strong>{{ card.question }}</strong>
+                <span>Tocca per vedere la risposta</span>
+              </span>
+              <span class="flash-card-face flash-card-back">
+                <small>Risposta</small>
+                <strong>{{ card.answer }}</strong>
+                <span>Tocca per tornare alla domanda</span>
+              </span>
+            </span>
+          </button>
+
+          <div class="study-controls" aria-label="Controlli del mazzo">
+            <button
+              type="button"
+              class="btn"
+              [disabled]="studyPosition() === 0"
+              (click)="previousCard()"
+            >
+              ← Indietro
+            </button>
+            <button type="button" class="btn" (click)="shuffleDeck()">⤨ Mescola</button>
+            <button
+              type="button"
+              class="btn btn-submit"
+              [disabled]="studyPosition() === topic.cards.length - 1"
+              (click)="nextCard()"
+            >
+              Avanti →
+            </button>
+          </div>
+        }
+      </section>
+    } @else {
+      <section class="study-library" aria-labelledby="study-library-title">
+        <div class="study-section-heading">
+          <div>
+            <p class="study-eyebrow">I tuoi materiali</p>
+            <h2 id="study-library-title">Argomenti</h2>
+          </div>
+          @if (editingId() === null) {
+            <button type="button" class="btn btn-submit" (click)="startCreate()">
+              ＋ Nuovo argomento
+            </button>
+          }
+        </div>
+
+        @if (editingId() !== null) {
+          <form class="study-editor card" (ngSubmit)="saveTopic()">
+            <div class="study-editor-heading">
+              <div>
+                <p class="study-eyebrow">
+                  {{ editingId() === 'new' ? 'Crea il mazzo' : 'Aggiorna il mazzo' }}
+                </p>
+                <h2>{{ editingId() === 'new' ? 'Nuovo argomento' : 'Modifica argomento' }}</h2>
+              </div>
+              <span class="study-card-count"
+                >{{ parsedPairs().cards.length }}
+                {{ parsedPairs().cards.length === 1 ? 'carta' : 'carte' }}</span
+              >
+            </div>
+
+            <label class="form-field">
+              <span>Nome dell’argomento</span>
+              <input
+                type="text"
+                maxlength="120"
+                required
+                placeholder="Per esempio: Storia romana"
+                [ngModel]="draft().title"
+                (ngModelChange)="updateDraft({ title: $event })"
+                name="title"
+              />
+            </label>
+
+            <label class="form-field">
+              <span
+                >Domande e risposte
+                <small>una riga per la domanda, quella dopo per la risposta</small></span
+              >
+              <textarea
+                rows="14"
+                required
+                placeholder="Che cos’è la fotosintesi?&#10;Il processo con cui le piante trasformano luce, acqua e anidride carbonica in energia.&#10;&#10;Dove avviene?&#10;Nei cloroplasti."
+                [ngModel]="draft().pairs"
+                (ngModelChange)="updateDraft({ pairs: $event })"
+                name="pairs"
+              ></textarea>
+            </label>
+
+            <div class="study-format-example" aria-label="Esempio del formato richiesto">
+              <span>1ª riga</span><strong>Domanda</strong> <span>2ª riga</span
+              ><strong>Risposta</strong> <span>3ª riga</span><strong>Domanda successiva</strong>
+              <span>4ª riga</span><strong>Risposta successiva</strong>
+            </div>
+
+            @if (parsedPairs().danglingQuestion) {
+              <p class="study-inline-warning" role="status">
+                Manca ancora una risposta all’ultima domanda.
+              </p>
+            }
+            @if (formError()) {
+              <p class="study-error" role="alert">{{ formError() }}</p>
+            }
+
+            <div class="study-editor-actions">
+              <button type="button" class="btn" [disabled]="saving()" (click)="cancelEdit()">
+                Annulla
+              </button>
+              <button type="submit" class="btn btn-submit" [disabled]="saving()">
+                {{ saving() ? 'Salvo…' : 'Salva argomento' }}
+              </button>
+            </div>
+          </form>
+        }
+
+        @if (loading()) {
+          <p class="study-message">Sto preparando l’aula…</p>
+        } @else if (pageError()) {
+          <p class="study-message is-error" role="alert">{{ pageError() }}</p>
+        } @else {
+          <div class="study-topic-grid">
+            @for (topic of topics(); track topic.id) {
+              <article class="study-topic card">
+                <div class="study-topic-mark" aria-hidden="true">{{ topic.cards.length }}</div>
+                <div>
+                  <p class="study-topic-meta">{{ topic.cards.length }} flash card</p>
+                  <h3>{{ topic.title }}</h3>
+                </div>
+                <div class="study-topic-actions">
+                  <button type="button" class="btn btn-submit" (click)="startStudy(topic)">
+                    Inizia il ripasso
+                  </button>
+                  <button
+                    type="button"
+                    class="btn"
+                    aria-label="Modifica argomento"
+                    (click)="startEdit(topic)"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    type="button"
+                    class="btn"
+                    aria-label="Elimina argomento"
+                    (click)="requestDelete(topic)"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </article>
+            } @empty {
+              <div class="study-empty card">
+                <span aria-hidden="true">✦</span>
+                <h3>L’aula è pronta</h3>
+                <p>Crea il primo argomento: bastano una domanda e la riga con la sua risposta.</p>
+                <button type="button" class="btn btn-submit" (click)="startCreate()">
+                  Crea il primo argomento
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+  </main>
+
+  <app-confirmation-dialog
+    dialogId="delete-study-topic"
+    title="Eliminare questo argomento?"
+    [description]="
+      '“' +
+      (deleteTarget()?.title ?? '') +
+      '” e tutte le sue flash card verranno eliminate definitivamente.'
+    "
+    confirmLabel="Elimina"
+    cancelLabel="Annulla"
+    [open]="deleteTarget() !== null"
+    (confirm)="confirmDelete()"
+    (cancel)="deleteTarget.set(null)"
+  />
+</app-shell>

@@ -153,6 +153,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/ricettario/ricettario').then((m) => m.Ricettario)
       },
       {
+        path: 'aula-studio',
+        data: { bodyClasses: ['aula-studio-page'] },
+        loadComponent: () => import('./pages/aula-studio/aula-studio').then((m) => m.AulaStudio)
+      },
+      {
         path: 'tavolo-da-gioco',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/tavolo-da-gioco/tavolo-da-gioco').then((m) => m.TavoloDaGioco)

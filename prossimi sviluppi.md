@@ -6,38 +6,15 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
-- [x] #e24 — Coppia permanente di account di collaudo, **Test Rory** (`lui`) e **Test Desy**
-  (`lei`), per provare autonomamente in locale e negli ambienti autorizzati i flussi che richiedono
-  due persone (chat/realtime/unread, lettere, GDR, carte e funzionalità future) senza coinvolgere
-  Desy e senza usare gli account reali. Separare l'attuale rollback in due azioni: **Ripulisci dati**,
-  che elimina tutto ciò che gli account test hanno generato ma conserva account e credenziali per
-  riutilizzarli, ed **Elimina account**, distruttiva e da usare soltanto quando serve davvero.
-  Consentire anche gli allegati della chat agli account test solo dopo aver esteso la pulizia ai
-  relativi oggetti R2, evitando file orfani; mantenere disattivati email e qualunque altra
-  integrazione esterna. Il reset deve coprire anche sessioni, telemetria, ricevute di lettura e tutte
-  le tabelle personali/additive autorizzate, con verifica esplicita che non tocchi contenuti condivisi
-  o dati degli account reali. **Implementato il 01/09/2026** nel Profilo con Modalità admin:
-  creazione e lista degli account test, azioni separate “Ripulisci dati”/“Elimina account” e form
-  precompilato in base alla persona simulata. La pulizia è centralizzata lato server e comprende
-  D1, sessioni, telemetria, ricevute unread e gli oggetti R2 collegati ai messaggi; per questo gli
-  account test possono ora provare anche gli allegati senza lasciare file orfani. Email, scambi e
-  scritture sui contenuti condivisi restano bloccati.
-- [x] #e23 — Aggiornamento del sito notificato in diretta via WebSocket: quando viene pubblicata una
-  nuova build, inviare ai client connessi un evento realtime con l'identificatore della versione,
-  così l'avviso "Ho aggiornato il Mondo Bianco" compare subito senza aspettare il controllo
-  periodico attuale (ogni 5 minuti) o il ritorno della scheda in primo piano. Il segnale deve essere
-  emesso dal flusso di deploy solo dopo che la nuova versione è effettivamente disponibile; il client
-  confronta l'identificatore ricevuto con quello della build caricata e ignora eventi duplicati o
-  relativi alla stessa versione. Conservare il controllo HTTP già esistente come fallback per chi era
-  offline, si collega dopo il deploy o perde l'evento WebSocket; nessun polling aggiuntivo.
-  **Implementato il 01/09/2026**: ogni build viene marcata con `CF_PAGES_COMMIT_SHA`; il workflow
-  GitHub avviato dal push aspetta che `/build-version.json` esponga davvero quel commit sul dominio
-  principale e soltanto allora chiama `/api/deploy-notify`, che verifica autonomamente la versione
-  pubblicata e trasmette
-  `site-version:changed` tramite il Durable Object realtime. Il client confronta il commit con
-  quello incorporato nel proprio HTML, ignora duplicati e stessa versione, e conserva il controllo
-  HTTP precedente come fallback. Non richiede secret: l'endpoint può annunciare soltanto il commit
-  che Pages sta servendo davvero e i client ignorano eventi duplicati o relativi alla stessa build.
+- #e25 — Centro notifiche interno al sito: aggiungere nella barra condivisa la classica campanellina
+  con badge dei non letti e pannello apribile, senza Service Worker, permessi browser o notifiche sul
+  telefono. Conservare in D1 notifiche appartenenti a `users.id`, con tipo, testo breve, destinazione,
+  data e stato letto; click sulla voce apre la pagina interessata e la segna come letta, con azione
+  “Segna tutte come lette”. Creare le notifiche lato backend soltanto dopo che l'azione origine è
+  riuscita e aggiornarle in diretta via WebSocket, mantenendole disponibili anche dopo logout,
+  cambio dispositivo o perdita dell'evento realtime. Primo perimetro da decidere prima di
+  implementare: sicuramente messaggi della Chat e aggiornamenti del sito, poi eventualmente Lettere,
+  scambi di carte, GDR e altri eventi utili, evitando di trasformare ogni modifica in rumore.
 - #e20 — Commenti di Desy sulle foto della Bacheca (**prima di UNO**): permettere a lei di
   lasciare un commento direttamente sulla singola foto, mantenendo distinta la didascalia
   editoriale già presente. Il commento deve appartenere all'account tramite `user_id` (mai alla
@@ -50,33 +27,23 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   Ricetta o un'attività dell'Agenda, ed eventualmente pensiero successivo a un evento del
   Calendario. Non aggiungerlo a Lettere, GDR, Ponti, Stranger Chat, scambi o Capsule, dove
   duplicherebbe flussi già esistenti o ne snaturerebbe il senso.
-- [x] #e22 — Chat globale e notifiche: riusare la Chat dei Ponti come **unica conversazione** e
-  renderla accessibile da tutte le pagine tramite un widget compatto nel guscio condiviso,
-  simile al Messenger di Facebook (pulsante flottante, pannello espandibile, composer allineato,
-  cronologia recente e link alla vista completa). Nessun iframe e nessuna seconda tabella di
-  messaggi: stesso endpoint, stessi media, stesso realtime. Prima uniformare messaggi e
-  autorizzazioni su `sender_user_id`/`users.id`, lasciando `sender_identity` solo come label.
-  Aggiungere unread per account e badge globale; come primo livello, notifiche in-app e titolo
-  della scheda. Le notifiche browser vanno richieste solo con consenso esplicito e sono una fase
-  successiva; evitare email per ogni messaggio. **Implementato il 01/09/2026**: widget globale
-  Messenger-style montato alla radice della SPA per ogni sessione autenticata, cronologia recente,
-  invio testuale e link alla vista completa (che conserva allegati e cancellazione). La tabella
-  messaggi resta unica; `sender_user_id` e la tabella `ponti_chat_reads` rendono proprietà e unread
-  per-account, con backfill dei messaggi esistenti da `created_by`. Realtime aggiorna widget e badge;
-  il numero di non letti compare anche nel titolo della scheda. Nessuna richiesta di permesso browser
-  e nessuna email, come previsto per questo primo livello.
 - #e21 — UNO nativo del Mondo Bianco, successivo ai commenti foto: mini-app nostra eventualmente
   isolata in un iframe same-origin, senza servizi o giochi esterni. Pages Functions per
   creazione/storico, Durable Object come stato autorevole della partita e WebSocket per turni,
   mosse e riconnessione; D1 conserva partite concluse e statistiche. Deve riusare la sessione
   esistente, inviare a ogni account soltanto la propria mano e restare separato dai flussi
   normali del sito. Prima versione pensata per Rory e Desy, senza spettatori o matchmaking.
-- #e19 — Presenza online leggera: aggiornare un campo `last_seen_at` sfruttando soltanto le
-  chiamate API che l'utente effettua già mentre usa il sito, senza introdurre un heartbeat o
-  richieste periodiche dedicate. Mostrare uno stato indicativo (per esempio "Online", "Online
-  poco fa", "Offline") in base al tempo trascorso dall'ultima attività. È intenzionalmente una
-  stima: chi resta fermo a leggere una pagina potrebbe risultare offline anche se ha ancora il
-  sito aperto, ma non si generano chiamate inutili solo per segnalarne la presenza.
+- #e19 — Presenza online nella Chat globale. **Implementata in locale il 02/09/2026** sfruttando
+  il WebSocket già aperto: ogni scheda comunica al Durable Object route e `visibilityState` quando
+  si connette, cambia pagina o passa in primo piano/background. Un utente è online soltanto se ha
+  almeno una scheda visibile; più schede vengono aggregate e la pagina mostrata è quella aggiornata
+  più di recente. Gli account reali vedono soltanto la presenza dell'altra identità reale e gli
+  account test soltanto quella dell'altra identità test. Il Durable Object conserva l'ultima visita
+  nel proprio storage, senza D1, migration, polling o heartbeat. Nel titolo del widget Chat: pallino
+  verde e `Nome - Pagina` quando online; pallino grigio e `Nome - ultima visita: gg/mm/aaaa hh:mm`
+  quando offline. Il testo scorre automaticamente solo se supera lo spazio disponibile. **Resta da
+  chiudere**: pubblicare sia il Worker realtime sia Pages e verificare con Test Rory/Test Desy
+  online, background, cambio pagina, più schede e disconnessione.
 - #e4 (idee proposte il 15/08/2026, non ancora fatte) — grafica delle carte: (a) un **retro
   della carta** vero (oggi le carte non ancora rivelate/nell'album non hanno un fronte
   "coperto" disegnato); (b) una **texture per la bustina** stessa (oggi solo un'emoji 🧧 nel
@@ -110,24 +77,6 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
   `documentazione/e4-carte-collezionabili.md`. Il resto della feature è concluso e rifinito, vedi voce completa
   più sotto nel Fatto.
 - #e16 (idea, ripescata) — Playlist Spotify condivisa nelle Cuffiette: era già stata proposta come #e1 e scartata il 13/08/2026 perché non chiaro il senso. Rory ha chiarito il 14/08/2026: non un editoriale scritto, ma un vero embed di una playlist Spotify che lui cura nel tempo, aggiungendo canzoni man mano — più semplice da fare di una pagina editoriale (nessun CMS, nessun testo da scrivere, solo un iframe verso la playlist).
-- [x] #f5 — Infrastruttura email (Resend) implementata il 15/08/2026, dominio `il-mondo-bianco.com`
-  verificato su Resend, API key salvata come secret Cloudflare (`RESEND_API_KEY`, mai nel repo).
-  Libreria condivisa `functions/api/_shared/email.js` (`sendEmail`, `notifyOtherIdentity`, quest'ultima
-  rispetta sempre `users.notify_email_updates`). Due canali attivi per ora: **notifica manuale**
-  (inizialmente un bottone nella userbar condivisa, spostato lo stesso giorno nella pagina
-  **Profilo** — sotto "Strumenti riservati" — con una casella di testo per personalizzare il
-  messaggio prima di inviarlo, `web/src/app/pages/profilo/`, chiama `functions/api/notify-update.js`)
-  e **notifiche automatiche di scambio carte** (#e4, Blocco 5: proponi/accetta/rifiuta/controproponi
-  in `functions/api/carte-trade/`). Deciso con Rory di non agganciare automaticamente tutte le
-  altre 20 sezioni con contenuto pubblicabile (Ricettario, Lettere, Bacheca, ecc.): troppo
-  rumoroso da fare a tappeto ora; si aggiungeranno singolarmente in futuro se richiesto, o si
-  valuterà una newsletter settimanale riassuntiva invece di email puntuali. Invio reale testato
-  end-to-end il 15/08/2026 (email di prova consegnata con successo a rory982011@gmail.com),
-  endpoint di test temporaneo rimosso subito dopo. Controllando la nuova card nel Profilo è
-  emerso un bug preesistente e indipendente: `--input-bg` (sfondo dei campi di testo) era
-  definito solo nel tema scuro di default e mai ridefinito negli altri 7 temi in `themes.css` —
-  con qualunque tema chiaro attivo tutti i campi di testo del sito restavano scuri. Risolto
-  ridefinendo `--input-bg` in ciascun tema, verificato con screenshot Playwright prima/dopo.
 - #f6 - Animazione di apertura/chiusura del biglietto nel Barattolo dei Pensieri (#e12): voluta come un vero foglietto piegato in 4 (due pieghe, orizzontale e verticale) che si spiega — tentativi fatti e scartati: scale()/clip-path (sembrava una copia in miniatura, non una piega), 4 pannelli reali con cerniere 3D rotateX/rotateY (geometricamente corretto ma troppo macchinoso/fragile da rifinire). Per ora il biglietto compare e scompare di scatto, senza animazione.
 - #e18 (pulizia interna, non urgente) — Duplicazione trovata il 14/08/2026 durante un'audit richiesta da Rory: (a) il metodo "sposta su/giù" è identico in 9 pagine (Bacheca, Barattolo dei Pensieri, Linguaggio Segreto, Cuffiette, Mappamondo, Mappa, Storie, Cruciverba, Ricettario) — stesso corpo di 3 righe, cambia solo endpoint e nome del metodo di reload; estrarlo in un helper condiviso è lavoro piccolo (~1h, basso rischio). (b) il pattern completo "Sposta…" (spostare un elemento in un altro contenitore/categoria: stessi signal `startMove*`/`cancelMove*`/`confirmMove*`, stesso blocco HTML con due select e bottoni Annulla/Sposta, stesso cluster di bottoni ⬆️⬇️↔️✏️🗑️) è ripetuto in 3 pagine (Bacheca, Barattolo dei Pensieri, Linguaggio Segreto) con nomi di campo diversi invece di essere un componente condiviso — lavoro medio (~mezza giornata: progettazione componente generico + migrazione delle 3 pagine + verifica Playwright). Nessuna delle due è urgente: non è un bug, non cambia nulla nell'uso del sito, solo manutenzione interna coerente con la regola "zero duplicazione" (CLAUDE.md). Rimandato per ora su richiesta di Rory (poco tempo disponibile).
 ---
@@ -142,6 +91,64 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Fatto
 
+- [x] #e23 — Aggiornamento del sito notificato in diretta via WebSocket: ogni build viene marcata
+  con `CF_PAGES_COMMIT_SHA`; dopo il push su `main`, il workflow GitHub aspetta che
+  `/build-version.json` esponga davvero quel commit sul dominio principale e soltanto allora chiama
+  `/api/deploy-notify`. L'endpoint verifica autonomamente che la versione richiesta sia quella
+  realmente pubblicata e trasmette `site-version:changed` tramite il Durable Object realtime. Il
+  client confronta il commit con quello incorporato nel proprio HTML, ignora stessa versione ed
+  eventi duplicati e mostra subito “Ho aggiornato il Mondo Bianco” alle schede rimaste sulla build
+  precedente; il controllo HTTP ogni cinque minuti e al ritorno in primo piano resta come fallback
+  per chi era offline o perde l'evento. Non richiede secret perché non può annunciare una versione
+  diversa da quella servita da Pages. **Rilasciato e verificato il 01/09/2026**: il dominio pubblico
+  espone il commit `d44bbab991494dd5e99b8388a484b35722b54216` e il primo workflow “Notifica nuova
+  versione” si è concluso con successo sullo stesso commit.
+- [x] #e24 — Coppia permanente di account di collaudo, **Test Rory** (`lui`) e **Test Desy**
+  (`lei`), per provare autonomamente in locale e negli ambienti autorizzati i flussi che richiedono
+  due persone (chat/realtime/unread, lettere, GDR, carte e funzionalità future) senza coinvolgere
+  Desy e senza usare gli account reali. Separare l'attuale rollback in due azioni: **Ripulisci dati**,
+  che elimina tutto ciò che gli account test hanno generato ma conserva account e credenziali per
+  riutilizzarli, ed **Elimina account**, distruttiva e da usare soltanto quando serve davvero.
+  Consentire anche gli allegati della chat agli account test solo dopo aver esteso la pulizia ai
+  relativi oggetti R2, evitando file orfani; mantenere disattivati email e qualunque altra
+  integrazione esterna. Il reset deve coprire anche sessioni, telemetria, ricevute di lettura e tutte
+  le tabelle personali/additive autorizzate, con verifica esplicita che non tocchi contenuti condivisi
+  o dati degli account reali. **Implementato il 01/09/2026** nel Profilo con Modalità admin:
+  creazione e lista degli account test, azioni separate “Ripulisci dati”/“Elimina account” e form
+  precompilato in base alla persona simulata. La pulizia è centralizzata lato server e comprende
+  D1, sessioni, telemetria, ricevute unread e gli oggetti R2 collegati ai messaggi; per questo gli
+  account test possono ora provare anche gli allegati senza lasciare file orfani. Email, scambi e
+  scritture sui contenuti condivisi restano bloccati.
+- [x] #e22 — Chat globale e notifiche: riusare la Chat dei Ponti come **unica conversazione** e
+  renderla accessibile da tutte le pagine tramite un widget compatto nel guscio condiviso,
+  simile al Messenger di Facebook (pulsante flottante, pannello espandibile, composer allineato,
+  cronologia recente e link alla vista completa). Nessun iframe e nessuna seconda tabella di
+  messaggi: stesso endpoint, stessi media, stesso realtime. Prima uniformare messaggi e
+  autorizzazioni su `sender_user_id`/`users.id`, lasciando `sender_identity` solo come label.
+  Aggiungere unread per account e badge globale; come primo livello, notifiche in-app e titolo
+  della scheda. Le notifiche browser vanno richieste solo con consenso esplicito e sono una fase
+  successiva; evitare email per ogni messaggio. **Implementato il 01/09/2026**: widget globale
+  Messenger-style montato alla radice della SPA per ogni sessione autenticata, cronologia recente,
+  invio testuale e link alla vista completa (che conserva allegati e cancellazione). La tabella
+  messaggi resta unica; `sender_user_id` e la tabella `ponti_chat_reads` rendono proprietà e unread
+  per-account, con backfill dei messaggi esistenti da `created_by`. Realtime aggiorna widget e badge;
+  il numero di non letti compare anche nel titolo della scheda. La lettura azzera il badge anche per
+  gli account test, aggiorna `read_at` e mostra la spunta al mittente; Invio spedisce, Shift+Invio va
+  a capo e i cambi di giorno sono separati con date italiane. Nessuna richiesta di permesso browser
+  e nessuna email, come previsto per questo primo livello.
+- [x] #f5 — Infrastruttura email (Resend) implementata il 15/08/2026, dominio `il-mondo-bianco.com`
+  verificato su Resend, API key salvata come secret Cloudflare (`RESEND_API_KEY`, mai nel repo).
+  Libreria condivisa `functions/api/_shared/email.js` (`sendEmail`, `notifyOtherIdentity`, quest'ultima
+  rispetta sempre `users.notify_email_updates`). Due canali attivi per ora: **notifica manuale**
+  (inizialmente un bottone nella userbar condivisa, poi spostato nel pannello amministratore, con
+  messaggio personalizzabile, anteprima del template e opzione esplicita “Forza” per ignorare la
+  preferenza del destinatario) e **notifiche automatiche di scambio carte** (#e4, Blocco 5:
+  proponi/accetta/rifiuta/controproponi in `functions/api/carte-trade/`). Deciso con Rory di non
+  agganciare automaticamente tutte le altre sezioni con contenuto pubblicabile: troppo rumoroso;
+  si aggiungeranno singolarmente in futuro se richiesto, o si valuterà una newsletter settimanale.
+  Invio reale testato end-to-end il 15/08/2026 (email consegnata a rory982011@gmail.com), endpoint
+  di test temporaneo rimosso. Durante la verifica è stato inoltre corretto `--input-bg` in tutti i
+  temi chiari, evitando campi di testo scuri fuori tema.
 - [x] #e6 - Test generale e fix finali mobile: verifica sistematica con Playwright (viewport 375×812, sessione autenticata via cookie di sessione impostato direttamente, senza passare dal Portone) di tutte le 35 rotte del sito, incluse quelle admin (Log, Contenuti, playground di Prova a Dire No) e il Portone da sloggato. Per ognuna controllati overflow orizzontale (`scrollWidth` vs `clientWidth` su `html`/`body`), testo tagliato, bottoni troppo piccoli, elementi sovrapposti, e screenshot a piena pagina. Trovato un solo bug reale: nell'header condiviso (`app-world-header`/`app-world-user-bar`, `web/src/styles/components/world-shell.css`) la riga `.place-header` non poteva andare a capo — su Il Mappamondo, che disattiva il collasso dell'etichetta home (`homeLabelCollapsible="false"`), un utente con ruolo admin (bottone extra "Admin" nella barra utente) superava la larghezza della viewport di circa 26px, con scroll orizzontale della pagina. Corretto con una regola di difesa in profondità sul componente condiviso, non specifica del Mappamondo: sotto i 480px `.place-header` va in `flex-wrap: wrap` e `.place-userbar` si allinea a destra con `margin-left: auto`, così la barra utente scende a riga nuova invece di sforare, qualunque combinazione di pagina/ruolo. Verificato dopo il fix che tutte le 35 rotte tornano a `overflow: false`. Durante la verifica trovato anche un problema preesistente e indipendente, non del test mobile: nel working tree c'era una modifica a metà (riorganizzazione della home in 4 macro-luoghi, non ancora committata in quel momento) che rompeva la build (`ng build` falliva, `places` reso `private` in `mondo-bianco.ts` ma il template ancora lo usa) — corretto riportando la visibilità a `protected` per sbloccare il build e poter testare il sito, senza toccare né completare quella feature.
 
 ### Extra (fuori scaletta, chiesto il 15/08/2026)

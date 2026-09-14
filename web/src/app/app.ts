@@ -25,6 +25,7 @@ import { WorldBalloons } from './shared/world-balloons';
 import { WorldFireworks } from './shared/world-fireworks';
 import { GlobalChatWidget } from './shared/global-chat-widget/global-chat-widget';
 import { GlobalChatService } from './core/global-chat.service';
+import { StudyFocusService } from './core/study-focus.service';
 
 // Eventi usati come "prova di attività" per rinnovare lo sblocco della Chiave (vedi
 // AuthService.touchAccessUnlock) — non serve seguire ogni movimento del mouse, basta sapere
@@ -50,6 +51,7 @@ const ROUTE_BODY_CLASSES = [
   'suggerimenti-page',
   'impostazioni-mondo-page',
   'sky-view-page',
+  'aula-studio-page',
   'tavolo-page',
   'not-found-page'
 ];
@@ -70,6 +72,7 @@ export class App {
   private readonly carteBustineService = inject(CarteBustineService);
   private readonly realtimeService = inject(RealtimeService);
   private readonly globalChat = inject(GlobalChatService);
+  protected readonly studyFocus = inject(StudyFocusService);
   private lastActivityTouchAt = 0;
   private readonly currentAssetSignature = this.assetSignature(document);
   private readonly currentDeploymentVersion = document.querySelector<HTMLMetaElement>('meta[name="app-version"]')?.content || '';

@@ -116,7 +116,7 @@ export class MondoBianco {
     })
   );
 
-  // Riorganizzazione home del 15/08/2026: le 16 card "primary" restano le stesse, ma raggruppate
+  // Riorganizzazione home del 15/08/2026: le card "primary" sono raggruppate
   // sotto 4 macro-luoghi esplorabili (HOME_AREAS) invece di una griglia piatta.
   protected readonly areas = computed<AreaView[]>(() => {
     const places = this.places();

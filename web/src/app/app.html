@@ -1,19 +1,21 @@
-<app-world-silk />
-<app-world-stars />
-<app-world-shooting-stars />
-<app-world-lanterns />
-<app-world-moon />
-<app-world-sparkles />
-<app-world-leaves />
-<app-world-waves />
-<app-world-fish />
-<app-world-petals />
-<app-world-bubbles />
-<app-world-hearts />
-<app-world-pearl-shimmers />
-<app-world-stickers />
-<app-world-balloons />
-<app-world-fireworks />
+@if (!studyFocus.active()) {
+  <app-world-silk />
+  <app-world-stars />
+  <app-world-shooting-stars />
+  <app-world-lanterns />
+  <app-world-moon />
+  <app-world-sparkles />
+  <app-world-leaves />
+  <app-world-waves />
+  <app-world-fish />
+  <app-world-petals />
+  <app-world-bubbles />
+  <app-world-hearts />
+  <app-world-pearl-shimmers />
+  <app-world-stickers />
+  <app-world-balloons />
+  <app-world-fireworks />
+}
 @if (updateAvailable()) {
   <aside class="app-update-notice" role="status" aria-live="polite">
     <p>Ho aggiornato il Mondo Bianco. Quando sei pronta, puoi caricare la nuova versione</p>

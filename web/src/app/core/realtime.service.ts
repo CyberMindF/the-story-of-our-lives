@@ -1,4 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { DestroyRef, Injectable, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router } from '@angular/router';
 import { Observable, Subject, filter } from 'rxjs';
 
 export interface RealtimeEvent {
@@ -11,6 +13,8 @@ export type RealtimeConnectionState = 'disconnected' | 'connecting' | 'connected
 
 @Injectable({ providedIn: 'root' })
 export class RealtimeService {
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly eventsSubject = new Subject<RealtimeEvent>();
   private socket: WebSocket | null = null;
   private reconnectTimer: ReturnType<typeof window.setTimeout> | null = null;
@@ -21,6 +25,14 @@ export class RealtimeService {
 
   readonly state = signal<RealtimeConnectionState>('disconnected');
   readonly events: Observable<RealtimeEvent> = this.eventsSubject.asObservable();
+
+  constructor() {
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.sendPresence());
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
+    this.destroyRef.onDestroy(() => document.removeEventListener('visibilitychange', this.onVisibilityChange));
+  }
 
   // App lo chiama dopo l'autenticazione; il controllo preliminare evita tentativi WebSocket
   // finché il binding Cloudflare non è stato effettivamente attivato.
@@ -63,12 +75,17 @@ export class RealtimeService {
   private openSocket(): void {
     this.state.set('connecting');
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const socket = new WebSocket(`${protocol}//${window.location.host}/api/realtime`);
+    const socketUrl = new URL('/api/realtime', window.location.origin);
+    socketUrl.protocol = protocol;
+    socketUrl.searchParams.set('path', window.location.pathname);
+    socketUrl.searchParams.set('visible', String(document.visibilityState === 'visible'));
+    const socket = new WebSocket(socketUrl);
     this.socket = socket;
 
     socket.addEventListener('open', () => {
       this.reconnectAttempt = 0;
       this.state.set('connected');
+      this.sendPresence();
     });
 
     socket.addEventListener('message', (message) => {
@@ -99,6 +116,17 @@ export class RealtimeService {
     if (this.reconnectTimer === null) return;
     window.clearTimeout(this.reconnectTimer);
     this.reconnectTimer = null;
+  }
+
+  private readonly onVisibilityChange = (): void => this.sendPresence();
+
+  private sendPresence(): void {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return;
+    this.socket.send(JSON.stringify({
+      type: 'presence:update',
+      path: window.location.pathname,
+      visible: document.visibilityState === 'visible'
+    }));
   }
 }
 

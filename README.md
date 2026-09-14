@@ -242,6 +242,12 @@ messaggi, eliminazioni e letture), Stranger Chat, i turni delle due avventure GD
 L'evento contiene l'utente che ha originato la modifica, così la sua stessa scheda non esegue
 un secondo caricamento ridondante.
 
+Lo stesso socket gestisce la presenza della Chat globale. Il browser invia soltanto route e
+visibilità su connessione, navigazione e `visibilitychange`; il Durable Object aggrega le schede
+per identità e separa account principali da account test. Una scheda in background non conta come
+online. L'ultima visita è conservata nello storage del Durable Object e il widget mostra pagina
+corrente o data dell'ultima visita senza introdurre heartbeat o polling.
+
 Per validare e pubblicare il Worker:
 
 ```bash

@@ -833,3 +833,12 @@ body[data-theme="the-white-world"] .northern-aurora { mix-blend-mode: screen; }
     opacity: 0;
   }
 }
+
+/* L'Aula studio può spegnere la scenografia per la sola durata della scheda. Il tema resta
+   attivo: conserviamo il suo colore semantico di base, ma togliamo il cielo illustrato. Gli
+   elementi animati vengono anche smontati da app.html, così i canvas non lavorano nascosti.
+   Questa regola resta in fondo al file per prevalere sui cieli specifici dei singoli temi. */
+body.world-atmosphere.study-zero-distractions {
+  background: var(--bg-color);
+  background-attachment: fixed;
+}

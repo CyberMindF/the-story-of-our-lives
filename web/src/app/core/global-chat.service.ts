@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService, UserIdentity } from './auth.service';
 import { ApiService } from './api.service';
 import { RealtimeService } from './realtime.service';
+import { WORLD_PLACES } from './world-places';
 
 export interface ChatMessage {
   id: string;
@@ -13,6 +14,12 @@ export interface ChatMessage {
   mediaType: 'photo' | 'video' | null;
   readAt: string | null;
   createdAt: string;
+}
+
+export interface ContactPresence {
+  online: boolean;
+  path: string | null;
+  lastSeen: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,11 +35,21 @@ export class GlobalChatService {
   readonly unreadCount = signal(0);
   readonly loading = signal(false);
   readonly panelOpen = signal(false);
+  readonly contactPresence = signal<ContactPresence>({ online: false, path: null, lastSeen: null });
   readonly ownUserId = computed(() => this.auth.currentUser()?.id ?? null);
   readonly contactName = computed(() => this.auth.currentUser()?.identity === 'lui' ? 'Desy' : 'Rory');
 
   constructor() {
     this.realtime.on('ponti-chat:changed').pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => void this.loadRecent());
+    this.realtime.on('presence:changed').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
+      const user = this.auth.currentUser();
+      if (!user || event['identity'] === user.identity || event['isTest'] !== user.isTest) return;
+      this.contactPresence.set({
+        online: event['online'] === true,
+        path: typeof event['path'] === 'string' ? event['path'] : null,
+        lastSeen: typeof event['lastSeen'] === 'string' ? event['lastSeen'] : null
+      });
+    });
   }
 
   async startForCurrentUser(): Promise<void> {
@@ -46,6 +63,7 @@ export class GlobalChatService {
     this.loadedForUserId = null;
     this.messages.set([]);
     this.unreadCount.set(0);
+    this.contactPresence.set({ online: false, path: null, lastSeen: null });
     this.updateTitle();
   }
 
@@ -100,6 +118,16 @@ export class GlobalChatService {
   async sendText(body: string): Promise<boolean> { return this.send(body); }
 
   mediaUrl(message: ChatMessage): string { return `/api/media/${message.mediaKey}`; }
+
+  contactPageLabel(): string {
+    const path = this.contactPresence().path;
+    if (!path || path === '/') return 'Il Mondo Bianco';
+    if (path === '/ponti-chat' || path === '/stranger-chat') return 'I Ponti';
+    const place = [...WORLD_PLACES]
+      .filter((candidate) => candidate.route && (path === candidate.route || path.startsWith(`${candidate.route}/`)))
+      .sort((a, b) => (b.route?.length ?? 0) - (a.route?.length ?? 0))[0];
+    return place?.fallbackName ?? 'Il Mondo Bianco';
+  }
 
   startsNewDay(index: number): boolean {
     if (index === 0) return true;

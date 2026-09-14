@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, afterNextRender, inject, signal } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, HostListener, ViewChild, afterNextRender, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -11,7 +11,7 @@ import { GlobalChatService } from '../../core/global-chat.service';
   templateUrl: './global-chat-widget.html',
   styleUrl: './global-chat-widget.css'
 })
-export class GlobalChatWidget {
+export class GlobalChatWidget implements AfterViewChecked {
   protected readonly chat = inject(GlobalChatService);
   protected readonly open = signal(false);
   protected readonly text = signal('');
@@ -19,8 +19,20 @@ export class GlobalChatWidget {
   protected readonly error = signal('');
   protected readonly pendingFile = signal<File | null>(null);
   protected readonly pendingPreviewUrl = signal<string | null>(null);
+  protected readonly titleScrollDistance = signal(0);
   @ViewChild('log') private log?: ElementRef<HTMLElement>;
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('presenceViewport') private presenceViewport?: ElementRef<HTMLElement>;
+  @ViewChild('presenceText') private presenceText?: ElementRef<HTMLElement>;
+
+  ngAfterViewChecked(): void {
+    this.measurePresenceTitle();
+  }
+
+  @HostListener('window:resize')
+  protected onResize(): void {
+    this.measurePresenceTitle();
+  }
 
   protected toggle(): void {
     this.open.update((value) => !value);
@@ -87,5 +99,13 @@ export class GlobalChatWidget {
   private scrollToBottom(): void {
     const element = this.log?.nativeElement;
     if (element) element.scrollTop = element.scrollHeight;
+  }
+
+  private measurePresenceTitle(): void {
+    const viewport = this.presenceViewport?.nativeElement;
+    const text = this.presenceText?.nativeElement;
+    if (!viewport || !text) return;
+    const distance = Math.max(0, Math.ceil(text.scrollWidth - viewport.clientWidth));
+    if (distance !== this.titleScrollDistance()) this.titleScrollDistance.set(distance);
   }
 }

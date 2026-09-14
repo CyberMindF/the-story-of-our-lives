@@ -2,7 +2,22 @@
   @if (open()) {
     <section class="global-chat-panel" aria-label="Chat globale">
       <header class="global-chat-header">
-        <strong>{{ chat.contactName() }}</strong>
+        <div class="global-chat-presence" [attr.aria-label]="chat.contactPresence().online ? 'Online' : 'Offline'">
+          <span class="global-chat-presence-dot" [class.is-online]="chat.contactPresence().online" aria-hidden="true"></span>
+          <div #presenceViewport class="global-chat-presence-viewport">
+            <span #presenceText class="global-chat-presence-text" [class.is-scrolling]="titleScrollDistance() > 0"
+              [style.--presence-scroll-distance.px]="titleScrollDistance()">
+              <strong>{{ chat.contactName() }}</strong>
+              @if (chat.contactPresence().online) {
+                <span> - {{ chat.contactPageLabel() }}</span>
+              } @else if (chat.contactPresence().lastSeen) {
+                <span> - ultima visita: {{ chat.contactPresence().lastSeen | date: 'dd/MM/yyyy HH:mm' }}</span>
+              } @else {
+                <span> - offline</span>
+              }
+            </span>
+          </div>
+        </div>
         <div class="global-chat-header-actions">
           <a class="global-chat-icon-btn" routerLink="/ponti-chat" (click)="toggle()" aria-label="Apri la chat a pagina intera" title="Apri a pagina intera">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5h2V5h3V3Zm8 0v2h3v3h2V3h-5ZM5 16H3v5h5v-2H5v-3Zm16 0h-2v3h-3v2h5v-5Z"/></svg>

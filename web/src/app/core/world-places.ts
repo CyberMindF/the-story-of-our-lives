@@ -13,7 +13,7 @@ export interface WorldPlace {
   homeArea?: HomeAreaId;
 }
 
-// I 4 macro-luoghi della home (riorganizzazione del 15/08/2026): raggruppano le stesse 16
+// I 4 macro-luoghi della home (riorganizzazione del 15/08/2026): raggruppano le destinazioni
 // destinazioni "primary" di WORLD_PLACES sotto card esplorabili, senza introdurre nuove rotte.
 export const HOME_AREAS: readonly { id: HomeAreaId; emoji: string; label: string; description: string }[] = [
   { id: 'valle', emoji: '🏞️', label: 'La Valle dei Ricordi', description: 'Il luogo che conserva e racconta le nostre storie' },
@@ -46,6 +46,7 @@ export const WORLD_PLACES: readonly WorldPlace[] = [
   { id: 'mappa', emoji: '🗺️', route: '/mappa', fallbackName: 'La Mappa', fallbackDescription: 'I luoghi che sogniamo di visitare insieme e che magari un giorno visiteremo davvero', group: 'insieme', primary: true, homeArea: 'prato' },
   { id: 'cose-da-fare-insieme', emoji: '📔', route: '/cose-da-fare-insieme', fallbackName: "L'Agenda delle Idee", fallbackDescription: 'La famosa lista delle cose da fare, ora è anche tua', group: 'insieme', primary: true, homeArea: 'prato' },
   { id: 'ricettario', emoji: '🍳', route: '/ricettario', fallbackName: 'Il Ricettario', fallbackDescription: 'Tutte le nostre ricette raccolte, come se fosse un libro di cucina', group: 'insieme', primary: true, homeArea: 'prato' },
+  { id: 'aula-studio', emoji: '🏫', route: '/aula-studio', fallbackName: 'L’Aula studio', fallbackDescription: 'Argomenti e flash card per ripassare senza distrazioni', group: 'insieme', primary: true, homeArea: 'prato' },
   { id: 'suggerimenti', emoji: '💭', route: '/suggerimenti', fallbackName: 'I Suggerimenti', fallbackDescription: 'Questo mondo è tanto mio quanto tuo, se vuoi creare qualcosa proponilo qui', group: 'insieme' },
 
   { id: 'tavolo-da-gioco', emoji: '🎲', route: '/tavolo-da-gioco', fallbackName: 'Il Tavolo da Gioco', fallbackDescription: 'L’hub dei giochi', group: 'giochi', primary: true, homeArea: 'prato' },

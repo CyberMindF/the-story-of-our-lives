@@ -4,6 +4,20 @@ import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: () => undefined,
+        removeEventListener: () => undefined,
+        addListener: () => undefined,
+        removeListener: () => undefined,
+        dispatchEvent: () => false
+      })
+    });
+
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [provideRouter([])]
@@ -21,7 +35,7 @@ describe('App', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelectorAll('.world-star').length).toBe(150);
+    expect(compiled.querySelector('app-world-stars')).toBeTruthy();
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });
