@@ -40,41 +40,54 @@
 
         @if (currentCard(); as card) {
           <p class="study-progress">Carta {{ studyPosition() + 1 }} di {{ topic.cards.length }}</p>
-          <button
-            type="button"
-            class="flash-card"
-            [class.is-flipped]="flipped()"
-            [attr.aria-label]="flipped() ? 'Mostra la domanda' : 'Mostra la risposta'"
-            (click)="flipped.set(!flipped())"
+          <div
+            class="flash-card-stage"
+            [class.moving-next]="transitionDirection() === 'next'"
+            [class.moving-previous]="transitionDirection() === 'previous'"
           >
-            <span class="flash-card-inner">
-              <span class="flash-card-face flash-card-front">
-                <small>Domanda</small>
-                <strong>{{ card.question }}</strong>
-                <span>Tocca per vedere la risposta</span>
-              </span>
-              <span class="flash-card-face flash-card-back">
-                <small>Risposta</small>
-                <strong>{{ card.answer }}</strong>
-                <span>Tocca per tornare alla domanda</span>
-              </span>
-            </span>
-          </button>
+            @if (outgoingCard(); as outgoing) {
+              <app-study-flash-card
+                class="flash-card-layer is-outgoing"
+                aria-hidden="true"
+                [question]="outgoing.card.question"
+                [answer]="outgoing.card.answer"
+                [flipped]="outgoing.flipped"
+                [interactive]="false"
+              />
+            }
+            <app-study-flash-card
+              class="flash-card-layer is-current"
+              [question]="card.question"
+              [answer]="card.answer"
+              [flipped]="flipped()"
+              [interactive]="transitionDirection() === null"
+              (flip)="flipped.set(!flipped())"
+            />
+          </div>
 
           <div class="study-controls" aria-label="Controlli del mazzo">
             <button
               type="button"
               class="btn"
-              [disabled]="studyPosition() === 0"
+              [disabled]="studyPosition() === 0 || transitionDirection() !== null"
               (click)="previousCard()"
             >
               ← Indietro
             </button>
-            <button type="button" class="btn" (click)="shuffleDeck()">⤨ Mescola</button>
+            <button
+              type="button"
+              class="btn"
+              [disabled]="transitionDirection() !== null"
+              (click)="shuffleDeck()"
+            >
+              Mescola
+            </button>
             <button
               type="button"
               class="btn btn-submit"
-              [disabled]="studyPosition() === topic.cards.length - 1"
+              [disabled]="
+                studyPosition() === topic.cards.length - 1 || transitionDirection() !== null
+              "
               (click)="nextCard()"
             >
               Avanti →

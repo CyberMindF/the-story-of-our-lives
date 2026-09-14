@@ -4,6 +4,7 @@ import { AppShell } from '../../shell/app-shell';
 import { ApiService } from '../../core/api.service';
 import { StudyFocusService } from '../../core/study-focus.service';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
+import { StudyFlashCard } from './study-flash-card';
 
 interface StudyCard {
   id?: number;
@@ -67,7 +68,7 @@ function shuffledIndices(length: number): number[] {
 @Component({
   selector: 'app-aula-studio',
   standalone: true,
-  imports: [AppShell, FormsModule, ConfirmationDialog],
+  imports: [AppShell, FormsModule, ConfirmationDialog, StudyFlashCard],
   styleUrls: ['../../../styles/pages/aula-studio.css'],
   templateUrl: './aula-studio.html',
 })
@@ -90,6 +91,11 @@ export class AulaStudio implements OnDestroy {
   private readonly studyOrder = signal<number[]>([]);
   protected readonly studyPosition = signal(0);
   protected readonly flipped = signal(false);
+  protected readonly transitionDirection = signal<'next' | 'previous' | null>(null);
+  protected readonly outgoingCard = signal<{ card: StudyCard; flipped: boolean } | null>(null);
+  private transitionTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private readonly reducedMotion =
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
   protected readonly studyingTopic = computed(
     () => this.topics().find((topic) => topic.id === this.studyingTopicId()) ?? null,
   );
@@ -105,6 +111,7 @@ export class AulaStudio implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.clearCardTransition();
     this.focusMode.leavePage();
   }
 
@@ -150,11 +157,6 @@ export class AulaStudio implements OnDestroy {
       this.formError.set('Aggiungi almeno una domanda e la sua risposta.');
       return;
     }
-    if (parsed.cards.length > 200) {
-      this.formError.set('Un argomento può contenere al massimo 200 flash card.');
-      return;
-    }
-
     this.saving.set(true);
     this.formError.set('');
     const editingId = this.editingId();
@@ -209,6 +211,7 @@ export class AulaStudio implements OnDestroy {
   }
 
   protected closeStudy(): void {
+    this.clearCardTransition();
     this.studyingTopicId.set(null);
     this.studyOrder.set([]);
     this.studyPosition.set(0);
@@ -218,21 +221,44 @@ export class AulaStudio implements OnDestroy {
   protected shuffleDeck(): void {
     const topic = this.studyingTopic();
     if (!topic) return;
+    this.clearCardTransition();
     this.studyOrder.set(shuffledIndices(topic.cards.length));
     this.studyPosition.set(0);
     this.flipped.set(false);
   }
 
   protected previousCard(): void {
-    if (this.studyPosition() === 0) return;
-    this.studyPosition.update((position) => position - 1);
-    this.flipped.set(false);
+    this.moveCard(-1, 'previous');
   }
 
   protected nextCard(): void {
-    if (this.studyPosition() >= this.studyOrder().length - 1) return;
-    this.studyPosition.update((position) => position + 1);
+    this.moveCard(1, 'next');
+  }
+
+  private moveCard(offset: -1 | 1, direction: 'next' | 'previous'): void {
+    if (this.transitionDirection()) return;
+    const card = this.currentCard();
+    const targetPosition = this.studyPosition() + offset;
+    if (!card || targetPosition < 0 || targetPosition >= this.studyOrder().length) return;
+
+    if (this.reducedMotion) {
+      this.studyPosition.set(targetPosition);
+      this.flipped.set(false);
+      return;
+    }
+
+    this.outgoingCard.set({ card, flipped: this.flipped() });
+    this.transitionDirection.set(direction);
+    this.studyPosition.set(targetPosition);
     this.flipped.set(false);
+    this.transitionTimer = window.setTimeout(() => this.clearCardTransition(), 360);
+  }
+
+  private clearCardTransition(): void {
+    if (this.transitionTimer !== null) window.clearTimeout(this.transitionTimer);
+    this.transitionTimer = null;
+    this.outgoingCard.set(null);
+    this.transitionDirection.set(null);
   }
 
   private async load(): Promise<void> {

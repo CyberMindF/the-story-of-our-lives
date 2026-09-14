@@ -1,0 +1,31 @@
+<button
+  type="button"
+  class="flash-card"
+  [class.is-flipped]="flipped"
+  [disabled]="!interactive"
+  [attr.aria-label]="interactive ? (flipped ? 'Mostra la domanda' : 'Mostra la risposta') : null"
+  (click)="requestFlip()"
+>
+  <span class="flash-card-inner">
+    <span class="flash-card-face flash-card-front">
+      <small>Domanda</small>
+      <strong
+        [class.is-long]="question.length > 100"
+        [class.is-very-long]="question.length > 220"
+        [class.is-dense]="question.length > 400"
+        >{{ question }}</strong
+      >
+      <span>Tocca per vedere la risposta</span>
+    </span>
+    <span class="flash-card-face flash-card-back">
+      <small>Risposta</small>
+      <strong
+        [class.is-long]="answer.length > 100"
+        [class.is-very-long]="answer.length > 220"
+        [class.is-dense]="answer.length > 400"
+        >{{ answer }}</strong
+      >
+      <span>Tocca per tornare alla domanda</span>
+    </span>
+  </span>
+</button>

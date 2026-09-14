@@ -1,5 +1,4 @@
 const MAX_TITLE_LENGTH = 120;
-const MAX_CARDS = 200;
 const MAX_CARD_SIDE_LENGTH = 2000;
 
 export function normalizeTitle(value) {
@@ -8,7 +7,7 @@ export function normalizeTitle(value) {
 }
 
 export function normalizeCards(value) {
-  if (!Array.isArray(value) || value.length === 0 || value.length > MAX_CARDS) {
+  if (!Array.isArray(value) || value.length === 0) {
     return null;
   }
 
