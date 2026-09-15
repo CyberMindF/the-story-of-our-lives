@@ -9,6 +9,7 @@ const ROLE_PERMISSIONS = {
     "content.create",
     "content.delete",
     "content.reorder",
+    "study.bulk_import",
     "events.view",
     "users.manage"
   ])
