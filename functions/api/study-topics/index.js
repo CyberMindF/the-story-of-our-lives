@@ -7,6 +7,11 @@ import {
   normalizeTitle,
   topicsFromRows,
 } from "./_shared.js";
+import {
+  folderExists,
+  normalizeNullableFolderId,
+  toFolderView,
+} from "../study-folders/_shared.js";
 
 // L'Aula è un unico spazio condiviso: qualunque utente autenticato vede gli stessi argomenti.
 export async function onRequestGet(context) {
@@ -14,12 +19,20 @@ export async function onRequestGet(context) {
     const session = await getAuthenticatedSession(context.request, context.env);
     if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
 
-    const { results } = await context.env.DB.prepare(
-      `${TOPIC_WITH_CARDS_SELECT}
+    const [{ results }, { results: folderRows }] = await Promise.all([
+      context.env.DB.prepare(
+        `${TOPIC_WITH_CARDS_SELECT}
         ORDER BY topics.updated_at DESC, topics.id DESC, cards.position ASC`,
-    ).all();
+      ).all(),
+      context.env.DB.prepare(
+        "SELECT * FROM study_folders WHERE deleted_at IS NULL ORDER BY name COLLATE NOCASE, id",
+      ).all(),
+    ]);
 
-    return json({ topics: topicsFromRows(results) });
+    return json({
+      topics: topicsFromRows(results),
+      folders: folderRows.map(toFolderView),
+    });
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -43,14 +56,20 @@ export async function onRequestPost(context) {
     const payload = await readJson(request);
     const title = normalizeTitle(payload?.title);
     const cards = normalizeCards(payload?.cards);
+    const folderId = normalizeNullableFolderId(payload?.folderId);
     if (!title) return json({ error: "Il titolo non è valido." }, 400);
     if (!cards) return json({ error: "Le flash card non sono valide." }, 400);
+    if (folderId === undefined)
+      return json({ error: "La cartella non è valida." }, 400);
+    if (!(await folderExists(env, folderId))) {
+      return json({ error: "La cartella scelta non esiste più." }, 404);
+    }
 
     const now = new Date().toISOString();
     const inserted = await env.DB.prepare(
-      "INSERT INTO study_topics (user_id, title, created_at, updated_at) VALUES (?, ?, ?, ?)",
+      "INSERT INTO study_topics (user_id, folder_id, title, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
     )
-      .bind(session.user.id, title, now, now)
+      .bind(session.user.id, folderId, title, now, now)
       .run();
     const topicId = inserted.meta.last_row_id;
     await env.DB.batch(cardsForInsert(env, topicId, cards, now));
@@ -62,13 +81,13 @@ export async function onRequestPost(context) {
         {
           section: "aula-studio",
           eventType: "content_created",
-          metadata: { topicId, cardCount: cards.length },
+          metadata: { topicId, folderId, cardCount: cards.length },
         },
       ),
     );
 
     return json(
-      { id: topicId, title, cards, createdAt: now, updatedAt: now },
+      { id: topicId, title, folderId, cards, createdAt: now, updatedAt: now },
       201,
     );
   } catch (error) {

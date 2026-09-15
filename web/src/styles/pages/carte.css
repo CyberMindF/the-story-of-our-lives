@@ -51,9 +51,8 @@
 .carte-album-panel,
 .carte-trade-panel,
 .carte-editor-panel {
-  background: var(--panel-color);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--panel-border-color);
+  border-width: 1px;
+  border-style: solid;
   border-radius: 1rem;
   padding: 1.2rem 1.4rem;
   margin-block: 1.2rem;

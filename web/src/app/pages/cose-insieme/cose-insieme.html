@@ -20,7 +20,7 @@
     </header>
 
     @if (editingId() !== null) {
-      <form class="activity-form card" (ngSubmit)="submitEdit()">
+      <form class="activity-form card glass-surface" (ngSubmit)="submitEdit()">
         <h2>{{ editingId() === 'new' ? 'Nuova attività' : 'Modifica attività' }}</h2>
         <label class="form-field">
           <span>Testo pubblico <small>lascia vuoto se è un'idea solo privata</small></span>
@@ -50,7 +50,7 @@
       </form>
     }
 
-    <section class="together-tools card" aria-label="Filtri e contenuti riservati">
+    <section class="together-tools card glass-surface" aria-label="Filtri e contenuti riservati">
       <div class="together-filters" aria-label="Filtra per stato">
         <button type="button" [class.is-active]="filter() === 'all'" (click)="setFilter('all')">Tutte</button>
         <button type="button" [class.is-active]="filter() === 'todo'" (click)="setFilter('todo')">Da fare</button>
@@ -78,7 +78,7 @@
     </nav>
 
     @if (unlockOpen() && !unlocked()) {
-      <form class="unlock-panel card" (submit)="$event.preventDefault(); unlock(unlockAnswer)">
+      <form class="unlock-panel card glass-surface" (submit)="$event.preventDefault(); unlock(unlockAnswer)">
         <div class="unlock-kicker"><span aria-hidden="true">🔐</span> <app-editorial-text contentKey="cose-insieme.sblocco.introduzione" /></div>
         <label for="unlock-answer">Qual era la cosa che ti piaceva di più quando lo facevamo?</label>
         <div>
@@ -96,7 +96,7 @@
       <ol class="together-list">
         @for (activity of visibleActivities(); track activity.id) {
           <li
-            class="activity-card card"
+            class="activity-card card glass-surface"
             [class.is-complete]="activity.status === 'done'"
             [class.is-repeat]="activity.status === 'repeat'"
             [class.is-unavailable]="activity.status === 'unavailable'"
@@ -150,7 +150,7 @@
             }
           </li>
         } @empty {
-          <li class="empty-state card">Non ci sono attività con questo stato.</li>
+          <li class="empty-state card glass-surface">Non ci sono attività con questo stato.</li>
         }
       </ol>
     }

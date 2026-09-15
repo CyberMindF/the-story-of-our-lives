@@ -4,7 +4,7 @@
     <h1 id="log-title"><span aria-hidden="true">🗂️</span> Log degli eventi</h1>
   </section>
 
-  <form class="log-filters card" aria-label="Filtra gli eventi" (ngSubmit)="applyFilters()">
+  <form class="log-filters card glass-surface" aria-label="Filtra gli eventi" (ngSubmit)="applyFilters()">
     <label class="form-field">
       <span>Persona</span>
       <select [(ngModel)]="identity" name="identity">
@@ -43,7 +43,7 @@
   @if (error()) {
     <p class="log-error">{{ error() }}</p>
   } @else {
-    <div class="log-table-wrap card">
+    <div class="log-table-wrap card glass-surface">
       <table class="log-table">
         <thead>
           <tr>

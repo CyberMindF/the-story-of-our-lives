@@ -44,7 +44,7 @@
         }
 
         @if (editingId() !== null) {
-          <form class="word-admin-form card" (ngSubmit)="submitEdit()">
+          <form class="word-admin-form card glass-surface" (ngSubmit)="submitEdit()">
             <h3>{{ editingId() === '__new__' ? 'Nuova definizione' : 'Modifica definizione' }}</h3>
             <label class="form-field">
               <span>Soluzione</span>

@@ -2,7 +2,7 @@
   <section class="globe-hero" aria-labelledby="globe-title">
     <p class="globe-eyebrow">Il racconto di come tutto è nato</p>
     <h1 id="globe-title"><span aria-hidden="true">🌍</span> Il Mappamondo</h1>
-    <div class="globe-soundtrack card">
+    <div class="globe-soundtrack card glass-surface">
       <p>Questo mondo io voglio viverlo a modo mio</p>
       <app-audio-player [src]="songUrl" label="Benjamin" />
     </div>
@@ -13,7 +13,7 @@
   }
 
   @if (editingId() !== null) {
-    <form class="scene-form card" (ngSubmit)="submitEdit()">
+    <form class="scene-form card glass-surface" (ngSubmit)="submitEdit()">
       <h2>{{ editingId() === 'new' ? 'Nuova scena' : 'Modifica scena' }}</h2>
       @if (editingId() === 'new') {
         <label class="form-field">
@@ -82,7 +82,7 @@
           <img src="assets/images/world/mappamondo.webp" alt="Un mappamondo trasparente che contiene il Mondo Bianco tra le nuvole" />
         </figure>
       }
-      <section class="story-scene card" [class.story-scene-wide]="scene.isWide" [class.story-finale]="scene.isFinale">
+      <section class="story-scene card glass-surface" [class.story-scene-wide]="scene.isWide" [class.story-finale]="scene.isFinale">
         <p class="scene-number">{{ (i + 1).toString().padStart(2, '0') }} · {{ scene.title }}</p>
         @for (line of scene.lines; track $index) {
           <p>
@@ -114,7 +114,7 @@
     </div>
 
     @if (editingAtlasId()) {
-      <form class="atlas-edit-form card" (ngSubmit)="submitAtlasEdit()">
+      <form class="atlas-edit-form card glass-surface" (ngSubmit)="submitAtlasEdit()">
         <h3>Modifica la tappa</h3>
         <label class="form-field">
           <span>Nome</span>

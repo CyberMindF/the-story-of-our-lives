@@ -9,7 +9,7 @@
       eccoci qui ahaha</p>
   </div>
 
-  <aside class="carte-coming-soon card" aria-label="Nuove carte in arrivo">
+  <aside class="carte-coming-soon card glass-surface" aria-label="Nuove carte in arrivo">
     <span class="carte-coming-soon-mark" aria-hidden="true">✦</span>
     <div>
       <strong>Nuove carte in arrivo e Work in progress</strong>
@@ -34,7 +34,7 @@
   </nav>
 
   @if (tab() === 'album') {
-  <section class="carte-album-panel">
+  <section class="carte-album-panel glass-surface">
     <div class="carte-bustine-strip">
       <app-carta-pack size="display" />
       <div class="carte-bustine-left">
@@ -132,7 +132,7 @@
   }
 
   @if (tab() === 'scambi') {
-  <section class="carte-trade-panel">
+  <section class="carte-trade-panel glass-surface">
     <header class="carte-trade-header">
       <div>
         <p class="carte-trade-eyebrow">Il tavolo degli scambi</p>
@@ -272,7 +272,7 @@
   }
 
   @if (tab() === 'editor' && canEdit()) {
-  <section class="carte-editor-panel">
+  <section class="carte-editor-panel glass-surface">
     @if (editorLoadError()) {
     <p class="carte-error">Non è stato possibile caricare l'editor.</p>
     }

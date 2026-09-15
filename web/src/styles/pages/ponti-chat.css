@@ -9,7 +9,7 @@
 .chat-day-divider { display: flex; align-items: center; gap: .75rem; width: 100%; color: var(--muted-color); font-size: .75rem; text-transform: capitalize; }
 .chat-day-divider::before, .chat-day-divider::after { content: ''; flex: 1; height: 1px; background: var(--panel-border-color); }
 
-.chat-bubble { align-self: flex-start; max-width: 80%; display: flex; flex-direction: column; gap: .5rem; padding: .85rem 1rem; border-radius: 1rem; border: 1px solid var(--panel-border-color); background: var(--panel-color); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.chat-bubble { align-self: flex-start; max-width: 80%; display: flex; flex-direction: column; gap: .5rem; padding: .85rem 1rem; border-radius: 1rem; border-width: 1px; border-style: solid; }
 .chat-bubble--own { align-self: flex-end; border-color: var(--accent-color); background: color-mix(in srgb, var(--panel-color) 65%, var(--accent-color) 35%); }
 
 .chat-bubble-text { margin: 0; color: var(--text-color); line-height: 1.6; white-space: pre-wrap; word-break: break-word; }

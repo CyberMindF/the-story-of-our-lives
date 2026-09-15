@@ -1,11 +1,11 @@
 <app-shell>
-  <header class="memory-hero card">
+  <header class="memory-hero card glass-surface">
     <p class="memory-kicker">Il nostro archivio</p>
     <h1>📸 La Bacheca dei Ricordi</h1>
     <div class="memory-intro"><app-editorial-text contentKey="bacheca.introduzione" /></div>
   </header>
 
-  <nav class="memory-nav card">
+  <nav class="memory-nav card glass-surface">
     @for (period of layoutPeriods(); track period.id) {
       <div class="memory-nav-group">
         <strong>{{ period.title }}</strong>
@@ -35,7 +35,7 @@
         </header>
 
         @for (day of period.days; track day.slug) {
-          <article class="memory-day card" [id]="dayId(period, day)">
+          <article class="memory-day card glass-surface" [id]="dayId(period, day)">
             @if (day.title) {
               <h3>{{ day.title }}</h3>
             }
@@ -54,7 +54,7 @@
             }
 
             @if (dayMoveTargetId() === day.id) {
-              <div class="bk-move-form card">
+              <div class="bk-move-form card glass-surface">
                 <label class="form-field">
                   <span>Sposta in periodo</span>
                   <select [ngModel]="dayMovePeriodId()" (ngModelChange)="dayMovePeriodId.set($event); dayMoveAfterId.set('')" name="dayMovePeriod-{{ day.id }}">
@@ -154,7 +154,7 @@
           <button type="button" class="btn" (click)="startCreatePeriod()">➕ Aggiungi periodo</button>
         }
         @if (periodEditingId() !== null) {
-          <form class="bk-admin-form card" (ngSubmit)="submitPeriod()">
+          <form class="bk-admin-form card glass-surface" (ngSubmit)="submitPeriod()">
             <h3>{{ periodEditingId() === '__new__' ? 'Nuovo periodo' : 'Rinomina periodo' }}</h3>
             @if (periodEditingId() === '__new__') {
               <label class="form-field">
@@ -178,7 +178,7 @@
   </main>
 
   @if (dayEditingId() !== null) {
-    <form class="bk-admin-form card bk-day-meta-form" (ngSubmit)="submitDay()">
+    <form class="bk-admin-form card glass-surface bk-day-meta-form" (ngSubmit)="submitDay()">
       <h3>{{ dayEditingId() === '__new__' ? 'Nuovo giorno' : 'Titolo e slug del giorno' }}</h3>
       <label class="form-field">
         <span>Titolo <small>facoltativo</small></span>

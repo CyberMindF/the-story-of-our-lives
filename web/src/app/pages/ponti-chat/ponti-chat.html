@@ -9,7 +9,7 @@
   @if (loadError()) { <p class="content-message is-error" role="alert">Non sono riuscito a caricare la chat. Riprova più tardi.</p> }
 
   @if (!loadError()) {
-  <section class="chat-panel card" aria-label="Conversazione">
+  <section class="chat-panel card glass-surface" aria-label="Conversazione">
     <div class="chat-log" #log>
       @if (loading()) { <p class="content-message">Caricamento…</p> }
       @if (!loading() && messages().length === 0) { <p class="content-message">Ancora nessun messaggio.</p> }
@@ -18,7 +18,7 @@
       @if (startsNewDay(index)) {
       <div class="chat-day-divider"><span>{{ message.createdAt | date: 'EEEE d MMMM y' }}</span></div>
       }
-      <article class="chat-bubble" [class.chat-bubble--own]="message.senderUserId === ownUserId()">
+      <article class="chat-bubble glass-surface" [class.chat-bubble--own]="message.senderUserId === ownUserId()">
         @if (message.mediaType === 'photo' && message.mediaKey) {
         <img class="chat-media chat-media--photo" [src]="mediaUrl(message)" alt="" />
         }

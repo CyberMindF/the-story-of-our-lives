@@ -85,12 +85,9 @@ app-world-user-bar {
   max-width: 100%;
   margin: 0;
   padding: 0.3rem 0.35rem 0.3rem 0.8rem;
-  border: 1px solid var(--panel-border-color);
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: var(--panel-color);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .place-userbar .user-greeting {
@@ -189,9 +186,6 @@ app-back-link {
 
 .place-bottom-link {
   margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;
-  background: var(--panel-color);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .place-bottom-link:hover {

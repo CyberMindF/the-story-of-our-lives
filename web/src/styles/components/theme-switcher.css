@@ -24,10 +24,8 @@
   min-width: 0;
   padding: .45rem;
   overflow: hidden;
-  border: 1px solid var(--panel-border-color);
+  border: 1px solid transparent;
   border-radius: 1.2rem;
-  background: var(--panel-color);
-  backdrop-filter: blur(12px);
   color: var(--text-color);
   text-align: left;
   cursor: pointer;
@@ -167,19 +165,20 @@
 }
 
 .theme-chip-selected {
+  --glass-border-color: rgba(255, 255, 255, .28);
+  --glass-background: rgba(8, 14, 24, .68);
+  --glass-filter: blur(6px);
   position: absolute;
   top: .85rem;
   right: .85rem;
   padding: .28rem .55rem;
-  border: 1px solid rgba(255, 255, 255, .28);
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: rgba(8, 14, 24, .68);
   color: #fff;
   font-size: .68rem;
   font-weight: 750;
   letter-spacing: .04em;
   text-transform: uppercase;
-  backdrop-filter: blur(6px);
 }
 
 @media (max-width: 480px) {

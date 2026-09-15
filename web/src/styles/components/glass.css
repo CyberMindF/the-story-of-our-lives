@@ -1,0 +1,9 @@
+/* Superficie di vetro componibile.
+   Definisce soltanto il materiale visivo: forma, spaziatura e ombre restano al
+   componente che la usa (card, bottone, pannello, tooltip...). */
+.glass-surface {
+  border-color: var(--glass-border-color, var(--panel-border-color));
+  background: var(--glass-background, var(--panel-color));
+  backdrop-filter: var(--glass-filter, blur(12px));
+  -webkit-backdrop-filter: var(--glass-filter, blur(12px));
+}

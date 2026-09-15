@@ -9,7 +9,7 @@
 
       <button
         type="button"
-        class="study-focus-toggle card"
+        class="study-focus-toggle card glass-surface"
         [class.is-active]="focusMode.enabled()"
         [attr.aria-pressed]="focusMode.enabled()"
         (click)="toggleFocusMode()"
@@ -28,18 +28,24 @@
       </button>
     </header>
 
-    @if (studyingTopic(); as topic) {
+    @if (isStudying()) {
       <section class="study-session" aria-labelledby="study-session-title">
         <header class="study-session-heading">
           <div>
-            <p class="study-eyebrow">Ripasso in ordine casuale</p>
-            <h2 id="study-session-title">{{ topic.title }}</h2>
+            <p class="study-eyebrow">
+              {{
+                studySessionKind() === 'folder'
+                  ? 'Ripasso di tutta la cartella'
+                  : 'Ripasso in ordine casuale'
+              }}
+            </p>
+            <h2 id="study-session-title">{{ studySessionTitle() }}</h2>
           </div>
-          <button type="button" class="btn" (click)="closeStudy()">Chiudi</button>
+          <button type="button" class="btn glass-surface" (click)="closeStudy()">Chiudi</button>
         </header>
 
         @if (currentCard(); as card) {
-          <p class="study-progress">Carta {{ studyPosition() + 1 }} di {{ topic.cards.length }}</p>
+          <p class="study-progress">Carta {{ studyPosition() + 1 }} di {{ studyDeck().length }}</p>
           <div
             class="flash-card-stage"
             [class.moving-next]="transitionDirection() === 'next'"
@@ -51,6 +57,7 @@
                 aria-hidden="true"
                 [question]="outgoing.card.question"
                 [answer]="outgoing.card.answer"
+                [context]="outgoing.card.context"
                 [flipped]="outgoing.flipped"
                 [interactive]="false"
               />
@@ -59,6 +66,7 @@
               class="flash-card-layer is-current"
               [question]="card.question"
               [answer]="card.answer"
+              [context]="card.context"
               [flipped]="flipped()"
               [interactive]="transitionDirection() === null"
               (flip)="flipped.set(!flipped())"
@@ -68,7 +76,7 @@
           <div class="study-controls" aria-label="Controlli del mazzo">
             <button
               type="button"
-              class="btn"
+              class="btn glass-surface"
               [disabled]="studyPosition() === 0 || transitionDirection() !== null"
               (click)="previousCard()"
             >
@@ -76,7 +84,7 @@
             </button>
             <button
               type="button"
-              class="btn"
+              class="btn glass-surface"
               [disabled]="transitionDirection() !== null"
               (click)="shuffleDeck()"
             >
@@ -84,9 +92,9 @@
             </button>
             <button
               type="button"
-              class="btn btn-submit"
+              class="btn glass-surface btn-submit"
               [disabled]="
-                studyPosition() === topic.cards.length - 1 || transitionDirection() !== null
+                studyPosition() === studyDeck().length - 1 || transitionDirection() !== null
               "
               (click)="nextCard()"
             >
@@ -100,17 +108,98 @@
         <div class="study-section-heading">
           <div>
             <p class="study-eyebrow">I nostri materiali</p>
-            <h2 id="study-library-title">Argomenti</h2>
+            <h2 id="study-library-title">{{ currentFolder()?.name ?? 'Tutti gli argomenti' }}</h2>
           </div>
-          @if (editingId() === null) {
-            <button type="button" class="btn btn-submit" (click)="startCreate()">
-              ＋ Nuovo argomento
-            </button>
+          @if (editingId() === null && editingFolderId() === null) {
+            <div class="study-heading-actions">
+              @if (currentFolder(); as folder) {
+                <button
+                  type="button"
+                  class="btn glass-surface"
+                  [disabled]="folderCardCount(folder.id) === 0"
+                  (click)="startFolderStudy(folder)"
+                >
+                  ▶ Ripassa tutto
+                </button>
+              }
+              <button type="button" class="btn glass-surface" (click)="startCreateFolder()">
+                ＋ Nuova cartella
+              </button>
+              <button type="button" class="btn glass-surface btn-submit" (click)="startCreate()">
+                ＋ Nuovo argomento
+              </button>
+            </div>
           }
         </div>
 
+        <nav class="study-breadcrumbs" aria-label="Percorso delle cartelle">
+          <button
+            type="button"
+            [class.is-current]="currentFolderId() === null"
+            [attr.aria-current]="currentFolderId() === null ? 'page' : null"
+            (click)="openFolder(null)"
+          >
+            Aula studio
+          </button>
+          @for (folder of breadcrumbs(); track folder.id) {
+            <span aria-hidden="true">›</span>
+            <button
+              type="button"
+              [class.is-current]="folder.id === currentFolderId()"
+              [attr.aria-current]="folder.id === currentFolderId() ? 'page' : null"
+              (click)="openFolder(folder.id)"
+            >
+              {{ folder.name }}
+            </button>
+          }
+        </nav>
+
+        @if (editingFolderId() !== null) {
+          <form class="study-folder-editor card glass-surface" (ngSubmit)="saveFolder()">
+            <label class="form-field">
+              <span>{{ editingFolderId() === 'new' ? 'Nome della cartella' : 'Nuovo nome' }}</span>
+              <input
+                type="text"
+                maxlength="120"
+                required
+                autofocus
+                placeholder="Per esempio: Biologia"
+                [ngModel]="folderName()"
+                (ngModelChange)="folderName.set($event)"
+                name="folderName"
+              />
+            </label>
+            @if (folderError()) {
+              <p class="study-error" role="alert">{{ folderError() }}</p>
+            }
+            <div class="study-editor-actions">
+              <button
+                type="button"
+                class="btn glass-surface"
+                [disabled]="savingFolder()"
+                (click)="closeFolderEditor()"
+              >
+                Annulla
+              </button>
+              <button
+                type="submit"
+                class="btn glass-surface btn-submit"
+                [disabled]="savingFolder()"
+              >
+                {{
+                  savingFolder()
+                    ? 'Salvo…'
+                    : editingFolderId() === 'new'
+                      ? 'Crea cartella'
+                      : 'Rinomina'
+                }}
+              </button>
+            </div>
+          </form>
+        }
+
         @if (editingId() !== null) {
-          <form class="study-editor card" (ngSubmit)="saveTopic()">
+          <form class="study-editor card glass-surface" (ngSubmit)="saveTopic()">
             <div class="study-editor-heading">
               <div>
                 <p class="study-eyebrow">
@@ -135,6 +224,20 @@
                 (ngModelChange)="updateDraft({ title: $event })"
                 name="title"
               />
+            </label>
+
+            <label class="form-field">
+              <span>Cartella</span>
+              <select
+                [ngModel]="draft().folderId"
+                (ngModelChange)="updateDraft({ folderId: $event })"
+                name="folderId"
+              >
+                <option [ngValue]="null">Aula studio (radice)</option>
+                @for (folder of folderChoices(); track folder.id) {
+                  <option [ngValue]="folder.id">{{ folder.label }}</option>
+                }
+              </select>
             </label>
 
             <label class="form-field">
@@ -168,10 +271,15 @@
             }
 
             <div class="study-editor-actions">
-              <button type="button" class="btn" [disabled]="saving()" (click)="cancelEdit()">
+              <button
+                type="button"
+                class="btn glass-surface"
+                [disabled]="saving()"
+                (click)="cancelEdit()"
+              >
                 Annulla
               </button>
-              <button type="submit" class="btn btn-submit" [disabled]="saving()">
+              <button type="submit" class="btn glass-surface btn-submit" [disabled]="saving()">
                 {{ saving() ? 'Salvo…' : 'Salva argomento' }}
               </button>
             </div>
@@ -183,47 +291,110 @@
         } @else if (pageError()) {
           <p class="study-message is-error" role="alert">{{ pageError() }}</p>
         } @else {
-          <div class="study-topic-grid">
-            @for (topic of topics(); track topic.id) {
-              <article class="study-topic card">
-                <div class="study-topic-mark" aria-hidden="true">{{ topic.cards.length }}</div>
-                <div>
-                  <p class="study-topic-meta">{{ topic.cards.length }} flash card</p>
-                  <h3>{{ topic.title }}</h3>
-                </div>
-                <div class="study-topic-actions">
-                  <button type="button" class="btn btn-submit" (click)="startStudy(topic)">
-                    Inizia il ripasso
-                  </button>
+          @if (currentFolders().length > 0 || currentTopics().length > 0) {
+            <div class="study-topic-grid">
+              @for (folder of currentFolders(); track folder.id) {
+                <article class="study-folder card glass-surface">
                   <button
                     type="button"
-                    class="btn"
-                    aria-label="Modifica argomento"
-                    (click)="startEdit(topic)"
+                    class="study-folder-open"
+                    [attr.aria-label]="'Apri la cartella ' + folder.name"
+                    (click)="openFolder(folder.id)"
                   >
-                    ✏️
+                    <span class="study-folder-icon" aria-hidden="true">📁</span>
+                    <span>
+                      <span class="study-topic-meta">
+                        {{ folderChildCount(folder.id) }} sottocartelle ·
+                        {{ folderTopicCount(folder.id) }} argomenti ·
+                        {{ folderCardCount(folder.id) }} carte
+                      </span>
+                      <strong>{{ folder.name }}</strong>
+                    </span>
                   </button>
-                  <button
-                    type="button"
-                    class="btn"
-                    aria-label="Elimina argomento"
-                    (click)="requestDelete(topic)"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </article>
-            } @empty {
-              <div class="study-empty card">
-                <span aria-hidden="true">✦</span>
-                <h3>L’aula è pronta</h3>
-                <p>Crea il primo argomento: bastano una domanda e la riga con la sua risposta.</p>
-                <button type="button" class="btn btn-submit" (click)="startCreate()">
-                  Crea il primo argomento
+                  <div class="study-folder-actions">
+                    <button
+                      type="button"
+                      class="btn glass-surface btn-submit study-folder-review"
+                      [disabled]="folderCardCount(folder.id) === 0"
+                      [attr.aria-label]="
+                        'Ripassa tutti gli argomenti della cartella ' + folder.name
+                      "
+                      (click)="startFolderStudy(folder)"
+                    >
+                      ▶ Ripassa tutto
+                    </button>
+                    <button
+                      type="button"
+                      class="btn glass-surface"
+                      [attr.aria-label]="'Rinomina la cartella ' + folder.name"
+                      (click)="startRenameFolder(folder)"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      type="button"
+                      class="btn glass-surface"
+                      [attr.aria-label]="'Elimina la cartella ' + folder.name"
+                      (click)="requestDeleteFolder(folder)"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </article>
+              }
+              @for (topic of currentTopics(); track topic.id) {
+                <article class="study-topic card glass-surface">
+                  <div class="study-topic-mark" aria-hidden="true">{{ topic.cards.length }}</div>
+                  <div>
+                    <p class="study-topic-meta">{{ topic.cards.length }} flash card</p>
+                    <h3>{{ topic.title }}</h3>
+                  </div>
+                  <div class="study-topic-actions">
+                    <button
+                      type="button"
+                      class="btn glass-surface btn-submit"
+                      (click)="startStudy(topic)"
+                    >
+                      Inizia il ripasso
+                    </button>
+                    <button
+                      type="button"
+                      class="btn glass-surface"
+                      aria-label="Modifica argomento"
+                      (click)="startEdit(topic)"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      type="button"
+                      class="btn glass-surface"
+                      aria-label="Elimina argomento"
+                      (click)="requestDelete(topic)"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </article>
+              }
+            </div>
+          } @else {
+            <div class="study-empty card glass-surface">
+              <span aria-hidden="true">✦</span>
+              <h3>{{ currentFolder() ? 'Questa cartella è vuota' : 'L’aula è pronta' }}</h3>
+              <p>
+                Crea una cartella per organizzare il materiale oppure aggiungi un argomento con le
+                sue flash card.
+              </p>
+              <div class="study-heading-actions">
+                <button type="button" class="btn glass-surface" (click)="startCreateFolder()">
+                  Crea una cartella
+                </button>
+                <button type="button" class="btn glass-surface btn-submit" (click)="startCreate()">
+                  Crea un argomento
                 </button>
               </div>
-            }
-          </div>
+            </div>
+          }
         }
       </section>
     }
@@ -235,12 +406,27 @@
     [description]="
       '“' +
       (deleteTarget()?.title ?? '') +
-      '” e tutte le sue flash card verranno eliminate definitivamente.'
+      '” verrà rimosso dall’aula insieme alle sue flash card, ma resterà recuperabile.'
     "
     confirmLabel="Elimina"
     cancelLabel="Annulla"
     [open]="deleteTarget() !== null"
     (confirm)="confirmDelete()"
     (cancel)="deleteTarget.set(null)"
+  />
+
+  <app-confirmation-dialog
+    dialogId="delete-study-folder"
+    title="Eliminare questa cartella?"
+    [description]="
+      'La cartella “' +
+      (deleteFolderTarget()?.name ?? '') +
+      '” verrà rimossa dall’aula, ma resterà recuperabile. Per sicurezza, l’operazione è possibile solo se è vuota.'
+    "
+    confirmLabel="Elimina"
+    cancelLabel="Annulla"
+    [open]="deleteFolderTarget() !== null"
+    (confirm)="confirmDeleteFolder()"
+    (cancel)="deleteFolderTarget.set(null)"
   />
 </app-shell>

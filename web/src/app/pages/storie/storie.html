@@ -17,7 +17,7 @@
     }
 
     @if (editingId() !== null) {
-      <form class="story-form card" (ngSubmit)="submitEdit()">
+      <form class="story-form card glass-surface" (ngSubmit)="submitEdit()">
         <h2>{{ editingId() === '__new__' ? 'Nuova storia' : 'Modifica storia' }}</h2>
 
         @if (editingId() === '__new__') {
@@ -118,7 +118,7 @@
     }
   </section>
 
-  <details class="story-suggestion">
+  <details class="story-suggestion glass-surface">
     <summary class="suggestion-trigger">
       <span>
         <div class="stories-eyebrow"><app-editorial-text contentKey="storie.suggerimento.eyebrow" /></div>

@@ -32,7 +32,6 @@ body.access-locked .app-shell {
   padding: 2rem;
   border: 1px solid var(--panel-border-color);
   border-radius: 22px;
-  background: var(--panel-color);
   box-shadow: var(--shadow);
 }
 

@@ -6,7 +6,7 @@
   @for (theme of themeService.themes; track theme.id) {
     <button
       type="button"
-      class="theme-chip"
+      class="theme-chip glass-surface"
       [class.is-selected]="themeService.activeThemeId() === theme.id"
       [style.--chip-color]="theme.swatch"
       [attr.data-theme-id]="theme.id"
@@ -43,7 +43,7 @@
         <small class="theme-chip-description">{{ theme.description }}</small>
       </span>
       @if (themeService.activeThemeId() === theme.id) {
-        <span class="theme-chip-selected" aria-hidden="true">Tema attivo</span>
+        <span class="theme-chip-selected glass-surface" aria-hidden="true">Tema attivo</span>
       }
     </button>
   }

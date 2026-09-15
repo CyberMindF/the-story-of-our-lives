@@ -11,7 +11,7 @@
       <h2 id="dream-map-title">La nostra mappa dei sogni</h2>
     </div>
 
-    <div class="dream-map-layout">
+    <div class="dream-map-layout glass-surface">
       <div class="dream-map-scroll" tabindex="0" aria-label="Mappa visuale delle destinazioni, scorribile orizzontalmente">
         <div class="dream-map">
           <img class="world-map-image" src="assets/images/world/map/world-equal-earth.svg" alt="" aria-hidden="true" />
@@ -30,7 +30,7 @@
                 (click)="selectDestination(pin.destination.id)"
               >
                 <span class="pin-dot"></span>
-                <span class="pin-label"><small>{{ (pin.index + 1).toString().padStart(2, '0') }}</small><strong>{{ pin.destination.name }}</strong></span>
+                <span class="pin-label glass-surface"><small>{{ (pin.index + 1).toString().padStart(2, '0') }}</small><strong>{{ pin.destination.name }}</strong></span>
               </button>
             }
           </div>
@@ -67,7 +67,7 @@
     </div>
 
     @if (editingId() !== null) {
-      <form class="destination-form card" (ngSubmit)="submitEdit()">
+      <form class="destination-form card glass-surface" (ngSubmit)="submitEdit()">
         <h3>{{ editingId() === '__new__' ? 'Nuova destinazione' : 'Modifica destinazione' }}</h3>
         @if (editingId() === '__new__') {
           <label class="form-field">
@@ -130,7 +130,7 @@
                 @if (passage.images.length && passage.imagePosition !== 'after') {
                   <ng-container *ngTemplateOutlet="gallery; context: { $implicit: passage }" />
                 }
-                <p>{{ passage.text }}</p>
+                <p class="glass-surface">{{ passage.text }}</p>
                 @if (passage.images.length && passage.imagePosition === 'after') {
                   <ng-container *ngTemplateOutlet="gallery; context: { $implicit: passage }" />
                 }

@@ -197,13 +197,13 @@
 }
 
 .story-suggestion {
+  --glass-filter: blur(16px);
   width: min(100%, 64rem);
   margin: clamp(2rem, 7vw, 5rem) auto 0;
   overflow: hidden;
-  border: 1px solid var(--panel-border-color);
+  border-width: 1px;
+  border-style: solid;
   border-radius: 1.25rem;
-  background: var(--panel-color);
-  backdrop-filter: blur(16px);
 }
 
 .suggestion-trigger {

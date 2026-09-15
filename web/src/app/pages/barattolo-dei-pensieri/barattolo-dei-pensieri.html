@@ -10,7 +10,7 @@
   </p> }
 
   <div class="jars-grid">
-    <section class="jar-card card" aria-labelledby="own-jar-title">
+    <section class="jar-card card glass-surface" aria-labelledby="own-jar-title">
       <span class="jar-count">{{ counts()[ownIdentity()] }}</span>
       <span class="jar-emoji" aria-hidden="true">🫙</span>
       <h2 id="own-jar-title">Il tuo barattolo</h2>
@@ -21,7 +21,7 @@
       @if (drawError() && !drawnBiglietto()) { <p class="form-message is-error" role="status">{{ drawError() }}</p> }
     </section>
 
-    <section class="jar-card card" aria-labelledby="other-jar-title">
+    <section class="jar-card card glass-surface" aria-labelledby="other-jar-title">
       <span class="jar-count">{{ counts()[otherIdentity()] }}</span>
       <span class="jar-emoji" aria-hidden="true">🫙</span>
       <h2 id="other-jar-title">Scrivi per {{ otherLabel() }}</h2>
@@ -76,7 +76,7 @@
     </p> }
 
     @if (editingId()) {
-    <form class="jars-admin-form card" (ngSubmit)="saveEdit()">
+    <form class="jars-admin-form card glass-surface" (ngSubmit)="saveEdit()">
       <h3>Modifica biglietto</h3>
       <label class="form-field">
         <span>Testo</span>

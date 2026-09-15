@@ -1,12 +1,10 @@
 /* Card condivise del Mondo Bianco. Normalizzazione del 09/08/2026, vedi CLAUDE.md. */
 
-/* Base "frost" scura: stesso pattern già usato con successo da .access-card, pilotata
-   dalle var di tema invece di ripetere gli stessi valori hardcoded in ogni pagina. */
+/* Geometria condivisa delle card. Il materiale è composto separatamente tramite
+   .glass-surface, così non è più implicito nel tipo di componente. */
 .card {
-  border: 1px solid var(--panel-border-color);
+  border: 1px solid transparent;
   border-radius: 1.1rem;
-  background: var(--panel-color);
-  backdrop-filter: blur(12px);
 }
 
 /* Il backdrop-filter crea un contesto di sovrapposizione: quando una select è aperta,
@@ -41,7 +39,9 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='1.6'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
   background-size: 140px 140px;
   color: #2b2620;
-  box-shadow: 0 0.5rem 0 rgba(0, 0, 0, 0.06), 0 2rem 6rem rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 0.5rem 0 rgba(0, 0, 0, 0.06),
+    0 2rem 6rem rgba(0, 0, 0, 0.5);
 }
 
 /* Font corsivo vero (non serif+italic finto) per il testo scritto a mano sopra

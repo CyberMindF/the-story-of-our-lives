@@ -29,7 +29,7 @@
     @case ('npc_grid') {
       <div class="npc-grid">
         @for (entry of asNpcGrid(block.data).entries; track entry.name) {
-          <article class="npc-card card">
+          <article class="npc-card card glass-surface">
             <img [src]="entry.image" [alt]="entry.alt" loading="lazy" />
             <h4>{{ entry.name }}</h4>
             <p>{{ entry.description }}</p>

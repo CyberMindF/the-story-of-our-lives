@@ -5,7 +5,7 @@
     </figure>
     <h1 id="music-title"><span aria-hidden="true">🎧</span> Le Cuffiette</h1>
     @if (data(); as musicData) {
-      <div class="playlist-card card">
+      <div class="playlist-card card glass-surface">
         <div>
           <p class="music-eyebrow">La playlist</p>
           <p class="playlist-name">{{ musicData.playlist.name }}</p>
@@ -30,7 +30,7 @@
       </div>
 
       @if (editingId() !== null) {
-        <form class="song-form card" (ngSubmit)="submitEdit()">
+        <form class="song-form card glass-surface" (ngSubmit)="submitEdit()">
           <h3>{{ editingId() === '__new__' ? 'Nuova canzone' : 'Modifica canzone' }}</h3>
           @if (editingId() === '__new__') {
             <label class="form-field">

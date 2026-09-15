@@ -21,7 +21,7 @@
    sempre uguale e, se una scheda non ci sta, scorre al suo interno — "min-height: 0" sui
    figli flex serve perché altrimenti non si restringono mai sotto il contenuto e
    "overflow-y: auto" da solo non basterebbe a farli scorrere davvero. */
-.linguaggio-rubrica { width: min(100%, 64rem); margin: 0 auto; display: flex; height: 27rem; border: 1px solid var(--panel-border-color); border-radius: 1.25rem; overflow: hidden; background: var(--panel-color); backdrop-filter: blur(12px); box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.22); }
+.linguaggio-rubrica { width: min(100%, 64rem); margin: 0 auto; display: flex; height: 27rem; border-width: 1px; border-style: solid; border-radius: 1.25rem; overflow: hidden; box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.22); }
 
 .linguaggio-rubrica-tabs { display: flex; flex-direction: column; flex: 0 0 13rem; min-height: 0; gap: .2rem; padding: .85rem; background: color-mix(in srgb, var(--bg-color) 45%, transparent); overflow-y: auto; }
 .linguaggio-rubrica-tabs button { display: flex; align-items: center; gap: .65rem; padding: .7rem .9rem; border: 0; border-radius: .7rem; background: transparent; color: var(--muted-color); text-align: left; font-family: Georgia, "Times New Roman", serif; font-size: 1rem; cursor: pointer; transition: background 150ms ease, color 150ms ease; }

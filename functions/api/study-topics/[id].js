@@ -6,6 +6,10 @@ import {
   normalizeTitle,
   normalizeTopicId,
 } from "./_shared.js";
+import {
+  folderExists,
+  normalizeNullableFolderId,
+} from "../study-folders/_shared.js";
 
 export async function onRequestPut(context) {
   const { request, env, params } = context;
@@ -16,7 +20,7 @@ export async function onRequestPut(context) {
     const topicId = normalizeTopicId(params.id);
     if (!topicId) return json({ error: "Argomento non valido." }, 400);
     const sharedTopic = await env.DB.prepare(
-      "SELECT id FROM study_topics WHERE id = ?",
+      "SELECT id FROM study_topics WHERE id = ? AND deleted_at IS NULL",
     )
       .bind(topicId)
       .first();
@@ -25,14 +29,20 @@ export async function onRequestPut(context) {
     const payload = await readJson(request);
     const title = normalizeTitle(payload?.title);
     const cards = normalizeCards(payload?.cards);
+    const folderId = normalizeNullableFolderId(payload?.folderId);
     if (!title) return json({ error: "Il titolo non è valido." }, 400);
     if (!cards) return json({ error: "Le flash card non sono valide." }, 400);
+    if (folderId === undefined)
+      return json({ error: "La cartella non è valida." }, 400);
+    if (!(await folderExists(env, folderId))) {
+      return json({ error: "La cartella scelta non esiste più." }, 404);
+    }
 
     const now = new Date().toISOString();
     await env.DB.batch([
       env.DB.prepare(
-        "UPDATE study_topics SET title = ?, updated_at = ? WHERE id = ?",
-      ).bind(title, now, topicId),
+        "UPDATE study_topics SET title = ?, folder_id = ?, updated_at = ? WHERE id = ?",
+      ).bind(title, folderId, now, topicId),
       env.DB.prepare("DELETE FROM study_cards WHERE topic_id = ?").bind(
         topicId,
       ),
@@ -46,12 +56,12 @@ export async function onRequestPut(context) {
         {
           section: "aula-studio",
           eventType: "content_updated",
-          metadata: { topicId, cardCount: cards.length },
+          metadata: { topicId, folderId, cardCount: cards.length },
         },
       ),
     );
 
-    return json({ id: topicId, title, cards, updatedAt: now });
+    return json({ id: topicId, title, folderId, cards, updatedAt: now });
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -71,8 +81,11 @@ export async function onRequestDelete(context) {
 
     const topicId = normalizeTopicId(params.id);
     if (!topicId) return json({ error: "Argomento non valido." }, 400);
-    const result = await env.DB.prepare("DELETE FROM study_topics WHERE id = ?")
-      .bind(topicId)
+    const now = new Date().toISOString();
+    const result = await env.DB.prepare(
+      "UPDATE study_topics SET deleted_at = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL",
+    )
+      .bind(now, now, topicId)
       .run();
     if (Number(result.meta.changes || 0) === 0) {
       return json({ error: "Argomento non trovato." }, 404);
@@ -90,7 +103,7 @@ export async function onRequestDelete(context) {
       ),
     );
 
-    return json({ deleted: true });
+    return json({ deleted: true, deletedAt: now });
   } catch (error) {
     console.error(
       JSON.stringify({

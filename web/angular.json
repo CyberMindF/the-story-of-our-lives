@@ -31,6 +31,7 @@
               "src/styles/components/world-shell.css",
               "src/styles/components/buttons.css",
               "src/styles/components/cards.css",
+              "src/styles/components/glass.css",
               "src/styles/components/details-toggle.css",
               "src/styles/components/toggle-switch.css",
               "src/styles/components/typography.css",

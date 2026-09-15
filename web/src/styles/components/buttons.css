@@ -14,7 +14,9 @@
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 160ms ease, border-color 160ms ease;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
 }
 
 .btn:hover {
@@ -51,4 +53,21 @@
 .btn-submit:disabled {
   cursor: wait;
   opacity: 0.58;
+}
+
+/* Gli stati restano responsabilità del bottone anche quando il materiale visivo
+   è composto tramite la utility neutra .glass-surface. */
+.btn.glass-surface:hover {
+  border-color: var(--focus-color);
+  background: var(--button-hover-bg);
+}
+
+.btn.glass-surface.btn-submit {
+  border-color: color-mix(in srgb, var(--focus-color) 48%, var(--border-color));
+  background: color-mix(in srgb, var(--focus-color) 12%, var(--panel-color));
+}
+
+.btn.glass-surface.btn-submit:hover {
+  border-color: var(--focus-color);
+  background: color-mix(in srgb, var(--focus-color) 20%, var(--panel-color));
 }

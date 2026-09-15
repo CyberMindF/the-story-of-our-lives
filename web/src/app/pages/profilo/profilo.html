@@ -5,7 +5,7 @@
     <div class="profilo-intro"><app-editorial-text contentKey="profilo.introduzione" /></div>
   </section>
 
-  <form class="profilo-form card" aria-label="Cambia nome" (ngSubmit)="submitNickname()">
+  <form class="profilo-form card glass-surface" aria-label="Cambia nome" (ngSubmit)="submitNickname()">
     <h2>Nome</h2>
     <label class="form-field">
       <span>Come vuoi farti chiamare</span>
@@ -17,7 +17,7 @@
     <app-form-status [message]="nicknameMessage()" [status]="nicknameStatus()" />
   </form>
 
-  <form class="profilo-form card" aria-label="Cambia password" (ngSubmit)="submitPassword()">
+  <form class="profilo-form card glass-surface" aria-label="Cambia password" (ngSubmit)="submitPassword()">
     <h2>Password</h2>
     <label class="form-field">
       <span>Password attuale</span>
@@ -38,7 +38,7 @@
   </form>
 
   @if (authService.isAdmin()) {
-    <section class="profilo-form card" aria-labelledby="admin-tools-title">
+    <section class="profilo-form card glass-surface" aria-labelledby="admin-tools-title">
       <h2 id="admin-tools-title">Strumenti riservati</h2>
       @if (authService.adminModeEnabled()) {
         <div class="profilo-admin-links">

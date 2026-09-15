@@ -1,21 +1,20 @@
 :host { position: fixed; z-index: 1100; right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom)); }
 .global-chat { display: flex; flex-direction: column; align-items: flex-end; gap: .75rem; }
 .global-chat-trigger {
+  --glass-border-color: color-mix(in srgb, var(--text-color) 28%, transparent);
+  --glass-background: linear-gradient(145deg, color-mix(in srgb, var(--text-color) 14%, transparent), transparent 48%), color-mix(in srgb, var(--bg-color) 28%, transparent);
+  --glass-filter: blur(20px) saturate(165%);
   position: relative;
   width: 3.5rem;
   height: 3.5rem;
   display: grid;
   place-items: center;
   padding: 0;
-  border: 1px solid color-mix(in srgb, var(--text-color) 28%, transparent);
+  border-width: 1px;
+  border-style: solid;
   border-radius: 50%;
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--text-color) 14%, transparent), transparent 48%),
-    color-mix(in srgb, var(--bg-color) 28%, transparent);
   color: var(--text-color);
   box-shadow: var(--shadow), inset 0 1px 0 color-mix(in srgb, var(--text-color) 22%, transparent);
-  backdrop-filter: blur(20px) saturate(165%);
-  -webkit-backdrop-filter: blur(20px) saturate(165%);
   cursor: pointer;
   font-size: 1.45rem;
   transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
@@ -24,7 +23,7 @@
 .global-chat-trigger:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 4px; }
 .global-chat-trigger > svg { width: 1.55rem; height: 1.55rem; display: block; fill: currentColor; }
 .global-chat-badge { position: absolute; top: -.3rem; right: -.3rem; min-width: 1.35rem; height: 1.35rem; padding: 0 .25rem; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--focus-color) 70%, var(--text-color)); border-radius: 999px; background: var(--focus-color); color: var(--bg-color); box-shadow: 0 3px 10px color-mix(in srgb, var(--bg-color) 45%, transparent); font-size: .68rem; }
-.global-chat-panel { width: min(23rem, calc(100vw - 2rem)); height: min(34rem, calc(100vh - 6.5rem)); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--panel-border-color); border-radius: 1rem; background: color-mix(in srgb, var(--bg-color) 92%, transparent); box-shadow: var(--shadow); backdrop-filter: blur(18px); }
+.global-chat-panel { --glass-background: color-mix(in srgb, var(--bg-color) 92%, transparent); --glass-filter: blur(18px); width: min(23rem, calc(100vw - 2rem)); height: min(34rem, calc(100vh - 6.5rem)); display: flex; flex-direction: column; overflow: hidden; border-width: 1px; border-style: solid; border-radius: 1rem; box-shadow: var(--shadow); }
 .global-chat-header { display: flex; align-items: center; justify-content: space-between; min-height: 2.9rem; padding: .55rem .7rem .55rem 1rem; border-bottom: 1px solid var(--panel-border-color); }
 .global-chat-presence { flex: 1; min-width: 0; display: flex; align-items: center; gap: .45rem; overflow: hidden; }
 .global-chat-presence-dot { flex: 0 0 auto; width: .58rem; height: .58rem; border-radius: 50%; background: var(--muted-color); box-shadow: 0 0 0 2px color-mix(in srgb, var(--muted-color) 18%, transparent); }

@@ -56,6 +56,7 @@ export function topicsFromRows(rows) {
       topic = {
         id: row.topic_id,
         title: row.title,
+        folderId: row.folder_id,
         cards: [],
         createdAt: row.topic_created_at,
         updatedAt: row.topic_updated_at,
@@ -80,6 +81,7 @@ export const TOPIC_WITH_CARDS_SELECT = `
   SELECT
     topics.id AS topic_id,
     topics.title,
+    topics.folder_id,
     topics.created_at AS topic_created_at,
     topics.updated_at AS topic_updated_at,
     cards.id AS card_id,
@@ -88,4 +90,5 @@ export const TOPIC_WITH_CARDS_SELECT = `
     cards.position
   FROM study_topics AS topics
   LEFT JOIN study_cards AS cards ON cards.topic_id = topics.id
+  WHERE topics.deleted_at IS NULL
 `;

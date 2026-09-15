@@ -9,7 +9,7 @@
   @if (loadError()) { <p class="page-message" role="alert">Non sono riuscito a caricare le capsule. Riprova più
     tardi.</p> }
 
-  <section class="capsule-write card" aria-labelledby="capsule-write-title">
+  <section class="capsule-write card glass-surface" aria-labelledby="capsule-write-title">
     <h2 id="capsule-write-title">Sigilla una nuova capsula</h2>
     <form class="capsule-form" (ngSubmit)="submit()">
       <label class="form-field">
@@ -49,7 +49,7 @@
     <h2 id="capsule-upcoming-title">In arrivo</h2>
     <div class="capsule-grid">
       @for (capsula of upcoming(); track capsula.id) {
-      <article class="capsule-card capsule-card--locked card">
+      <article class="capsule-card capsule-card--locked card glass-surface">
         <span class="capsule-lock" aria-hidden="true">🔒</span>
         <p class="capsule-date">Si apre il {{ capsula.unlockDate }}</p>
         <p class="capsule-author">scritta da {{ identityLabel(capsula.authorIdentity) }}</p>
@@ -67,7 +67,7 @@
     <h2 id="capsule-opened-title">Aperte</h2>
     <div class="capsule-grid">
       @for (capsula of opened(); track capsula.id) {
-      <article class="capsule-card card">
+      <article class="capsule-card card glass-surface">
         @if (capsula.title) { <h3 class="capsule-card-title">{{ capsula.title }}</h3> }
         @if (capsula.mediaKey && capsula.mediaType === 'photo') { <img class="capsule-photo" [src]="mediaUrl(capsula)"
           alt="" /> }

@@ -23,17 +23,17 @@
                   <!-- Prima del primo tentativo: un solo Sì, in flusso accanto al No,
                        stessa taglia — non fisso a schermo fin da subito. -->
                   <div class="pand-answers">
-                    <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
-                    <button #noBtn type="button" class="btn pand-no" (pointerdown)="onNoInteract()">No</button>
+                    <button type="button" class="btn glass-surface btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                    <button #noBtn type="button" class="btn glass-surface pand-no" (pointerdown)="onNoInteract()">No</button>
                   </div>
                 } @else {
                   @for (pos of yesPositions(); track $index) {
-                    <button type="button" class="btn btn-accent pand-yes pand-yes-scattered" [style.left]="pos.left" [style.top]="pos.top" (click)="onYesClick()">Sì</button>
+                    <button type="button" class="btn glass-surface btn-accent pand-yes pand-yes-scattered" [style.left]="pos.left" [style.top]="pos.top" (click)="onYesClick()">Sì</button>
                   }
                   <button
                     #noBtn
                     type="button"
-                    class="btn pand-no"
+                    class="btn glass-surface pand-no"
                     [style.left]="noButtonPosition()?.left"
                     [style.top]="noButtonPosition()?.top"
                     [style.position]="noButtonPosition() ? 'fixed' : null"
@@ -44,7 +44,7 @@
 
               @case ('bubble') {
                 <div class="pand-answers">
-                  <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                  <button type="button" class="btn glass-surface btn-accent pand-yes" (click)="onYesClick()">Sì</button>
                   @if (!bubblePopped()) {
                     <button
                       #noBtn
@@ -65,15 +65,15 @@
               @case ('rain') {
                 @if (!rainActive()) {
                   <div class="pand-answers">
-                    <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
-                    <button #noBtn type="button" class="btn pand-no" (pointerdown)="onNoInteract()">No</button>
+                    <button type="button" class="btn glass-surface btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                    <button #noBtn type="button" class="btn glass-surface pand-no" (pointerdown)="onNoInteract()">No</button>
                   </div>
                 }
                 <div class="pand-rain">
                   @for (drop of rainDrops(); track drop.id) {
                     <button
                       type="button"
-                      class="btn btn-accent pand-rain-drop"
+                      class="btn glass-surface btn-accent pand-rain-drop"
                       [style.left.px]="drop.x"
                       [style.top.px]="drop.y"
                       [style.transform]="'translate(-50%, -50%) rotate(' + drop.rot + 'deg)'"
@@ -92,7 +92,7 @@
                   @for (label of shellLabels(); track $index; let i = $index) {
                     <button
                       type="button"
-                      class="btn pand-no"
+                      class="btn glass-surface pand-no"
                       [class.btn-accent]="!isShellCardCovered(i) && label === 'Sì'"
                       [class.is-pulsing]="shellFlipPulse() || shellRevealPulse() === i"
                       [class.is-locked]="shellPhase() === 'waiting' && shellPicked() !== null && shellPicked() !== i"
@@ -105,11 +105,11 @@
 
               @case ('drama') {
                 <div class="pand-answers">
-                  <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                  <button type="button" class="btn glass-surface btn-accent pand-yes" (click)="onYesClick()">Sì</button>
                   <button
                     #noBtn
                     type="button"
-                    class="btn pand-no"
+                    class="btn glass-surface pand-no"
                     [class.pand-fleeing]="dramaLeaving()"
                     [style.left]="noButtonPosition()?.left"
                     [style.top]="noButtonPosition()?.top"
@@ -121,15 +121,15 @@
 
               @case ('error') {
                 <div class="pand-answers">
-                  <button type="button" class="btn btn-accent pand-yes" (click)="onYesClick()">Sì</button>
-                  <button type="button" class="btn pand-no" (click)="onNoInteract()">No</button>
+                  <button type="button" class="btn glass-surface btn-accent pand-yes" (click)="onYesClick()">Sì</button>
+                  <button type="button" class="btn glass-surface pand-no" (click)="onNoInteract()">No</button>
                 </div>
                 @if (fakeAlertOpen()) {
                   <div class="pand-fake-overlay">
                     <div class="pand-fake-box">
                       <h3>⚠️ Errore 404</h3>
                       <p>La risposta No è temporaneamente fuori servizio. Scegli Sì per continuare.</p>
-                      <button type="button" class="btn btn-accent pand-fake-confirm" (click)="closeFakeAlert()">Capito (Sì)</button>
+                      <button type="button" class="btn glass-surface btn-accent pand-fake-confirm" (click)="closeFakeAlert()">Capito (Sì)</button>
                     </div>
                   </div>
                 }
@@ -139,7 +139,7 @@
                 <div class="pand-answers">
                   <button
                     type="button"
-                    class="btn btn-accent pand-yes"
+                    class="btn glass-surface btn-accent pand-yes"
                     [class.is-fullscreen]="yesFullscreen()"
                     [class.is-pulsing]="swapPulse()"
                     [style.order]="answersSwapped() ? 2 : 1"
@@ -149,7 +149,7 @@
                   <button
                     #noBtn
                     type="button"
-                    class="btn pand-no"
+                    class="btn glass-surface pand-no"
                     [class.is-hidden]="noButtonHidden()"
                     [class.is-pulsing]="swapPulse()"
                     [style.order]="answersSwapped() ? 1 : 2"
@@ -178,7 +178,7 @@
                 <span>Quando facciamo il viaggio</span>
                 <input type="date" name="tripDate" required [ngModel]="tripDate()" (ngModelChange)="tripDate.set($event)" />
               </label>
-              <button type="submit" class="btn btn-accent" [disabled]="!nextMeetingDate() || !tripDate()">Fatto 🙄</button>
+              <button type="submit" class="btn glass-surface btn-accent" [disabled]="!nextMeetingDate() || !tripDate()">Fatto 🙄</button>
             </form>
           }
         }
@@ -188,8 +188,8 @@
     <div class="pand-stage pand-end">
       <p class="pand-question">Visto? Non riesci proprio a dirmi di no <span aria-hidden="true">😏</span></p>
       <div class="pand-answers">
-        <button type="button" class="btn btn-accent" (click)="restart()">Ricomincia</button>
-        <a class="btn" routerLink="/tavolo-da-gioco">Torna al Tavolo</a>
+        <button type="button" class="btn glass-surface btn-accent" (click)="restart()">Ricomincia</button>
+        <a class="btn glass-surface" routerLink="/tavolo-da-gioco">Torna al Tavolo</a>
       </div>
     </div>
   }

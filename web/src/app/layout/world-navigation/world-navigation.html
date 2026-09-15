@@ -3,7 +3,7 @@
   aria-label="Chiudi il pannello dei luoghi" (click)="close()"></button>
 
 <aside class="world-navigation-drawer" [class.is-open]="navigationOpen()" aria-labelledby="world-navigation-title">
-  <nav class="world-navigation-rail" aria-label="Navigazione rapida">
+  <nav class="world-navigation-rail glass-surface" aria-label="Navigazione rapida">
     <button class="world-navigation-action" type="button" aria-label="Vai all'inizio della pagina" title="Inizio pagina" (click)="scrollToTop()">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 15 7-7 7 7" /></svg>
     </button>
@@ -26,7 +26,7 @@
     </button>
   </nav>
 
-  <div class="world-navigation-sheet" [attr.aria-hidden]="navigationOpen() ? null : true" [attr.inert]="navigationOpen() ? null : ''">
+  <div class="world-navigation-sheet glass-surface" [attr.aria-hidden]="navigationOpen() ? null : true" [attr.inert]="navigationOpen() ? null : ''">
     <header class="world-navigation-heading">
       <a id="world-navigation-title" routerLink="/"><span aria-hidden="true">⭕</span> Il Mondo Bianco</a>
       <button type="button" class="world-navigation-close" aria-label="Chiudi i luoghi" (click)="close()">

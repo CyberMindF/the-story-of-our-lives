@@ -13,10 +13,23 @@ interface StudyCard {
   position?: number;
 }
 
+interface StudySessionCard extends StudyCard {
+  context: string;
+}
+
 interface StudyTopic {
   id: number;
   title: string;
+  folderId: number | null;
   cards: StudyCard[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface StudyFolder {
+  id: number;
+  name: string;
+  parentId: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -24,11 +37,58 @@ interface StudyTopic {
 interface TopicDraft {
   title: string;
   pairs: string;
+  folderId: number | null;
+}
+
+interface FolderChoice extends StudyFolder {
+  label: string;
 }
 
 interface ParsedPairs {
   cards: StudyCard[];
   danglingQuestion: string | null;
+}
+
+export function collectFolderStudyCards(
+  folders: StudyFolder[],
+  topics: StudyTopic[],
+  folderId: number,
+): StudySessionCard[] {
+  const descendantIds = new Set<number>([folderId]);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const folder of folders) {
+      if (
+        folder.parentId !== null &&
+        descendantIds.has(folder.parentId) &&
+        !descendantIds.has(folder.id)
+      ) {
+        descendantIds.add(folder.id);
+        changed = true;
+      }
+    }
+  }
+
+  return topics
+    .filter((topic) => topic.folderId !== null && descendantIds.has(topic.folderId))
+    .flatMap((topic) => {
+      const context = buildStudyTopicPath(folders, topic);
+      return topic.cards.map((card) => ({ ...card, context }));
+    });
+}
+
+export function buildStudyTopicPath(folders: StudyFolder[], topic: StudyTopic): string {
+  const byId = new Map(folders.map((folder) => [folder.id, folder]));
+  const names: string[] = [topic.title];
+  const visited = new Set<number>();
+  let folder = topic.folderId === null ? null : (byId.get(topic.folderId) ?? null);
+  while (folder && !visited.has(folder.id)) {
+    visited.add(folder.id);
+    names.unshift(folder.name);
+    folder = folder.parentId === null ? null : (byId.get(folder.parentId) ?? null);
+  }
+  return names.join(' › ');
 }
 
 export function parseStudyPairs(value: string): ParsedPairs {
@@ -53,7 +113,33 @@ function topicToDraft(topic: StudyTopic): TopicDraft {
   return {
     title: topic.title,
     pairs: topic.cards.flatMap((card) => [card.question, card.answer]).join('\n'),
+    folderId: topic.folderId,
   };
+}
+
+export function buildFolderChoices(folders: StudyFolder[]): FolderChoice[] {
+  const children = new Map<number | null, StudyFolder[]>();
+  for (const folder of folders) {
+    const siblings = children.get(folder.parentId) ?? [];
+    siblings.push(folder);
+    children.set(folder.parentId, siblings);
+  }
+  for (const siblings of children.values()) {
+    siblings.sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' }));
+  }
+
+  const result: FolderChoice[] = [];
+  const visited = new Set<number>();
+  const visit = (parentId: number | null, depth: number): void => {
+    for (const folder of children.get(parentId) ?? []) {
+      if (visited.has(folder.id)) continue;
+      visited.add(folder.id);
+      result.push({ ...folder, label: `${'— '.repeat(depth)}${folder.name}` });
+      visit(folder.id, depth + 1);
+    }
+  };
+  visit(null, 0);
+  return result;
 }
 
 function shuffledIndices(length: number): number[] {
@@ -77,32 +163,64 @@ export class AulaStudio implements OnDestroy {
   protected readonly focusMode = inject(StudyFocusService);
 
   protected readonly topics = signal<StudyTopic[]>([]);
+  protected readonly folders = signal<StudyFolder[]>([]);
   protected readonly loading = signal(true);
   protected readonly pageError = signal('');
   protected readonly saving = signal(false);
 
   protected readonly editingId = signal<number | 'new' | null>(null);
-  protected readonly draft = signal<TopicDraft>({ title: '', pairs: '' });
+  protected readonly draft = signal<TopicDraft>({ title: '', pairs: '', folderId: null });
   protected readonly formError = signal('');
   protected readonly parsedPairs = computed(() => parseStudyPairs(this.draft().pairs));
   protected readonly deleteTarget = signal<StudyTopic | null>(null);
 
+  protected readonly currentFolderId = signal<number | null>(null);
+  protected readonly editingFolderId = signal<number | 'new' | null>(null);
+  protected readonly folderName = signal('');
+  protected readonly folderError = signal('');
+  protected readonly savingFolder = signal(false);
+  protected readonly deleteFolderTarget = signal<StudyFolder | null>(null);
+  protected readonly currentFolder = computed(
+    () => this.folders().find((folder) => folder.id === this.currentFolderId()) ?? null,
+  );
+  protected readonly currentFolders = computed(() =>
+    this.folders().filter((folder) => folder.parentId === this.currentFolderId()),
+  );
+  protected readonly currentTopics = computed(() =>
+    this.topics().filter((topic) => topic.folderId === this.currentFolderId()),
+  );
+  protected readonly folderChoices = computed(() => buildFolderChoices(this.folders()));
+  protected readonly breadcrumbs = computed(() => {
+    const byId = new Map(this.folders().map((folder) => [folder.id, folder]));
+    const path: StudyFolder[] = [];
+    const visited = new Set<number>();
+    let folder = this.currentFolder();
+    while (folder && !visited.has(folder.id)) {
+      visited.add(folder.id);
+      path.unshift(folder);
+      folder = folder.parentId === null ? null : (byId.get(folder.parentId) ?? null);
+    }
+    return path;
+  });
+
   protected readonly studyingTopicId = signal<number | null>(null);
+  protected readonly studyDeck = signal<StudySessionCard[]>([]);
+  protected readonly studySessionTitle = signal('');
+  protected readonly studySessionKind = signal<'topic' | 'folder' | null>(null);
   private readonly studyOrder = signal<number[]>([]);
   protected readonly studyPosition = signal(0);
   protected readonly flipped = signal(false);
   protected readonly transitionDirection = signal<'next' | 'previous' | null>(null);
-  protected readonly outgoingCard = signal<{ card: StudyCard; flipped: boolean } | null>(null);
+  protected readonly outgoingCard = signal<{ card: StudySessionCard; flipped: boolean } | null>(
+    null,
+  );
   private transitionTimer: ReturnType<typeof window.setTimeout> | null = null;
   private readonly reducedMotion =
     window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-  protected readonly studyingTopic = computed(
-    () => this.topics().find((topic) => topic.id === this.studyingTopicId()) ?? null,
-  );
+  protected readonly isStudying = computed(() => this.studySessionKind() !== null);
   protected readonly currentCard = computed(() => {
-    const topic = this.studyingTopic();
     const cardIndex = this.studyOrder()[this.studyPosition()];
-    return topic && cardIndex !== undefined ? topic.cards[cardIndex] : null;
+    return cardIndex !== undefined ? (this.studyDeck()[cardIndex] ?? null) : null;
   });
 
   constructor() {
@@ -121,13 +239,15 @@ export class AulaStudio implements OnDestroy {
 
   protected startCreate(): void {
     this.closeStudy();
-    this.draft.set({ title: '', pairs: '' });
+    this.closeFolderEditor();
+    this.draft.set({ title: '', pairs: '', folderId: this.currentFolderId() });
     this.formError.set('');
     this.editingId.set('new');
   }
 
   protected startEdit(topic: StudyTopic): void {
     this.closeStudy();
+    this.closeFolderEditor();
     this.draft.set(topicToDraft(topic));
     this.formError.set('');
     this.editingId.set(topic.id);
@@ -140,6 +260,120 @@ export class AulaStudio implements OnDestroy {
 
   protected updateDraft(patch: Partial<TopicDraft>): void {
     this.draft.set({ ...this.draft(), ...patch });
+  }
+
+  protected openFolder(folderId: number | null): void {
+    this.cancelEdit();
+    this.closeFolderEditor();
+    this.currentFolderId.set(folderId);
+    this.pageError.set('');
+  }
+
+  protected startCreateFolder(): void {
+    this.cancelEdit();
+    this.folderName.set('');
+    this.folderError.set('');
+    this.editingFolderId.set('new');
+  }
+
+  protected startRenameFolder(folder: StudyFolder): void {
+    this.cancelEdit();
+    this.folderName.set(folder.name);
+    this.folderError.set('');
+    this.editingFolderId.set(folder.id);
+  }
+
+  protected closeFolderEditor(): void {
+    this.editingFolderId.set(null);
+    this.folderError.set('');
+  }
+
+  protected async saveFolder(): Promise<void> {
+    const name = this.folderName().trim();
+    if (!name) {
+      this.folderError.set('Scrivi un nome per la cartella.');
+      return;
+    }
+
+    const editingId = this.editingFolderId();
+    if (editingId === null) return;
+    const isNew = editingId === 'new';
+    this.savingFolder.set(true);
+    this.folderError.set('');
+    try {
+      const response = await fetch(
+        isNew ? '/api/study-folders' : `/api/study-folders/${editingId}`,
+        {
+          method: isNew ? 'POST' : 'PUT',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, parentId: this.currentFolderId() }),
+        },
+      );
+      const result = await this.api.readApiResponse<{ error?: string }>(response);
+      if (!response.ok) throw new Error(result.error || 'Salvataggio non riuscito.');
+      this.closeFolderEditor();
+      await this.load();
+    } catch (error) {
+      this.folderError.set(
+        error instanceof Error ? error.message : 'Non è stato possibile salvare la cartella.',
+      );
+    } finally {
+      this.savingFolder.set(false);
+    }
+  }
+
+  protected folderTopicCount(folderId: number): number {
+    const descendants = new Set<number>([folderId]);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const folder of this.folders()) {
+        if (
+          folder.parentId !== null &&
+          descendants.has(folder.parentId) &&
+          !descendants.has(folder.id)
+        ) {
+          descendants.add(folder.id);
+          changed = true;
+        }
+      }
+    }
+    return this.topics().filter(
+      (topic) => topic.folderId !== null && descendants.has(topic.folderId),
+    ).length;
+  }
+
+  protected folderCardCount(folderId: number): number {
+    return collectFolderStudyCards(this.folders(), this.topics(), folderId).length;
+  }
+
+  protected folderChildCount(folderId: number): number {
+    return this.folders().filter((folder) => folder.parentId === folderId).length;
+  }
+
+  protected requestDeleteFolder(folder: StudyFolder): void {
+    this.deleteFolderTarget.set(folder);
+  }
+
+  protected async confirmDeleteFolder(): Promise<void> {
+    const folder = this.deleteFolderTarget();
+    if (!folder) return;
+    try {
+      const response = await fetch(`/api/study-folders/${folder.id}`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      });
+      const result = await this.api.readApiResponse<{ error?: string }>(response);
+      if (!response.ok) throw new Error(result.error || 'Eliminazione non riuscita.');
+      this.deleteFolderTarget.set(null);
+      await this.load();
+    } catch (error) {
+      this.pageError.set(
+        error instanceof Error ? error.message : 'Non è stato possibile eliminare la cartella.',
+      );
+      this.deleteFolderTarget.set(null);
+    }
   }
 
   protected async saveTopic(): Promise<void> {
@@ -167,7 +401,7 @@ export class AulaStudio implements OnDestroy {
         method: isNew ? 'POST' : 'PUT',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, cards: parsed.cards }),
+        body: JSON.stringify({ title, cards: parsed.cards, folderId: this.draft().folderId }),
       });
       const result = await this.api.readApiResponse<{ error?: string }>(response);
       if (!response.ok) throw new Error(result.error || 'Salvataggio non riuscito.');
@@ -205,24 +439,33 @@ export class AulaStudio implements OnDestroy {
   }
 
   protected startStudy(topic: StudyTopic): void {
-    this.cancelEdit();
-    this.studyingTopicId.set(topic.id);
-    this.shuffleDeck();
+    const context = buildStudyTopicPath(this.folders(), topic);
+    const cards = topic.cards.map((card) => ({ ...card, context }));
+    this.beginStudy(topic.title, cards, 'topic', topic.id);
+  }
+
+  protected startFolderStudy(folder: StudyFolder): void {
+    const cards = collectFolderStudyCards(this.folders(), this.topics(), folder.id);
+    if (cards.length === 0) return;
+    this.beginStudy(`${folder.name} · Tutto insieme`, cards, 'folder', null);
   }
 
   protected closeStudy(): void {
     this.clearCardTransition();
     this.studyingTopicId.set(null);
+    this.studyDeck.set([]);
+    this.studySessionTitle.set('');
+    this.studySessionKind.set(null);
     this.studyOrder.set([]);
     this.studyPosition.set(0);
     this.flipped.set(false);
   }
 
   protected shuffleDeck(): void {
-    const topic = this.studyingTopic();
-    if (!topic) return;
+    const cards = this.studyDeck();
+    if (cards.length === 0) return;
     this.clearCardTransition();
-    this.studyOrder.set(shuffledIndices(topic.cards.length));
+    this.studyOrder.set(shuffledIndices(cards.length));
     this.studyPosition.set(0);
     this.flipped.set(false);
   }
@@ -233,6 +476,23 @@ export class AulaStudio implements OnDestroy {
 
   protected nextCard(): void {
     this.moveCard(1, 'next');
+  }
+
+  private beginStudy(
+    title: string,
+    cards: StudySessionCard[],
+    kind: 'topic' | 'folder',
+    topicId: number | null,
+  ): void {
+    this.cancelEdit();
+    this.closeFolderEditor();
+    this.pageError.set('');
+    this.clearCardTransition();
+    this.studyingTopicId.set(topicId);
+    this.studyDeck.set([...cards]);
+    this.studySessionTitle.set(title);
+    this.studySessionKind.set(kind);
+    this.shuffleDeck();
   }
 
   private moveCard(offset: -1 | 1, direction: 'next' | 'previous'): void {
@@ -269,11 +529,20 @@ export class AulaStudio implements OnDestroy {
         credentials: 'same-origin',
         headers: { Accept: 'application/json' },
       });
-      const result = await this.api.readApiResponse<{ topics?: StudyTopic[]; error?: string }>(
-        response,
-      );
+      const result = await this.api.readApiResponse<{
+        topics?: StudyTopic[];
+        folders?: StudyFolder[];
+        error?: string;
+      }>(response);
       if (!response.ok) throw new Error(result.error || 'Caricamento non riuscito.');
       this.topics.set(result.topics ?? []);
+      this.folders.set(result.folders ?? []);
+      if (
+        this.currentFolderId() !== null &&
+        !(result.folders ?? []).some((folder) => folder.id === this.currentFolderId())
+      ) {
+        this.currentFolderId.set(null);
+      }
     } catch (error) {
       this.pageError.set(
         error instanceof Error ? error.message : 'Non è stato possibile aprire l’Aula studio.',

@@ -11,7 +11,7 @@
         <button type="button" class="btn bde-row-insert-button" (click)="startAddRow(0)"
           aria-label="Aggiungi una riga all'inizio">＋</button>
         @if (addingRowAt() === 0) {
-          <div class="bde-row-presets card">
+          <div class="bde-row-presets card glass-surface">
             <p>Scegli il layout della nuova riga</p>
             <div class="bde-preset-buttons">
               <button type="button" class="btn" (click)="addRow('full')">Larghezza intera</button>
@@ -125,7 +125,7 @@
               }
 
               @if (blockTarget()?.rowIndex === rowIndex && blockTarget()?.colIndex === colIndex) {
-                <form class="bde-block-form card" (ngSubmit)="submitBlockForm()">
+                <form class="bde-block-form card glass-surface" (ngSubmit)="submitBlockForm()">
                   <label class="form-field">
                     <span>Tipo di blocco</span>
                     <select [ngModel]="blockForm().type" (ngModelChange)="updateBlockForm({ type: $event })" name="blockType-{{ rowIndex }}-{{ colIndex }}" [disabled]="blockTarget()?.blockIndex !== null">
@@ -255,7 +255,7 @@
         <button type="button" class="btn bde-row-insert-button" (click)="startAddRow(rowIndex + 1)"
           [attr.aria-label]="'Aggiungi una riga dopo la riga ' + (rowIndex + 1)">＋</button>
         @if (addingRowAt() === rowIndex + 1) {
-          <div class="bde-row-presets card">
+          <div class="bde-row-presets card glass-surface">
             <p>Scegli il layout della nuova riga</p>
             <div class="bde-preset-buttons">
               <button type="button" class="btn" (click)="addRow('full')">Larghezza intera</button>
@@ -272,7 +272,7 @@
   </div>
 
   @if (draft().rows.length === 0 && addingRowAt() === 0) {
-    <div class="bde-row-presets card">
+    <div class="bde-row-presets card glass-surface">
       <p>Scegli il layout della nuova riga</p>
       <div class="bde-preset-buttons">
         <button type="button" class="btn" (click)="addRow('full')">Larghezza intera</button>

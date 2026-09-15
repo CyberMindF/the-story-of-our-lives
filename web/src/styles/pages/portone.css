@@ -100,15 +100,14 @@
 }
 
 .portone-card {
+  --glass-background: color-mix(in srgb, var(--panel-color) 88%, transparent);
+  --glass-filter: blur(18px);
   width: 100%;
   min-width: 0;
   max-height: none;
   padding: clamp(1.35rem, 3vw, 2rem);
   overflow: visible;
-  border-color: var(--panel-border-color);
-  background: color-mix(in srgb, var(--panel-color) 88%, transparent);
   box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(18px);
 }
 
 .portone-card > *,

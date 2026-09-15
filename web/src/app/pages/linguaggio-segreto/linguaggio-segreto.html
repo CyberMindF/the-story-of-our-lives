@@ -4,7 +4,7 @@
     <h1 id="linguaggio-title"><span aria-hidden="true">🔐</span> Il Nostro Linguaggio</h1>
   </section>
 
-  <section class="linguaggio-note card" aria-label="Perché esiste questo linguaggio">
+  <section class="linguaggio-note card glass-surface" aria-label="Perché esiste questo linguaggio">
     <app-editorial-text contentKey="linguaggio-segreto.introduzione" />
   </section>
 
@@ -16,7 +16,7 @@
        sfoglierebbe un indice alfabetico, il contenuto cambia nel pannello a fianco. Scelta
        dopo aver confrontato 4 alternative dal vivo (griglia, colonna singola, fisarmonica,
        sfoglia a pagine). -->
-  <section class="linguaggio-rubrica" aria-label="La tabella dei simboli">
+  <section class="linguaggio-rubrica glass-surface" aria-label="La tabella dei simboli">
     <div class="linguaggio-rubrica-tabs" role="tablist" aria-label="Categorie">
       @for (category of categories(); track category.id; let i = $index) {
         <button type="button" role="tab" [attr.aria-selected]="activeCategoryIndex() === i" [class.is-active]="activeCategoryIndex() === i" (click)="activeCategoryIndex.set(i)">
@@ -55,7 +55,7 @@
     </div>
   </details>
 
-  <section class="linguaggio-examples card" aria-label="Qualche esempio di frase">
+  <section class="linguaggio-examples card glass-surface" aria-label="Qualche esempio di frase">
     <h2>Esempi</h2>
     <div class="linguaggio-examples-intro"><app-editorial-text contentKey="linguaggio-segreto.esempi-introduzione" /></div>
     <ul class="linguaggio-examples-list">
@@ -90,7 +90,7 @@
           </div>
 
           @if (categoryEditingId() !== null) {
-            <form class="linguaggio-admin-form card" (ngSubmit)="submitCategory()">
+            <form class="linguaggio-admin-form card glass-surface" (ngSubmit)="submitCategory()">
               <h4>{{ categoryEditingId() === '__new__' ? 'Nuova categoria' : 'Modifica categoria' }}</h4>
               @if (categoryEditingId() === '__new__') {
                 <label class="form-field">
@@ -142,7 +142,7 @@
           <h3>Simboli</h3>
 
           @if (symbolEditingId() !== null) {
-            <form class="linguaggio-admin-form card" (ngSubmit)="submitSymbol()">
+            <form class="linguaggio-admin-form card glass-surface" (ngSubmit)="submitSymbol()">
               <h4>{{ symbolEditingId() === '__new__' ? 'Nuovo simbolo' : 'Modifica simbolo' }}</h4>
               @if (symbolEditingId() === '__new__') {
                 <label class="form-field">
@@ -245,7 +245,7 @@
           </div>
 
           @if (exampleEditingId() !== null) {
-            <form class="linguaggio-admin-form card" (ngSubmit)="submitExample()">
+            <form class="linguaggio-admin-form card glass-surface" (ngSubmit)="submitExample()">
               <h4>{{ exampleEditingId() === '__new__' ? 'Nuovo esempio' : 'Modifica esempio' }}</h4>
               <label class="form-field">
                 <span>Codice</span>

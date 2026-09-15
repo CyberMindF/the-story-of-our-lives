@@ -93,17 +93,6 @@
   min-height: 3.5rem;
 }
 
-/* Stesso materiale "vetro" del pulsante "Torna al Mondo Bianco" (.place-bottom-link,
-   world-shell.css) su tutti i bottoni della pagina — feedback di Rory, allineare lo stile
-   invece di lasciare lo sfondo pieno di default di .btn. La versione a schermo intero di
-   'grow' (.is-fullscreen) resta esclusa apposta: lì serve un pieno vero e ben visibile, non
-   trasparente (vedi la nota su quella regola). */
-.pand-stage .btn:not(.is-fullscreen):not(.pand-bubble) {
-  background: var(--panel-color);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
 .pand-yes, .pand-no {
   min-width: 8.75rem;
   justify-content: center;
@@ -117,6 +106,8 @@
 }
 
 .pand-yes.is-fullscreen {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   position: fixed;
   inset: 0;
   z-index: 20;

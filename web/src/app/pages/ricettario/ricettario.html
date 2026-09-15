@@ -12,14 +12,14 @@
       }
     </header>
 
-    <nav class="recipe-filters card" aria-label="Filtra le ricette">
+    <nav class="recipe-filters card glass-surface" aria-label="Filtra le ricette">
       <button type="button" [class.is-active]="filter() === 'Tutte'" (click)="setFilter('Tutte')">Tutte</button>
       <button type="button" [class.is-active]="filter() === 'Fatta insieme'" (click)="setFilter('Fatta insieme')">Fatte insieme</button>
       <button type="button" [class.is-active]="filter() === 'Da provare'" (click)="setFilter('Da provare')">Da provare</button>
     </nav>
 
     @if (editingId() !== null) {
-      <form class="recipe-form card" (ngSubmit)="submit()">
+      <form class="recipe-form card glass-surface" (ngSubmit)="submit()">
         <h2>{{ editingId() === '__new__' ? 'Nuova ricetta' : 'Modifica ricetta' }}</h2>
 
         @if (editingId() === '__new__') {
@@ -79,7 +79,7 @@
     } @else {
       <section class="recipe-list" aria-label="Ricette">
         @for (recipe of visibleRecipes(); track recipe.id) {
-          <article class="recipe-card card" [class.is-placeholder]="recipe.placeholder">
+          <article class="recipe-card card glass-surface" [class.is-placeholder]="recipe.placeholder">
             <header class="recipe-card-heading">
               <div>
                 <div class="recipe-tags">
@@ -123,7 +123,7 @@
             }
           </article>
         } @empty {
-          <p class="recipe-message card">Non ci sono ancora ricette in questa categoria.</p>
+          <p class="recipe-message card glass-surface">Non ci sono ancora ricette in questa categoria.</p>
         }
       </section>
     }

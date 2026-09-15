@@ -15,7 +15,7 @@
     <p class="world-eyebrow">La nostra casa</p>
     <h1 id="world-title"><span aria-hidden="true">⭕</span> Il Mondo Bianco</h1>
     <div class="world-music">
-      <div class="world-player card">
+      <div class="world-player card glass-surface">
         <p>
           <svg class="world-music-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M9 18V5l10-2v13M9 9l10-2M6.5 21C4.57 21 3 19.88 3 18.5S4.57 16 6.5 16 10 17.12 10 18.5 8.43 21 6.5 21ZM16.5 19c-1.93 0-3.5-1.12-3.5-2.5s1.57-2.5 3.5-2.5 3.5 1.12 3.5 2.5-1.57 2.5-3.5 2.5Z" />
@@ -30,7 +30,7 @@
           [showWaveform]="true"
         />
       </div>
-      <blockquote class="card">
+      <blockquote class="card glass-surface">
         <app-editorial-text contentKey="mondo-bianco.canzone.citazione" />
       </blockquote>
     </div>
@@ -55,7 +55,7 @@
       </div>
       <div class="world-today-row">
         @for (memory of todayMemories(); track memory.type + memory.id) {
-          <article class="world-today-card card card--compact">
+          <article class="world-today-card card glass-surface card--compact">
             <span class="world-today-year">{{ memory.year }}</span>
             <strong class="world-today-title">{{ memory.title }}</strong>
             <p class="world-today-excerpt">{{ memory.excerpt }}</p>
@@ -82,7 +82,7 @@
          piatta. -->
     <div class="world-areas-grid">
       @for (area of areas(); track area.id) {
-        <section class="world-area-card card">
+        <section class="world-area-card card glass-surface">
           <button
             type="button"
             class="world-area-header"
@@ -102,7 +102,7 @@
             <div class="world-places-grid">
               @for (place of area.places; track place.id) {
                 <div class="world-place-card-wrap">
-                  <a class="world-place-card card is-available" [routerLink]="place.route">
+                  <a class="world-place-card card glass-surface is-available" [routerLink]="place.route">
                     <span class="world-place-emoji">{{ place.emoji }}</span>
                     <strong>{{ place.name }}</strong>
                     @if (place.description) { <span class="world-place-description">{{ place.description }}</span> }
@@ -120,7 +120,7 @@
     </div>
 
     @if (editingId() !== null) {
-      <form class="world-place-form card" (ngSubmit)="submitEdit()">
+      <form class="world-place-form card glass-surface" (ngSubmit)="submitEdit()">
         <h3>Modifica "{{ editingId() }}"</h3>
         <label class="form-field">
           <span>Nome</span>

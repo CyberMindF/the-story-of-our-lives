@@ -7,7 +7,8 @@
   (click)="requestFlip()"
 >
   <span class="flash-card-inner">
-    <span class="flash-card-face flash-card-front">
+    <span class="flash-card-face flash-card-front card glass-surface">
+      <span class="flash-card-context">{{ context }}</span>
       <small>Domanda</small>
       <strong
         [class.is-long]="question.length > 100"
@@ -17,7 +18,8 @@
       >
       <span>Tocca per vedere la risposta</span>
     </span>
-    <span class="flash-card-face flash-card-back">
+    <span class="flash-card-face flash-card-back card glass-surface">
+      <span class="flash-card-context">{{ context }}</span>
       <small>Risposta</small>
       <strong
         [class.is-long]="answer.length > 100"

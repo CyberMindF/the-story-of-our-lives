@@ -48,7 +48,6 @@
   overflow-y: auto;
   border: 1px solid var(--panel-border-color);
   border-radius: 1.5rem;
-  background: color-mix(in srgb, var(--bg-color) 82%, var(--text-color) 8%);
   box-shadow: var(--shadow);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -57,7 +56,7 @@
 
 .flash-card-back {
   border-color: color-mix(in srgb, var(--focus-color) 55%, var(--border-color));
-  background: color-mix(in srgb, var(--bg-color) 75%, var(--focus-color) 12%);
+  background: color-mix(in srgb, var(--focus-color) 12%, var(--panel-color));
   transform: rotateY(180deg);
 }
 
@@ -66,6 +65,15 @@
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.flash-card-context {
+  max-width: 100%;
+  color: var(--muted-color);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .flash-card-face strong {
