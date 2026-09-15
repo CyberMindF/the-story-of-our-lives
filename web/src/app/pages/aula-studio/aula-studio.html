@@ -110,7 +110,7 @@
             <p class="study-eyebrow">I nostri materiali</p>
             <h2 id="study-library-title">{{ currentFolder()?.name ?? 'Tutti gli argomenti' }}</h2>
           </div>
-          @if (editingId() === null && editingFolderId() === null) {
+          @if (editingId() === null && editingFolderId() === null && !bulkMode()) {
             <div class="study-heading-actions">
               @if (currentFolder(); as folder) {
                 <button
@@ -128,6 +128,11 @@
               <button type="button" class="btn glass-surface btn-submit" (click)="startCreate()">
                 ＋ Nuovo argomento
               </button>
+              @if (canBulkImport()) {
+                <button type="button" class="btn glass-surface" (click)="startBulkImport()">
+                  ⇧ Importa in blocco
+                </button>
+              }
             </div>
           }
         </div>
@@ -154,246 +159,558 @@
           }
         </nav>
 
-        @if (editingFolderId() !== null) {
-          <form class="study-folder-editor card glass-surface" (ngSubmit)="saveFolder()">
-            <label class="form-field">
-              <span>{{ editingFolderId() === 'new' ? 'Nome della cartella' : 'Nuovo nome' }}</span>
-              <input
-                type="text"
-                maxlength="120"
-                required
-                autofocus
-                placeholder="Per esempio: Biologia"
-                [ngModel]="folderName()"
-                (ngModelChange)="folderName.set($event)"
-                name="folderName"
-              />
-            </label>
-            @if (folderError()) {
-              <p class="study-error" role="alert">{{ folderError() }}</p>
-            }
-            <div class="study-editor-actions">
-              <button
-                type="button"
-                class="btn glass-surface"
-                [disabled]="savingFolder()"
-                (click)="closeFolderEditor()"
-              >
-                Annulla
-              </button>
-              <button
-                type="submit"
-                class="btn glass-surface btn-submit"
-                [disabled]="savingFolder()"
-              >
-                {{
-                  savingFolder()
-                    ? 'Salvo…'
-                    : editingFolderId() === 'new'
-                      ? 'Crea cartella'
-                      : 'Rinomina'
-                }}
-              </button>
-            </div>
-          </form>
-        }
-
-        @if (editingId() !== null) {
-          <form class="study-editor card glass-surface" (ngSubmit)="saveTopic()">
-            <div class="study-editor-heading">
+        @if (bulkMode()) {
+          <section class="study-bulk-import card glass-surface" aria-labelledby="bulk-import-title">
+            <header class="study-bulk-heading">
               <div>
-                <p class="study-eyebrow">
-                  {{ editingId() === 'new' ? 'Crea il mazzo' : 'Aggiorna il mazzo' }}
-                </p>
-                <h2>{{ editingId() === 'new' ? 'Nuovo argomento' : 'Modifica argomento' }}</h2>
+                <p class="study-eyebrow">Strumento amministratore</p>
+                <h2 id="bulk-import-title">Importa in blocco</h2>
               </div>
-              <span class="study-card-count"
-                >{{ parsedPairs().cards.length }}
-                {{ parsedPairs().cards.length === 1 ? 'carta' : 'carte' }}</span
-              >
-            </div>
+              <button type="button" class="btn glass-surface" (click)="closeBulkImport()">
+                Chiudi
+              </button>
+            </header>
 
-            <label class="form-field">
-              <span>Nome dell’argomento</span>
-              <input
-                type="text"
-                maxlength="120"
-                required
-                placeholder="Per esempio: Storia romana"
-                [ngModel]="draft().title"
-                (ngModelChange)="updateDraft({ title: $event })"
-                name="title"
-              />
-            </label>
+            <ol class="study-bulk-steps" aria-label="Avanzamento dell’importazione">
+              <li [class.is-active]="bulkStep() === 1" [class.is-complete]="bulkStep() > 1">
+                <span>1</span> Inserisci
+              </li>
+              <li [class.is-active]="bulkStep() === 2" [class.is-complete]="bulkStep() > 2">
+                <span>2</span> Controlla
+              </li>
+              <li [class.is-active]="bulkStep() === 3"><span>3</span> Risultato</li>
+            </ol>
 
-            <label class="form-field">
-              <span>Cartella</span>
-              <select
-                [ngModel]="draft().folderId"
-                (ngModelChange)="updateDraft({ folderId: $event })"
-                name="folderId"
-              >
-                <option [ngValue]="null">Aula studio (radice)</option>
-                @for (folder of folderChoices(); track folder.id) {
-                  <option [ngValue]="folder.id">{{ folder.label }}</option>
+            @if (bulkStep() === 1) {
+              <div class="study-bulk-panel">
+                @if (bulkUndoMessage()) {
+                  <p class="study-bulk-undo-message" role="status">{{ bulkUndoMessage() }}</p>
                 }
-              </select>
-            </label>
+                <div class="study-bulk-instructions">
+                  <p>
+                    Incolla il testo oppure scegli un file Markdown. Usa
+                    <code># Cartella &gt; Sottocartella</code>, poi <code>## Argomento</code> e
+                    alterna una domanda e una risposta per riga.
+                  </p>
+                </div>
 
-            <label class="form-field">
-              <span
-                >Domande e risposte
-                <small>una riga per la domanda, quella dopo per la risposta</small></span
-              >
-              <textarea
-                rows="14"
-                required
-                placeholder="Che cos’è la fotosintesi?&#10;Il processo con cui le piante trasformano luce, acqua e anidride carbonica in energia.&#10;&#10;Dove avviene?&#10;Nei cloroplasti."
-                [ngModel]="draft().pairs"
-                (ngModelChange)="updateDraft({ pairs: $event })"
-                name="pairs"
-              ></textarea>
-            </label>
+                <label class="form-field">
+                  <span>Contenuto da importare</span>
+                  <textarea
+                    class="study-bulk-source"
+                    rows="18"
+                    maxlength="500000"
+                    placeholder="# Biologia > Unità 1&#10;## Lipidi&#10;Che cosa sono i lipidi?&#10;Molecole organiche insolubili in acqua.&#10;&#10;Qual è la loro funzione?&#10;Riserva energetica e componenti delle membrane."
+                    [ngModel]="bulkSource()"
+                    (ngModelChange)="bulkSource.set($event); bulkFileName.set('')"
+                    name="bulkSource"
+                  ></textarea>
+                </label>
 
-            <div class="study-format-example" aria-label="Esempio del formato richiesto">
-              <span>1ª riga</span><strong>Domanda</strong> <span>2ª riga</span
-              ><strong>Risposta</strong> <span>3ª riga</span><strong>Domanda successiva</strong>
-              <span>4ª riga</span><strong>Risposta successiva</strong>
-            </div>
+                <label class="study-bulk-file">
+                  <span>Scegli un file <strong>.md</strong></span>
+                  <input type="file" accept=".md,text/markdown" (change)="loadBulkFile($event)" />
+                  @if (bulkFileName()) {
+                    <small>File caricato: {{ bulkFileName() }}</small>
+                  }
+                </label>
 
-            @if (parsedPairs().danglingQuestion) {
-              <p class="study-inline-warning" role="status">
-                Manca ancora una risposta all’ultima domanda.
-              </p>
-            }
-            @if (formError()) {
-              <p class="study-error" role="alert">{{ formError() }}</p>
-            }
+                @if (latestBulkImport(); as imported) {
+                  <aside class="study-bulk-latest">
+                    <span>Ultima importazione disponibile</span>
+                    <strong>{{ imported.summary.cardsInserted }} carte inserite</strong>
+                    <button
+                      type="button"
+                      class="btn glass-surface"
+                      (click)="requestUndoBulkImport(imported)"
+                    >
+                      Annulla ultima importazione
+                    </button>
+                  </aside>
+                }
 
-            <div class="study-editor-actions">
-              <button
-                type="button"
-                class="btn glass-surface"
-                [disabled]="saving()"
-                (click)="cancelEdit()"
-              >
-                Annulla
-              </button>
-              <button type="submit" class="btn glass-surface btn-submit" [disabled]="saving()">
-                {{ saving() ? 'Salvo…' : 'Salva argomento' }}
-              </button>
-            </div>
-          </form>
-        }
+                @if (bulkError()) {
+                  <p class="study-error" role="alert">{{ bulkError() }}</p>
+                }
+                @if (bulkErrors().length > 0) {
+                  <ul class="study-bulk-errors" role="alert">
+                    @for (error of bulkErrors(); track $index) {
+                      <li>
+                        @if (error.line) {
+                          <strong>Riga {{ error.line }}:</strong>
+                        }
+                        {{ error.message }}
+                        @if (error.path || error.topic) {
+                          <small>
+                            {{ error.path ? 'Percorso: ' + error.path : '' }}
+                            {{ error.topic ? ' · Argomento: ' + error.topic : '' }}
+                          </small>
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
 
-        @if (loading()) {
-          <p class="study-message">Sto preparando l’aula…</p>
-        } @else if (pageError()) {
-          <p class="study-message is-error" role="alert">{{ pageError() }}</p>
-        } @else {
-          @if (currentFolders().length > 0 || currentTopics().length > 0) {
-            <div class="study-topic-grid">
-              @for (folder of currentFolders(); track folder.id) {
-                <article class="study-folder card glass-surface">
+                <div class="study-editor-actions">
+                  <button type="button" class="btn glass-surface" (click)="closeBulkImport()">
+                    Annulla
+                  </button>
                   <button
                     type="button"
-                    class="study-folder-open"
-                    [attr.aria-label]="'Apri la cartella ' + folder.name"
-                    (click)="openFolder(folder.id)"
+                    class="btn glass-surface btn-submit"
+                    [disabled]="bulkChecking() || !bulkSource().trim()"
+                    (click)="previewBulkImport()"
                   >
-                    <span class="study-folder-icon" aria-hidden="true">📁</span>
-                    <span>
-                      <span class="study-topic-meta">
-                        {{ folderChildCount(folder.id) }} sottocartelle ·
-                        {{ folderTopicCount(folder.id) }} argomenti ·
-                        {{ folderCardCount(folder.id) }} carte
-                      </span>
-                      <strong>{{ folder.name }}</strong>
-                    </span>
+                    {{ bulkChecking() ? 'Controllo…' : 'Controlla il contenuto' }}
                   </button>
-                  <div class="study-folder-actions">
-                    <button
-                      type="button"
-                      class="btn glass-surface btn-submit study-review-action"
-                      [disabled]="folderCardCount(folder.id) === 0"
-                      [attr.aria-label]="
-                        'Ripassa tutti gli argomenti della cartella ' + folder.name
-                      "
-                      (click)="startFolderStudy(folder)"
-                    >
-                      ▶ Ripassa tutto
-                    </button>
-                    <button
-                      type="button"
-                      class="btn glass-surface"
-                      [attr.aria-label]="'Rinomina la cartella ' + folder.name"
-                      (click)="startRenameFolder(folder)"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      type="button"
-                      class="btn glass-surface"
-                      [attr.aria-label]="'Elimina la cartella ' + folder.name"
-                      (click)="requestDeleteFolder(folder)"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </article>
-              }
-              @for (topic of currentTopics(); track topic.id) {
-                <article class="study-topic card glass-surface">
-                  <div class="study-topic-mark" aria-hidden="true">{{ topic.cards.length }}</div>
+                </div>
+              </div>
+            } @else if (bulkStep() === 2) {
+              <div class="study-bulk-panel">
+                <div class="study-bulk-summary" aria-label="Riepilogo del contenuto">
+                  <span
+                    ><strong>{{ bulkPreview().length }}</strong> percorsi</span
+                  >
+                  <span
+                    ><strong>{{ bulkTotalTopics() }}</strong> argomenti</span
+                  >
+                  <span
+                    ><strong>{{ bulkTotalCards() }}</strong> flash card</span
+                  >
+                  <span
+                    ><strong>{{ bulkConflictCount() }}</strong> conflitti</span
+                  >
+                </div>
+
+                <div class="study-bulk-preview">
+                  @for (path of bulkPreview(); track path.path) {
+                    <article class="study-bulk-path">
+                      <h3><span aria-hidden="true">📁</span> {{ path.path }}</h3>
+                      <ul>
+                        @for (topic of path.topics; track topic.title) {
+                          <li>
+                            <span
+                              ><strong>{{ topic.title }}</strong> ·
+                              {{ topic.cardCount }} carte</span
+                            >
+                            @if (topic.conflict) {
+                              <span class="study-bulk-conflict">Già presente</span>
+                            }
+                          </li>
+                        }
+                      </ul>
+                    </article>
+                  }
+                </div>
+
+                @if (bulkConflictCount() > 0) {
+                  <fieldset class="study-bulk-conflict-options">
+                    <legend>Come gestire gli argomenti già presenti?</legend>
+                    <label [class.is-selected]="bulkConflictPolicy() === 'skip'">
+                      <input
+                        type="radio"
+                        name="bulkConflictPolicy"
+                        value="skip"
+                        [checked]="bulkConflictPolicy() === 'skip'"
+                        (change)="bulkConflictPolicy.set('skip'); bulkConfirmed.set(false)"
+                      />
+                      <span
+                        ><strong>Salta</strong
+                        ><small>Non modifica l’argomento esistente.</small></span
+                      >
+                    </label>
+                    <label [class.is-selected]="bulkConflictPolicy() === 'append'">
+                      <input
+                        type="radio"
+                        name="bulkConflictPolicy"
+                        value="append"
+                        [checked]="bulkConflictPolicy() === 'append'"
+                        (change)="bulkConflictPolicy.set('append'); bulkConfirmed.set(false)"
+                      />
+                      <span
+                        ><strong>Aggiungi</strong
+                        ><small>Accoda le nuove carte mantenendo l’ordine.</small></span
+                      >
+                    </label>
+                    <label [class.is-selected]="bulkConflictPolicy() === 'replace'">
+                      <input
+                        type="radio"
+                        name="bulkConflictPolicy"
+                        value="replace"
+                        [checked]="bulkConflictPolicy() === 'replace'"
+                        (change)="bulkConflictPolicy.set('replace'); bulkConfirmed.set(false)"
+                      />
+                      <span
+                        ><strong>Sostituisci</strong
+                        ><small>Rimpiazza l’argomento, recuperabile con Annulla.</small></span
+                      >
+                    </label>
+                  </fieldset>
+                }
+
+                <label class="study-bulk-confirm">
+                  <input
+                    type="checkbox"
+                    [checked]="bulkConfirmed()"
+                    (change)="bulkConfirmed.set(!bulkConfirmed())"
+                  />
+                  <span>
+                    Ho controllato percorsi, argomenti e numero di carte e confermo l’importazione
+                    completa.
+                  </span>
+                </label>
+
+                @if (bulkError()) {
+                  <p class="study-error" role="alert">{{ bulkError() }}</p>
+                }
+                @if (bulkErrors().length > 0) {
+                  <ul class="study-bulk-errors" role="alert">
+                    @for (error of bulkErrors(); track $index) {
+                      <li>
+                        {{ error.message }}
+                        @if (error.path || error.topic) {
+                          <small>
+                            {{ error.path ? 'Percorso: ' + error.path : '' }}
+                            {{ error.topic ? ' · Argomento: ' + error.topic : '' }}
+                          </small>
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
+
+                <div class="study-editor-actions">
+                  <button
+                    type="button"
+                    class="btn glass-surface"
+                    [disabled]="bulkImporting()"
+                    (click)="returnToBulkSource()"
+                  >
+                    ← Modifica testo
+                  </button>
+                  <button
+                    type="button"
+                    class="btn glass-surface btn-submit"
+                    [disabled]="bulkImporting() || !bulkConfirmed()"
+                    (click)="importBulk()"
+                  >
+                    {{ bulkImporting() ? 'Importazione…' : 'Importa tutto' }}
+                  </button>
+                </div>
+              </div>
+            } @else if (bulkResult(); as result) {
+              <div class="study-bulk-panel study-bulk-result">
+                <div class="study-bulk-success" aria-hidden="true">✓</div>
+                <div>
+                  <p class="study-eyebrow">Importazione completata</p>
+                  <h3>Il materiale è pronto nell’Aula studio</h3>
+                </div>
+                <dl class="study-bulk-result-grid">
                   <div>
-                    <p class="study-topic-meta">{{ topic.cards.length }} flash card</p>
-                    <h3>{{ topic.title }}</h3>
+                    <dt>Cartelle create</dt>
+                    <dd>{{ result.summary.foldersCreated }}</dd>
                   </div>
-                  <div class="study-topic-actions">
-                    <button
-                      type="button"
-                      class="btn glass-surface btn-submit study-review-action"
-                      (click)="startStudy(topic)"
-                    >
-                      Inizia il ripasso
-                    </button>
-                    <button
-                      type="button"
-                      class="btn glass-surface"
-                      aria-label="Modifica argomento"
-                      (click)="startEdit(topic)"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      type="button"
-                      class="btn glass-surface"
-                      aria-label="Elimina argomento"
-                      (click)="requestDelete(topic)"
-                    >
-                      🗑️
-                    </button>
+                  <div>
+                    <dt>Cartelle riusate</dt>
+                    <dd>{{ result.summary.foldersReused }}</dd>
                   </div>
-                </article>
+                  <div>
+                    <dt>Argomenti creati</dt>
+                    <dd>{{ result.summary.topicsCreated }}</dd>
+                  </div>
+                  <div>
+                    <dt>Argomenti saltati</dt>
+                    <dd>{{ result.summary.topicsSkipped }}</dd>
+                  </div>
+                  <div>
+                    <dt>Argomenti aggiornati</dt>
+                    <dd>{{ result.summary.topicsAppended }}</dd>
+                  </div>
+                  <div>
+                    <dt>Argomenti sostituiti</dt>
+                    <dd>{{ result.summary.topicsReplaced }}</dd>
+                  </div>
+                  <div>
+                    <dt>Flash card inserite</dt>
+                    <dd>{{ result.summary.cardsInserted }}</dd>
+                  </div>
+                </dl>
+
+                @if (bulkUndoMessage()) {
+                  <p class="study-bulk-undo-message" role="status">{{ bulkUndoMessage() }}</p>
+                }
+                @if (bulkError()) {
+                  <p class="study-error" role="alert">{{ bulkError() }}</p>
+                }
+
+                <div class="study-editor-actions">
+                  <button
+                    type="button"
+                    class="btn glass-surface"
+                    [disabled]="bulkUndoing()"
+                    (click)="requestUndoBulkImport(result)"
+                  >
+                    Annulla questa importazione
+                  </button>
+                  <button
+                    type="button"
+                    class="btn glass-surface btn-submit"
+                    (click)="closeBulkImport()"
+                  >
+                    Torna all’Aula studio
+                  </button>
+                </div>
+              </div>
+            }
+          </section>
+        } @else {
+          @if (editingFolderId() !== null) {
+            <form class="study-folder-editor card glass-surface" (ngSubmit)="saveFolder()">
+              <label class="form-field">
+                <span>{{
+                  editingFolderId() === 'new' ? 'Nome della cartella' : 'Nuovo nome'
+                }}</span>
+                <input
+                  type="text"
+                  maxlength="120"
+                  required
+                  autofocus
+                  placeholder="Per esempio: Biologia"
+                  [ngModel]="folderName()"
+                  (ngModelChange)="folderName.set($event)"
+                  name="folderName"
+                />
+              </label>
+              @if (folderError()) {
+                <p class="study-error" role="alert">{{ folderError() }}</p>
               }
-            </div>
-          } @else {
-            <div class="study-empty card glass-surface">
-              <span aria-hidden="true">✦</span>
-              <h3>{{ currentFolder() ? 'Questa cartella è vuota' : 'L’aula è pronta' }}</h3>
-              <p>
-                Crea una cartella per organizzare il materiale oppure aggiungi un argomento con le
-                sue flash card.
-              </p>
-              <div class="study-heading-actions">
-                <button type="button" class="btn glass-surface" (click)="startCreateFolder()">
-                  Crea una cartella
+              <div class="study-editor-actions">
+                <button
+                  type="button"
+                  class="btn glass-surface"
+                  [disabled]="savingFolder()"
+                  (click)="closeFolderEditor()"
+                >
+                  Annulla
                 </button>
-                <button type="button" class="btn glass-surface btn-submit" (click)="startCreate()">
-                  Crea un argomento
+                <button
+                  type="submit"
+                  class="btn glass-surface btn-submit"
+                  [disabled]="savingFolder()"
+                >
+                  {{
+                    savingFolder()
+                      ? 'Salvo…'
+                      : editingFolderId() === 'new'
+                        ? 'Crea cartella'
+                        : 'Rinomina'
+                  }}
                 </button>
               </div>
-            </div>
+            </form>
+          }
+
+          @if (editingId() !== null) {
+            <form class="study-editor card glass-surface" (ngSubmit)="saveTopic()">
+              <div class="study-editor-heading">
+                <div>
+                  <p class="study-eyebrow">
+                    {{ editingId() === 'new' ? 'Crea il mazzo' : 'Aggiorna il mazzo' }}
+                  </p>
+                  <h2>{{ editingId() === 'new' ? 'Nuovo argomento' : 'Modifica argomento' }}</h2>
+                </div>
+                <span class="study-card-count"
+                  >{{ parsedPairs().cards.length }}
+                  {{ parsedPairs().cards.length === 1 ? 'carta' : 'carte' }}</span
+                >
+              </div>
+
+              <label class="form-field">
+                <span>Nome dell’argomento</span>
+                <input
+                  type="text"
+                  maxlength="120"
+                  required
+                  placeholder="Per esempio: Storia romana"
+                  [ngModel]="draft().title"
+                  (ngModelChange)="updateDraft({ title: $event })"
+                  name="title"
+                />
+              </label>
+
+              <label class="form-field">
+                <span>Cartella</span>
+                <select
+                  [ngModel]="draft().folderId"
+                  (ngModelChange)="updateDraft({ folderId: $event })"
+                  name="folderId"
+                >
+                  <option [ngValue]="null">Aula studio (radice)</option>
+                  @for (folder of folderChoices(); track folder.id) {
+                    <option [ngValue]="folder.id">{{ folder.label }}</option>
+                  }
+                </select>
+              </label>
+
+              <label class="form-field">
+                <span
+                  >Domande e risposte
+                  <small>una riga per la domanda, quella dopo per la risposta</small></span
+                >
+                <textarea
+                  rows="14"
+                  required
+                  placeholder="Che cos’è la fotosintesi?&#10;Il processo con cui le piante trasformano luce, acqua e anidride carbonica in energia.&#10;&#10;Dove avviene?&#10;Nei cloroplasti."
+                  [ngModel]="draft().pairs"
+                  (ngModelChange)="updateDraft({ pairs: $event })"
+                  name="pairs"
+                ></textarea>
+              </label>
+
+              <div class="study-format-example" aria-label="Esempio del formato richiesto">
+                <span>1ª riga</span><strong>Domanda</strong> <span>2ª riga</span
+                ><strong>Risposta</strong> <span>3ª riga</span><strong>Domanda successiva</strong>
+                <span>4ª riga</span><strong>Risposta successiva</strong>
+              </div>
+
+              @if (parsedPairs().danglingQuestion) {
+                <p class="study-inline-warning" role="status">
+                  Manca ancora una risposta all’ultima domanda.
+                </p>
+              }
+              @if (formError()) {
+                <p class="study-error" role="alert">{{ formError() }}</p>
+              }
+
+              <div class="study-editor-actions">
+                <button
+                  type="button"
+                  class="btn glass-surface"
+                  [disabled]="saving()"
+                  (click)="cancelEdit()"
+                >
+                  Annulla
+                </button>
+                <button type="submit" class="btn glass-surface btn-submit" [disabled]="saving()">
+                  {{ saving() ? 'Salvo…' : 'Salva argomento' }}
+                </button>
+              </div>
+            </form>
+          }
+
+          @if (loading()) {
+            <p class="study-message">Sto preparando l’aula…</p>
+          } @else if (pageError()) {
+            <p class="study-message is-error" role="alert">{{ pageError() }}</p>
+          } @else {
+            @if (currentFolders().length > 0 || currentTopics().length > 0) {
+              <div class="study-topic-grid">
+                @for (folder of currentFolders(); track folder.id) {
+                  <article class="study-folder card glass-surface">
+                    <button
+                      type="button"
+                      class="study-folder-open"
+                      [attr.aria-label]="'Apri la cartella ' + folder.name"
+                      (click)="openFolder(folder.id)"
+                    >
+                      <span class="study-folder-icon" aria-hidden="true">📁</span>
+                      <span>
+                        <span class="study-topic-meta">
+                          {{ folderChildCount(folder.id) }} sottocartelle ·
+                          {{ folderTopicCount(folder.id) }} argomenti ·
+                          {{ folderCardCount(folder.id) }} carte
+                        </span>
+                        <strong>{{ folder.name }}</strong>
+                      </span>
+                    </button>
+                    <div class="study-folder-actions">
+                      <button
+                        type="button"
+                        class="btn glass-surface btn-submit study-review-action"
+                        [disabled]="folderCardCount(folder.id) === 0"
+                        [attr.aria-label]="
+                          'Ripassa tutti gli argomenti della cartella ' + folder.name
+                        "
+                        (click)="startFolderStudy(folder)"
+                      >
+                        ▶ Ripassa tutto
+                      </button>
+                      <button
+                        type="button"
+                        class="btn glass-surface"
+                        [attr.aria-label]="'Rinomina la cartella ' + folder.name"
+                        (click)="startRenameFolder(folder)"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        type="button"
+                        class="btn glass-surface"
+                        [attr.aria-label]="'Elimina la cartella ' + folder.name"
+                        (click)="requestDeleteFolder(folder)"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </article>
+                }
+                @for (topic of currentTopics(); track topic.id) {
+                  <article class="study-topic card glass-surface">
+                    <div class="study-topic-mark" aria-hidden="true">{{ topic.cards.length }}</div>
+                    <div>
+                      <p class="study-topic-meta">{{ topic.cards.length }} flash card</p>
+                      <h3>{{ topic.title }}</h3>
+                    </div>
+                    <div class="study-topic-actions">
+                      <button
+                        type="button"
+                        class="btn glass-surface btn-submit study-review-action"
+                        (click)="startStudy(topic)"
+                      >
+                        Inizia il ripasso
+                      </button>
+                      <button
+                        type="button"
+                        class="btn glass-surface"
+                        aria-label="Modifica argomento"
+                        (click)="startEdit(topic)"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        type="button"
+                        class="btn glass-surface"
+                        aria-label="Elimina argomento"
+                        (click)="requestDelete(topic)"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </article>
+                }
+              </div>
+            } @else {
+              <div class="study-empty card glass-surface">
+                <span aria-hidden="true">✦</span>
+                <h3>{{ currentFolder() ? 'Questa cartella è vuota' : 'L’aula è pronta' }}</h3>
+                <p>
+                  Crea una cartella per organizzare il materiale oppure aggiungi un argomento con le
+                  sue flash card.
+                </p>
+                <div class="study-heading-actions">
+                  <button type="button" class="btn glass-surface" (click)="startCreateFolder()">
+                    Crea una cartella
+                  </button>
+                  <button
+                    type="button"
+                    class="btn glass-surface btn-submit"
+                    (click)="startCreate()"
+                  >
+                    Crea un argomento
+                  </button>
+                </div>
+              </div>
+            }
           }
         }
       </section>
@@ -428,5 +745,16 @@
     [open]="deleteFolderTarget() !== null"
     (confirm)="confirmDeleteFolder()"
     (cancel)="deleteFolderTarget.set(null)"
+  />
+
+  <app-confirmation-dialog
+    dialogId="undo-study-import"
+    title="Annullare l’ultima importazione?"
+    description="Verranno rimossi solo i contenuti aggiunti da questa importazione. Gli argomenti sostituiti saranno ripristinati e le cartelle che nel frattempo contengono altro materiale saranno conservate."
+    confirmLabel="Annulla importazione"
+    cancelLabel="Mantieni"
+    [open]="bulkUndoTarget() !== null"
+    (confirm)="confirmUndoBulkImport()"
+    (cancel)="bulkUndoTarget.set(null)"
   />
 </app-shell>

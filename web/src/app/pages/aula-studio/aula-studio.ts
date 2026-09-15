@@ -2,6 +2,7 @@ import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
 import { ApiService } from '../../core/api.service';
+import { AuthService } from '../../core/auth.service';
 import { StudyFocusService } from '../../core/study-focus.service';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { StudyFlashCard } from './study-flash-card';
@@ -47,6 +48,60 @@ interface FolderChoice extends StudyFolder {
 interface ParsedPairs {
   cards: StudyCard[];
   danglingQuestion: string | null;
+}
+
+type BulkConflictPolicy = 'skip' | 'append' | 'replace';
+
+interface BulkImportSummary {
+  foldersCreated: number;
+  foldersReused: number;
+  topicsCreated: number;
+  topicsSkipped: number;
+  topicsAppended: number;
+  topicsReplaced: number;
+  cardsInserted: number;
+}
+
+interface BulkImportError {
+  line?: number;
+  message: string;
+  path?: string;
+  topic?: string;
+}
+
+interface BulkPreviewPath {
+  path: string;
+  segments: string[];
+  topics: Array<{ title: string; cardCount: number; conflict: boolean }>;
+}
+
+interface BulkPreviewResponse {
+  paths?: BulkPreviewPath[];
+  conflictCount?: number;
+  summary?: BulkImportSummary;
+  totalTopics?: number;
+  totalCards?: number;
+  errors?: BulkImportError[];
+  error?: string;
+}
+
+interface BulkImportView {
+  id: string;
+  conflictPolicy: BulkConflictPolicy;
+  summary: BulkImportSummary;
+  createdAt: string;
+  undoneAt?: string | null;
+}
+
+interface BulkImportResponse {
+  importId?: string;
+  conflictPolicy?: BulkConflictPolicy;
+  summary?: BulkImportSummary;
+  createdAt?: string;
+  import?: BulkImportView | null;
+  retainedNonEmptyFolders?: number;
+  errors?: BulkImportError[];
+  error?: string;
 }
 
 export function collectFolderStudyCards(
@@ -160,6 +215,7 @@ function shuffledIndices(length: number): number[] {
 })
 export class AulaStudio implements OnDestroy {
   private readonly api = inject(ApiService);
+  protected readonly authService = inject(AuthService);
   protected readonly focusMode = inject(StudyFocusService);
 
   protected readonly topics = signal<StudyTopic[]>([]);
@@ -180,6 +236,29 @@ export class AulaStudio implements OnDestroy {
   protected readonly folderError = signal('');
   protected readonly savingFolder = signal(false);
   protected readonly deleteFolderTarget = signal<StudyFolder | null>(null);
+  protected readonly canBulkImport = computed(
+    () => this.authService.isAdmin() && this.authService.adminModeEnabled(),
+  );
+  protected readonly bulkMode = signal(false);
+  protected readonly bulkStep = signal<1 | 2 | 3>(1);
+  protected readonly bulkSource = signal('');
+  protected readonly bulkFileName = signal('');
+  protected readonly bulkPreview = signal<BulkPreviewPath[]>([]);
+  protected readonly bulkConflictCount = signal(0);
+  protected readonly bulkTotalTopics = signal(0);
+  protected readonly bulkTotalCards = signal(0);
+  protected readonly bulkConflictPolicy = signal<BulkConflictPolicy>('skip');
+  private readonly bulkIdempotencyKey = signal('');
+  protected readonly bulkConfirmed = signal(false);
+  protected readonly bulkChecking = signal(false);
+  protected readonly bulkImporting = signal(false);
+  protected readonly bulkUndoing = signal(false);
+  protected readonly bulkErrors = signal<BulkImportError[]>([]);
+  protected readonly bulkError = signal('');
+  protected readonly bulkResult = signal<BulkImportView | null>(null);
+  protected readonly latestBulkImport = signal<BulkImportView | null>(null);
+  protected readonly bulkUndoTarget = signal<BulkImportView | null>(null);
+  protected readonly bulkUndoMessage = signal('');
   protected readonly currentFolder = computed(
     () => this.folders().find((folder) => folder.id === this.currentFolderId()) ?? null,
   );
@@ -238,6 +317,7 @@ export class AulaStudio implements OnDestroy {
   }
 
   protected startCreate(): void {
+    this.closeBulkImport();
     this.closeStudy();
     this.closeFolderEditor();
     this.draft.set({ title: '', pairs: '', folderId: this.currentFolderId() });
@@ -270,6 +350,7 @@ export class AulaStudio implements OnDestroy {
   }
 
   protected startCreateFolder(): void {
+    this.closeBulkImport();
     this.cancelEdit();
     this.folderName.set('');
     this.folderError.set('');
@@ -286,6 +367,189 @@ export class AulaStudio implements OnDestroy {
   protected closeFolderEditor(): void {
     this.editingFolderId.set(null);
     this.folderError.set('');
+  }
+
+  protected startBulkImport(): void {
+    this.cancelEdit();
+    this.closeFolderEditor();
+    this.bulkMode.set(true);
+    this.bulkStep.set(1);
+    this.bulkSource.set('');
+    this.bulkFileName.set('');
+    this.bulkPreview.set([]);
+    this.bulkConflictCount.set(0);
+    this.bulkTotalTopics.set(0);
+    this.bulkTotalCards.set(0);
+    this.bulkConflictPolicy.set('skip');
+    this.bulkIdempotencyKey.set('');
+    this.bulkConfirmed.set(false);
+    this.bulkErrors.set([]);
+    this.bulkError.set('');
+    this.bulkResult.set(null);
+    this.bulkUndoMessage.set('');
+    void this.loadLatestBulkImport();
+  }
+
+  protected closeBulkImport(): void {
+    this.bulkMode.set(false);
+    this.bulkError.set('');
+    this.bulkErrors.set([]);
+  }
+
+  protected async loadBulkFile(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!file.name.toLocaleLowerCase('it').endsWith('.md')) {
+      this.bulkFileName.set('');
+      this.bulkError.set('Scegli un file con estensione .md.');
+      input.value = '';
+      return;
+    }
+    try {
+      this.bulkSource.set(await file.text());
+      this.bulkFileName.set(file.name);
+      this.bulkError.set('');
+      this.bulkErrors.set([]);
+    } catch {
+      this.bulkError.set('Non è stato possibile leggere il file selezionato.');
+    }
+  }
+
+  protected async previewBulkImport(): Promise<void> {
+    this.bulkChecking.set(true);
+    this.bulkError.set('');
+    this.bulkErrors.set([]);
+    try {
+      const response = await fetch('/api/study-imports/preview', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: this.bulkSource(), conflictPolicy: 'skip' }),
+      });
+      const result = await this.api.readApiResponse<BulkPreviewResponse>(response);
+      if (!response.ok) {
+        this.bulkErrors.set(result.errors ?? []);
+        this.bulkError.set(
+          result.error ?? (result.errors?.length ? '' : 'Controllo non riuscito.'),
+        );
+        return;
+      }
+      this.bulkPreview.set(result.paths ?? []);
+      this.bulkConflictCount.set(result.conflictCount ?? 0);
+      this.bulkTotalTopics.set(result.totalTopics ?? 0);
+      this.bulkTotalCards.set(result.totalCards ?? 0);
+      this.bulkConflictPolicy.set('skip');
+      this.bulkIdempotencyKey.set(crypto.randomUUID());
+      this.bulkConfirmed.set(false);
+      this.bulkResult.set(null);
+      this.bulkStep.set(2);
+    } catch {
+      this.bulkError.set('Non è stato possibile controllare il contenuto.');
+    } finally {
+      this.bulkChecking.set(false);
+    }
+  }
+
+  protected returnToBulkSource(): void {
+    this.bulkStep.set(1);
+    this.bulkIdempotencyKey.set('');
+    this.bulkConfirmed.set(false);
+    this.bulkError.set('');
+    this.bulkErrors.set([]);
+  }
+
+  protected async importBulk(): Promise<void> {
+    if (!this.bulkConfirmed()) return;
+    if (!this.bulkIdempotencyKey()) this.bulkIdempotencyKey.set(crypto.randomUUID());
+    this.bulkImporting.set(true);
+    this.bulkError.set('');
+    this.bulkErrors.set([]);
+    try {
+      const response = await fetch('/api/study-imports', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          source: this.bulkSource(),
+          conflictPolicy: this.bulkConflictPolicy(),
+          idempotencyKey: this.bulkIdempotencyKey(),
+        }),
+      });
+      const result = await this.api.readApiResponse<BulkImportResponse>(response);
+      if (!response.ok || !result.importId || !result.summary || !result.createdAt) {
+        this.bulkErrors.set(result.errors ?? []);
+        this.bulkError.set(result.error ?? 'Importazione non riuscita.');
+        return;
+      }
+      const imported: BulkImportView = {
+        id: result.importId,
+        conflictPolicy: result.conflictPolicy ?? this.bulkConflictPolicy(),
+        summary: result.summary,
+        createdAt: result.createdAt,
+      };
+      this.bulkResult.set(imported);
+      this.latestBulkImport.set(imported);
+      this.bulkStep.set(3);
+      await this.load();
+    } catch {
+      this.bulkError.set("Non è stato possibile completare l'importazione.");
+    } finally {
+      this.bulkImporting.set(false);
+    }
+  }
+
+  protected requestUndoBulkImport(imported: BulkImportView): void {
+    this.bulkUndoTarget.set(imported);
+  }
+
+  protected async confirmUndoBulkImport(): Promise<void> {
+    if (!this.bulkUndoTarget()) return;
+    this.bulkUndoing.set(true);
+    this.bulkError.set('');
+    try {
+      const response = await fetch('/api/study-imports/undo-last', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { Accept: 'application/json' },
+      });
+      const result = await this.api.readApiResponse<BulkImportResponse>(response);
+      if (!response.ok) {
+        this.bulkError.set(result.error ?? "Non è stato possibile annullare l'importazione.");
+        return;
+      }
+      const retained = result.retainedNonEmptyFolders ?? 0;
+      this.bulkUndoMessage.set(
+        retained > 0
+          ? `Importazione annullata. ${retained} cartelle non vuote sono state conservate.`
+          : 'Importazione annullata e contenuti precedenti ripristinati.',
+      );
+      this.bulkResult.set(null);
+      this.bulkStep.set(1);
+      this.latestBulkImport.set(null);
+      await this.load();
+      await this.loadLatestBulkImport();
+    } catch {
+      this.bulkError.set("Non è stato possibile annullare l'importazione.");
+    } finally {
+      this.bulkUndoing.set(false);
+      this.bulkUndoTarget.set(null);
+    }
+  }
+
+  private async loadLatestBulkImport(): Promise<void> {
+    if (!this.canBulkImport()) return;
+    try {
+      const response = await fetch('/api/study-imports', {
+        credentials: 'same-origin',
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) return;
+      const result = await this.api.readApiResponse<BulkImportResponse>(response);
+      this.latestBulkImport.set(result.import ?? null);
+    } catch {
+      // L'assenza del riepilogo precedente non deve bloccare una nuova importazione.
+    }
   }
 
   protected async saveFolder(): Promise<void> {

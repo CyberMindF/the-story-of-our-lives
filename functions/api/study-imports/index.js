@@ -130,13 +130,21 @@ export async function onRequestPost(context) {
     );
   } catch (error) {
     if (userId && idempotencyKey && sourceHash && conflictPolicy) {
-      const existingImport = await findImportByKey(env, userId, idempotencyKey);
-      if (existingImport) {
-        return duplicateImportResponse(
-          existingImport,
-          sourceHash,
-          conflictPolicy,
+      try {
+        const existingImport = await findImportByKey(
+          env,
+          userId,
+          idempotencyKey,
         );
+        if (existingImport) {
+          return duplicateImportResponse(
+            existingImport,
+            sourceHash,
+            conflictPolicy,
+          );
+        }
+      } catch {
+        // L'errore originale resta quello più utile da registrare e restituire.
       }
     }
     console.error(
