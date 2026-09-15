@@ -1,4 +1,4 @@
-import { isLazyChunkLoadError } from './lazy-chunk-recovery';
+import { isLazyChunkLoadError, lazyChunkUrl } from './lazy-chunk-recovery';
 
 describe('isLazyChunkLoadError', () => {
   it('recognizes the dynamic import error emitted during an incomplete asset rollout', () => {
@@ -19,5 +19,14 @@ describe('isLazyChunkLoadError', () => {
 
   it('does not reload for application errors unrelated to assets', () => {
     expect(isLazyChunkLoadError(new Error('Accesso non riuscito.'))).toBe(false);
+  });
+
+  it('extracts the failed asset URL so its cached response can be refreshed', () => {
+    expect(
+      lazyChunkUrl(
+        'Failed to fetch dynamically imported module: https://il-mondo-bianco.com/chunk-example.js',
+      ),
+    ).toBe('https://il-mondo-bianco.com/chunk-example.js');
+    expect(lazyChunkUrl('Loading chunk aula-studio failed')).toBeNull();
   });
 });

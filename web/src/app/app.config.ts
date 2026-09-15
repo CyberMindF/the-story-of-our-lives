@@ -21,7 +21,7 @@ export const appConfig: ApplicationConfig = {
       routes,
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
       withNavigationErrorHandler((error: NavigationError) => {
-        recoverFromLazyChunkError(error.error);
+        void recoverFromLazyChunkError(error.error);
       }),
     ),
   ],

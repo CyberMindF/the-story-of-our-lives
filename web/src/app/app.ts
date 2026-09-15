@@ -171,7 +171,9 @@ export class App {
   }
 
   protected refreshForUpdate(): void {
-    window.location.reload();
+    const reloadUrl = new URL(window.location.href);
+    reloadUrl.searchParams.set('__app_update', String(Date.now()));
+    window.location.replace(reloadUrl.toString());
   }
 
   private async checkBuildVersion(): Promise<void> {
