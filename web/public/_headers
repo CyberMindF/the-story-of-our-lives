@@ -1,5 +1,0 @@
-# I chunk Angular hanno nomi fingerprinted, ma il fallback SPA di Pages risponde con
-# index.html anche quando un chunk non è ancora disponibile durante la propagazione.
-# Senza rivalidazione il browser può conservare quella risposta HTML sotto un URL .js.
-/*.js
-  Cache-Control: public, max-age=0, must-revalidate
