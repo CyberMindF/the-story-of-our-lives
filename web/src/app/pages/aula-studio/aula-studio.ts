@@ -50,16 +50,10 @@ interface ParsedPairs {
   danglingQuestion: string | null;
 }
 
-type BulkConflictPolicy = 'skip' | 'append' | 'replace';
-
 interface BulkImportSummary {
-  foldersCreated: number;
-  foldersReused: number;
-  topicsCreated: number;
-  topicsSkipped: number;
-  topicsAppended: number;
-  topicsReplaced: number;
-  cardsInserted: number;
+  paths: number;
+  topics: number;
+  cards: number;
 }
 
 interface BulkImportError {
@@ -71,35 +65,14 @@ interface BulkImportError {
 
 interface BulkPreviewPath {
   path: string;
-  segments: string[];
-  topics: Array<{ title: string; cardCount: number; conflict: boolean }>;
-}
-
-interface BulkPreviewResponse {
-  paths?: BulkPreviewPath[];
-  conflictCount?: number;
-  summary?: BulkImportSummary;
-  totalTopics?: number;
-  totalCards?: number;
-  errors?: BulkImportError[];
-  error?: string;
-}
-
-interface BulkImportView {
-  id: string;
-  conflictPolicy: BulkConflictPolicy;
-  summary: BulkImportSummary;
-  createdAt: string;
-  undoneAt?: string | null;
+  topics: Array<{ title: string; cardCount: number }>;
 }
 
 interface BulkImportResponse {
-  importId?: string;
-  conflictPolicy?: BulkConflictPolicy;
+  paths?: BulkPreviewPath[];
   summary?: BulkImportSummary;
+  importId?: string;
   createdAt?: string;
-  import?: BulkImportView | null;
-  retainedNonEmptyFolders?: number;
   errors?: BulkImportError[];
   error?: string;
 }
@@ -244,21 +217,14 @@ export class AulaStudio implements OnDestroy {
   protected readonly bulkSource = signal('');
   protected readonly bulkFileName = signal('');
   protected readonly bulkPreview = signal<BulkPreviewPath[]>([]);
-  protected readonly bulkConflictCount = signal(0);
-  protected readonly bulkTotalTopics = signal(0);
-  protected readonly bulkTotalCards = signal(0);
-  protected readonly bulkConflictPolicy = signal<BulkConflictPolicy>('skip');
+  protected readonly bulkSummary = signal<BulkImportSummary | null>(null);
   private readonly bulkIdempotencyKey = signal('');
   protected readonly bulkConfirmed = signal(false);
   protected readonly bulkChecking = signal(false);
   protected readonly bulkImporting = signal(false);
-  protected readonly bulkUndoing = signal(false);
   protected readonly bulkErrors = signal<BulkImportError[]>([]);
   protected readonly bulkError = signal('');
-  protected readonly bulkResult = signal<BulkImportView | null>(null);
-  protected readonly latestBulkImport = signal<BulkImportView | null>(null);
-  protected readonly bulkUndoTarget = signal<BulkImportView | null>(null);
-  protected readonly bulkUndoMessage = signal('');
+  protected readonly bulkResult = signal<BulkImportSummary | null>(null);
   protected readonly currentFolder = computed(
     () => this.folders().find((folder) => folder.id === this.currentFolderId()) ?? null,
   );
@@ -377,17 +343,12 @@ export class AulaStudio implements OnDestroy {
     this.bulkSource.set('');
     this.bulkFileName.set('');
     this.bulkPreview.set([]);
-    this.bulkConflictCount.set(0);
-    this.bulkTotalTopics.set(0);
-    this.bulkTotalCards.set(0);
-    this.bulkConflictPolicy.set('skip');
+    this.bulkSummary.set(null);
     this.bulkIdempotencyKey.set('');
     this.bulkConfirmed.set(false);
     this.bulkErrors.set([]);
     this.bulkError.set('');
     this.bulkResult.set(null);
-    this.bulkUndoMessage.set('');
-    void this.loadLatestBulkImport();
   }
 
   protected closeBulkImport(): void {
@@ -425,9 +386,9 @@ export class AulaStudio implements OnDestroy {
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ source: this.bulkSource(), conflictPolicy: 'skip' }),
+        body: JSON.stringify({ source: this.bulkSource() }),
       });
-      const result = await this.api.readApiResponse<BulkPreviewResponse>(response);
+      const result = await this.api.readApiResponse<BulkImportResponse>(response);
       if (!response.ok) {
         this.bulkErrors.set(result.errors ?? []);
         this.bulkError.set(
@@ -436,10 +397,7 @@ export class AulaStudio implements OnDestroy {
         return;
       }
       this.bulkPreview.set(result.paths ?? []);
-      this.bulkConflictCount.set(result.conflictCount ?? 0);
-      this.bulkTotalTopics.set(result.totalTopics ?? 0);
-      this.bulkTotalCards.set(result.totalCards ?? 0);
-      this.bulkConflictPolicy.set('skip');
+      this.bulkSummary.set(result.summary ?? null);
       this.bulkIdempotencyKey.set(crypto.randomUUID());
       this.bulkConfirmed.set(false);
       this.bulkResult.set(null);
@@ -472,7 +430,6 @@ export class AulaStudio implements OnDestroy {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           source: this.bulkSource(),
-          conflictPolicy: this.bulkConflictPolicy(),
           idempotencyKey: this.bulkIdempotencyKey(),
         }),
       });
@@ -482,73 +439,13 @@ export class AulaStudio implements OnDestroy {
         this.bulkError.set(result.error ?? 'Importazione non riuscita.');
         return;
       }
-      const imported: BulkImportView = {
-        id: result.importId,
-        conflictPolicy: result.conflictPolicy ?? this.bulkConflictPolicy(),
-        summary: result.summary,
-        createdAt: result.createdAt,
-      };
-      this.bulkResult.set(imported);
-      this.latestBulkImport.set(imported);
+      this.bulkResult.set(result.summary);
       this.bulkStep.set(3);
       await this.load();
     } catch {
       this.bulkError.set("Non è stato possibile completare l'importazione.");
     } finally {
       this.bulkImporting.set(false);
-    }
-  }
-
-  protected requestUndoBulkImport(imported: BulkImportView): void {
-    this.bulkUndoTarget.set(imported);
-  }
-
-  protected async confirmUndoBulkImport(): Promise<void> {
-    if (!this.bulkUndoTarget()) return;
-    this.bulkUndoing.set(true);
-    this.bulkError.set('');
-    try {
-      const response = await fetch('/api/study-imports/undo-last', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { Accept: 'application/json' },
-      });
-      const result = await this.api.readApiResponse<BulkImportResponse>(response);
-      if (!response.ok) {
-        this.bulkError.set(result.error ?? "Non è stato possibile annullare l'importazione.");
-        return;
-      }
-      const retained = result.retainedNonEmptyFolders ?? 0;
-      this.bulkUndoMessage.set(
-        retained > 0
-          ? `Importazione annullata. ${retained} cartelle non vuote sono state conservate.`
-          : 'Importazione annullata e contenuti precedenti ripristinati.',
-      );
-      this.bulkResult.set(null);
-      this.bulkStep.set(1);
-      this.latestBulkImport.set(null);
-      await this.load();
-      await this.loadLatestBulkImport();
-    } catch {
-      this.bulkError.set("Non è stato possibile annullare l'importazione.");
-    } finally {
-      this.bulkUndoing.set(false);
-      this.bulkUndoTarget.set(null);
-    }
-  }
-
-  private async loadLatestBulkImport(): Promise<void> {
-    if (!this.canBulkImport()) return;
-    try {
-      const response = await fetch('/api/study-imports', {
-        credentials: 'same-origin',
-        headers: { Accept: 'application/json' },
-      });
-      if (!response.ok) return;
-      const result = await this.api.readApiResponse<BulkImportResponse>(response);
-      this.latestBulkImport.set(result.import ?? null);
-    } catch {
-      // L'assenza del riepilogo precedente non deve bloccare una nuova importazione.
     }
   }
 

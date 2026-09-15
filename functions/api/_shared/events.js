@@ -45,7 +45,6 @@ const ALLOWED_EVENTS = new Set([
   "content_version_added",
   "content_deleted",
   "bulk_import_created",
-  "bulk_import_undone",
   "admin_log_viewed",
   "content_export_downloaded",
   "barattolo_biglietto_pescato",

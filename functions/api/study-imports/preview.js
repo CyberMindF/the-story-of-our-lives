@@ -1,48 +1,20 @@
 import { json, readJson } from "../auth/_shared.js";
-import { buildStudyBulkPlan, normalizeConflictPolicy } from "./_plan.mjs";
+import { buildStudyBulkPlan } from "./_plan.mjs";
 import { parseStudyBulkSource } from "./_shared.mjs";
-import {
-  loadStudyImportState,
-  requireStudyBulkAdmin,
-} from "./_endpoint-shared.js";
+import { loadStudyFolders, requireStudyBulkAdmin } from "./_endpoint-shared.js";
 
-export async function onRequestPost(context) {
-  const { request, env } = context;
+export async function onRequestPost({ request, env }) {
   try {
     const access = await requireStudyBulkAdmin(request, env);
     if (access.response) return access.response;
 
-    const payload = await readJson(request);
-    const conflictPolicy =
-      normalizeConflictPolicy(payload?.conflictPolicy) ?? "skip";
-    const parsed = parseStudyBulkSource(payload?.source);
+    const parsed = parseStudyBulkSource((await readJson(request))?.source);
     if (parsed.errors.length > 0) {
-      return json(
-        {
-          errors: parsed.errors,
-          totalTopics: parsed.totalTopics,
-          totalCards: parsed.totalCards,
-        },
-        400,
-      );
+      return json({ errors: parsed.errors }, 400);
     }
 
-    const state = await loadStudyImportState(env);
-    const plan = buildStudyBulkPlan(
-      parsed,
-      state.folders,
-      state.topics,
-      conflictPolicy,
-    );
-    if (plan.errors.length > 0) return json({ errors: plan.errors }, 409);
-
-    return json({
-      paths: plan.preview,
-      conflictCount: plan.conflictCount,
-      summary: plan.summary,
-      totalTopics: parsed.totalTopics,
-      totalCards: parsed.totalCards,
-    });
+    const plan = buildStudyBulkPlan(parsed, await loadStudyFolders(env));
+    return json({ paths: plan.preview, summary: plan.summary });
   } catch (error) {
     console.error(
       JSON.stringify({
