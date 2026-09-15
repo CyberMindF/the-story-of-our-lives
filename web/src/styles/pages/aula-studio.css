@@ -247,7 +247,10 @@
 .flash-card-stage {
   display: grid;
   width: 100%;
-  overflow: hidden;
+  /* Nasconde le carte che entrano/escono lateralmente, ma lascia all'ombra lo spazio per
+     sfumare: con overflow:hidden veniva troncata sul fondo e sembrava una barra scura. */
+  overflow: clip;
+  overflow-clip-margin: 4rem;
 }
 
 .flash-card-layer {
