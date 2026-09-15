@@ -8,8 +8,7 @@ import {
   topicsFromRows,
 } from "./_shared.js";
 
-// Gli argomenti sono materiali personali: ogni query filtra sempre per user_id, ricavato
-// dalla sessione e mai accettato dal client.
+// L'Aula è un unico spazio condiviso: qualunque utente autenticato vede gli stessi argomenti.
 export async function onRequestGet(context) {
   try {
     const session = await getAuthenticatedSession(context.request, context.env);
@@ -17,11 +16,8 @@ export async function onRequestGet(context) {
 
     const { results } = await context.env.DB.prepare(
       `${TOPIC_WITH_CARDS_SELECT}
-        WHERE topics.user_id = ?
         ORDER BY topics.updated_at DESC, topics.id DESC, cards.position ASC`,
-    )
-      .bind(session.user.id)
-      .all();
+    ).all();
 
     return json({ topics: topicsFromRows(results) });
   } catch (error) {

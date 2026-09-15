@@ -15,12 +15,12 @@ export async function onRequestPut(context) {
 
     const topicId = normalizeTopicId(params.id);
     if (!topicId) return json({ error: "Argomento non valido." }, 400);
-    const ownedTopic = await env.DB.prepare(
-      "SELECT id FROM study_topics WHERE id = ? AND user_id = ?",
+    const sharedTopic = await env.DB.prepare(
+      "SELECT id FROM study_topics WHERE id = ?",
     )
-      .bind(topicId, session.user.id)
+      .bind(topicId)
       .first();
-    if (!ownedTopic) return json({ error: "Argomento non trovato." }, 404);
+    if (!sharedTopic) return json({ error: "Argomento non trovato." }, 404);
 
     const payload = await readJson(request);
     const title = normalizeTitle(payload?.title);
@@ -31,8 +31,8 @@ export async function onRequestPut(context) {
     const now = new Date().toISOString();
     await env.DB.batch([
       env.DB.prepare(
-        "UPDATE study_topics SET title = ?, updated_at = ? WHERE id = ? AND user_id = ?",
-      ).bind(title, now, topicId, session.user.id),
+        "UPDATE study_topics SET title = ?, updated_at = ? WHERE id = ?",
+      ).bind(title, now, topicId),
       env.DB.prepare("DELETE FROM study_cards WHERE topic_id = ?").bind(
         topicId,
       ),
@@ -71,10 +71,8 @@ export async function onRequestDelete(context) {
 
     const topicId = normalizeTopicId(params.id);
     if (!topicId) return json({ error: "Argomento non valido." }, 400);
-    const result = await env.DB.prepare(
-      "DELETE FROM study_topics WHERE id = ? AND user_id = ?",
-    )
-      .bind(topicId, session.user.id)
+    const result = await env.DB.prepare("DELETE FROM study_topics WHERE id = ?")
+      .bind(topicId)
       .run();
     if (Number(result.meta.changes || 0) === 0) {
       return json({ error: "Argomento non trovato." }, 404);

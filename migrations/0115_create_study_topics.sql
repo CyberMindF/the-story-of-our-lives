@@ -1,6 +1,5 @@
--- Aula studio: raccolte di flash card personali. Gli argomenti appartengono all'account
--- che li crea; l'eliminazione di un account di prova rimuove automaticamente anche i suoi
--- materiali, senza aggiungere casi speciali alla procedura di pulizia.
+-- Aula studio: raccolte di flash card condivise tra tutti gli utenti autenticati. user_id
+-- conserva chi ha creato l'argomento; eliminare un account rimuove gli argomenti che aveva creato.
 CREATE TABLE study_topics (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
