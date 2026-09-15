@@ -18,6 +18,7 @@
     "upload:carte:prod": "node scripts/upload-carte-assets.mjs --remote",
     "analyze:export": "node scripts/analyze-notion-export.mjs",
     "verify:links": "node scripts/verify-external-links.mjs",
+    "test:study-import": "node --test functions/api/study-imports/*.test.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
