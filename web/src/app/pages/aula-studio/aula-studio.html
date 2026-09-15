@@ -314,7 +314,7 @@
                   <div class="study-folder-actions">
                     <button
                       type="button"
-                      class="btn glass-surface btn-submit study-folder-review"
+                      class="btn glass-surface btn-submit study-review-action"
                       [disabled]="folderCardCount(folder.id) === 0"
                       [attr.aria-label]="
                         'Ripassa tutti gli argomenti della cartella ' + folder.name
@@ -352,7 +352,7 @@
                   <div class="study-topic-actions">
                     <button
                       type="button"
-                      class="btn glass-surface btn-submit"
+                      class="btn glass-surface btn-submit study-review-action"
                       (click)="startStudy(topic)"
                     >
                       Inizia il ripasso

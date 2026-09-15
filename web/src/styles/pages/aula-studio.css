@@ -221,12 +221,23 @@
 }
 
 .study-folder {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: 1rem;
   min-height: 9rem;
   padding: 1rem;
+}
+
+.study-folder:has(> .study-folder-open:hover) {
+  border-color: var(--focus-color);
+  background: var(--button-hover-bg);
+}
+
+.study-folder:has(> .study-folder-open:focus-visible) {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 4px;
 }
 
 .study-folder-open {
@@ -240,6 +251,18 @@
   color: var(--text-color);
   text-align: left;
   cursor: pointer;
+}
+
+.study-folder-open::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+  content: '';
+}
+
+.study-folder-open:focus-visible {
+  outline: none;
 }
 
 .study-folder-open > span:last-child {
@@ -262,17 +285,30 @@
   filter: saturate(0.75);
 }
 
-.study-folder-actions {
+.study-folder-actions,
+.study-topic-actions {
+  position: relative;
+  z-index: 2;
   align-self: end;
 }
 
-.study-folder-actions .btn {
+.study-folder-actions {
+  pointer-events: none;
+}
+
+.study-folder-actions .btn,
+.study-topic-actions .btn {
   width: 2.65rem;
   justify-content: center;
   padding-inline: 0;
 }
 
-.study-folder-actions .study-folder-review {
+.study-folder-actions .btn {
+  pointer-events: auto;
+}
+
+.study-folder-actions .study-review-action,
+.study-topic-actions .study-review-action {
   width: auto;
   margin-right: auto;
   padding-inline: 1rem;
@@ -313,12 +349,6 @@
 .study-topic-actions {
   align-self: end;
   margin-top: 2rem;
-}
-
-.study-topic-actions .btn:not(.btn-submit) {
-  width: 2.9rem;
-  justify-content: center;
-  padding-inline: 0;
 }
 
 .study-empty {
