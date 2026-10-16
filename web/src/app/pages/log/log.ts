@@ -23,6 +23,25 @@ interface EventsResponse {
 }
 
 const PAGE_SIZE = 25;
+const LOG_DATE_FORMATTER = new Intl.DateTimeFormat('it-IT', {
+  timeZone: 'Europe/Rome',
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+});
+
+// SQLite CURRENT_TIMESTAMP restituisce UTC come "YYYY-MM-DD HH:mm:ss", senza indicare il
+// fuso. Aggiungiamo esplicitamente Z prima del parsing, poi mostriamo l'ora italiana.
+export function formatLogDate(value: string): string {
+  const normalized = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value)
+    ? `${value.replace(' ', 'T')}Z`
+    : value;
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime()) ? value : LOG_DATE_FORMATTER.format(date);
+}
 
 // Pagina amministrativa dei log (documentazione/cms/planning-editor-contenuti.md, Fase 6). Protetta da
 // authGuard + adminGuard sulla rotta; l'endpoint /api/events verifica comunque events.view a
@@ -50,6 +69,7 @@ export class Log {
   protected readonly to = signal('');
 
   protected readonly pageCount = computed(() => Math.max(1, Math.ceil(this.total() / PAGE_SIZE)));
+  protected readonly formatDate = formatLogDate;
 
   constructor() {
     void this.load();

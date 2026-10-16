@@ -57,7 +57,7 @@
         <tbody>
           @for (event of events(); track event.id) {
             <tr>
-              <td>{{ event.createdAt }}</td>
+              <td><time [attr.datetime]="event.createdAt">{{ formatDate(event.createdAt) }}</time></td>
               <td>{{ event.nickname }} ({{ event.identity }})</td>
               <td>{{ event.section }}</td>
               <td>{{ event.eventType }}</td>
