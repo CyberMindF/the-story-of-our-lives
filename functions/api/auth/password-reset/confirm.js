@@ -4,6 +4,7 @@ import {
   hashToken,
   isValidPassword,
   json,
+  normalizePassword,
   readJson
 } from "../_shared.js";
 
@@ -11,7 +12,8 @@ export async function onRequestPost(context) {
   const { request, env } = context;
   try {
     const body = await readJson(request);
-    if (typeof body?.token !== "string" || body.token.length < 20 || !isValidPassword(body.newPassword)) {
+    const newPassword = normalizePassword(body?.newPassword);
+    if (typeof body?.token !== "string" || body.token.length < 20 || !isValidPassword(newPassword)) {
       return json({ error: "Link non valido oppure nuova password troppo corta." }, 400);
     }
 
@@ -34,7 +36,7 @@ export async function onRequestPost(context) {
       return json({ error: "Il link non è valido o è scaduto." }, 400);
     }
 
-    if (body.newPassword === reset.password) {
+    if (newPassword === reset.password) {
       return json({ error: "La nuova password deve essere diversa da quella precedente." }, 400);
     }
 
@@ -66,7 +68,7 @@ export async function onRequestPost(context) {
 
     await env.DB.batch([
       env.DB.prepare("UPDATE users SET password = ?, updated_at = ? WHERE id = ?")
-        .bind(body.newPassword, now, reset.user_id),
+        .bind(newPassword, now, reset.user_id),
       env.DB.prepare("UPDATE sessions SET deleted_at = ? WHERE user_id = ? AND deleted_at IS NULL")
         .bind(now, reset.user_id),
       env.DB.prepare("UPDATE password_reset_tokens SET used_at = ? WHERE user_id = ? AND used_at IS NULL")

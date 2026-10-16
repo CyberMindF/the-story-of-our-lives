@@ -6,6 +6,7 @@ import {
   json,
   normalizeEmail,
   normalizeNickname,
+  normalizePassword,
   readJson
 } from "./_shared.js";
 
@@ -41,7 +42,7 @@ export async function onRequestPost(context) {
 
     const body = await readJson(context.request);
     const email = normalizeEmail(body?.email);
-    const password = body?.password;
+    const password = normalizePassword(body?.password);
     const nickname = normalizeNickname(body?.nickname) || "Account test";
     const identity = body?.identity === "lui" ? "lui" : "lei";
 

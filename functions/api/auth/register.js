@@ -9,6 +9,7 @@ import {
   json,
   normalizeEmail,
   normalizeNickname,
+  normalizePassword,
   readJson
 } from "./_shared.js";
 
@@ -23,7 +24,7 @@ export async function onRequestPost(context) {
     }
 
     const email = normalizeEmail(body.email);
-    const password = body.password;
+    const password = normalizePassword(body.password);
 
     if (!isValidEmail(email)) {
       return json({ error: "Email non valida." }, 400);

@@ -69,7 +69,7 @@
               [context]="card.context"
               [flipped]="flipped()"
               [interactive]="transitionDirection() === null"
-              (flip)="flipped.set(!flipped())"
+              (flip)="flipCurrentCard()"
             />
           </div>
 

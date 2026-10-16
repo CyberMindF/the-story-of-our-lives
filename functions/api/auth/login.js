@@ -8,6 +8,7 @@ import {
   isWorldKeyValid,
   json,
   normalizeEmail,
+  normalizePassword,
   readJson
 } from "./_shared.js";
 
@@ -22,7 +23,7 @@ export async function onRequestPost(context) {
     }
 
     const email = normalizeEmail(body.email);
-    const password = body.password;
+    const password = normalizePassword(body.password);
 
     if (!isValidEmail(email) || !isValidPassword(password)) {
       return json({ error: "Email o password non corretti." }, 401);

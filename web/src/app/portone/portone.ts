@@ -167,16 +167,18 @@ export class Portone implements OnInit {
         return;
       }
 
-      if (this.newPassword !== this.confirmNewPassword) {
+      const newPassword = this.newPassword.trim();
+      const confirmNewPassword = this.confirmNewPassword.trim();
+      if (newPassword !== confirmNewPassword) {
         throw new Error('Le due password non coincidono.');
       }
 
-      const { response, result } = await this.authService.resetPassword(this.resetToken, this.newPassword);
+      const { response, result } = await this.authService.resetPassword(this.resetToken, newPassword);
       if (!response.ok) {
         throw new Error(result.error || 'Impossibile reimpostare la password.');
       }
 
-      this.password = this.newPassword;
+      this.password = newPassword;
       this.recoveryMode.set('none');
       this.mode.set('login');
       this.successMessage.set(result.message || 'Password aggiornata. Ora puoi accedere.');
@@ -195,7 +197,7 @@ export class Portone implements OnInit {
 
     if (mode !== 'key') {
       payload['email'] = this.email.trim();
-      payload['password'] = this.password;
+      payload['password'] = this.password.trim();
     }
     if (mode === 'register') {
       payload['nickname'] = this.nickname.trim();

@@ -118,18 +118,21 @@ export class Profilo {
   protected async submitPassword(): Promise<void> {
     this.passwordStatus.set('');
     this.passwordMessage.set('');
+    const currentPassword = this.currentPassword.trim();
+    const newPassword = this.newPassword.trim();
+    const confirmNewPassword = this.confirmNewPassword.trim();
 
-    if (this.newPassword.length < 8) {
+    if (newPassword.length < 8) {
       this.passwordStatus.set('error');
       this.passwordMessage.set('La nuova password deve contenere almeno 8 caratteri.');
       return;
     }
-    if (this.newPassword !== this.confirmNewPassword) {
+    if (newPassword !== confirmNewPassword) {
       this.passwordStatus.set('error');
       this.passwordMessage.set('Le due password non coincidono.');
       return;
     }
-    if (this.newPassword === this.currentPassword) {
+    if (newPassword === currentPassword) {
       this.passwordStatus.set('error');
       this.passwordMessage.set('La nuova password deve essere diversa da quella attuale.');
       return;
@@ -138,7 +141,7 @@ export class Profilo {
     this.passwordLoading.set(true);
 
     try {
-      const { response, result } = await this.authService.updatePassword(this.currentPassword, this.newPassword);
+      const { response, result } = await this.authService.updatePassword(currentPassword, newPassword);
       if (!response.ok || !result.success) {
         throw new Error(result.error || 'Impossibile cambiare la password.');
       }

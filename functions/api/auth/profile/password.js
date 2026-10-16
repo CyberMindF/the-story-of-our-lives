@@ -4,6 +4,7 @@ import {
   getAuthenticatedSession,
   isValidPassword,
   json,
+  normalizePassword,
   readJson
 } from "../_shared.js";
 
@@ -22,7 +23,10 @@ export async function onRequestPost(context) {
       return json({ error: "Richiesta non valida." }, 400);
     }
 
-    if (!isValidPassword(body.newPassword)) {
+    const currentPassword = normalizePassword(body.currentPassword);
+    const newPassword = normalizePassword(body.newPassword);
+
+    if (!isValidPassword(newPassword)) {
       return json({ error: "La nuova password deve contenere almeno 8 caratteri." }, 400);
     }
 
@@ -31,11 +35,11 @@ export async function onRequestPost(context) {
       .bind(session.user.id)
       .first();
 
-    if (!user || body.currentPassword !== user.password) {
+    if (!user || currentPassword !== user.password) {
       return json({ error: "La password attuale non è corretta." }, 403);
     }
 
-    if (body.newPassword === user.password) {
+    if (newPassword === user.password) {
       return json({ error: "La nuova password deve essere diversa da quella attuale." }, 400);
     }
 
@@ -57,7 +61,7 @@ export async function onRequestPost(context) {
 
     await env.DB
       .prepare("UPDATE users SET password = ?, updated_at = ? WHERE id = ?")
-      .bind(body.newPassword, new Date().toISOString(), session.user.id)
+      .bind(newPassword, new Date().toISOString(), session.user.id)
       .run();
 
     return json({ success: true });

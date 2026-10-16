@@ -28,6 +28,11 @@ export function normalizeEmail(value) {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
 }
 
+// Gli spazi inseriti accidentalmente prima o dopo una password non ne fanno parte.
+export function normalizePassword(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 // Controlla che l'email abbia una struttura minima valida prima di interrogare il database.
 export function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

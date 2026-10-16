@@ -88,11 +88,17 @@ export class AuthService {
     payload: Record<string, unknown>
   ): Promise<{ response: Response; result: AuthSessionResponse }> {
     const endpoint = mode === 'key' ? '/api/auth/session' : `/api/auth/${mode}`;
+    const normalizedPayload = {
+      ...payload,
+      ...(typeof payload['email'] === 'string' ? { email: payload['email'].trim() } : {}),
+      ...(typeof payload['password'] === 'string' ? { password: payload['password'].trim() } : {}),
+      ...(typeof payload['worldKey'] === 'string' ? { worldKey: payload['worldKey'].trim() } : {})
+    };
     const response = await fetch(endpoint, {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(normalizedPayload)
     });
 
     return { response, result: (await this.api.readApiResponse<AuthSessionResponse>(response)) as AuthSessionResponse };
@@ -116,7 +122,7 @@ export class AuthService {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ currentPassword, newPassword })
+      body: JSON.stringify({ currentPassword: currentPassword.trim(), newPassword: newPassword.trim() })
     });
 
     return { response, result: (await this.api.readApiResponse<ProfilePasswordResponse>(response)) as ProfilePasswordResponse };
@@ -127,7 +133,7 @@ export class AuthService {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email: email.trim() })
     });
 
     return { response, result: (await this.api.readApiResponse<PasswordResetResponse>(response)) as PasswordResetResponse };
@@ -138,7 +144,7 @@ export class AuthService {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, newPassword })
+      body: JSON.stringify({ token, newPassword: newPassword.trim() })
     });
 
     return { response, result: (await this.api.readApiResponse<PasswordResetResponse>(response)) as PasswordResetResponse };

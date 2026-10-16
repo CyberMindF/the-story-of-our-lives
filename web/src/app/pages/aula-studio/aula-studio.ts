@@ -4,6 +4,7 @@ import { AppShell } from '../../shell/app-shell';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
 import { StudyFocusService } from '../../core/study-focus.service';
+import { TelemetryService } from '../../core/telemetry.service';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { StudyFlashCard } from './study-flash-card';
 
@@ -188,6 +189,7 @@ function shuffledIndices(length: number): number[] {
 })
 export class AulaStudio implements OnDestroy {
   private readonly api = inject(ApiService);
+  private readonly telemetry = inject(TelemetryService);
   protected readonly authService = inject(AuthService);
   protected readonly focusMode = inject(StudyFocusService);
 
@@ -253,6 +255,13 @@ export class AulaStudio implements OnDestroy {
   protected readonly studySessionTitle = signal('');
   protected readonly studySessionKind = signal<'topic' | 'folder' | null>(null);
   private readonly studyOrder = signal<number[]>([]);
+  private studySessionId: string | null = null;
+  private studySubjectId: number | null = null;
+  private studyStartedAt = 0;
+  private studyFlips = 0;
+  private studyNavigations = 0;
+  private studyCompleted = false;
+  private readonly viewedStudyCards = new Set<number>();
   protected readonly studyPosition = signal(0);
   protected readonly flipped = signal(false);
   protected readonly transitionDirection = signal<'next' | 'previous' | null>(null);
@@ -274,6 +283,7 @@ export class AulaStudio implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.endStudySession('page_left');
     this.clearCardTransition();
     this.focusMode.leavePage();
   }
@@ -608,10 +618,11 @@ export class AulaStudio implements OnDestroy {
   protected startFolderStudy(folder: StudyFolder): void {
     const cards = collectFolderStudyCards(this.folders(), this.topics(), folder.id);
     if (cards.length === 0) return;
-    this.beginStudy(`${folder.name} · Tutto insieme`, cards, 'folder', null);
+    this.beginStudy(`${folder.name} · Tutto insieme`, cards, 'folder', folder.id);
   }
 
   protected closeStudy(): void {
+    this.endStudySession('closed');
     this.clearCardTransition();
     this.studyingTopicId.set(null);
     this.studyDeck.set([]);
@@ -629,6 +640,18 @@ export class AulaStudio implements OnDestroy {
     this.studyOrder.set(shuffledIndices(cards.length));
     this.studyPosition.set(0);
     this.flipped.set(false);
+    this.markCurrentCardViewed();
+    this.trackStudyEvent('study_deck_shuffled', { cardCount: cards.length });
+  }
+
+  protected flipCurrentCard(): void {
+    const flipped = !this.flipped();
+    this.flipped.set(flipped);
+    this.studyFlips += 1;
+    this.trackStudyEvent('study_card_flipped', {
+      position: this.studyPosition() + 1,
+      side: flipped ? 'answer' : 'question',
+    });
   }
 
   protected previousCard(): void {
@@ -643,17 +666,31 @@ export class AulaStudio implements OnDestroy {
     title: string,
     cards: StudySessionCard[],
     kind: 'topic' | 'folder',
-    topicId: number | null,
+    subjectId: number,
   ): void {
     this.cancelEdit();
     this.closeFolderEditor();
     this.pageError.set('');
     this.clearCardTransition();
-    this.studyingTopicId.set(topicId);
+    this.studyingTopicId.set(kind === 'topic' ? subjectId : null);
     this.studyDeck.set([...cards]);
     this.studySessionTitle.set(title);
     this.studySessionKind.set(kind);
-    this.shuffleDeck();
+    this.studySubjectId = subjectId;
+    this.studySessionId = crypto.randomUUID();
+    this.studyStartedAt = Date.now();
+    this.studyFlips = 0;
+    this.studyNavigations = 0;
+    this.studyCompleted = false;
+    this.viewedStudyCards.clear();
+    this.studyOrder.set(shuffledIndices(cards.length));
+    this.studyPosition.set(0);
+    this.flipped.set(false);
+    this.trackStudyEvent('study_session_started', {
+      cardCount: cards.length,
+      ...(kind === 'topic' ? { topicId: subjectId } : { folderId: subjectId }),
+    });
+    this.markCurrentCardViewed();
   }
 
   private moveCard(offset: -1 | 1, direction: 'next' | 'previous'): void {
@@ -665,6 +702,7 @@ export class AulaStudio implements OnDestroy {
     if (this.reducedMotion) {
       this.studyPosition.set(targetPosition);
       this.flipped.set(false);
+      this.recordStudyNavigation(direction, targetPosition);
       return;
     }
 
@@ -672,7 +710,59 @@ export class AulaStudio implements OnDestroy {
     this.transitionDirection.set(direction);
     this.studyPosition.set(targetPosition);
     this.flipped.set(false);
+    this.recordStudyNavigation(direction, targetPosition);
     this.transitionTimer = window.setTimeout(() => this.clearCardTransition(), 360);
+  }
+
+  private recordStudyNavigation(direction: 'next' | 'previous', targetPosition: number): void {
+    this.studyNavigations += 1;
+    this.markCurrentCardViewed();
+    this.trackStudyEvent('study_card_navigated', {
+      direction,
+      position: targetPosition + 1,
+      cardCount: this.studyDeck().length,
+    });
+  }
+
+  private markCurrentCardViewed(): void {
+    const cardIndex = this.studyOrder()[this.studyPosition()];
+    if (cardIndex === undefined) return;
+    this.viewedStudyCards.add(cardIndex);
+    if (!this.studyCompleted && this.viewedStudyCards.size === this.studyDeck().length) {
+      this.studyCompleted = true;
+      this.trackStudyEvent('study_session_completed', this.studySummary());
+    }
+  }
+
+  private endStudySession(reason: 'closed' | 'page_left'): void {
+    if (!this.studySessionId) return;
+    this.trackStudyEvent('study_session_ended', { reason, ...this.studySummary() });
+    this.studySessionId = null;
+    this.studySubjectId = null;
+  }
+
+  private studySummary(): Record<string, unknown> {
+    return {
+      cardCount: this.studyDeck().length,
+      viewedCardCount: this.viewedStudyCards.size,
+      flipCount: this.studyFlips,
+      navigationCount: this.studyNavigations,
+      completed: this.studyCompleted,
+      durationSeconds: Math.max(0, Math.round((Date.now() - this.studyStartedAt) / 1000)),
+    };
+  }
+
+  private trackStudyEvent(eventType: string, metadata: Record<string, unknown>): void {
+    if (!this.studySessionId) return;
+    const kind = this.studySessionKind();
+    void this.telemetry.trackEvent('aula-studio', eventType, {
+      studySessionId: this.studySessionId,
+      kind,
+      ...(kind === 'topic'
+        ? { topicId: this.studySubjectId }
+        : { folderId: this.studySubjectId }),
+      ...metadata,
+    });
   }
 
   private clearCardTransition(): void {
