@@ -4,16 +4,15 @@
       <header class="global-chat-header">
         <div class="global-chat-presence" [attr.aria-label]="chat.contactPresence().online ? 'Online' : 'Offline'">
           <span class="global-chat-presence-dot" [class.is-online]="chat.contactPresence().online" aria-hidden="true"></span>
-          <div #presenceViewport class="global-chat-presence-viewport">
-            <span #presenceText class="global-chat-presence-text" [class.is-scrolling]="titleScrollDistance() > 0"
-              [style.--presence-scroll-distance.px]="titleScrollDistance()">
-              <strong>{{ chat.contactName() }}</strong>
+          <div class="global-chat-presence-copy">
+            <strong>{{ chat.contactName() }}</strong>
+            <span class="global-chat-presence-status">
               @if (chat.contactPresence().online) {
-                <span> - {{ chat.contactPageLabel() }}</span>
+                {{ chat.contactPageLabel() }}
               } @else if (chat.contactPresence().lastSeen) {
-                <span> - ultima visita: {{ chat.contactPresence().lastSeen | date: 'dd/MM/yyyy HH:mm' }}</span>
+                ultima visita: {{ chat.contactPresence().lastSeen | date: 'dd/MM/yyyy HH:mm' }}
               } @else {
-                <span> - offline</span>
+                offline
               }
             </span>
           </div>
