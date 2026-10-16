@@ -4,6 +4,11 @@
 .chat-intro { margin: 1.25rem auto 0; max-width: 34rem; color: var(--muted-color); font-size: 1.05rem; line-height: 1.8; }
 
 .chat-panel { width: min(100%, 46rem); margin: 0 auto clamp(3rem, 7vw, 5rem); display: flex; flex-direction: column; gap: 1.25rem; padding: clamp(1.25rem, 3vw, 1.75rem); }
+.chat-presence { display: flex; align-items: center; gap: .55rem; padding-bottom: 1rem; border-bottom: 1px solid var(--panel-border-color); }
+.chat-presence p { min-width: 0; margin: 0; color: var(--muted-color); overflow-wrap: anywhere; }
+.chat-presence strong { color: var(--text-color); }
+.chat-presence-dot { flex: 0 0 auto; width: .65rem; height: .65rem; border-radius: 50%; background: var(--muted-color); box-shadow: 0 0 0 2px color-mix(in srgb, var(--muted-color) 18%, transparent); }
+.chat-presence-dot.is-online { background: var(--success-text-color); box-shadow: 0 0 0 2px color-mix(in srgb, var(--success-text-color) 20%, transparent), 0 0 .45rem color-mix(in srgb, var(--success-text-color) 50%, transparent); }
 
 .chat-log { display: flex; flex-direction: column; gap: .75rem; max-height: 60vh; overflow-y: auto; padding-right: .25rem; }
 .chat-day-divider { display: flex; align-items: center; gap: .75rem; width: 100%; color: var(--muted-color); font-size: .75rem; text-transform: capitalize; }

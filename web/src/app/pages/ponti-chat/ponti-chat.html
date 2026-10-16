@@ -10,6 +10,19 @@
 
   @if (!loadError()) {
   <section class="chat-panel card glass-surface" aria-label="Conversazione">
+    <header class="chat-presence" [attr.aria-label]="chat.contactPresence().online ? 'Online' : 'Offline'">
+      <span class="chat-presence-dot" [class.is-online]="chat.contactPresence().online" aria-hidden="true"></span>
+      <p>
+        <strong>{{ chat.contactName() }}</strong>
+        @if (chat.contactPresence().online) {
+          <span> · {{ chat.contactPageLabel() }}</span>
+        } @else if (chat.contactPresence().lastSeen) {
+          <span> · ultima visita: {{ chat.contactPresence().lastSeen | date: 'dd/MM/yyyy HH:mm' }}</span>
+        } @else {
+          <span> · offline</span>
+        }
+      </p>
+    </header>
     <div class="chat-log" #log>
       @if (loading()) { <p class="content-message">Caricamento…</p> }
       @if (!loading() && messages().length === 0) { <p class="content-message">Ancora nessun messaggio.</p> }

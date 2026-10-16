@@ -25,7 +25,7 @@ export class PontiChat implements OnInit {
   private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
   private readonly realtime = inject(RealtimeService);
-  private readonly globalChat = inject(GlobalChatService);
+  protected readonly chat = inject(GlobalChatService);
 
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
   @ViewChild('log') private log?: ElementRef<HTMLElement>;
@@ -79,7 +79,7 @@ export class PontiChat implements OnInit {
   }
 
   private async markRead(): Promise<void> {
-    await this.globalChat.markRead();
+    await this.chat.markRead();
   }
 
   // afterNextRender (non queueMicrotask/setTimeout) perché deve leggere scrollHeight solo
