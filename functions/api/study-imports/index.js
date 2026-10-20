@@ -1,6 +1,10 @@
 import { json, readJson } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
 import { buildImportStatements, buildStudyBulkPlan } from "./_plan.mjs";
+import {
+  LEGACY_IMPORT_DETAILS_SQL,
+  normalizeStoredImportDetails,
+} from "./_history.mjs";
 import { parseStudyBulkSource } from "./_shared.mjs";
 import {
   loadStudyFolders,
@@ -42,7 +46,9 @@ export async function onRequestGet({ request, env }) {
        LIMIT 100`,
     ).all();
 
-    return json({ imports: results.map(toImportView) });
+    const imports = results.map(toImportView);
+    await addLegacyImportDetails(env, imports);
+    return json({ imports });
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -171,6 +177,7 @@ function toImportView(row) {
     revertedBy: row.reverted_by_nickname ?? null,
     createdFolders: Number(row.folder_count || 0),
     modifiedItems: Number(row.modified_item_count || 0),
+    details: normalizeStoredImportDetails(summary.details),
     summary: {
       paths: Number(summary.paths || 0),
       topics: Number(summary.topics || 0),
@@ -179,4 +186,27 @@ function toImportView(row) {
       quizQuestions: Number(summary.quizQuestions || 0),
     },
   };
+}
+
+async function addLegacyImportDetails(env, imports) {
+  const importIds = imports
+    .filter((item) => item.details.length === 0)
+    .map((item) => item.id);
+  if (importIds.length === 0) return;
+
+  const { results } = await env.DB.prepare(LEGACY_IMPORT_DETAILS_SQL)
+    .bind(JSON.stringify(importIds))
+    .all();
+
+  const importsById = new Map(imports.map((item) => [item.id, item]));
+  for (const row of results) {
+    const item = importsById.get(row.source_import_id);
+    if (!item) continue;
+    item.details.push({
+      path: String(row.path),
+      kind: row.kind === "quiz" ? "quiz" : "flashcard",
+      title: String(row.title),
+      itemCount: Number(row.item_count || 0),
+    });
+  }
 }

@@ -98,7 +98,7 @@ export function buildImportStatements({
       userId,
       idempotencyKey,
       sourceHash,
-      JSON.stringify(plan.summary),
+      JSON.stringify({ ...plan.summary, details: plan.preview }),
       now,
     ),
   ];

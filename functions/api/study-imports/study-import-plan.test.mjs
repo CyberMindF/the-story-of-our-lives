@@ -3,6 +3,10 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { buildImportStatements, buildStudyBulkPlan } from "./_plan.mjs";
+import {
+  LEGACY_IMPORT_DETAILS_SQL,
+  normalizeStoredImportDetails,
+} from "./_history.mjs";
 import { parseStudyBulkSource } from "./_shared.mjs";
 
 const NOW = "2026-09-15T12:00:00.000Z";
@@ -110,6 +114,45 @@ Risposta: Contiene il DNA.`,
       .correction_mode,
     "immediate",
   );
+});
+
+test("salva il percorso e il contenuto nel riepilogo dei nuovi import", () => {
+  const plan = buildStudyBulkPlan(
+    validParse("# Biologia > Unità 1\n## Ripasso\nD\nR"),
+    [],
+  );
+  const operation = importOperations(plan, "import-summary", "key-summary")[0];
+  const summary = JSON.parse(operation.params[4]);
+
+  assert.deepEqual(normalizeStoredImportDetails(summary.details), [
+    {
+      path: "Biologia › Unità 1",
+      kind: "flashcard",
+      title: "Ripasso",
+      itemCount: 1,
+    },
+  ]);
+});
+
+test("ricostruisce il percorso per le importazioni già esistenti", () => {
+  const db = createDatabase();
+  const plan = planForDatabase(db, "# Biologia > Unità 1\n## Ripasso\nD\nR");
+  applyAtomically(db, importOperations(plan, "import-legacy", "key-legacy"));
+
+  const details = db
+    .prepare(LEGACY_IMPORT_DETAILS_SQL)
+    .all(JSON.stringify(["import-legacy"]))
+    .map((row) => ({ ...row }));
+
+  assert.deepEqual(details, [
+    {
+      source_import_id: "import-legacy",
+      kind: "flashcard",
+      title: "Ripasso",
+      item_count: 1,
+      path: "Biologia › Unità 1",
+    },
+  ]);
 });
 
 function validParse(source) {

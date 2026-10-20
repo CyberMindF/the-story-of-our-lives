@@ -718,7 +718,7 @@
 
 .study-bulk-history-list > li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   padding: 0.9rem 1rem;
@@ -749,6 +749,48 @@
 .study-bulk-history-info small {
   display: block;
   margin-top: 0.2rem;
+}
+
+.study-bulk-import-details {
+  display: grid;
+  gap: 0.28rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.study-bulk-import-details li {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  color: var(--muted-color);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.study-bulk-import-details strong {
+  color: var(--text-color);
+}
+
+.study-bulk-import-path {
+  color: var(--accent-color);
+  font-weight: 750;
+}
+
+.study-bulk-import-more {
+  margin-top: 0.45rem;
+  color: var(--muted-color);
+  font-size: 0.8rem;
+}
+
+.study-bulk-import-more summary {
+  cursor: pointer;
+}
+
+.study-bulk-import-unavailable {
+  font-size: 0.82rem;
+  font-style: italic;
 }
 
 .study-bulk-history-status {

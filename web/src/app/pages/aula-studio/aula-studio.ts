@@ -116,7 +116,15 @@ interface BulkImportHistoryItem {
   revertedBy: string | null;
   createdFolders: number;
   modifiedItems: number;
+  details: BulkImportHistoryDetail[];
   summary: BulkImportSummary;
+}
+
+interface BulkImportHistoryDetail {
+  path: string;
+  kind: 'flashcard' | 'quiz';
+  title: string;
+  itemCount: number;
 }
 
 interface BulkImportHistoryResponse {

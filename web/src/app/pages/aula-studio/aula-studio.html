@@ -376,6 +376,71 @@ Risposta: Risposta di riferimento facoltativa.</pre>
                           }
                         </div>
                         <p>{{ bulkImportSummary(item) }}</p>
+                        @if (item.details.length > 0) {
+                          <ul class="study-bulk-import-details">
+                            @for (detail of item.details.slice(0, 3); track $index) {
+                              <li>
+                                <span class="study-bulk-import-path">{{ detail.path }}</span>
+                                <span aria-hidden="true">→</span>
+                                <span>
+                                  <strong
+                                    >{{ detail.kind === 'quiz' ? 'Quiz' : 'Flashcard' }}:
+                                    {{ detail.title }}</strong
+                                  >
+                                  · {{ detail.itemCount }}
+                                  {{
+                                    detail.kind === 'quiz'
+                                      ? detail.itemCount === 1
+                                        ? 'domanda'
+                                        : 'domande'
+                                      : detail.itemCount === 1
+                                        ? 'carta'
+                                        : 'carte'
+                                  }}
+                                </span>
+                              </li>
+                            }
+                          </ul>
+                          @if (item.details.length > 3) {
+                            <details class="study-bulk-import-more">
+                              <summary>
+                                {{
+                                  item.details.length === 4
+                                    ? 'Mostra un altro contenuto'
+                                    : 'Mostra gli altri ' + (item.details.length - 3) + ' contenuti'
+                                }}
+                              </summary>
+                              <ul class="study-bulk-import-details">
+                                @for (detail of item.details.slice(3); track $index) {
+                                  <li>
+                                    <span class="study-bulk-import-path">{{ detail.path }}</span>
+                                    <span aria-hidden="true">→</span>
+                                    <span>
+                                      <strong
+                                        >{{ detail.kind === 'quiz' ? 'Quiz' : 'Flashcard' }}:
+                                        {{ detail.title }}</strong
+                                      >
+                                      · {{ detail.itemCount }}
+                                      {{
+                                        detail.kind === 'quiz'
+                                          ? detail.itemCount === 1
+                                            ? 'domanda'
+                                            : 'domande'
+                                          : detail.itemCount === 1
+                                            ? 'carta'
+                                            : 'carte'
+                                      }}
+                                    </span>
+                                  </li>
+                                }
+                              </ul>
+                            </details>
+                          }
+                        } @else {
+                          <p class="study-bulk-import-unavailable">
+                            Dettaglio del contenuto non disponibile.
+                          </p>
+                        }
                         <small>
                           Importata da {{ item.createdBy }}
                           @if (item.revertedAt) {
