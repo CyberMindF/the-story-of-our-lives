@@ -108,6 +108,22 @@ interface BulkImportResponse {
   error?: string;
 }
 
+interface BulkImportHistoryItem {
+  id: string;
+  createdAt: string;
+  createdBy: string;
+  revertedAt: string | null;
+  revertedBy: string | null;
+  createdFolders: number;
+  modifiedItems: number;
+  summary: BulkImportSummary;
+}
+
+interface BulkImportHistoryResponse {
+  imports?: BulkImportHistoryItem[];
+  error?: string;
+}
+
 export function collectFolderStudyCards(
   folders: StudyFolder[],
   topics: StudyTopic[],
@@ -264,6 +280,11 @@ export class AulaStudio implements OnDestroy {
   protected readonly bulkErrors = signal<BulkImportError[]>([]);
   protected readonly bulkError = signal('');
   protected readonly bulkResult = signal<BulkImportSummary | null>(null);
+  protected readonly bulkImports = signal<BulkImportHistoryItem[]>([]);
+  protected readonly bulkImportsLoading = signal(false);
+  protected readonly bulkImportsError = signal('');
+  protected readonly revertingImportId = signal<string | null>(null);
+  protected readonly revertImportTarget = signal<BulkImportHistoryItem | null>(null);
   protected readonly currentFolder = computed(
     () => this.folders().find((folder) => folder.id === this.currentFolderId()) ?? null,
   );
@@ -413,6 +434,7 @@ export class AulaStudio implements OnDestroy {
     this.bulkErrors.set([]);
     this.bulkError.set('');
     this.bulkResult.set(null);
+    void this.loadBulkImports();
   }
 
   protected closeBulkImport(): void {
@@ -505,12 +527,81 @@ export class AulaStudio implements OnDestroy {
       }
       this.bulkResult.set(result.summary);
       this.bulkStep.set(3);
-      await this.load();
+      await Promise.all([this.load(), this.loadBulkImports()]);
     } catch {
       this.bulkError.set("Non è stato possibile completare l'importazione.");
     } finally {
       this.bulkImporting.set(false);
     }
+  }
+
+  protected requestRevertImport(item: BulkImportHistoryItem): void {
+    if (item.revertedAt || this.revertingImportId() !== null) return;
+    this.revertImportTarget.set(item);
+  }
+
+  protected async confirmRevertImport(): Promise<void> {
+    const target = this.revertImportTarget();
+    if (!target || this.revertingImportId() !== null) return;
+
+    this.revertImportTarget.set(null);
+    this.revertingImportId.set(target.id);
+    this.bulkImportsError.set('');
+    try {
+      const response = await this.fetchWithTimeout(
+        `/api/study-imports/${encodeURIComponent(target.id)}`,
+        15_000,
+        'DELETE',
+      );
+      const result = await this.api.readApiResponse<{
+        reverted?: boolean;
+        error?: string;
+      }>(response);
+      if (!response.ok || !result.reverted) {
+        throw new Error(result.error || 'Annullamento non riuscito.');
+      }
+      await Promise.all([this.load(), this.loadBulkImports()]);
+    } catch (error) {
+      this.bulkImportsError.set(
+        error instanceof Error ? error.message : "Non è stato possibile annullare l'importazione.",
+      );
+    } finally {
+      this.revertingImportId.set(null);
+    }
+  }
+
+  protected formatBulkImportDate(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('it-IT', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'Europe/Rome',
+    }).format(date);
+  }
+
+  protected bulkImportSummary(item: BulkImportHistoryItem): string {
+    const parts: string[] = [];
+    if (item.createdFolders > 0) {
+      parts.push(`${item.createdFolders} ${item.createdFolders === 1 ? 'cartella' : 'cartelle'}`);
+    }
+    if (item.summary.topics > 0) {
+      parts.push(`${item.summary.topics} ${item.summary.topics === 1 ? 'argomento' : 'argomenti'}`);
+    }
+    if (item.summary.cards > 0) parts.push(`${item.summary.cards} flashcard`);
+    if (item.summary.quizzes > 0) {
+      parts.push(`${item.summary.quizzes} quiz (${item.summary.quizQuestions} domande)`);
+    }
+    return parts.join(' · ') || 'Nessun contenuto registrato';
+  }
+
+  protected revertImportDescription(item: BulkImportHistoryItem | null): string {
+    if (!item) return '';
+    const warning =
+      item.modifiedItems > 0
+        ? ` Attenzione: ${item.modifiedItems} ${item.modifiedItems === 1 ? 'elemento risulta modificato' : 'elementi risultano modificati'} dopo l’importazione e ${item.modifiedItems === 1 ? 'sarà comunque rimosso' : 'saranno comunque rimossi'}.`
+        : '';
+    return `Verranno rimossi dall’Aula studio ${this.bulkImportSummary(item)}. Le cartelle saranno rimosse solo se vuote; lo storico dei tentativi dei quiz verrà conservato.${warning}`;
   }
 
   protected async saveFolder(): Promise<void> {
@@ -919,11 +1010,36 @@ export class AulaStudio implements OnDestroy {
     return result.topic;
   }
 
-  private async fetchWithTimeout(input: RequestInfo | URL, timeoutMs = 15_000): Promise<Response> {
+  protected async loadBulkImports(): Promise<void> {
+    if (!this.canBulkImport()) return;
+    this.bulkImportsLoading.set(true);
+    this.bulkImportsError.set('');
+    try {
+      const response = await this.fetchWithTimeout('/api/study-imports');
+      const result = await this.api.readApiResponse<BulkImportHistoryResponse>(response);
+      if (!response.ok) {
+        throw new Error(result.error || 'Caricamento delle importazioni non riuscito.');
+      }
+      this.bulkImports.set(result.imports ?? []);
+    } catch (error) {
+      this.bulkImportsError.set(
+        error instanceof Error ? error.message : 'Non è stato possibile caricare le importazioni.',
+      );
+    } finally {
+      this.bulkImportsLoading.set(false);
+    }
+  }
+
+  private async fetchWithTimeout(
+    input: RequestInfo | URL,
+    timeoutMs = 15_000,
+    method: 'GET' | 'DELETE' = 'GET',
+  ): Promise<Response> {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
     try {
       return await fetch(input, {
+        method,
         credentials: 'same-origin',
         headers: { Accept: 'application/json' },
         signal: controller.signal,

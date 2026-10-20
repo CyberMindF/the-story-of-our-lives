@@ -45,6 +45,7 @@ const ALLOWED_EVENTS = new Set([
   "content_version_added",
   "content_deleted",
   "bulk_import_created",
+  "bulk_import_reverted",
   "study_session_started",
   "study_card_flipped",
   "study_card_navigated",

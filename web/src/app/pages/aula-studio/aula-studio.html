@@ -340,6 +340,67 @@ Risposta: Risposta di riferimento facoltativa.</pre>
                 }
               </ul>
             }
+
+            <section class="study-bulk-history" aria-labelledby="bulk-history-title">
+              <header>
+                <div>
+                  <p class="study-eyebrow">Solo admin</p>
+                  <h3 id="bulk-history-title">Importazioni precedenti</h3>
+                </div>
+                <button
+                  type="button"
+                  class="btn glass-surface"
+                  [disabled]="bulkImportsLoading()"
+                  (click)="loadBulkImports()"
+                >
+                  {{ bulkImportsLoading() ? 'Aggiornamento…' : 'Aggiorna' }}
+                </button>
+              </header>
+
+              @if (bulkImportsError()) {
+                <p class="study-error" role="alert">{{ bulkImportsError() }}</p>
+              }
+              @if (bulkImportsLoading() && bulkImports().length === 0) {
+                <p class="study-bulk-history-empty">Caricamento delle importazioni…</p>
+              } @else if (!bulkImportsLoading() && bulkImports().length === 0) {
+                <p class="study-bulk-history-empty">Non ci sono ancora importazioni.</p>
+              } @else {
+                <ul class="study-bulk-history-list">
+                  @for (item of bulkImports(); track item.id) {
+                    <li [class.is-reverted]="item.revertedAt !== null">
+                      <div class="study-bulk-history-info">
+                        <div class="study-bulk-history-title">
+                          <strong>{{ formatBulkImportDate(item.createdAt) }}</strong>
+                          @if (item.revertedAt) {
+                            <span class="study-bulk-history-status">Annullata</span>
+                          }
+                        </div>
+                        <p>{{ bulkImportSummary(item) }}</p>
+                        <small>
+                          Importata da {{ item.createdBy }}
+                          @if (item.revertedAt) {
+                            · annullata {{ formatBulkImportDate(item.revertedAt) }}
+                            @if (item.revertedBy) {
+                              da {{ item.revertedBy }}
+                            }
+                          }
+                        </small>
+                      </div>
+                      @if (!item.revertedAt) {
+                        <button
+                          type="button"
+                          class="btn glass-surface study-bulk-revert"
+                          [disabled]="revertingImportId() !== null"
+                          (click)="requestRevertImport(item)"
+                        >
+                          {{ revertingImportId() === item.id ? 'Annullamento…' : 'Annulla import' }}
+                        </button>
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+            </section>
           </section>
         } @else {
           @if (editingFolderId() !== null) {
@@ -667,5 +728,16 @@ Risposta: Risposta di riferimento facoltativa.</pre>
     [open]="deleteFolderTarget() !== null"
     (confirm)="confirmDeleteFolder()"
     (cancel)="deleteFolderTarget.set(null)"
+  />
+
+  <app-confirmation-dialog
+    dialogId="revert-study-import"
+    title="Annullare questa importazione?"
+    [description]="revertImportDescription(revertImportTarget())"
+    confirmLabel="Annulla import"
+    cancelLabel="Indietro"
+    [open]="revertImportTarget() !== null"
+    (confirm)="confirmRevertImport()"
+    (cancel)="revertImportTarget.set(null)"
   />
 </app-shell>

@@ -12,6 +12,51 @@ import {
 
 const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9_-]{16,100}$/;
 
+export async function onRequestGet({ request, env }) {
+  try {
+    const access = await requireStudyBulkAdmin(request, env);
+    if (access.response) return access.response;
+
+    const { results } = await env.DB.prepare(
+      `SELECT imports.id, imports.summary_json, imports.created_at,
+              imports.reverted_at, creator.nickname AS creator_nickname,
+              reverted_by.nickname AS reverted_by_nickname,
+              (SELECT COUNT(*) FROM study_folders AS folders
+               WHERE folders.source_import_id = imports.id) AS folder_count,
+              ((SELECT COUNT(*) FROM study_topics AS topics
+                WHERE topics.source_import_id = imports.id
+                  AND topics.deleted_at IS NULL
+                  AND topics.updated_at > imports.created_at) +
+               (SELECT COUNT(*) FROM study_quizzes AS quizzes
+                WHERE quizzes.source_import_id = imports.id
+                  AND quizzes.deleted_at IS NULL
+                  AND quizzes.updated_at > imports.created_at) +
+               (SELECT COUNT(*) FROM study_folders AS modified_folders
+                WHERE modified_folders.source_import_id = imports.id
+                  AND modified_folders.deleted_at IS NULL
+                  AND modified_folders.updated_at > imports.created_at)) AS modified_item_count
+       FROM study_imports AS imports
+       JOIN users AS creator ON creator.id = imports.user_id
+       LEFT JOIN users AS reverted_by ON reverted_by.id = imports.reverted_by_user_id
+       ORDER BY imports.created_at DESC
+       LIMIT 100`,
+    ).all();
+
+    return json({ imports: results.map(toImportView) });
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        event: "study_bulk_import_list_error",
+        message: error instanceof Error ? error.message : String(error),
+      }),
+    );
+    return json(
+      { error: "Non è stato possibile caricare le importazioni." },
+      500,
+    );
+  }
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   let userId;
@@ -114,4 +159,24 @@ function duplicateResponse(existing, sourceHash) {
     createdAt: existing.created_at,
     idempotent: true,
   });
+}
+
+function toImportView(row) {
+  const summary = parseSummary(row.summary_json) ?? {};
+  return {
+    id: row.id,
+    createdAt: row.created_at,
+    createdBy: row.creator_nickname,
+    revertedAt: row.reverted_at ?? null,
+    revertedBy: row.reverted_by_nickname ?? null,
+    createdFolders: Number(row.folder_count || 0),
+    modifiedItems: Number(row.modified_item_count || 0),
+    summary: {
+      paths: Number(summary.paths || 0),
+      topics: Number(summary.topics || 0),
+      cards: Number(summary.cards || 0),
+      quizzes: Number(summary.quizzes || 0),
+      quizQuestions: Number(summary.quizQuestions || 0),
+    },
+  };
 }
