@@ -1,11 +1,11 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
 import {
-  TOPIC_WITH_CARDS_SELECT,
+  TOPIC_SUMMARY_SELECT,
   cardsForInsert,
   normalizeCards,
   normalizeTitle,
-  topicsFromRows,
+  topicSummariesFromRows,
 } from "./_shared.js";
 import {
   folderExists,
@@ -21,8 +21,8 @@ export async function onRequestGet(context) {
 
     const [{ results }, { results: folderRows }] = await Promise.all([
       context.env.DB.prepare(
-        `${TOPIC_WITH_CARDS_SELECT}
-        ORDER BY topics.updated_at DESC, topics.id DESC, cards.position ASC`,
+        `${TOPIC_SUMMARY_SELECT}
+        ORDER BY topics.updated_at DESC, topics.id DESC`,
       ).all(),
       context.env.DB.prepare(
         "SELECT * FROM study_folders WHERE deleted_at IS NULL ORDER BY name COLLATE NOCASE, id",
@@ -30,7 +30,7 @@ export async function onRequestGet(context) {
     ]);
 
     return json({
-      topics: topicsFromRows(results),
+      topics: topicSummariesFromRows(results),
       folders: folderRows.map(toFolderView),
     });
   } catch (error) {

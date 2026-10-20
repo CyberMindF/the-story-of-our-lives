@@ -116,10 +116,10 @@
                 <button
                   type="button"
                   class="btn glass-surface"
-                  [disabled]="folderCardCount(folder.id) === 0"
+                  [disabled]="folderCardCount(folder.id) === 0 || openingFolderId() !== null"
                   (click)="startFolderStudy(folder)"
                 >
-                  ▶ Ripassa tutto
+                  {{ openingFolderId() === folder.id ? 'Apro…' : '▶ Ripassa tutto' }}
                 </button>
               }
               <button type="button" class="btn glass-surface" (click)="startCreateFolder()">
@@ -479,7 +479,10 @@ Risposta: Risposta di riferimento facoltativa.</pre>
           @if (loading()) {
             <p class="study-message">Sto preparando l’aula…</p>
           } @else if (pageError()) {
-            <p class="study-message is-error" role="alert">{{ pageError() }}</p>
+            <div class="study-load-error" role="alert">
+              <p class="study-message is-error">{{ pageError() }}</p>
+              <button type="button" class="btn glass-surface" (click)="retryLoad()">Riprova</button>
+            </div>
           } @else {
             @if (
               currentFolders().length > 0 ||
@@ -510,13 +513,13 @@ Risposta: Risposta di riferimento facoltativa.</pre>
                       <button
                         type="button"
                         class="btn glass-surface btn-submit study-review-action"
-                        [disabled]="folderCardCount(folder.id) === 0"
+                        [disabled]="folderCardCount(folder.id) === 0 || openingFolderId() !== null"
                         [attr.aria-label]="
                           'Ripassa tutti gli argomenti della cartella ' + folder.name
                         "
                         (click)="startFolderStudy(folder)"
                       >
-                        ▶ Ripassa tutto
+                        {{ openingFolderId() === folder.id ? 'Apro…' : '▶ Ripassa tutto' }}
                       </button>
                       <button
                         type="button"
@@ -539,23 +542,25 @@ Risposta: Risposta di riferimento facoltativa.</pre>
                 }
                 @for (topic of currentTopics(); track topic.id) {
                   <article class="study-topic card glass-surface">
-                    <div class="study-topic-mark" aria-hidden="true">{{ topic.cards.length }}</div>
+                    <div class="study-topic-mark" aria-hidden="true">{{ topic.cardCount }}</div>
                     <div>
-                      <p class="study-topic-meta">{{ topic.cards.length }} flash card</p>
+                      <p class="study-topic-meta">{{ topic.cardCount }} flash card</p>
                       <h3>{{ topic.title }}</h3>
                     </div>
                     <div class="study-topic-actions">
                       <button
                         type="button"
                         class="btn glass-surface btn-submit study-review-action"
+                        [disabled]="openingTopicId() !== null"
                         (click)="startStudy(topic)"
                       >
-                        Inizia il ripasso
+                        {{ openingTopicId() === topic.id ? 'Apro…' : 'Inizia il ripasso' }}
                       </button>
                       <button
                         type="button"
                         class="btn glass-surface"
                         aria-label="Modifica argomento"
+                        [disabled]="openingTopicId() !== null"
                         (click)="startEdit(topic)"
                       >
                         ✏️

@@ -1,15 +1,45 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
 import {
+  TOPIC_WITH_CARDS_SELECT,
   cardsForInsert,
   normalizeCards,
   normalizeTitle,
   normalizeTopicId,
+  topicsFromRows,
 } from "./_shared.js";
 import {
   folderExists,
   normalizeNullableFolderId,
 } from "../study-folders/_shared.js";
+
+export async function onRequestGet({ request, env, params }) {
+  try {
+    const session = await getAuthenticatedSession(request, env);
+    if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
+
+    const topicId = normalizeTopicId(params.id);
+    if (!topicId) return json({ error: "Argomento non valido." }, 400);
+    const { results } = await env.DB.prepare(
+      `${TOPIC_WITH_CARDS_SELECT}
+       AND topics.id = ?
+       ORDER BY cards.position ASC`,
+    )
+      .bind(topicId)
+      .all();
+    const topic = topicsFromRows(results)[0];
+    if (!topic) return json({ error: "Argomento non trovato." }, 404);
+    return json({ topic });
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        event: "study_topic_detail_error",
+        message: error.message,
+      }),
+    );
+    return json({ error: "Non è stato possibile caricare l'argomento." }, 500);
+  }
+}
 
 export async function onRequestPut(context) {
   const { request, env, params } = context;

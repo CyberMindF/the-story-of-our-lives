@@ -77,6 +77,17 @@ export function topicsFromRows(rows) {
   return [...topics.values()];
 }
 
+export function topicSummariesFromRows(rows) {
+  return rows.map((row) => ({
+    id: row.topic_id,
+    title: row.title,
+    folderId: row.folder_id,
+    cardCount: Number(row.card_count),
+    createdAt: row.topic_created_at,
+    updatedAt: row.topic_updated_at,
+  }));
+}
+
 export const TOPIC_WITH_CARDS_SELECT = `
   SELECT
     topics.id AS topic_id,
@@ -91,4 +102,18 @@ export const TOPIC_WITH_CARDS_SELECT = `
   FROM study_topics AS topics
   LEFT JOIN study_cards AS cards ON cards.topic_id = topics.id
   WHERE topics.deleted_at IS NULL
+`;
+
+export const TOPIC_SUMMARY_SELECT = `
+  SELECT
+    topics.id AS topic_id,
+    topics.title,
+    topics.folder_id,
+    topics.created_at AS topic_created_at,
+    topics.updated_at AS topic_updated_at,
+    COUNT(cards.id) AS card_count
+  FROM study_topics AS topics
+  LEFT JOIN study_cards AS cards ON cards.topic_id = topics.id
+  WHERE topics.deleted_at IS NULL
+  GROUP BY topics.id
 `;

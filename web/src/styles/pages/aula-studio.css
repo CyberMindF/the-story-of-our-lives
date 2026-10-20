@@ -213,6 +213,13 @@
   color: var(--danger-text-color);
 }
 
+.study-load-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .study-editor-actions,
 .study-topic-actions,
 .study-controls {

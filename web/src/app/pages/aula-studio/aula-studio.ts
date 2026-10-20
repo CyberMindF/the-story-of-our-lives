@@ -20,6 +20,15 @@ interface StudySessionCard extends StudyCard {
   context: string;
 }
 
+interface StudyTopicSummary {
+  id: number;
+  title: string;
+  folderId: number | null;
+  cardCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface StudyTopic {
   id: number;
   title: string;
@@ -128,7 +137,10 @@ export function collectFolderStudyCards(
     });
 }
 
-export function buildStudyTopicPath(folders: StudyFolder[], topic: StudyTopic): string {
+export function buildStudyTopicPath(
+  folders: StudyFolder[],
+  topic: Pick<StudyTopicSummary, 'title' | 'folderId'>,
+): string {
   const byId = new Map(folders.map((folder) => [folder.id, folder]));
   const names: string[] = [topic.title];
   const visited = new Set<number>();
@@ -215,18 +227,20 @@ export class AulaStudio implements OnDestroy {
   protected readonly authService = inject(AuthService);
   protected readonly focusMode = inject(StudyFocusService);
 
-  protected readonly topics = signal<StudyTopic[]>([]);
+  protected readonly topics = signal<StudyTopicSummary[]>([]);
   protected readonly folders = signal<StudyFolder[]>([]);
   protected readonly quizzes = signal<StudyQuizSummary[]>([]);
   protected readonly loading = signal(true);
   protected readonly pageError = signal('');
   protected readonly saving = signal(false);
+  protected readonly openingTopicId = signal<number | null>(null);
+  protected readonly openingFolderId = signal<number | null>(null);
 
   protected readonly editingId = signal<number | 'new' | null>(null);
   protected readonly draft = signal<TopicDraft>({ title: '', pairs: '', folderId: null });
   protected readonly formError = signal('');
   protected readonly parsedPairs = computed(() => parseStudyPairs(this.draft().pairs));
-  protected readonly deleteTarget = signal<StudyTopic | null>(null);
+  protected readonly deleteTarget = signal<StudyTopicSummary | null>(null);
 
   protected readonly currentFolderId = signal<number | null>(null);
   protected readonly editingFolderId = signal<number | 'new' | null>(null);
@@ -295,6 +309,7 @@ export class AulaStudio implements OnDestroy {
     null,
   );
   private transitionTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private libraryLoadController: AbortController | null = null;
   private readonly reducedMotion =
     window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
   protected readonly isStudying = computed(() => this.studySessionKind() !== null);
@@ -309,6 +324,7 @@ export class AulaStudio implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.libraryLoadController?.abort();
     this.endStudySession('page_left');
     this.clearCardTransition();
     this.focusMode.leavePage();
@@ -327,12 +343,24 @@ export class AulaStudio implements OnDestroy {
     this.editingId.set('new');
   }
 
-  protected startEdit(topic: StudyTopic): void {
+  protected async startEdit(topic: StudyTopicSummary): Promise<void> {
+    if (this.openingTopicId() !== null) return;
     this.closeStudy();
     this.closeFolderEditor();
-    this.draft.set(topicToDraft(topic));
-    this.formError.set('');
-    this.editingId.set(topic.id);
+    this.openingTopicId.set(topic.id);
+    this.pageError.set('');
+    try {
+      const detail = await this.loadTopicDetails(topic.id);
+      this.draft.set(topicToDraft(detail));
+      this.formError.set('');
+      this.editingId.set(topic.id);
+    } catch (error) {
+      this.pageError.set(
+        error instanceof Error ? error.message : "Non è stato possibile aprire l'argomento.",
+      );
+    } finally {
+      this.openingTopicId.set(null);
+    }
   }
 
   protected cancelEdit(): void {
@@ -567,7 +595,14 @@ export class AulaStudio implements OnDestroy {
   }
 
   protected folderCardCount(folderId: number): number {
-    return collectFolderStudyCards(this.folders(), this.topics(), folderId).length;
+    const descendants = this.folderDescendantIds(folderId);
+    return this.topics().reduce(
+      (total, topic) =>
+        topic.folderId !== null && descendants.has(topic.folderId)
+          ? total + topic.cardCount
+          : total,
+      0,
+    );
   }
 
   protected folderChildCount(folderId: number): number {
@@ -638,7 +673,7 @@ export class AulaStudio implements OnDestroy {
     }
   }
 
-  protected requestDelete(topic: StudyTopic): void {
+  protected requestDelete(topic: StudyTopicSummary): void {
     this.deleteTarget.set(topic);
   }
 
@@ -660,10 +695,22 @@ export class AulaStudio implements OnDestroy {
     }
   }
 
-  protected startStudy(topic: StudyTopic): void {
-    const context = buildStudyTopicPath(this.folders(), topic);
-    const cards = topic.cards.map((card) => ({ ...card, context }));
-    this.beginStudy(topic.title, cards, 'topic', topic.id);
+  protected async startStudy(topic: StudyTopicSummary): Promise<void> {
+    if (this.openingTopicId() !== null) return;
+    this.openingTopicId.set(topic.id);
+    this.pageError.set('');
+    try {
+      const detail = await this.loadTopicDetails(topic.id);
+      const context = buildStudyTopicPath(this.folders(), detail);
+      const cards = detail.cards.map((card) => ({ ...card, context }));
+      this.beginStudy(detail.title, cards, 'topic', detail.id);
+    } catch (error) {
+      this.pageError.set(
+        error instanceof Error ? error.message : 'Non è stato possibile iniziare il ripasso.',
+      );
+    } finally {
+      this.openingTopicId.set(null);
+    }
   }
 
   protected openQuiz(quiz: StudyQuizSummary): void {
@@ -688,10 +735,26 @@ export class AulaStudio implements OnDestroy {
     await this.load();
   }
 
-  protected startFolderStudy(folder: StudyFolder): void {
-    const cards = collectFolderStudyCards(this.folders(), this.topics(), folder.id);
-    if (cards.length === 0) return;
-    this.beginStudy(`${folder.name} · Tutto insieme`, cards, 'folder', folder.id);
+  protected async startFolderStudy(folder: StudyFolder): Promise<void> {
+    if (this.openingFolderId() !== null) return;
+    this.openingFolderId.set(folder.id);
+    this.pageError.set('');
+    try {
+      const response = await this.fetchWithTimeout(`/api/study-folders/${folder.id}/cards`);
+      const result = await this.api.readApiResponse<{ topics?: StudyTopic[]; error?: string }>(
+        response,
+      );
+      if (!response.ok) throw new Error(result.error || 'Caricamento non riuscito.');
+      const cards = collectFolderStudyCards(this.folders(), result.topics ?? [], folder.id);
+      if (cards.length === 0) return;
+      this.beginStudy(`${folder.name} · Tutto insieme`, cards, 'folder', folder.id);
+    } catch (error) {
+      this.pageError.set(
+        error instanceof Error ? error.message : 'Non è stato possibile iniziare il ripasso.',
+      );
+    } finally {
+      this.openingFolderId.set(null);
+    }
   }
 
   protected closeStudy(): void {
@@ -843,7 +906,47 @@ export class AulaStudio implements OnDestroy {
     this.transitionDirection.set(null);
   }
 
+  protected retryLoad(): void {
+    void this.load();
+  }
+
+  private async loadTopicDetails(topicId: number): Promise<StudyTopic> {
+    const response = await this.fetchWithTimeout(`/api/study-topics/${topicId}`);
+    const result = await this.api.readApiResponse<{ topic?: StudyTopic; error?: string }>(response);
+    if (!response.ok || !result.topic) {
+      throw new Error(result.error || "Non è stato possibile caricare l'argomento.");
+    }
+    return result.topic;
+  }
+
+  private async fetchWithTimeout(input: RequestInfo | URL, timeoutMs = 15_000): Promise<Response> {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(input, {
+        credentials: 'same-origin',
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+    } catch (error) {
+      if (controller.signal.aborted) {
+        throw new Error('Il caricamento sta impiegando troppo tempo. Riprova.');
+      }
+      throw error;
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
+
   private async load(): Promise<void> {
+    this.libraryLoadController?.abort();
+    const controller = new AbortController();
+    this.libraryLoadController = controller;
+    let timedOut = false;
+    const timeout = window.setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, 15_000);
     this.loading.set(true);
     this.pageError.set('');
     try {
@@ -851,14 +954,16 @@ export class AulaStudio implements OnDestroy {
         fetch('/api/study-topics', {
           credentials: 'same-origin',
           headers: { Accept: 'application/json' },
+          signal: controller.signal,
         }),
         fetch('/api/study-quizzes', {
           credentials: 'same-origin',
           headers: { Accept: 'application/json' },
+          signal: controller.signal,
         }),
       ]);
       const result = await this.api.readApiResponse<{
-        topics?: StudyTopic[];
+        topics?: StudyTopicSummary[];
         folders?: StudyFolder[];
         error?: string;
       }>(topicResponse);
@@ -878,11 +983,20 @@ export class AulaStudio implements OnDestroy {
         this.currentFolderId.set(null);
       }
     } catch (error) {
+      if (this.libraryLoadController !== controller) return;
       this.pageError.set(
-        error instanceof Error ? error.message : 'Non è stato possibile aprire l’Aula studio.',
+        timedOut
+          ? 'Il caricamento dell’Aula sta impiegando troppo tempo.'
+          : error instanceof Error
+            ? error.message
+            : 'Non è stato possibile aprire l’Aula studio.',
       );
     } finally {
-      this.loading.set(false);
+      window.clearTimeout(timeout);
+      if (this.libraryLoadController === controller) {
+        this.libraryLoadController = null;
+        this.loading.set(false);
+      }
     }
   }
 }
