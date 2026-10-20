@@ -15,7 +15,12 @@ import { Portone } from './portone/portone';
 // resta eager: è la prima cosa che vede chi non ha ancora una sessione valida (authGuard
 // reindirizza lì), niente da guadagnare a caricarlo pigro.
 export const routes: Routes = [
-  { path: 'login', pathMatch: 'full', component: Portone, data: { bodyClasses: ['access-locked', 'portone-page'] } },
+  {
+    path: 'login',
+    pathMatch: 'full',
+    component: Portone,
+    data: { bodyClasses: ['access-locked', 'portone-page'] },
+  },
   {
     path: '',
     canActivate: [authGuard],
@@ -24,193 +29,211 @@ export const routes: Routes = [
         path: '',
         pathMatch: 'full',
         data: { bodyClasses: ['world-page'] },
-        loadComponent: () => import('./pages/mondo-bianco/mondo-bianco').then((m) => m.MondoBianco)
+        loadComponent: () => import('./pages/mondo-bianco/mondo-bianco').then((m) => m.MondoBianco),
       },
       {
         path: 'mondo-bianco',
         redirectTo: '',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'ponti',
         data: { bodyClasses: ['ponti-page'] },
-        loadComponent: () => import('./pages/ponti/ponti').then((m) => m.Ponti)
+        loadComponent: () => import('./pages/ponti/ponti').then((m) => m.Ponti),
       },
       {
         path: 'calendario',
         data: { bodyClasses: ['calendar-page'] },
-        loadComponent: () => import('./pages/calendario/calendario').then((m) => m.Calendario)
+        loadComponent: () => import('./pages/calendario/calendario').then((m) => m.Calendario),
       },
       {
         path: 'cuffiette',
         data: { bodyClasses: ['music-page'] },
-        loadComponent: () => import('./pages/cuffiette/cuffiette').then((m) => m.Cuffiette)
+        loadComponent: () => import('./pages/cuffiette/cuffiette').then((m) => m.Cuffiette),
       },
       {
         path: 'suggerimenti',
         data: { bodyClasses: ['suggerimenti-page'] },
-        loadComponent: () => import('./pages/suggerimenti/suggerimenti').then((m) => m.Suggerimenti)
+        loadComponent: () =>
+          import('./pages/suggerimenti/suggerimenti').then((m) => m.Suggerimenti),
       },
       {
         path: 'profilo',
         data: { bodyClasses: ['profilo-page'] },
-        loadComponent: () => import('./pages/profilo/profilo').then((m) => m.Profilo)
+        loadComponent: () => import('./pages/profilo/profilo').then((m) => m.Profilo),
       },
       {
         path: 'log',
         canActivate: [adminGuard],
         data: { bodyClasses: ['log-page'] },
-        loadComponent: () => import('./pages/log/log').then((m) => m.Log)
+        loadComponent: () => import('./pages/log/log').then((m) => m.Log),
       },
       {
         path: 'contenuti',
         canActivate: [adminGuard],
         data: { bodyClasses: ['contenuti-page'] },
-        loadComponent: () => import('./pages/contenuti/contenuti').then((m) => m.Contenuti)
+        loadComponent: () => import('./pages/contenuti/contenuti').then((m) => m.Contenuti),
       },
       {
         path: 'il-cielo',
         data: { bodyClasses: ['sky-view-page'] },
-        loadComponent: () => import('./pages/il-cielo/il-cielo').then((m) => m.IlCielo)
+        loadComponent: () => import('./pages/il-cielo/il-cielo').then((m) => m.IlCielo),
       },
       {
         path: 'impostazioni-mondo',
         data: { bodyClasses: ['impostazioni-mondo-page'] },
         loadComponent: () =>
-          import('./pages/impostazioni-mondo/impostazioni-mondo').then((m) => m.ImpostazioniMondo)
+          import('./pages/impostazioni-mondo/impostazioni-mondo').then((m) => m.ImpostazioniMondo),
       },
       {
         path: 'linguaggio-segreto',
         data: { bodyClasses: ['linguaggio-page'] },
-        loadComponent: () => import('./pages/linguaggio-segreto/linguaggio-segreto').then((m) => m.LinguaggioSegreto)
+        loadComponent: () =>
+          import('./pages/linguaggio-segreto/linguaggio-segreto').then((m) => m.LinguaggioSegreto),
       },
       {
         path: 'storie',
         data: { bodyClasses: ['stories-page'] },
-        loadComponent: () => import('./pages/storie/storie').then((m) => m.Storie)
+        loadComponent: () => import('./pages/storie/storie').then((m) => m.Storie),
       },
       {
         path: 'mappa',
         data: { bodyClasses: ['map-page'] },
-        loadComponent: () => import('./pages/mappa/mappa').then((m) => m.Mappa)
+        loadComponent: () => import('./pages/mappa/mappa').then((m) => m.Mappa),
       },
       {
         path: 'mappamondo',
         data: { bodyClasses: ['globe-page'] },
-        loadComponent: () => import('./pages/mappamondo/mappamondo').then((m) => m.Mappamondo)
+        loadComponent: () => import('./pages/mappamondo/mappamondo').then((m) => m.Mappamondo),
       },
       {
         path: 'bacheca',
         data: { bodyClasses: ['bacheca-page'] },
-        loadComponent: () => import('./pages/bacheca-preview/bacheca-preview').then((m) => m.BachecaPreview)
+        loadComponent: () =>
+          import('./pages/bacheca-preview/bacheca-preview').then((m) => m.BachecaPreview),
       },
       {
         path: 'bacheca-nuova',
         redirectTo: 'bacheca',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'lettere',
         data: { bodyClasses: ['lettere-page'] },
-        loadComponent: () => import('./pages/lettere/lettere').then((m) => m.Lettere)
+        loadComponent: () => import('./pages/lettere/lettere').then((m) => m.Lettere),
       },
       {
         path: 'domande',
         data: { bodyClasses: ['domande-page'] },
-        loadComponent: () => import('./pages/domande/domande').then((m) => m.Domande)
+        loadComponent: () => import('./pages/domande/domande').then((m) => m.Domande),
       },
       {
         path: 'barattolo-dei-pensieri',
-        loadComponent: () => import('./pages/barattolo-dei-pensieri/barattolo-dei-pensieri').then((m) => m.BarattoloDeiPensieri)
+        loadComponent: () =>
+          import('./pages/barattolo-dei-pensieri/barattolo-dei-pensieri').then(
+            (m) => m.BarattoloDeiPensieri,
+          ),
       },
       {
         path: 'capsula-del-tempo',
-        loadComponent: () => import('./pages/capsula-del-tempo/capsula-del-tempo').then((m) => m.CapsulaDelTempo)
+        loadComponent: () =>
+          import('./pages/capsula-del-tempo/capsula-del-tempo').then((m) => m.CapsulaDelTempo),
       },
       {
         path: 'ponti-chat',
         data: { bodyClasses: ['ponti-chat-page'] },
-        loadComponent: () => import('./pages/ponti-chat/ponti-chat').then((m) => m.PontiChat)
+        loadComponent: () => import('./pages/ponti-chat/ponti-chat').then((m) => m.PontiChat),
       },
       {
         path: 'fake-omegle',
         data: { bodyClasses: ['stranger-chat-page'] },
-        loadComponent: () => import('./pages/stranger-chat/stranger-chat').then((m) => m.StrangerChat)
+        loadComponent: () =>
+          import('./pages/stranger-chat/stranger-chat').then((m) => m.StrangerChat),
       },
       {
         path: 'stranger-chat',
         redirectTo: 'fake-omegle',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'cose-da-fare-insieme',
         data: { bodyClasses: ['together-page-view'] },
-        loadComponent: () => import('./pages/cose-insieme/cose-insieme').then((m) => m.CoseInsieme)
+        loadComponent: () => import('./pages/cose-insieme/cose-insieme').then((m) => m.CoseInsieme),
       },
       {
         path: 'ricettario',
         data: { bodyClasses: ['recipe-page-view'] },
-        loadComponent: () => import('./pages/ricettario/ricettario').then((m) => m.Ricettario)
+        loadComponent: () => import('./pages/ricettario/ricettario').then((m) => m.Ricettario),
+      },
+      {
+        path: 'aula-studio/quiz/:id',
+        data: { bodyClasses: ['aula-studio-page'] },
+        loadComponent: () => import('./pages/aula-studio/study-quiz').then((m) => m.StudyQuiz),
       },
       {
         path: 'aula-studio',
         data: { bodyClasses: ['aula-studio-page'] },
-        loadComponent: () => import('./pages/aula-studio/aula-studio').then((m) => m.AulaStudio)
+        loadComponent: () => import('./pages/aula-studio/aula-studio').then((m) => m.AulaStudio),
       },
       {
         path: 'tavolo-da-gioco',
         data: { bodyClasses: ['tavolo-page'] },
-        loadComponent: () => import('./pages/tavolo-da-gioco/tavolo-da-gioco').then((m) => m.TavoloDaGioco)
+        loadComponent: () =>
+          import('./pages/tavolo-da-gioco/tavolo-da-gioco').then((m) => m.TavoloDaGioco),
       },
       {
         path: 'tavolo-da-gioco/gdr',
         data: { bodyClasses: ['tavolo-page'] },
-        loadComponent: () => import('./pages/gdr/gdr').then((m) => m.Gdr)
+        loadComponent: () => import('./pages/gdr/gdr').then((m) => m.Gdr),
       },
       {
         path: 'tavolo-da-gioco/gdr/il-prezzo-della-verita/avventura',
         data: { bodyClasses: ['tavolo-page'] },
-        loadComponent: () => import('./pages/avventura/avventura').then((m) => m.Avventura)
+        loadComponent: () => import('./pages/avventura/avventura').then((m) => m.Avventura),
       },
       {
         path: 'tavolo-da-gioco/gdr/la-casa-che-trattiene-il-respiro',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () =>
           import('./pages/la-casa-che-trattiene-il-respiro/la-casa-che-trattiene-il-respiro').then(
-            (m) => m.LaCasaCheTrattieneIlRespiro
-          )
+            (m) => m.LaCasaCheTrattieneIlRespiro,
+          ),
       },
       {
         path: 'tavolo-da-gioco/cruciverba',
-        loadComponent: () => import('./pages/cruciverba/cruciverba').then((m) => m.Cruciverba)
+        loadComponent: () => import('./pages/cruciverba/cruciverba').then((m) => m.Cruciverba),
       },
       {
         path: 'tavolo-da-gioco/messaggio-criptato',
         data: { bodyClasses: ['tavolo-page'] },
-        loadComponent: () => import('./pages/messaggio-criptato/messaggio-criptato').then((m) => m.MessaggioCriptato)
+        loadComponent: () =>
+          import('./pages/messaggio-criptato/messaggio-criptato').then((m) => m.MessaggioCriptato),
       },
       {
         path: 'tavolo-da-gioco/prova-a-dire-no',
         data: { bodyClasses: ['tavolo-page'] },
-        loadComponent: () => import('./pages/prova-a-dire-no/prova-a-dire-no').then((m) => m.ProvaADireNo)
+        loadComponent: () =>
+          import('./pages/prova-a-dire-no/prova-a-dire-no').then((m) => m.ProvaADireNo),
       },
       {
         path: 'tavolo-da-gioco/prova-a-dire-no/playground',
         canActivate: [adminGuard],
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () =>
-          import('./pages/prova-a-dire-no-playground/prova-a-dire-no-playground').then((m) => m.ProvaADireNoPlayground)
+          import('./pages/prova-a-dire-no-playground/prova-a-dire-no-playground').then(
+            (m) => m.ProvaADireNoPlayground,
+          ),
       },
       {
         path: 'tavolo-da-gioco/carte',
         data: { bodyClasses: ['tavolo-page'] },
-        loadComponent: () => import('./pages/carte/carte').then((m) => m.Carte)
-      }
-    ]
+        loadComponent: () => import('./pages/carte/carte').then((m) => m.Carte),
+      },
+    ],
   },
   {
     path: '**',
     data: { bodyClasses: ['not-found-page'] },
-    loadComponent: () => import('./pages/not-found/not-found').then((m) => m.NotFound)
-  }
+    loadComponent: () => import('./pages/not-found/not-found').then((m) => m.NotFound),
+  },
 ];

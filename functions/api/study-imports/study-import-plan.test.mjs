@@ -86,6 +86,32 @@ test("il doppio invio con la stessa chiave non crea duplicati", () => {
   assert.equal(value(db, "SELECT COUNT(*) FROM study_cards"), 1);
 });
 
+test("importa quiz, domande e opzioni nello stesso batch", () => {
+  const db = createDatabase();
+  const plan = planForDatabase(
+    db,
+    `# Biologia
+## Quiz: Cellula
+Correzione: immediata
+### Singola
+Domanda: Dove si trova il DNA?
+- [x] Nucleo
+- [ ] Membrana
+### Aperta
+Domanda: Descrivi il nucleo.
+Risposta: Contiene il DNA.`,
+  );
+  applyAtomically(db, importOperations(plan, "import-quiz", "key-quiz"));
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_quizzes"), 1);
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_quiz_questions"), 2);
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_quiz_options"), 2);
+  assert.equal(
+    db.prepare("SELECT correction_mode FROM study_quizzes").get()
+      .correction_mode,
+    "immediate",
+  );
+});
+
 function validParse(source) {
   const parsed = parseStudyBulkSource(source);
   assert.deepEqual(parsed.errors, []);
@@ -105,6 +131,7 @@ function createDatabase() {
     "migrations/0115_create_study_topics.sql",
     "migrations/0116_add_study_folders.sql",
     "migrations/0117_add_study_bulk_imports.sql",
+    "migrations/0118_add_study_quizzes.sql",
   ]) {
     db.exec(
       fs.readFileSync(

@@ -83,11 +83,12 @@ export async function onRequestDelete(context) {
     const content = await env.DB.prepare(
       `SELECT
          EXISTS(SELECT 1 FROM study_folders WHERE parent_id = ? AND deleted_at IS NULL) AS has_folders,
-         EXISTS(SELECT 1 FROM study_topics WHERE folder_id = ? AND deleted_at IS NULL) AS has_topics`,
+         EXISTS(SELECT 1 FROM study_topics WHERE folder_id = ? AND deleted_at IS NULL) AS has_topics,
+         EXISTS(SELECT 1 FROM study_quizzes WHERE folder_id = ? AND deleted_at IS NULL) AS has_quizzes`,
     )
-      .bind(folderId, folderId)
+      .bind(folderId, folderId, folderId)
       .first();
-    if (content?.has_folders || content?.has_topics) {
+    if (content?.has_folders || content?.has_topics || content?.has_quizzes) {
       return json(
         {
           error:

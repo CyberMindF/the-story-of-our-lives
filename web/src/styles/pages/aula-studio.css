@@ -163,6 +163,25 @@
   min-height: 17rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
+.study-bulk-guide {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--panel-color) 78%, transparent);
+}
+.study-bulk-guide summary {
+  cursor: pointer;
+  font-weight: 750;
+}
+.study-bulk-guide pre {
+  max-width: 100%;
+  margin: 1rem 0 0;
+  overflow-x: auto;
+  color: var(--muted-color);
+  font-size: 0.76rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
 
 .study-format-example {
   display: grid;
@@ -344,6 +363,26 @@
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.6rem;
   font-weight: 400;
+}
+.study-quiz-package {
+  border-color: color-mix(in srgb, var(--focus-color) 45%, var(--panel-border-color));
+}
+.study-quiz-mode {
+  margin: 0.65rem 0 0;
+  color: var(--muted-color);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.study-draft-badge {
+  display: inline-flex;
+  margin: 0.7rem 0 0;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-color) 16%, transparent);
+  color: var(--accent-color);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .study-topic-actions {

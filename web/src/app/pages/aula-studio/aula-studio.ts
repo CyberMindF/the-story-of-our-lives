@@ -1,5 +1,6 @@
 import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
@@ -36,6 +37,19 @@ interface StudyFolder {
   updatedAt: string;
 }
 
+interface StudyQuizSummary {
+  id: number;
+  folderId: number | null;
+  title: string;
+  correctionMode: 'immediate' | 'final';
+  shuffleQuestions: boolean;
+  shuffleOptions: boolean;
+  questionCount: number;
+  activeAttemptId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface TopicDraft {
   title: string;
   pairs: string;
@@ -55,6 +69,8 @@ interface BulkImportSummary {
   paths: number;
   topics: number;
   cards: number;
+  quizzes: number;
+  quizQuestions: number;
 }
 
 interface BulkImportError {
@@ -66,7 +82,12 @@ interface BulkImportError {
 
 interface BulkPreviewPath {
   path: string;
-  topics: Array<{ title: string; cardCount: number }>;
+  topics: Array<{
+    kind: 'flashcard' | 'quiz';
+    title: string;
+    cardCount?: number;
+    questionCount?: number;
+  }>;
 }
 
 interface BulkImportResponse {
@@ -190,11 +211,13 @@ function shuffledIndices(length: number): number[] {
 export class AulaStudio implements OnDestroy {
   private readonly api = inject(ApiService);
   private readonly telemetry = inject(TelemetryService);
+  private readonly router = inject(Router);
   protected readonly authService = inject(AuthService);
   protected readonly focusMode = inject(StudyFocusService);
 
   protected readonly topics = signal<StudyTopic[]>([]);
   protected readonly folders = signal<StudyFolder[]>([]);
+  protected readonly quizzes = signal<StudyQuizSummary[]>([]);
   protected readonly loading = signal(true);
   protected readonly pageError = signal('');
   protected readonly saving = signal(false);
@@ -235,6 +258,9 @@ export class AulaStudio implements OnDestroy {
   );
   protected readonly currentTopics = computed(() =>
     this.topics().filter((topic) => topic.folderId === this.currentFolderId()),
+  );
+  protected readonly currentQuizzes = computed(() =>
+    this.quizzes().filter((quiz) => quiz.folderId === this.currentFolderId()),
   );
   protected readonly folderChoices = computed(() => buildFolderChoices(this.folders()));
   protected readonly breadcrumbs = computed(() => {
@@ -515,6 +541,31 @@ export class AulaStudio implements OnDestroy {
     ).length;
   }
 
+  protected folderQuizCount(folderId: number): number {
+    const descendants = this.folderDescendantIds(folderId);
+    return this.quizzes().filter((quiz) => quiz.folderId !== null && descendants.has(quiz.folderId))
+      .length;
+  }
+
+  private folderDescendantIds(folderId: number): Set<number> {
+    const descendants = new Set<number>([folderId]);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const folder of this.folders()) {
+        if (
+          folder.parentId !== null &&
+          descendants.has(folder.parentId) &&
+          !descendants.has(folder.id)
+        ) {
+          descendants.add(folder.id);
+          changed = true;
+        }
+      }
+    }
+    return descendants;
+  }
+
   protected folderCardCount(folderId: number): number {
     return collectFolderStudyCards(this.folders(), this.topics(), folderId).length;
   }
@@ -613,6 +664,28 @@ export class AulaStudio implements OnDestroy {
     const context = buildStudyTopicPath(this.folders(), topic);
     const cards = topic.cards.map((card) => ({ ...card, context }));
     this.beginStudy(topic.title, cards, 'topic', topic.id);
+  }
+
+  protected openQuiz(quiz: StudyQuizSummary): void {
+    void this.router.navigate(['/aula-studio/quiz', quiz.id]);
+  }
+
+  protected async deleteQuiz(quiz: StudyQuizSummary): Promise<void> {
+    if (
+      !window.confirm(
+        `Eliminare il quiz “${quiz.title}”? Lo storico dei tentativi resterà disponibile.`,
+      )
+    )
+      return;
+    const response = await fetch(`/api/study-quizzes/${quiz.id}`, {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    });
+    if (!response.ok) {
+      this.pageError.set('Non è stato possibile eliminare il quiz.');
+      return;
+    }
+    await this.load();
   }
 
   protected startFolderStudy(folder: StudyFolder): void {
@@ -758,9 +831,7 @@ export class AulaStudio implements OnDestroy {
     void this.telemetry.trackEvent('aula-studio', eventType, {
       studySessionId: this.studySessionId,
       kind,
-      ...(kind === 'topic'
-        ? { topicId: this.studySubjectId }
-        : { folderId: this.studySubjectId }),
+      ...(kind === 'topic' ? { topicId: this.studySubjectId } : { folderId: this.studySubjectId }),
       ...metadata,
     });
   }
@@ -776,18 +847,30 @@ export class AulaStudio implements OnDestroy {
     this.loading.set(true);
     this.pageError.set('');
     try {
-      const response = await fetch('/api/study-topics', {
-        credentials: 'same-origin',
-        headers: { Accept: 'application/json' },
-      });
+      const [topicResponse, quizResponse] = await Promise.all([
+        fetch('/api/study-topics', {
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json' },
+        }),
+        fetch('/api/study-quizzes', {
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json' },
+        }),
+      ]);
       const result = await this.api.readApiResponse<{
         topics?: StudyTopic[];
         folders?: StudyFolder[];
         error?: string;
-      }>(response);
-      if (!response.ok) throw new Error(result.error || 'Caricamento non riuscito.');
+      }>(topicResponse);
+      const quizResult = await this.api.readApiResponse<{
+        quizzes?: StudyQuizSummary[];
+        error?: string;
+      }>(quizResponse);
+      if (!topicResponse.ok || !quizResponse.ok)
+        throw new Error(result.error || quizResult.error || 'Caricamento non riuscito.');
       this.topics.set(result.topics ?? []);
       this.folders.set(result.folders ?? []);
+      this.quizzes.set(quizResult.quizzes ?? []);
       if (
         this.currentFolderId() !== null &&
         !(result.folders ?? []).some((folder) => folder.id === this.currentFolderId())

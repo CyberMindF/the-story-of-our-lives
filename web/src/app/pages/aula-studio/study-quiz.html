@@ -1,0 +1,283 @@
+<app-shell homeHref="/aula-studio" homeAria="Torna all’Aula studio" homeLabel="Aula studio">
+  <main class="quiz-page">
+    @if (loading()) {
+      <p class="quiz-message">Sto preparando il foglio…</p>
+    } @else if (error() && !attempt()) {
+      <section class="quiz-message is-error">
+        <p>{{ error() }}</p>
+        <a class="btn" routerLink="/aula-studio">Torna all’Aula studio</a>
+      </section>
+    } @else if (attempt(); as current) {
+      <header class="quiz-heading">
+        <div>
+          <p class="quiz-eyebrow">Quiz · {{ current.snapshot.questions.length }} domande</p>
+          <h1>{{ current.snapshot.title }}</h1>
+          <p>
+            {{
+              current.snapshot.correctionMode === 'immediate'
+                ? 'Correzione domanda per domanda'
+                : 'Correzione alla fine'
+            }}
+            · {{ current.snapshot.shuffleQuestions ? 'ordine casuale' : 'ordine originale' }}
+          </p>
+        </div>
+        <div class="quiz-heading-actions">
+          <a class="btn glass-surface" routerLink="/aula-studio">Esci</a>
+          <button type="button" class="btn glass-surface" [disabled]="saving()" (click)="restart()">
+            Ripeti da capo
+          </button>
+        </div>
+      </header>
+
+      @if (resumed() && current.status === 'in_progress') {
+        <p class="quiz-draft-notice">
+          Hai un tentativo in corso: abbiamo ripristinato tutte le risposte salvate.
+        </p>
+      }
+
+      <aside class="quiz-summary card glass-surface" aria-label="Riepilogo del quiz">
+        <div>
+          <strong>{{ current.correctCount }}/{{ current.assessedCount }}</strong
+          ><span>risposte corrette valutate</span>
+        </div>
+        <div>
+          <strong>{{ current.snapshot.questions.length - current.assessedCount }}</strong
+          ><span>ancora da correggere</span>
+        </div>
+        <div class="quiz-summary-actions">
+          <button type="button" class="btn glass-surface" (click)="copyOpenAnswers()">
+            Copia risposte aperte
+          </button>
+          <button type="button" class="btn glass-surface" (click)="copyWrongAnswers()">
+            Copia risposte sbagliate
+          </button>
+        </div>
+      </aside>
+
+      <section class="quiz-sheet card" [class.is-completed]="current.status === 'completed'">
+        @for (question of current.snapshot.questions; track question.id; let index = $index) {
+          <article
+            class="quiz-question"
+            [class.is-correct]="answerFor(question).corrected && isQuestionCorrect(question)"
+            [class.is-wrong]="answerFor(question).corrected && !isQuestionCorrect(question)"
+          >
+            <header>
+              <div>
+                <span class="quiz-question-number">{{ index + 1 }}</span>
+                <span class="quiz-question-type">{{
+                  question.type === 'open'
+                    ? 'Risposta aperta'
+                    : question.type === 'multiple'
+                      ? 'Più risposte'
+                      : 'Una risposta'
+                }}</span>
+              </div>
+              <button
+                type="button"
+                class="quiz-copy"
+                (click)="copyQuestion(question)"
+                aria-label="Copia domanda e risposta"
+              >
+                ⧉ Copia
+              </button>
+            </header>
+            <h2>{{ question.prompt }}</h2>
+            @if (question.imageUrl) {
+              <img
+                class="quiz-question-image"
+                [src]="question.imageUrl"
+                [alt]="question.imageAlt || ''"
+                referrerpolicy="no-referrer"
+              />
+            }
+
+            @if (question.type === 'open') {
+              <label class="form-field">
+                <span>La tua risposta</span>
+                <textarea
+                  rows="5"
+                  maxlength="10000"
+                  [disabled]="isLocked(question)"
+                  [ngModel]="answerFor(question).text || ''"
+                  (ngModelChange)="updateOpenAnswer(question.id, $event)"
+                  [name]="'open-' + question.id"
+                ></textarea>
+              </label>
+              @if (answerFor(question).revealed) {
+                <div class="quiz-reference">
+                  <strong>Risposta di riferimento</strong>
+                  <p>
+                    {{
+                      question.referenceAnswer ||
+                        'Non è stata indicata una risposta di riferimento.'
+                    }}
+                  </p>
+                </div>
+                <div class="quiz-assessment" aria-label="Valuta la risposta">
+                  <button
+                    type="button"
+                    class="btn"
+                    [class.btn-submit]="answerFor(question).assessment === 'correct'"
+                    [disabled]="saving()"
+                    (click)="assessOpen(question, 'correct')"
+                  >
+                    ✓ Giusta
+                  </button>
+                  <button
+                    type="button"
+                    class="btn"
+                    [class.is-danger]="answerFor(question).assessment === 'incorrect'"
+                    [disabled]="saving()"
+                    (click)="assessOpen(question, 'incorrect')"
+                  >
+                    ✕ Sbagliata
+                  </button>
+                </div>
+              } @else if (
+                current.snapshot.correctionMode === 'immediate' ||
+                current.answers.finalCorrectionShown
+              ) {
+                <button
+                  type="button"
+                  class="btn glass-surface quiz-correct-button"
+                  [disabled]="saving() || !(answerFor(question).text || '').trim()"
+                  (click)="revealOpen(question)"
+                >
+                  ✓ Rivela e correggi risposta
+                </button>
+              }
+            } @else {
+              <div class="quiz-options">
+                @for (option of question.options; track option.id) {
+                  <label
+                    [class.is-selected]="isSelected(question, option.id)"
+                    [class.is-answer-correct]="answerFor(question).corrected && option.correct"
+                    [class.is-answer-wrong]="
+                      answerFor(question).corrected &&
+                      isSelected(question, option.id) &&
+                      !option.correct
+                    "
+                  >
+                    <input
+                      [type]="question.type === 'single' ? 'radio' : 'checkbox'"
+                      [name]="'question-' + question.id"
+                      [checked]="isSelected(question, option.id)"
+                      [disabled]="isLocked(question)"
+                      (change)="selectOption(question, option.id, $any($event.target).checked)"
+                    />
+                    <span>{{ option.text }}</span>
+                  </label>
+                }
+              </div>
+              @if (answerFor(question).corrected) {
+                <p class="quiz-result" [class.is-correct]="isQuestionCorrect(question)">
+                  {{ isQuestionCorrect(question) ? '✓ Risposta corretta' : '✕ Risposta sbagliata' }}
+                </p>
+              } @else if (current.snapshot.correctionMode === 'immediate') {
+                <button
+                  type="button"
+                  class="btn glass-surface quiz-correct-button"
+                  [disabled]="saving() || !canCorrectQuestion(question)"
+                  (click)="correctQuestion(question)"
+                >
+                  ✓ Correggi risposta
+                </button>
+              }
+            }
+          </article>
+        }
+
+        @if (current.status === 'in_progress') {
+          <footer class="quiz-sheet-footer">
+            @if (
+              current.snapshot.correctionMode === 'final' && !current.answers.finalCorrectionShown
+            ) {
+              <button type="button" class="btn btn-submit" [disabled]="saving()" (click)="correctQuiz()">
+                ✓ Correggi quiz
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="btn btn-submit"
+                [disabled]="saving() || !canComplete()"
+                (click)="complete()"
+              >
+                Concludi tentativo
+              </button>
+              @if (!canComplete()) {
+                <small>Correggi e valuta tutte le domande per concludere.</small>
+              }
+            }
+          </footer>
+        } @else {
+          <footer class="quiz-sheet-footer quiz-completed">
+            <strong>Quiz concluso: {{ current.correctCount }}/{{ current.assessedCount }}</strong
+            ><button type="button" class="btn btn-submit" [disabled]="saving()" (click)="restart()">
+              Ripeti il quiz
+            </button>
+          </footer>
+        }
+      </section>
+
+      @if (saving()) {
+        <p class="quiz-save-status" role="status">Salvataggio…</p>
+      }
+      @if (error()) {
+        <p class="quiz-message is-error" role="alert">{{ error() }}</p>
+      }
+      @if (copiedMessage()) {
+        <p class="quiz-copy-status" role="status">{{ copiedMessage() }}</p>
+      }
+
+      <section class="quiz-history" aria-labelledby="quiz-history-title">
+        <header>
+          <p class="quiz-eyebrow">I tentativi</p>
+          <h2 id="quiz-history-title">Storico</h2>
+        </header>
+        @if (history().length === 0) {
+          <p class="quiz-message">Nessun tentativo precedente.</p>
+        }
+        @for (past of history(); track past.id) {
+          <details class="card glass-surface">
+            <summary>
+              <span
+                ><strong>{{ past.nickname || 'Tu' }}</strong> ·
+                {{ past.status === 'completed' ? 'Completato' : 'In corso' }}</span
+              >
+              <span
+                >{{ past.correctCount }}/{{ past.assessedCount }} ·
+                {{ past.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</span
+              >
+            </summary>
+            <div class="quiz-history-body">
+              @for (question of past.snapshot.questions; track question.id; let index = $index) {
+                <article>
+                  <strong>{{ index + 1 }}. {{ question.prompt }}</strong>
+                  @if (question.type === 'open') {
+                    <p>Risposta: {{ past.answers.byQuestion[question.id]?.text || '—' }}</p>
+                    <p>
+                      Valutazione:
+                      {{
+                        past.answers.byQuestion[question.id]?.assessment === 'correct'
+                          ? 'giusta'
+                          : past.answers.byQuestion[question.id]?.assessment === 'incorrect'
+                            ? 'sbagliata'
+                            : 'non valutata'
+                      }}
+                    </p>
+                  } @else if (
+                    past.answers.byQuestion[question.id]?.corrected &&
+                    !isCorrectForAttempt(past, question)
+                  ) {
+                    <p>Risposta data: {{ optionTexts(past, question, false) }}</p>
+                    <p>Risposta corretta: {{ optionTexts(past, question, true) }}</p>
+                  }
+                </article>
+              }
+            </div>
+          </details>
+        }
+      </section>
+    }
+  </main>
+</app-shell>

@@ -51,6 +51,7 @@ const ALLOWED_EVENTS = new Set([
   "study_deck_shuffled",
   "study_session_completed",
   "study_session_ended",
+  "quiz_started",
   "admin_log_viewed",
   "content_export_downloaded",
   "barattolo_biglietto_pescato",

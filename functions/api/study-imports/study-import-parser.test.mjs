@@ -71,3 +71,52 @@ test("rifiuta un titolo vuoto ma consente argomenti con lo stesso nome", () => {
   assert.ok(result.errors.some((error) => /titolo.*vuoto/.test(error.message)));
   assert.equal(result.totalTopics, 2);
 });
+
+test("distingue flashcard e quiz nello stesso percorso", () => {
+  const result = parseStudyBulkSource(`# Biologia > Cellula
+## Flashcard: Ripasso
+Che cosa contiene il nucleo?
+Il DNA.
+## Quiz: Verifica
+Correzione: fine
+Ordine: casuale
+Opzioni: casuali
+### Singola
+Domanda: Dove si trova il DNA?
+- [x] Nel nucleo
+- [ ] Nei ribosomi
+### Multipla
+Domanda: Quali strutture appartengono alla cellula?
+- [x] Membrana
+- [x] Citoplasma
+- [ ] Radice
+### Aperta
+Domanda: Descrivi il nucleo.
+Immagine: https://example.com/nucleo.jpg
+Testo immagine: Schema del nucleo
+Risposta: Contiene il materiale genetico.`);
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.totalTopics, 1);
+  assert.equal(result.totalQuizzes, 1);
+  assert.equal(result.totalQuizQuestions, 3);
+  assert.equal(
+    result.paths[0].quizzes[0].questions[2].referenceAnswer,
+    "Contiene il materiale genetico.",
+  );
+});
+
+test("valida il numero di risposte corrette per singola e multipla", () => {
+  const result = parseStudyBulkSource(`# Test
+## Quiz: Errori
+### Singola
+Domanda: Una?
+- [x] A
+- [x] B
+### Multipla
+Domanda: Più di una?
+- [x] A
+- [ ] B`);
+  assert.equal(result.errors.length, 2);
+  assert.match(result.errors[0].message, /una sola/);
+  assert.match(result.errors[1].message, /almeno due/);
+});
