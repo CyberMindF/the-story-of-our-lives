@@ -71,39 +71,7 @@
 
     @if (kind() === 'frequenze') {
       @if (isAdmin()) { <p><a class="btn" routerLink="/tavolo-da-gioco/frequenze/prova">🧪 Prova da solo · Admin</a></p> }
-      <section class="play-panel coop-panel">
-        <p class="eyebrow">Cooperativo / Da giocare su due dispositivi</p>
-        @if (room(); as r) {
-          @if (r.status === 'waiting') {
-            <div class="empty-note"><span>📡</span><h2>Manca il secondo giocatore!</h2><p>{{ r.owner.name }} ha aperto la stanza. L’altra persona deve aprire questa stessa pagina dal proprio account.</p></div>
-            @if (r.owner.id !== userId()) { <button type="button" class="btn primary" [disabled]="busy()" (click)="act('join', { id: r.id })">Entra nella partita</button> }
-          } @else if (r.status === 'playing') {
-            <div class="action-row"><span class="pill">Serratura {{ r.round + 1 }} / 3</span><span>{{ r.errors }} tentativi errati</span></div>
-            <h2>{{ r.role === 'explorer' ? 'Tu vedi i simboli.' : 'Tu hai la legenda.' }}</h2>
-            <p>{{ r.role === 'explorer' ? 'Descrivi i simboli nell’ordine in cui li vedi. La guida conosce i numeri e la regola segreta di questa serratura.' : 'Ascolta i simboli descritti dall’altra persona. La legenda e la regola qui sotto sono visibili soltanto a te.' }} Parlate a voce o usate la chat del mondo.</p>
-            @if (r.role === 'explorer') {
-              <div class="symbol-strip" aria-label="Sequenza da descrivere">@for (symbol of r.sequence; track $index) { <span>{{ symbol }}</span> }</div>
-              <p class="muted">{{ r.ready ? 'La guida è pronta. Componi il codice.' : 'Aspetta che la guida confermi di essere pronta.' }}</p>
-              <output class="code" aria-live="polite" aria-label="Codice composto">{{ code().padEnd(r.round + 4, '') }}</output>
-              <div class="keypad">@for (n of numbers; track n) { <button type="button" class="btn" [disabled]="busy() || !r.ready || code().length >= r.round + 4" (click)="digit(n)">{{ n }}</button> }</div>
-              <div class="action-row centered"><button type="button" class="btn" [disabled]="busy() || !code()" (click)="code.set(code().slice(0, -1))">Cancella cifra</button><button type="button" class="btn primary" [disabled]="busy() || !r.ready || code().length !== r.round + 4" (click)="act('answer', { id: r.id, code: code() })">Apri la serratura</button></div>
-            } @else {
-              <p class="feedback instruction"><strong>La regola della serratura</strong><br />{{ r.instruction }}</p>
-              <div class="legend">@for (entry of r.legend; track entry.symbol) { <div><span>{{ entry.symbol }}</span><strong>{{ entry.number }}</strong></div> }</div>
-              <button type="button" class="btn primary" [disabled]="busy() || r.ready" (click)="act('ready', { id: r.id })">{{ r.ready ? 'Ora puoi guidare l’altra persona!' : 'Ho la legenda, sono pronta/o' }}</button>
-            }
-            @if (r.lastWrong) { <p role="status" class="feedback">Non ancora! Controllate l’ordine dei simboli e riprovate: nessun progresso perso.</p> }
-          } @else {
-            <div class="empty-note"><span>🎉</span><h2>{{ r.status === 'won' ? 'Fatto! Tutte aperte 🎉' : 'Stanza chiusa.' }}</h2><p>{{ r.status === 'won' ? 'Tre serrature aperte insieme, con ' + r.errors + ' tentativi errati. Un altro giro? Simboli e combinazioni cambieranno.' : 'Potete aprire una nuova partita quando volete.' }}</p></div>
-            <button type="button" class="btn primary" [disabled]="busy()" (click)="act('create')">Un’altra frequenza</button>
-          }
-          @if (r.owner.id === userId() && (r.status === 'waiting' || r.status === 'playing')) { <p><button type="button" class="text-button" [disabled]="busy()" (click)="cancelRoom(r.id)">Chiudi la partita</button></p> }
-        } @else {
-          <div class="empty-note"><span>🧩</span><h2>Uno legge, l’altro decifra.</h2><p>Uno vede la sequenza, l’altro la chiave. Aprite tre serrature comunicando e scambiandovi i ruoli. Nessun conto alla rovescia, combinazioni nuove a ogni partita.</p></div>
-          <button type="button" class="btn primary" [disabled]="busy()" (click)="act('create')">Apri una stanza per due</button>
-        }
-        @if (state.history?.length) { <details class="history"><summary>Le vostre partite precedenti</summary><ul>@for (item of state.history; track item.id) { <li>{{ item.at | date:'dd/MM HH:mm' }} · {{ item.status === 'won' ? 'Completata · ' + item.errors + ' errori' : 'Interrotta' }}</li> }</ul></details> }
-      </section>
+      <app-coop-room [state]="state" [busy]="busy()" [userId]="userId()" (command)="act($event.type, $event)" />
     }
 
     @if (kind() === 'nuvola') {

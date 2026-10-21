@@ -1,0 +1,108 @@
+@if (room(); as r) {
+  @if (r.schema === 2) {
+    @if (r.status === 'waiting') {
+      <section class="coop-panel waiting"><span class="big-icon">📡</span><h2>Manca il secondo giocatore!</h2><p>{{ r.owner.name }} ha aperto una partita: {{ r.total }} {{ r.total === 1 ? 'prova' : 'prove' }} · {{ difficultyName(r.difficulty) }}.</p><p>L’altra persona deve aprire questa pagina dal proprio account. Potete parlare a voce o usare la chat.</p>
+        @if (r.owner.id !== userId()) { <button class="btn primary" [disabled]="busy()" (click)="send('join')">Entra nella partita</button> }
+      </section>
+    } @else if (r.status === 'playing') {
+      @if (r.puzzle; as p) {
+        <section class="coop-panel puzzle-panel" [class.compact]="compact()">
+          <div class="puzzle-meta"><span>Prova {{ r.round + 1 }}/{{ r.total }} · {{ difficultyName(p.difficulty) }}</span><span>Il tuo lato: {{ r.seat === 0 ? 'A' : 'B' }}</span></div>
+          <h2>{{ p.emoji }} {{ p.title }}</h2><p class="objective">{{ p.objective }}</p><p class="private-note">👀 {{ p.instructions }}</p>
+          @switch (p.type) {
+            @case ('code') {
+              @if (p.role === 'explorer') {
+                <div class="symbol-strip" aria-label="Sequenza da descrivere">@for (symbol of p.sequence; track $index) { <span>{{ symbol }}</span> }</div>
+                <p>{{ p.ready ? 'La legenda è pronta. Tocca i quattro numeri.' : 'Aspetta che l’altra persona confermi la legenda.' }}</p>
+                <output class="code" aria-live="polite" aria-label="Codice composto">{{ code() || '…' }}</output>
+                <div class="keypad">@for (n of numbers; track n) { <button class="btn" [disabled]="busy() || !p.ready || code().length >= 4" (click)="digit(n)">{{ n }}</button> }</div>
+                <div class="button-row"><button class="btn" [disabled]="busy() || !code()" (click)="code.set(code().slice(0,-1))">Cancella cifra</button><button class="btn primary" [disabled]="busy() || !p.ready || code().length !== 4" (click)="submitCode('code-answer')">Apri il lucchetto</button></div>
+              } @else {
+                <div class="legend">@for (entry of p.legend; track entry.symbol) { <div><span>{{ entry.symbol }}</span><strong>{{ entry.number }}</strong></div> }</div>
+                <button class="btn primary" [disabled]="busy() || p.ready" (click)="send('code-ready')">{{ p.ready ? 'Legenda pronta!' : 'Ho la legenda, sono pronta/o' }}</button>
+              }
+            }
+            @case ('maze') {
+              <p class="turn-note" aria-live="polite">{{ p.myTurn ? '🚶 Tocca a te muovere.' : '📣 Tocca all’altra persona: aiutala con la tua mappa.' }} Chiavi: {{ p.collected.length }}/{{ p.keys.length }}.</p>
+              <div class="maze-board" [style.--size]="p.size" role="group" aria-label="Mappa condivisa">
+                @for (cell of cells(p.size); track cell) {
+                  <button class="maze-cell" [class.here]="p.position === cell" [class.reachable]="p.myTurn && adjacent(p.position,cell,p.size)"
+                    [style.border-top-style]="edge(p,cell,0,r.seat)" [style.border-right-style]="edge(p,cell,1,r.seat)" [style.border-bottom-style]="edge(p,cell,2,r.seat)" [style.border-left-style]="edge(p,cell,3,r.seat)"
+                    [disabled]="busy() || !p.myTurn || !adjacent(p.position,cell,p.size)"
+                    [attr.aria-label]="coordinate(cell,p.size) + (p.position === cell ? ', posizione attuale' : p.goal === cell ? ', uscita' : p.keys.includes(cell) && !p.collected.includes(cell) ? ', chiave' : '')"
+                    (click)="send('maze-move',{cell})"><small>{{ coordinate(cell,p.size) }}</small><span>{{ p.position === cell ? '🚶' : p.keys.includes(cell) && !p.collected.includes(cell) ? '🔑' : cell === p.goal ? '🏁' : '' }}</span></button>
+                }
+              </div><p class="hint">Bordo continuo = muro. Nessun bordo = passaggio. Bordo tratteggiato = chiedi all’altra persona. Dopo ogni passo vi scambiate i comandi.</p>
+            }
+            @case ('circuit') {
+              <h3>Le tue lampadine</h3><div class="lamps">@for (lamp of p.lights; track lamp.index) { <div [class.lamp-on]="lamp.on" [class.correct]="lamp.on === lamp.target"><strong>{{ lamp.on ? '💡' : '🌑' }} L{{ lamp.index + 1 }}</strong><span>{{ lamp.on ? 'Accesa' : 'Spenta' }}</span><small>Obiettivo: {{ lamp.target ? 'accesa' : 'spenta' }}</small></div> }</div>
+              <h3>I tuoi interruttori</h3><div class="switches">@for (lever of p.switches; track lever.index) { <button class="btn switch" [disabled]="busy()" [attr.aria-pressed]="lever.on" (click)="send('circuit-toggle',{index:lever.index})"><strong>🎚️ T{{ lever.index + 1 }} · {{ lever.on ? 'ON' : 'OFF' }}</strong><small>Cambia {{ lampNames(lever.lights) }}</small></button> }</div><p class="hint">I tuoi interruttori possono cambiare anche le luci dell’altro lato. Quando tutti gli obiettivi coincidono, la prova è risolta.</p>
+            }
+            @case ('order') {
+              <div class="clues"><h3>📝 I tuoi indizi</h3><ul>@for (clue of p.clues; track $index) { <li>{{ clue }}</li> }</ul></div>
+              <ol class="ordered-items">@for (item of ordered(p); track item.id; let i = $index) { <li><span class="position">{{ i + 1 }}</span><strong>{{ item.emoji }} {{ item.name }}</strong><div><button class="btn" [disabled]="busy() || i === 0" [attr.aria-label]="'Sposta prima ' + item.name" (click)="send('order-move',{from:i,to:i-1})">⬆️</button><button class="btn" [disabled]="busy() || i === p.order.length-1" [attr.aria-label]="'Sposta dopo ' + item.name" (click)="send('order-move',{from:i,to:i+1})">⬇️</button></div></li> }</ol>
+              <button class="btn primary" [disabled]="busy() || p.confirmed[r.seat]" (click)="send('order-check')">{{ p.confirmed[r.seat] ? 'Hai confermato questo ordine' : 'Per me l’ordine è giusto' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra persona ha confermato.' : 'La soluzione si controlla quando confermate entrambi.' }} Cambiare ordine annulla entrambe le conferme.</p>
+            }
+            @case ('dossier') {
+              <div class="clues"><h3>🕵️ I tuoi indizi</h3><ul>@for (clue of p.clues; track $index) { <li>{{ clue }}</li> }</ul></div>
+              <div class="suspects">@for (suspect of p.suspects; track suspect.id) { <article [class.chosen]="p.votes[r.seat] === suspect.id"><h3>{{ suspect.emoji }} {{ suspect.name }}</h3><dl><dt>Colore</dt><dd>{{ suspect.attributes.color }}</dd><dt>Oggetto</dt><dd>{{ suspect.attributes.item }}</dd><dt>Luogo</dt><dd>{{ suspect.attributes.place }}</dd></dl><button class="btn" [disabled]="busy() || p.votes[r.seat] === suspect.id" (click)="send('dossier-vote',{candidate:suspect.id})">{{ p.votes[r.seat] === suspect.id ? '✅ La tua scelta' : 'Scelgo ' + suspect.name }}</button>@if (p.votes[1-r.seat] === suspect.id) { <small>👈 Scelta dell’altra persona</small> }</article> }</div>
+              <p class="hint">Scegliete entrambi lo stesso candidato per controllare la risposta. Se non siete d’accordo, confrontate gli indizi e cambiate scelta.</p>
+            }
+            @case ('mosaic') {
+              <div class="nonogram" [style.--size]="p.size"><span></span>@for (col of indices(p.size); track col) { <span class="col-clue"><small>{{ col + 1 }}</small>{{ p.columnClues ? (p.columnClues[col].join(' · ') || '0') : '?' }}</span> }
+                @for (row of indices(p.size); track row) { <span class="row-clue"><small>{{ coordinate(row*p.size,p.size).slice(0,1) }}</small>{{ p.rowClues ? (p.rowClues[row].join(' · ') || '0') : '?' }}</span>@for (col of indices(p.size); track col) { @let cell = row * p.size + col;
+                  <button class="mosaic-cell" [class.filled]="p.grid[cell]" [class.owned]="p.ownedCells.includes(cell)" [disabled]="busy() || !p.ownedCells.includes(cell)" [attr.aria-pressed]="p.grid[cell]" [attr.aria-label]="coordinate(cell,p.size) + (p.ownedCells.includes(cell) ? ', tua casella' : ', casella dell’altra persona') + (p.grid[cell] ? ', piena' : ', vuota')" (click)="send('mosaic-toggle',{cell})">{{ p.grid[cell] ? '🟦' : p.ownedCells.includes(cell) ? '' : '🔒' }}</button>
+                } }
+              </div>
+              <p class="hint">I numeri indicano gruppi di caselle piene, separati da almeno una vuota. “2 · 1” significa due piene, uno spazio o più, poi una piena. Tocca solo le caselle con il tuo bordo; raccontatevi i numeri mancanti.</p>
+              <button class="btn primary" [disabled]="busy() || p.confirmed[r.seat]" (click)="send('mosaic-check')">{{ p.confirmed[r.seat] ? 'Hai confermato il mosaico' : 'Per me il mosaico è pronto' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra persona ha confermato.' : 'Aspettiamo la conferma di entrambi.' }}</p>
+            }
+            @case ('balance') {
+              <div class="balance-target">⚖️ Obiettivo comune <strong>{{ p.target }}</strong></div><p>Scegli due pesi: gli altri due li mette l’altra persona. Tocca di nuovo un peso selezionato per toglierlo.</p>
+              <div class="weights">@for (weight of p.weights; track weight.index) { <button class="btn weight" [class.chosen]="weight.selected" [disabled]="busy()" [attr.aria-pressed]="weight.selected" (click)="send('balance-toggle',{index:weight.index})"><span>{{ weight.selected ? '✅' : '📦' }}</span><strong>{{ weight.value }}</strong><small>Peso {{ weight.index + 1 }}</small></button> }</div>
+              <p>Il tuo contributo: <strong>{{ sum(p) }}</strong> · Hai scelto {{ p.selectedCounts[r.seat] }}/2 pesi.<br />L’altra persona ne ha scelti {{ p.selectedCounts[1-r.seat] }}/2. Chiedile quanto pesano!</p>
+              <button class="btn primary" [disabled]="busy() || p.selectedCounts[r.seat] !== 2 || p.confirmed[r.seat]" (click)="send('balance-check')">{{ p.confirmed[r.seat] ? 'Hai confermato i tuoi pesi' : 'Controlliamo il carico' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra persona ha confermato.' : 'Confermate entrambi per controllare la somma.' }}</p>
+            }
+            @case ('pipes') {
+              <div class="pipes-board" [style.--size]="p.size" role="group" aria-label="Circuito da collegare">@for (cell of p.cells; track cell.index) { <button class="pipe-cell" [class.owned]="cell.owned" [class.lit]="cell.lit" [disabled]="busy() || !cell.owned" [attr.aria-label]="coordinate(cell.index,p.size) + ', ' + portNames(cell.ports)" (click)="send('pipes-rotate',{cell:cell.index})"><small>{{ coordinate(cell.index,p.size) }} {{ cell.index === p.source ? 'IN' : cell.index === p.sink ? 'OUT' : '' }}</small>@if (cell.ports) { <svg viewBox="0 0 100 100" aria-hidden="true">@for (port of cell.ports; track port) { <line x1="50" y1="50" [attr.x2]="portX(port)" [attr.y2]="portY(port)" /> }<circle cx="50" cy="50" r="10" /></svg> } @else { <span>🔒</span> }</button> }</div>
+              <p class="hint">Ingresso a sinistra di IN, uscita a destra di OUT. Tocca un tuo tubo per ruotarlo di 90°. I tubi dell’altra persona sono nascosti: descrivete le aperture usando le coordinate. Il percorso alimentato non deve perdere; i tubi fuori percorso possono restare scollegati.</p>
+              <button class="btn primary" [disabled]="busy() || p.confirmed[r.seat]" (click)="send('pipes-check')">{{ p.confirmed[r.seat] ? 'Hai confermato i collegamenti' : 'Proviamo ad accenderlo' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra persona ha confermato.' : 'La prova parte quando confermate entrambi.' }}</p>
+            }
+          }
+          @if (r.message) { <p class="feedback" role="status">{{ r.message }}</p> }
+          <footer class="puzzle-footer"><span>{{ r.roundMoves }} azioni · {{ r.roundErrors }} errori · {{ r.hintsUsed }} aiuti</span><div class="button-row"><button class="btn" [disabled]="busy() || r.hintsUsed >= 3" (click)="send('hint')">💡 {{ r.hintsUsed ? 'Altro suggerimento' : 'Un suggerimento' }} ({{ r.hintsUsed }}/3)</button><button class="text-button" [disabled]="busy() || r.restartReady[r.userSeat]" (click)="send('restart-puzzle')">{{ r.restartReady[r.userSeat] ? 'Aspettiamo l’altra persona' : r.restartReady[1-r.userSeat] ? 'Conferma nuovo schema' : 'Proviamo un altro schema' }}</button></div>
+            @if (p.hints.length) { <ol class="hints">@for (hint of p.hints; track $index) { <li>{{ hint }}</li> }</ol> }
+          </footer>
+        </section>
+      }
+    } @else if (r.status === 'between' || r.status === 'won') {
+      <section class="coop-panel results"><span class="big-icon">🎉</span><h2>{{ r.status === 'won' ? 'Partita completata!' : 'Prova superata!' }}</h2><p>{{ r.results.length }}/{{ r.total }} prove · {{ r.errors }} errori. Nessuna fretta: il tempo è solo un riepilogo, non una penalità.</p>
+        <div class="result-list">@for (result of r.results; track $index) { <article><strong>{{ result.emoji }} {{ result.title }}</strong><span>{{ result.moves }} azioni · {{ result.errors }} errori · {{ result.hints }} aiuti · circa {{ minutes(result.durationMs) }} min</span></article> }</div>
+        @if (r.status === 'between') { <button class="btn primary" [disabled]="busy() || r.nextReady[r.userSeat]" (click)="send('next')">{{ r.nextReady[r.userSeat] ? 'Pronto! Aspettiamo l’altra persona' : 'Pronto per la prossima prova' }}</button> }
+      </section>
+    } @else { <p class="feedback">Partita chiusa. Potete scegliere un’altra prova.</p> }
+  } @else {
+    <section class="coop-panel legacy"><p class="hint">Partita del codice già iniziata: potete finirla normalmente.</p>
+      @if (r.status === 'waiting') { <h2>Manca il secondo giocatore!</h2><p>{{ r.owner.name }} ha aperto la stanza.</p>@if (r.owner.id !== userId()) { <button class="btn primary" [disabled]="busy()" (click)="send('join')">Entra nella partita</button> } }
+      @else if (r.status === 'playing') {
+        <p>Serratura {{ r.round + 1 }}/3 · {{ r.errors }} errori</p><h2>{{ r.role === 'explorer' ? 'Tu vedi i simboli.' : 'Tu hai la legenda.' }}</h2>
+        @if (r.role === 'explorer') { <div class="symbol-strip">@for (symbol of r.sequence; track $index) { <span>{{ symbol }}</span> }</div><output class="code">{{ code() || '…' }}</output><div class="keypad">@for (n of numbers; track n) { <button class="btn" [disabled]="busy() || !r.ready || code().length >= r.round+4" (click)="digit(n,r.round+4)">{{ n }}</button> }</div><div class="button-row"><button class="btn" [disabled]="busy() || !code()" (click)="code.set(code().slice(0,-1))">Cancella cifra</button><button class="btn primary" [disabled]="busy() || !r.ready || code().length !== r.round+4" (click)="submitCode('answer')">Apri la serratura</button></div> }
+        @else { <p class="instruction">{{ r.instruction }}</p><div class="legend">@for (entry of r.legend; track entry.symbol) { <div><span>{{ entry.symbol }}</span><strong>{{ entry.number }}</strong></div> }</div><button class="btn primary" [disabled]="busy() || r.ready" (click)="send('ready')">{{ r.ready ? 'Legenda pronta!' : 'Ho la legenda, sono pronta/o' }}</button> }
+        @if (r.lastWrong) { <p role="status">Codice sbagliato. Potete riprovare.</p> }
+      } @else { <h2>{{ r.status === 'won' ? 'Fatto! Tutte aperte 🎉' : 'Stanza chiusa.' }}</h2> }
+    </section>
+  }
+  @if (r.owner.id === userId() && ['waiting','playing','between'].includes(r.status)) { <p class="close-game"><button class="text-button" [disabled]="busy()" (click)="cancel()">Chiudi la partita</button></p> }
+}
+@if (!room() || room()?.status === 'won' || room()?.status === 'cancelled') {
+  @if (canCreate()) {
+    <section class="coop-panel setup"><h2>Che prova facciamo?</h2><p>Non vedete le stesse cose e non avete tutti i comandi. Parlatevi, provate, ragionate insieme. Il codice è solo il riscaldamento.</p>
+      <div class="setup-fields"><label>Tipo di partita<select [ngModel]="mode()" (ngModelChange)="mode.set($event)"><option value="mix">🎲 Partita mista</option>@for (item of state().catalog; track item.id) { <option [value]="item.id">{{ item.emoji }} {{ item.title }}</option> }</select></label>
+        <label>Difficoltà<select [disabled]="mode() === 'code'" [ngModel]="mode() === 'code' ? 'easy' : difficulty()" (ngModelChange)="difficulty.set($event)"><option value="easy">Facile</option><option value="normal">Normale</option><option value="hard">Difficile</option></select></label>
+        @if (mode() === 'mix') { <label>Quante prove?<select [ngModel]="length()" (ngModelChange)="length.set($event)"><option [ngValue]="3">3 prove diverse</option><option [ngValue]="5">5 prove diverse</option><option [ngValue]="8">Giro completo: tutte e 8</option></select></label> }
+      </div><button class="btn primary" [disabled]="busy()" (click)="create()">Apri una stanza per due</button><p class="hint">Niente conto alla rovescia. Potete uscire e riprendere; gli errori non cancellano le prove finite. Le partite miste da 3 o 5 prove partono dai nuovi puzzle, senza ripetizioni.</p>
+      <details [open]="!compact()" class="catalog"><summary>Le {{ state().catalog?.length ?? 8 }} prove</summary><div class="catalog-grid">@for (item of state().catalog; track item.id) { <button type="button" [attr.aria-pressed]="mode() === item.id" (click)="mode.set(item.id)"><span>{{ item.emoji }}</span><strong>{{ item.title }}</strong><small>{{ item.description }}</small></button> }</div></details>
+    </section>
+  } @else { <p>Apri prima una stanza con il giocatore A.</p> }
+}
+@if (state().history?.length) { <details class="history"><summary>📒 Le vostre partite precedenti</summary>@for (item of state().history; track item.id) { <article><p>{{ item.at | date:'dd/MM HH:mm' }} · {{ item.status === 'won' ? 'Completata' : 'Interrotta' }} · {{ item.errors }} errori</p>@if (item.results?.length) { <ul>@for (result of item.results; track $index) { <li>{{ result.emoji }} {{ result.title }}: {{ result.errors }} errori, {{ result.hints }} aiuti, {{ result.moves }} azioni</li> }</ul> }</article> }</details> }

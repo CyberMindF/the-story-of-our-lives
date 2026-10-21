@@ -64,15 +64,17 @@ test('API: prova admin con due ruoli, isolata dalla partita reale e dagli altri 
   try {
     assert.equal((await call('frequenze?practice=1', undefined, '2')).status, 403);
     assert.equal((await call('nuvola?practice=1')).status, 403);
-    const real = await call('frequenze', action('create', 0));
-    const practice = await call('frequenze?practice=1&seat=A', action('create', 0));
+    const real = await call('frequenze', action('create', 0, { mode: 'code' }));
+    const practice = await call('frequenze?practice=1&seat=A', action('create', 0, { mode: 'code' }));
     const joined = await call('frequenze?practice=1&seat=B', action('join', 1, { id: practice.body.room.id }));
     assert.equal(joined.status, 200);
-    assert.equal(joined.body.room.role, 'guide');
-    assert.equal(joined.body.room.legend.length, 8);
+    assert.equal(joined.body.room.puzzle.role, 'guide');
+    assert.equal(joined.body.room.puzzle.legend.length, 8);
+    assert.deepEqual(joined.body.room.puzzle.sequence, []);
     const a = await call('frequenze?practice=1&seat=A');
-    assert.equal(a.body.room.role, 'explorer');
-    assert.equal(a.body.room.sequence.length, 4);
+    assert.equal(a.body.room.puzzle.role, 'explorer');
+    assert.equal(a.body.room.puzzle.sequence.length, 4);
+    assert.deepEqual(a.body.room.puzzle.legend, []);
     assert.equal((await call('frequenze?practice=1', undefined, '3')).body.room, null);
     assert.equal((await call('frequenze', action('practice-reset', 1))).status, 409);
     assert.equal((await call('frequenze?practice=1', action('practice-reset', 2))).body.room, null);
@@ -106,5 +108,68 @@ test('API: completamento simultaneo del memory e reinvio non duplicano il premio
     assert.equal((await call('nuvola', actions[winner], String(winner + 1))).body.coins, 46);
     assert.equal((await call('nuvola', { ...actions[0], version: 2, requestId: crypto.randomUUID() })).status, 409);
     assert.equal((await call('nuvola')).body.coins, 46);
+  } finally { db.close(); }
+});
+
+test('API coop: soluzione privata, idempotenza del completamento e rifiuto di azioni su una vecchia prova', async () => {
+  const { call, db } = harness();
+  const request = (type, version, extra = {}) => ({ type, version, requestId: crypto.randomUUID(), ...extra });
+  try {
+    const created = await call('frequenze', request('create', 0, { mode: 'code' }));
+    assert.equal(created.status, 200); assert.equal(created.body.room.puzzle, null);
+    const id = created.body.room.id;
+    const joined = await call('frequenze', request('join', 1, { id }), '2');
+    assert.equal(joined.status, 200);
+    const puzzleId = joined.body.room.puzzle.id;
+    assert.deepEqual(joined.body.room.puzzle.sequence, []);
+    const explorer = await call('frequenze');
+    assert.deepEqual(explorer.body.room.puzzle.legend, []);
+    assert.equal(explorer.body.room.puzzle.mapping, undefined);
+    assert.equal((await call('frequenze', request('hint', 2, { id, puzzleId: 'stale' }))).status, 409);
+    assert.equal((await call('frequenze')).body.version, 2);
+    assert.equal((await call('frequenze', request('code-ready', 2, { id, puzzleId }), '2')).status, 200);
+    // Oracolo disponibile esclusivamente nel DB in memoria del test, mai nelle risposte HTTP.
+    const saved = JSON.parse(db.prepare('SELECT state_json FROM giochi_due WHERE kind = ?').get('frequenze').state_json);
+    const p = saved.room.puzzle;
+    const answer = request('code-answer', 3, { id, puzzleId, code: p.sequence.map(i => p.mapping[i]).join('') });
+    const won = await call('frequenze', answer);
+    assert.equal(won.status, 200); assert.equal(won.body.room.status, 'won');
+    assert.equal(won.body.room.results.length, 1); assert.equal(won.body.room.puzzle, null);
+    const duplicate = await call('frequenze', answer);
+    assert.equal(duplicate.body.version, 4); assert.deepEqual(duplicate.body.room.results, won.body.room.results);
+    const next = await call('frequenze', request('create', 4, { mode: 'code' }));
+    assert.equal(next.body.history.length, 1);
+    assert.notEqual(next.body.room.id, id);
+    assert.equal((await call('frequenze', request('code-answer', 5, { id, puzzleId, code: answer.code }))).status, 409);
+    assert.equal((await call('frequenze')).body.version, 5);
+  } finally { db.close(); }
+});
+
+test('API coop: due interruttori simultanei mantengono entrambe le mosse dopo il retry senza applicarle due volte', async () => {
+  const { call, db } = harness();
+  const request = (type, version, extra = {}) => ({ type, version, requestId: crypto.randomUUID(), ...extra });
+  try {
+    const created = await call('frequenze', request('create', 0, { mode: 'circuit' }));
+    const id = created.body.room.id;
+    const joined = await call('frequenze', request('join', 1, { id }), '2');
+    assert.equal(joined.status, 200);
+    const puzzleId = joined.body.room.puzzle.id;
+    const actions = [0, 1].map(index => request('circuit-toggle', 2, { id, puzzleId, index }));
+    const results = await Promise.all(actions.map((action, index) => call('frequenze', action, String(index + 1))));
+    assert.deepEqual(results.map(result => result.status).sort(), [200, 409]);
+    const winner = results.findIndex(result => result.status === 200), loser = 1 - winner;
+    const repeated = await call('frequenze', actions[winner], String(winner + 1));
+    assert.equal(repeated.body.version, 3);
+    // Una richiesta persa al compare-and-swap non è stata registrata come già eseguita.
+    const retry = await call('frequenze', { ...actions[loser], version: 3 }, String(loser + 1));
+    assert.equal(retry.status, 200); assert.equal(retry.body.version, 4);
+    const saved = JSON.parse(db.prepare('SELECT state_json FROM giochi_due WHERE kind = ?').get('frequenze').state_json);
+    assert.deepEqual(saved.room.puzzle.active.slice(0, 2), [true, true]);
+    assert.ok(saved.room.puzzle.active.slice(2).every(value => value === false));
+    assert.equal(saved.room.roundMoves, 2);
+    const duplicateRetry = await call('frequenze', { ...actions[loser], version: 3 }, String(loser + 1));
+    assert.equal(duplicateRetry.body.version, 4);
+    assert.equal((await call('frequenze', request('hint', 4, { id, puzzleId: 'old-puzzle' }))).status, 409);
+    assert.equal((await call('frequenze')).body.version, 4);
   } finally { db.close(); }
 });

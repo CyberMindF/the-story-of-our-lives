@@ -1,5 +1,6 @@
 import { GameError } from './_errors.mjs';
 import { newPets, applyPets, petsView } from './_pets.mjs';
+import { applyCoop, coopView, COOP_CATALOG } from './_coop.mjs';
 export { GameError } from './_errors.mjs';
 export const SYMBOLS = ['🌞', '🌙', '⭐', '🍎', '💚', '🌸', '🍕', '🎈'];
 const INSTRUCTIONS = [
@@ -33,23 +34,13 @@ export function validateTraps(traps) {
     && traps.every(n => Number.isInteger(n) && n > 0 && n < 24), 'Scegli esattamente 6 caselle diverse, senza partenza e arrivo.');
   requireThat(safeDistance(traps) <= 10, 'Lascia una strada senza trappole lunga al massimo 10 passi.');
 }
-function shuffle(values) {
-  const result = [...values];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
-function round() {
-  return { mapping: shuffle([1, 2, 3, 4, 5, 6, 7, 8]), sequence: shuffle([0, 1, 2, 3, 4, 5, 6, 7]), ready: false };
-}
 export function operatorId(room) { return room.round % 2 === 0 ? room.owner.id : room.partner?.id; }
 export function romeDay(now) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(now));
 }
 export function applyAction(kind, original, action, user, now = Date.now()) {
   if (kind === 'nuvola') return applyPets(original, action, user, now);
+  if (kind === 'frequenze' && (action.type === 'create' || original.room?.schema === 2)) return applyCoop(original, action, user, now);
   const state = structuredClone(original);
   const actor = { id: user.id, name: user.nickname };
   if (kind === 'trappole') {
@@ -100,13 +91,7 @@ export function applyAction(kind, original, action, user, now = Date.now()) {
       if (c.status !== 'open') a.finishedAt = now;
     } else throw new GameError('Azione non valida.');
   } else if (kind === 'frequenze') {
-    if (action.type === 'create') {
-      requireThat(!state.room || ['won', 'cancelled'].includes(state.room.status), 'C’è già una partita da completare.');
-      if (state.room) state.history.unshift({ id: state.room.id, status: state.room.status, errors: state.room.errors, at: state.room.finishedAt ?? now });
-      state.history = state.history.slice(0, 20);
-      state.room = { id: crypto.randomUUID(), owner: actor, partner: null, status: 'waiting', round: 0, rounds: [round(), round(), round()], errors: 0, startedAt: now, lastWrong: false };
-      return state;
-    }
+    // Solo compatibilità con le stanze precedenti: create usa sempre il nuovo motore.
     const r = state.room;
     requireThat(r && r.id === action.id && !['won', 'cancelled'].includes(r.status), 'La partita non è più attiva.', 409);
     if (action.type === 'join') {
@@ -148,7 +133,7 @@ export function publicState(kind, state, userId, now = Date.now()) {
   }) };
   if (kind === 'frequenze') {
     const r = state.room;
-    if (!r) return { room: null, history: state.history };
+    if (!r || r.schema === 2) return coopView(state, userId);
     const operator = userId === operatorId(r);
     const current = r.rounds[r.round];
     const participant = [r.owner.id, r.partner?.id].includes(userId);
@@ -156,7 +141,7 @@ export function publicState(kind, state, userId, now = Date.now()) {
     return { room: { ...safe, role: operator ? 'explorer' : 'guide', ready: current.ready,
       instruction: participant && !operator && r.status === 'playing' ? INSTRUCTIONS[r.round] : null,
       sequence: participant && operator && r.status === 'playing' ? current.sequence.slice(0, r.round + 4).map(i => SYMBOLS[i]) : [],
-      legend: participant && !operator && r.status === 'playing' ? SYMBOLS.map((symbol, i) => ({ symbol, number: current.mapping[i] })) : [] }, history: state.history };
+      legend: participant && !operator && r.status === 'playing' ? SYMBOLS.map((symbol, i) => ({ symbol, number: current.mapping[i] })) : [] }, history: state.history, catalog: COOP_CATALOG };
   }
   return petsView(state, userId, now);
 }

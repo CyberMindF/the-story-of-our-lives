@@ -199,7 +199,7 @@ Le tre pagine sono collegate da una barra di pillole in cima (`.ipdv-nav`, stess
 Dal Tavolo da Gioco, tre ingressi portano a pagine indipendenti, senza collegamenti incrociati:
 
 - `/tavolo-da-gioco/trappole`: griglia 5×5, sei trappole, 12 energia, bandierine e una sonda gratuita su una casella vicina. Primo ingresso su una trappola: costo 3; altri passi: costo 1. Le nuove mappe devono avere una strada sicura di massimo 10 passi. Restano le ultime 30 sfide, con replay del percorso. Le sfide precedenti mantengono le regole originali (18 energia).
-- `/tavolo-da-gioco/frequenze`: tre serrature con combinazioni generate, legenda privata della guida, sequenza privata dell’esploratore e regole diverse per l’ordine del codice. I ruoli si alternano; entrambi devono entrare dai propri account. Sono conservate la partita in corso e le ultime 20 partite precedenti. Gli admin trovano **Prova da solo**: due pannelli controllabili in `/frequenze/prova`, con stato separato per admin (`practice:<id>`) e reset esclusivamente della prova.
+- `/tavolo-da-gioco/frequenze`: otto famiglie di puzzle cooperativi, selezionabili singolarmente o in una partita mista da 3, 5 o 8 prove, con difficoltà facile/normale/difficile. I ruoli si alternano; entrambi devono entrare dai propri account. Sono conservate la partita in corso e le ultime 20 partite precedenti. Gli admin trovano **Prova da solo**: gli stessi componenti di gioco in due pannelli controllabili in `/tavolo-da-gioco/frequenze/prova`, con stato separato per admin (`practice:<id>`) e reset esclusivamente della prova. Il vecchio formato a tre serrature rimane giocabile fino al termine; le nuove stanze usano lo schema JSON 2 senza migrazioni SQL aggiuntive.
 - `/tavolo-da-gioco/animali`: casa e salvadanaio condivisi, sei specie (gatto, cane, volpe, coniglio, papera, istrice), uova scelte o a sorpresa. Il primo uovo è gratuito, le tre azioni di incubazione lo fanno schiudere; le adozioni successive costano 60 monete e richiedono 18 XP totali per ogni animale già presente. Un uovo in incubazione alla volta, massimo 12 animali. La sorpresa preferisce specie mancanti. I cuccioli crescono di dimensioni fino a 18 XP, senza cambiare disegno.
 
 Gli animali hanno proposte di nome indipendenti per i due utenti: l’altro approva una proposta ancora valida. Il portafoglio parte da 30 monete, senza premi basati sul tempo. Il memory condiviso (12 carte) assegna 4–16 monete secondo i tentativi e 3 XP all’animale selezionato, soltanto al completamento. Carte, accoppiamenti e premio sono verificati dal server; una partita incompleta si riprende anche dall’altro account. Lo shop vende giochi interattivi (scatola, pallina, tunnel, vaschetta), decorazioni e spuntini consumabili. Due giochi possono essere posizionati nella stanza; le reazioni e le preferenze si scoprono usandoli.
@@ -208,7 +208,57 @@ Le cure e le interazioni assegnano +1 XP per animale, utente e attività al gior
 
 La migrazione **`0124_add_giochi_due.sql` va applicata prima del rilascio**. Lo stato D1 è separato per coppia di utenti e attività; la coppia segue la stessa selezione del partner delle carte. Gli account di prova non accedono a queste attività condivise. Le azioni usano versioni e identificativi di richiesta per evitare sovrascritture e doppi invii. La pagina si aggiorna ogni tre secondi soltanto quando visibile; non richiede modifiche al Worker realtime. Gli indizi segreti non sono inclusi nelle risposte API dell’altro ruolo.
 
-Verifiche: `npm run test:giochi-due`; dopo `npm run build`, `node scripts/smoke-giochi-due.mjs` prova due sessioni browser contro l’handler API e SQLite in memoria, senza dati di produzione. Verifica anche la prova admin isolata, uovo/schiusa, proposte di nome, acquisti, premio del memory, persistenza e layout mobile. Genera schermate in una directory temporanea. Non sono inclusi popup promozionali, premi incrociati o il gioco di riordino dei cosmetici.
+Verifiche: `npm run test:giochi-due`; dopo `npm run build`, `node scripts/smoke-giochi-due.mjs` prova due sessioni browser contro l’handler API e SQLite in memoria, senza dati di produzione. Verifica le otto famiglie cooperative, la prova admin isolata, uovo/schiusa, proposte di nome, acquisti, premio del memory, persistenza e layout mobile. Genera schermate in una directory temporanea. Non sono inclusi popup promozionali, premi incrociati o il gioco di riordino dei cosmetici.
+
+### Sulla stessa frequenza: prove e regole
+
+| Prova | Cosa fate | Informazioni e comandi separati |
+| --- | --- | --- |
+| 🔐 Il codice | Traducete quattro simboli in numeri; resta il riscaldamento facile. | Uno ha la sequenza, l’altro la legenda e conferma di essere pronto. |
+| 🧭 Mappa a metà | Raccogliete le chiavi e raggiungete l’uscita su mappe 4×4, 5×5 o 6×6. | Uno vede i passaggi orizzontali, l’altro quelli verticali. Movimento alternato a ogni passo. |
+| 💡 Corto circuito | Invertite gruppi di lampadine fino a raggiungere tutti gli stati richiesti. | Ognuno controlla metà interruttori e vede metà lampadine; gli effetti attraversano i due pannelli. |
+| 📚 Tutto in fila | Riordinate 4–6 oggetti; a difficile entrano distanze, adiacenze, estremità e posizioni escluse, oltre alle precedenze. | Indizi privati diversi, fila comune e conferma di entrambi. |
+| 🔎 Il caso degli otto | Identificate il sospetto compatibile con le testimonianze. | Ogni metà lascia più candidati; solo l’incrocio identifica una persona. Voti indipendenti. |
+| 🎨 Pixel in incognito | Risolvete un nonogram 3×3, 4×4 o 5×5. | Uno legge le righe, l’altro le colonne; ciascuno può modificare solo le proprie celle a scacchiera. |
+| ⚖️ Questione di peso | Scegliete due pesi a testa per ottenere il totale richiesto. | Pesi e subtotali privati, conteggio delle selezioni comune, verifica bilaterale. |
+| 🔌 Circuito spezzato | Ruotate tubi su una griglia 3×3, 4×4 o 5×5 per collegare ingresso e uscita. | Tubi visibili e controllabili a scacchiera. Sono accettati tutti i percorsi validi, non solo quello generato. |
+
+Le partite miste da 3 o 5 prove estraggono famiglie diverse fra i sette nuovi giochi; il giro da 8 le include tutte, iniziando dal codice. Ogni prova ha tre suggerimenti graduali condivisi. Un nuovo schema della stessa famiglia richiede il consenso di entrambi e non azzera errori, azioni, aiuti o tempo già impiegato. Anche il passaggio alla prova successiva richiede entrambi; ogni modifica a fila/mosaico/pesi/tubi annulla le conferme precedenti. Non ci sono timer punitivi, ricompense basate sul tempo o collegamenti con gli altri giochi.
+
+Il riepilogo conserva per ogni prova errori, aiuti, azioni e durata trascorsa (comprende eventuali pause); non è un punteggio competitivo. L’ultima partita resta visibile e viene archiviata quando se ne apre un’altra. I generatori partono da configurazioni risolvibili, con controlli di unicità e tentativi limitati dove necessari. Nel codice server restano soluzioni, mappa completa e indizi dell’altro; i DTO espongono solo campi autorizzati. Ogni comando include identificativo stanza/prova e versione; le richieste obsolete sono rifiutate senza sovrascrivere il progresso. La prova admin usa gli stessi controlli della partita reale, non un simulatore diverso.
+
+### Ricerca di riferimento per il cooperativo — 21 ottobre 2026
+
+Ricerca svolta con tre agenti su videogiochi asimmetrici e giochi da tavolo: **24 titoli di riferimento**, non una pretesa di censire ogni gioco esistente. Le implementazioni sopra sono puzzle originali basati su meccaniche generali: nessun asset, testo, livello o regolamento commerciale è stato copiato integralmente. Le seguenti sono fonti degli autori/editori o relative pagine ufficiali di distribuzione.
+
+| Riferimento | Spunto analizzato |
+| --- | --- |
+| [Keep Talking and Nobody Explodes](https://keeptalkinggame.com/) | Informazioni separate e moduli con procedure differenti. |
+| [We Were Here](https://totalmayhemgames.com/games/we-were-here/) | Descrivere ambienti e indizi che l’altro non vede. |
+| [We Were Here Expeditions](https://support.totalmayhemgames.com/hc/en-us/articles/23286195951773-I-lost-my-progress-I-need-to-select-a-checkpoint-in-We-Were-Here-Expeditions) | Cooperazione suddivisa in prove e checkpoint. |
+| [Tick Tock: A Tale for Two](https://www.ticktockthegame.com/support) | Due dispositivi, informazioni complementari e comunicazione libera. |
+| [The Past Within](https://store.steampowered.com/app/1515210/The_Past_Within/) | Due prospettive diverse dello stesso mistero. |
+| [Operation: Tango](https://www.nintendo.com/us/store/products/operation-tango-switch/) | Ruoli con strumenti e azioni differenti. |
+| [Unsolved Case](https://elevenpuzzles.com/unsolved-case/) | Problemi condivisi con porzioni di indizi e oggetti private. |
+| [Unboxing the Cryptic Killer](https://store.steampowered.com/app/2069040/Unboxing_the_Cryptic_Killer/) | Varietà di enigmi e schermi complementari. |
+| [Parallel Experiment](https://store.steampowered.com/app/2012320/Parallel_Experiment/) | Interdipendenza fra azioni dei due investigatori. |
+| [BOKURA](https://creatorslab.kodansha.co.jp/en/products/1275/) | Percezioni diverse dello stesso spazio. |
+| [In Sink](https://www.insinkgame.com/) | Leve, pulsanti, bilance e strumenti non solo testuali. |
+| [How 2 Escape](https://store.steampowered.com/app/2264140/How_2_Escape/) | Chi agisce dipende dalle informazioni del compagno. |
+| [The Timeless Child](https://store.steampowered.com/app/1792010/The_Timeless_Child__Prologue/) | Collaborazione fra prospettive temporali. |
+| [Hanabi](https://www.cocktailgames.com/jeu/hanabi/) | Gestione degli indizi e informazioni sulle mani altrui. |
+| [Codenames Duet](https://www.czechgames.com/for-press-games/codenames-duet) | Obiettivi privati e indizi condivisi. |
+| [Bomb Busters](https://www.cocktailgames.com/jeu/bomb-busters/) | Deduzione numerica sulle informazioni nascoste. |
+| [Sky Team](https://www.scorpionmasque.com/en/sky-team) | Controlli separati e decisioni che influenzano lo stesso sistema. |
+| [The Crew: Mission Deep Sea](https://www.thamesandkosmos.co.uk/product/the-crew-mission-deep-sea/) | Compiti cooperativi e comunicazione limitata. |
+| [The Fox in the Forest Duet](https://renegadegamestudios.com/fox-in-the-forest-duet/) | Coordinare il movimento condiviso attraverso decisioni individuali. |
+| [The Shipwreck Arcana](https://www.meromorphgames.com/shop/shipwreck-arcana) | Ridurre possibilità tramite vincoli logici. |
+| [Letter Jam](https://www.czechgames.com/games/letter-jam) | Indizi che aiutano altri a ricostruire informazioni invisibili. |
+| [Décorum](https://floodgate.games/products/decorum) | Un’unica disposizione che soddisfa vincoli privati diversi. |
+| [Perspectives](https://www.spacecowboys-games.com/fr/game/perspectives/) | Ricostruzione di un caso tramite osservazioni distribuite. |
+| [Turing Machine](https://www.scorpionmasque.com/en/turingmachine) | Deduzione mediante verifiche logiche; non nasce come gioco asimmetrico, ma prevede anche la variante cooperativa. |
+
+Scelta progettuale: distribuire **anche i controlli**, alternare ragionamento spaziale, numerico e deduttivo, consentire tentativi senza perdere la partita e generare schemi nuovi. Non sono stati implementati cloni completi di questi titoli. Sono rimandati giochi di prese/carte, indizi linguistici con grandi dizionari, avventure narrative persistenti e sfide di precisione in tempo reale: richiedono rispettivamente un altro motore, contenuti editoriali o una sincronizzazione diversa dall’attuale polling. Le otto famiglie hanno regole verificabili sul server e non richiedono servizi AI durante la partita.
 
 ## Redirect legacy
 

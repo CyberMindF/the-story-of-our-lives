@@ -45,8 +45,12 @@ test('trappole: conserva lo storico e permette una rivincita', () => {
   assert.equal(state.challenges.length, 2);
   assert.equal(state.challenges[1].status, 'cancelled');
 });
-test('frequenze: richiede due giocatori, separa gli indizi e alterna i ruoli', () => {
-  let state = applyAction('frequenze', initialState('frequenze'), { type: 'create' }, rory);
+test('frequenze legacy: completa le tre serrature esistenti e passa al nuovo formato solo alla nuova partita', () => {
+  // Una partita salvata prima dell’aggiornamento non deve cambiare regole a metà.
+  let state = { room: { id: 'legacy-room', owner: { id: 1, name: 'Rory' }, partner: null,
+    status: 'waiting', round: 0, errors: 0, startedAt: 1000, lastWrong: false,
+    rounds: Array.from({ length: 3 }, () => ({ mapping: [2, 3, 4, 5, 6, 7, 8, 1],
+      sequence: [0, 1, 2, 3, 4, 5, 6, 7], ready: false })) }, history: [], requests: [] };
   const id = state.room.id;
   assert.throws(() => applyAction('frequenze', state, { type: 'join', id }, rory));
   assert.deepEqual(publicState('frequenze', state, 2).room.legend, []);
@@ -76,6 +80,7 @@ test('frequenze: richiede due giocatori, separa gli indizi e alterna i ruoli', (
   assert.equal(state.room.status, 'won'); assert.equal(state.room.errors, 3);
   state = applyAction('frequenze', state, { type: 'create' }, desy);
   assert.equal(state.history.length, 1); assert.equal(state.room.owner.id, 2);
+  assert.equal(state.room.schema, 2); assert.equal(state.history[0].mode, 'legacy');
 });
 test('trappole: bandierine, sonda singola e ritorno su una trappola già scoperta', () => {
   let state = create(); const id = state.challenges[0].id;

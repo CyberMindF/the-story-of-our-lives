@@ -2,7 +2,8 @@ import { Component, DestroyRef, OnDestroy, computed, inject, signal } from '@ang
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
+import { CoopRoom } from './coop-room';
+import { CoopState } from './coop-models';
 import { AuthService } from '../../core/auth.service';
 import { AppShell } from '../../shell/app-shell';
 import { PetRoom, PetView } from './pet-room';
@@ -14,19 +15,12 @@ interface Challenge {
   clues: Record<number, number>; rules?: number;
   attempt: { player: Actor; position: number; energy: number; steps: number[]; flags?: number[]; probed?: number | null } | null;
 }
-interface Room {
-  id: string; owner: Actor; partner: Actor | null; status: string; round: number; errors: number;
-  role: 'explorer' | 'guide'; ready: boolean; sequence: string[];
-  legend: { symbol: string; number: number }[]; lastWrong: boolean;
-  instruction: string | null;
-}
-interface GameView extends PetView {
-  version: number; partner: string; challenges?: Challenge[]; room?: Room | null;
-  history?: { id: string; status: string; errors: number; at: number }[];
+interface GameView extends PetView, CoopState {
+  partner: string; challenges?: Challenge[];
 }
 
 @Component({
-  selector: 'app-giochi-due', imports: [AppShell, RouterLink, FormsModule, DatePipe, PetRoom],
+  selector: 'app-giochi-due', imports: [AppShell, RouterLink, FormsModule, PetRoom, CoopRoom],
   templateUrl: './giochi-due.html', styleUrl: './giochi-due.css'
 })
 export class GiochiDue implements OnDestroy {
@@ -45,13 +39,11 @@ export class GiochiDue implements OnDestroy {
   protected readonly replay = signal(-1);
   protected readonly draft = signal<number[]>([]);
   protected readonly title = signal('');
-  protected readonly code = signal('');
   protected readonly cells = Array.from({ length: 25 }, (_, n) => n);
   protected readonly MathFloor = Math.floor;
-  protected readonly numbers = [1, 2, 3, 4, 5, 6, 7, 8];
   protected readonly tabs: { id: Kind; icon: string; name: string; description: string }[] = [
     { id: 'trappole', icon: '💣', name: 'Ti preparo una trappola', description: 'Nascondi le trappole. Vediamo chi arriva in fondo!' },
-    { id: 'frequenze', icon: '📡', name: 'Sulla stessa frequenza', description: 'Tu hai gli indizi. L’altro ha il codice. Parlatevi!' },
+    { id: 'frequenze', icon: '📡', name: 'Sulla stessa frequenza', description: 'Metà indizi a testa. Otto modi per capirsi al volo.' },
     { id: 'nuvola', icon: '🐾', name: 'La casa degli animali', description: 'Uova, zampe e qualche disastro sul tappeto.' }
   ];
   protected readonly currentTab = computed(() => this.tabs.find(t => t.id === this.kind())!);
@@ -59,7 +51,6 @@ export class GiochiDue implements OnDestroy {
   protected readonly challenge = computed(() => this.challenges().find(c => c.id === this.selectedId())
     ?? this.challenges().find(c => c.status === 'open' && c.creator.id !== this.userId()) ?? this.challenges()[0]);
   protected readonly ownPending = computed(() => this.challenges().some(c => c.creator.id === this.userId() && c.status === 'open'));
-  protected readonly room = computed(() => this.data()?.room);
   protected readonly isAdmin = this.auth.isAdmin;
   private generation = 0;
   private reading = false;
@@ -77,7 +68,7 @@ export class GiochiDue implements OnDestroy {
       this.generation++;
       this.controller?.abort(); this.reading = false;
       this.kind.set(next); this.data.set(null); this.error.set(''); this.notice.set('');
-      this.code.set(''); this.selectedId.set(''); this.loading.set(true); this.busy.set(false);
+      this.selectedId.set(''); this.loading.set(true); this.busy.set(false);
       void this.refresh();
     });
   }
@@ -108,7 +99,6 @@ export class GiochiDue implements OnDestroy {
 
   private accept(result: GameView): void {
     if (result.version < (this.data()?.version ?? -1)) return;
-    if (result.room?.round !== this.room()?.round || result.room?.id !== this.room()?.id) this.code.set('');
     this.data.set(result);
   }
 
@@ -125,7 +115,6 @@ export class GiochiDue implements OnDestroy {
       if (generation !== this.generation) return false;
       if (!response.ok) throw new Error(result.error || 'Operazione non riuscita.');
       this.accept(result);
-      if (type === 'answer') this.code.set('');
       if (this.kind() === 'nuvola') {
         if (!['memory-flip', 'memory-start'].includes(type) || result.memory?.done) this.notice.set(result.events?.[0]?.text ?? 'Fatto!');
       }
@@ -169,10 +158,6 @@ export class GiochiDue implements OnDestroy {
   }
   protected status(c: Challenge): string {
     return ({ won: 'Percorso conquistato', lost: 'Trappola riuscita', cancelled: 'Ritirata', open: c.attempt ? 'In corso' : 'Da giocare' })[c.status];
-  }
-  protected digit(value: number): void { if (this.code().length < (this.room()?.round ?? 0) + 4) this.code.update(s => s + value); }
-  protected async cancelRoom(id: string): Promise<void> {
-    if (confirm('Chiudere questa partita per entrambi? Potrete iniziarne una nuova.')) await this.act('cancel', { id });
   }
   ngOnDestroy(): void {
     this.generation++; this.controller?.abort(); clearInterval(this.poll);

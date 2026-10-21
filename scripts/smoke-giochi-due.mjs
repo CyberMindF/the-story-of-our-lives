@@ -82,62 +82,163 @@ try {
   await desy.reload(); await desy.getByText('Traguardo raggiunto!', { exact: false }).waitFor();
   await desy.getByRole('slider').fill('0');
   assert.equal(await desy.locator('.play-panel').nth(1).locator('.tile').first().getAttribute('class').then(s => s.includes('current')), true);
-  await go(rory, 'frequenze');
-  await rory.getByRole('button', { name: 'Apri una stanza per due' }).click();
-  await rory.getByRole('heading', { name: 'Manca il secondo giocatore!' }).waitFor();
-  await go(desy, 'frequenze');
-  await desy.getByRole('button', { name: 'Entra nella partita' }).click();
-  for (let turn = 0; turn < 3; turn++) {
-    console.log('Cooperativo, round', turn + 1);
-    const explorer = pages[turn % 2], guide = pages[1 - turn % 2];
-    await explorer.getByRole('heading', { name: 'Tu vedi i simboli.' }).waitFor();
-    await guide.getByRole('heading', { name: 'Tu hai la legenda.' }).waitFor();
-    const legend = await guide.locator('.legend div').evaluateAll(nodes => Object.fromEntries(nodes.map(n => [n.querySelector('span').textContent, n.querySelector('strong').textContent])));
-    const symbols = await explorer.locator('.symbol-strip span').allTextContents();
-    assert.equal(symbols.length, turn + 4);
-    assert.equal(await explorer.locator('.legend').count(), 0);
-    assert.equal(await guide.locator('.symbol-strip').count(), 0);
-    if (!turn) {
-      await explorer.screenshot({ path: join(screenshots, 'frequenze-explorer.png'), fullPage: true });
-      await guide.screenshot({ path: join(screenshots, 'frequenze-guide.png'), fullPage: true });
-    }
-    await guide.getByRole('button', { name: 'Ho la legenda, sono pronta/o' }).click();
-    const instruction = await guide.locator('.instruction').textContent();
-    let digits = symbols.map(symbol => legend[symbol]);
-    if (instruction.includes('al contrario')) digits.reverse();
-    if (instruction.includes('fa un giro')) digits = [...digits.slice(1), digits[0]];
-    for (const digit of digits) await explorer.locator('.keypad').getByRole('button', { name: digit, exact: true }).click();
-    await explorer.getByRole('button', { name: 'Apri la serratura' }).click();
-  }
-  await rory.getByRole('heading', { name: 'Fatto! Tutte aperte 🎉' }).waitFor();
-  await desy.getByRole('heading', { name: 'Fatto! Tutte aperte 🎉' }).waitFor();
-  const realCoop = db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json;
-  await rory.getByRole('link', { name: /Prova da solo/ }).click();
-  await rory.getByRole('button', { name: 'Apri la stanza come A' }).click();
-  await rory.getByRole('button', { name: 'Entra come B' }).click();
-  for (let turn = 0; turn < 3; turn++) {
-    const panels = rory.locator('.screens section');
-    const explorer = panels.nth(turn % 2), guide = panels.nth(1 - turn % 2);
-    await explorer.getByRole('heading', { name: 'Hai la sequenza' }).waitFor();
-    const legend = Object.fromEntries((await guide.locator('.legend span').allTextContents()).map(s => s.split(' = ')));
-    const symbols = (await explorer.locator('.symbols').textContent()).trim().split(' ');
-    let digits = symbols.map(s => legend[s]);
-    if (turn === 1) digits.reverse();
-    if (turn === 2) digits = [...digits.slice(1), digits[0]];
-    await guide.getByRole('button', { name: 'Sono pronto' }).click();
-    await explorer.getByLabel('Codice').fill(digits.join(''));
-    await explorer.getByRole('button', { name: 'Prova il codice' }).click();
-  }
-  await rory.getByRole('heading', { name: '🎉 Prova completata' }).first().waitFor();
-  await rory.screenshot({ path: join(screenshots, 'frequenze-admin.png'), fullPage: true });
-  await rory.getByRole('button', { name: /Azzera la prova/ }).click();
-  await rory.getByRole('button', { name: 'Apri la stanza come A' }).waitFor();
-  assert.equal(db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json, realCoop);
   const clickAction = async (page, locator) => {
     const response = page.waitForResponse(r => r.url().includes('/api/giochi-due/') && r.request().method() === 'POST');
     await locator.click(); const result = await response;
     assert.equal(result.status(), 200, await result.text());
   };
+  const coopState = () => JSON.parse(db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json);
+  const freshPuzzle = async page => {
+    await page.reload(); await page.locator('.puzzle-panel').waitFor();
+  };
+  const coopAction = async (seat, selector) => {
+    const page = pages[seat]; await freshPuzzle(page);
+    await clickAction(page, selector(page));
+  };
+  const coordinate = (cell, size) => String.fromCharCode(65 + Math.floor(cell / size)) + (cell % size + 1);
+  const checkTogether = async label => {
+    for (const seat of [0, 1]) await coopAction(seat, page => page.getByRole('button', { name: label, exact: true }));
+  };
+  const route = (p, goal) => {
+    const queue = [[p.position]], seen = new Set([p.position]);
+    for (const path of queue) {
+      const here = path.at(-1); if (here === goal) return path.slice(1);
+      for (const edge of p.edges) if (edge.includes(here)) {
+        const next = edge.find(cell => cell !== here);
+        if (!seen.has(next)) { seen.add(next); queue.push([...path, next]); }
+      }
+    }
+    throw new Error('Nessun percorso nella fixture maze');
+  };
+  const families = ['code', 'maze', 'circuit', 'order', 'dossier', 'mosaic', 'balance', 'pipes'];
+  for (const family of families) {
+    console.log('Cooperativo, prova', family);
+    await go(rory, 'frequenze');
+    await rory.getByLabel(/^Tipo di partita/).selectOption(family);
+    if (family !== 'code') await rory.getByLabel(/^Difficoltà/).selectOption('easy');
+    await clickAction(rory, rory.getByRole('button', { name: 'Apri una stanza per due' }));
+    await rory.getByRole('heading', { name: 'Manca il secondo giocatore!' }).waitFor();
+    await go(desy, 'frequenze');
+    await clickAction(desy, desy.getByRole('button', { name: 'Entra nella partita' }));
+    await freshPuzzle(rory); await freshPuzzle(desy);
+    await rory.screenshot({ path: join(screenshots, `frequenze-${family}-a-desktop.png`), fullPage: true });
+    await desy.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await desy.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${family} mobile overflow`);
+    await desy.screenshot({ path: join(screenshots, `frequenze-${family}-b-mobile.png`), fullPage: true });
+    await desy.setViewportSize({ width: 1280, height: 960 });
+    const p = coopState().room.puzzle; // Private oracle ONLY in this in-memory harness.
+    if (family === 'code') {
+      const legend = await desy.locator('.legend div').evaluateAll(nodes => Object.fromEntries(nodes.map(n => [n.querySelector('span').textContent, n.querySelector('strong').textContent])));
+      const symbols = await rory.locator('.symbol-strip span').allTextContents();
+      assert.equal(symbols.length, 4); assert.equal(await rory.locator('.legend').count(), 0);
+      assert.equal(await desy.locator('.symbol-strip').count(), 0);
+      await clickAction(desy, desy.getByRole('button', { name: 'Ho la legenda, sono pronta/o' }));
+      await freshPuzzle(rory);
+      for (const digit of symbols.map(symbol => legend[symbol])) await rory.locator('.keypad').getByRole('button', { name: digit, exact: true }).click();
+      await clickAction(rory, rory.getByRole('button', { name: 'Apri il lucchetto' }));
+    } else if (family === 'maze') {
+      for (const target of [...p.keys, p.goal]) {
+        const path = route(coopState().room.puzzle, target);
+        for (const cell of path) {
+          const current = coopState().room.puzzle;
+          await coopAction(current.turn, page => page.locator('.maze-cell').nth(cell));
+        }
+      }
+    } else if (family === 'circuit') {
+      for (let index = 0; index < p.solution.length; index++) if (p.solution[index]) {
+        await coopAction(index % 2, page => page.locator('.switches button').filter({ hasText: `T${index + 1} ·` }));
+      }
+    } else if (family === 'order') {
+      for (let i = 0; i < p.solution.length; i++) {
+        const name = p.items.find(item => item.id === p.solution[i]).name;
+        while (coopState().room.puzzle.order.indexOf(p.solution[i]) > i) {
+          await coopAction(i % 2, page => page.getByRole('button', { name: 'Sposta prima ' + name, exact: true }));
+        }
+      }
+      await checkTogether('Per me l’ordine è giusto');
+    } else if (family === 'dossier') {
+      const name = p.suspects.find(item => item.id === p.solution).name;
+      for (const seat of [0, 1]) await coopAction(seat, page => page.getByRole('button', { name: 'Scelgo ' + name, exact: true }));
+    } else if (family === 'mosaic') {
+      for (let cell = 0; cell < p.solution.length; cell++) if (p.solution[cell]) {
+        const seat = (Math.floor(cell / p.size) + cell % p.size) % 2;
+        await coopAction(seat, page => page.locator('.mosaic-cell').nth(cell));
+      }
+      await checkTogether('Per me il mosaico è pronto');
+    } else if (family === 'balance') {
+      for (const seat of [0, 1]) for (const index of p.solution[seat]) {
+        await coopAction(seat, page => page.locator('.weights button').nth(index));
+      }
+      await checkTogether('Controlliamo il carico');
+    } else if (family === 'pipes') {
+      for (let cell = 0; cell < p.cells.length; cell++) {
+        let turns = 0;
+        while (JSON.stringify(coopState().room.puzzle.cells[cell]) !== JSON.stringify(p.solution[cell])) {
+          assert.ok(turns++ < 4, 'Orientamento irraggiungibile ' + coordinate(cell, p.size));
+          const seat = (Math.floor(cell / p.size) + cell % p.size) % 2;
+          await coopAction(seat, page => page.locator('.pipe-cell').nth(cell));
+        }
+      }
+      await checkTogether('Proviamo ad accenderlo');
+    }
+    await rory.reload(); await desy.reload();
+    await rory.getByRole('heading', { name: 'Partita completata!', exact: true }).waitFor();
+    await desy.getByRole('heading', { name: 'Partita completata!', exact: true }).waitFor();
+    const finished = coopState().room;
+    assert.equal(finished.errors, 0, family + ' unexpected errors');
+    assert.equal(finished.results.length, 1); assert.equal(finished.results[0].type, family);
+  }
+  const realCoop = db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json;
+  await rory.getByRole('link', { name: /Prova da solo/ }).click();
+  const panels = rory.locator('.screens > section');
+  const explorer = panels.nth(0), guide = panels.nth(1);
+  await explorer.getByLabel(/^Tipo di partita/).selectOption('code');
+  await clickAction(rory, explorer.getByRole('button', { name: 'Apri una stanza per due' }));
+  await clickAction(rory, guide.getByRole('button', { name: 'Entra nella partita' }));
+  const adminLegend = await guide.locator('.legend div').evaluateAll(nodes => Object.fromEntries(nodes.map(n => [n.querySelector('span').textContent, n.querySelector('strong').textContent])));
+  const adminSymbols = await explorer.locator('.symbol-strip span').allTextContents();
+  await clickAction(rory, guide.getByRole('button', { name: 'Ho la legenda, sono pronta/o' }));
+  for (const digit of adminSymbols.map(symbol => adminLegend[symbol])) await explorer.locator('.keypad').getByRole('button', { name: digit, exact: true }).click();
+  await clickAction(rory, explorer.getByRole('button', { name: 'Apri il lucchetto' }));
+  await explorer.getByRole('heading', { name: 'Partita completata!', exact: true }).waitFor();
+  await rory.screenshot({ path: join(screenshots, 'frequenze-admin.png'), fullPage: true });
+  await clickAction(rory, rory.getByRole('button', { name: /Azzera la prova/ }));
+  await explorer.getByRole('button', { name: 'Apri una stanza per due' }).waitFor();
+  assert.equal(db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json, realCoop);
+  // Layout più densi: tabelloni difficili, due pannelli admin e schermi stretti.
+  await explorer.getByLabel(/^Tipo di partita/).selectOption('pipes');
+  await explorer.getByLabel(/^Difficoltà/).selectOption('hard');
+  await clickAction(rory, explorer.getByRole('button', { name: 'Apri una stanza per due' }));
+  await clickAction(rory, guide.getByRole('button', { name: 'Entra nella partita' }));
+  await explorer.locator('.pipe-cell').nth(24).waitFor();
+  await rory.screenshot({ path: join(screenshots, 'frequenze-admin-hard-desktop.png'), fullPage: true });
+  for (const width of [390, 320]) {
+    await rory.setViewportSize({ width, height: 844 });
+    assert.equal(await rory.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `Admin hard ${width}px overflow`);
+    await rory.screenshot({ path: join(screenshots, `frequenze-admin-hard-${width}.png`), fullPage: true });
+  }
+  await rory.setViewportSize({ width: 1280, height: 960 });
+  await clickAction(rory, rory.getByRole('button', { name: /Azzera la prova/ }));
+  assert.equal(db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json, realCoop);
+  for (const family of ['maze', 'mosaic', 'pipes']) {
+    console.log('Cooperativo, layout difficile', family);
+    await go(rory, 'frequenze');
+    await rory.getByLabel(/^Tipo di partita/).selectOption(family);
+    await rory.getByLabel(/^Difficoltà/).selectOption('hard');
+    await clickAction(rory, rory.getByRole('button', { name: 'Apri una stanza per due' }));
+    await go(desy, 'frequenze');
+    await clickAction(desy, desy.getByRole('button', { name: 'Entra nella partita' }));
+    await freshPuzzle(rory); await freshPuzzle(desy);
+    await rory.screenshot({ path: join(screenshots, `frequenze-${family}-hard-desktop.png`), fullPage: true });
+    for (const width of [390, 320]) {
+      await desy.setViewportSize({ width, height: 844 });
+      assert.equal(await desy.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${family} hard ${width}px overflow`);
+      await desy.screenshot({ path: join(screenshots, `frequenze-${family}-hard-${width}.png`), fullPage: true });
+    }
+    await desy.setViewportSize({ width: 1280, height: 960 });
+    rory.once('dialog', dialog => dialog.accept());
+    await clickAction(rory, rory.getByRole('button', { name: 'Chiudi la partita', exact: true }));
+  }
   await go(rory, 'nuvola');
   await rory.getByRole('button', { name: 'Scegli il primo uovo' }).click();
   await rory.getByLabel('Chi vorresti?').selectOption('cat');
@@ -208,7 +309,7 @@ try {
   await desy.waitForURL(base + '/');
   assert.equal(await desy.locator('app-frequenze-prova').count(), 0);
   assert.deepEqual(errors, []);
-  console.log(`PASS: due sessioni, trappole e replay, tre round cooperativi e prova admin isolata, uovo/schiusa, nomi condivisi, shop e memory con premio persistente, mobile. Screenshot: ${screenshots}`);
+  console.log(`PASS: due sessioni, trappole e replay, tutte le 8 famiglie cooperative tramite UI, screenshot desktop/mobile e layout difficili a 390/320px, prova admin isolata, uovo/schiusa, nomi condivisi, shop e memory con premio persistente. Screenshot: ${screenshots}`);
 } catch (error) {
   for (const [i, page] of pages.entries()) {
     await page.screenshot({ path: join(screenshots, `errore-${i}.png`), fullPage: true });
