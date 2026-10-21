@@ -51,7 +51,7 @@ export class GiochiDue implements OnDestroy {
   protected readonly numbers = [1, 2, 3, 4, 5, 6, 7, 8];
   protected readonly tabs: { id: Kind; icon: string; name: string; description: string }[] = [
     { id: 'trappole', icon: '💣', name: 'Ti preparo una trappola', description: 'Nascondi le trappole. Vediamo chi arriva in fondo!' },
-    { id: 'frequenze', icon: '🧩', name: 'Sulla stessa frequenza', description: 'Tu hai gli indizi. L’altro ha il codice. Parlatevi!' },
+    { id: 'frequenze', icon: '📡', name: 'Sulla stessa frequenza', description: 'Tu hai gli indizi. L’altro ha il codice. Parlatevi!' },
     { id: 'nuvola', icon: '🐾', name: 'La casa degli animali', description: 'Uova, zampe e qualche disastro sul tappeto.' }
   ];
   protected readonly currentTab = computed(() => this.tabs.find(t => t.id === this.kind())!);
