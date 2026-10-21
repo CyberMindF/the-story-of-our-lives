@@ -1,6 +1,7 @@
 import { Component, DestroyRef, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AuthService, UserIdentity } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
@@ -95,7 +96,7 @@ const IDENTITY_LABELS: Record<UserIdentity, string> = { lui: 'lui', lei: 'lei' }
 @Component({
   selector: 'app-carte',
   standalone: true,
-  imports: [AppShell, FormsModule, CartaTilt, CartaBack, CartaPack, CartaAlbumPicker],
+  imports: [AppShell, FormsModule, RouterLink, CartaTilt, CartaBack, CartaPack, CartaAlbumPicker],
   styleUrls: ['../../../styles/components/modal.css', '../../../styles/pages/carte.css'],
   templateUrl: './carte.html'
 })
@@ -112,6 +113,7 @@ export class Carte implements OnInit, OnDestroy {
   protected readonly otherLabel = computed(() => IDENTITY_LABELS[this.otherIdentity()]);
   protected readonly partnerNickname = signal<string | null>(null);
   protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
+  protected readonly isAdmin = this.authService.isAdmin;
 
   protected readonly tab = signal<Tab>('album');
 

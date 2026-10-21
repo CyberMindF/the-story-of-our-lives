@@ -230,6 +230,12 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'tavolo-da-gioco/carte/catalogo',
+        canActivate: [adminGuard],
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () => import('./pages/carte/carte-catalogo').then((m) => m.CarteCatalogo),
+      },
+      {
         path: 'tavolo-da-gioco/carte',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/carte/carte').then((m) => m.Carte),

@@ -1,0 +1,115 @@
+<app-shell homeHref="/tavolo-da-gioco/carte" homeAria="Torna alle Carte" homeLabel="Le Carte">
+  <header class="catalog-heading">
+    <div>
+      <p class="eyebrow">Catalogo admin</p>
+      <h1>Tutte le carte del gioco</h1>
+      <p>Esplora le immagini di tutte le carte, anche quelle che non avete ancora trovato.</p>
+    </div>
+    @if (canEdit()) {
+    <button type="button" class="btn btn-submit" [disabled]="loading() || !!error() || !sets().length" (click)="open(null)">+ Nuova carta</button>
+    }
+  </header>
+
+  @if (!canEdit()) {
+  <p class="catalog-hint">Puoi vedere tutte le anteprime. Per aggiungere o modificare carte, attiva la Modalità admin in alto.</p>
+  }
+  @if (notice()) { <p role="status" class="catalog-hint">{{ notice() }}</p> }
+
+  <div class="catalog-filters glass-surface">
+    <label>Cerca una carta
+      <input type="search" placeholder="Nome della carta…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    </label>
+    <label>Set
+      <select [ngModel]="filterSet()" (ngModelChange)="filterSet.set($event)">
+        <option value="">Tutti i set</option>
+        @for (set of sets(); track set.id) { <option [value]="set.id">{{ set.nome }}</option> }
+      </select>
+    </label>
+    <p role="status">{{ filtered().length }} di {{ designs().length }} carte</p>
+  </div>
+
+  @if (loading()) {
+  <p role="status">Caricamento delle carte…</p>
+  } @else if (error()) {
+  <div role="alert"><p>{{ error() }}</p><button type="button" class="btn" (click)="load()">Riprova</button></div>
+  } @else {
+    @for (group of groups(); track group.id) {
+    <section class="catalog-set" [attr.aria-label]="group.nome">
+      <h2>{{ group.nome }} <span>{{ group.cards.length }} carte</span></h2>
+      <div class="catalog-grid">
+        @for (card of group.cards; track card.id) {
+        <article class="catalog-card glass-surface">
+          <button type="button" class="catalog-preview" (click)="open(card)" [attr.aria-label]="'Apri anteprima di ' + card.nome">
+            @if (imageUrl(card.immagineKey); as url) {
+            <img [src]="url" [alt]="card.nome" loading="lazy" decoding="async" width="300" height="400" />
+            } @else {
+            <span class="catalog-placeholder">🃏<small>Immagine non presente</small></span>
+            }
+          </button>
+          <h3>{{ card.nome }}</h3>
+          <button type="button" class="btn" (click)="open(card)">Anteprima{{ canEdit() ? ' e modifica' : '' }}</button>
+        </article>
+        }
+      </div>
+    </section>
+    } @empty {
+    <p class="catalog-empty">{{ designs().length ? 'Nessuna carta corrisponde ai filtri.' : 'Non ci sono ancora carte. Crea un set dall’Editor delle Carte e aggiungi la prima.' }}</p>
+    }
+  }
+
+  <dialog #details class="catalog-dialog" (cancel)="cancelDialog($event)" aria-labelledby="catalog-detail-title">
+    <header class="detail-heading">
+      <h2 id="catalog-detail-title">{{ selected() ? (editing() ? 'Modifica carta' : selected()!.nome) : 'Nuova carta' }}</h2>
+      <button type="button" class="btn" [disabled]="saving()" (click)="close()" aria-label="Chiudi anteprima">Chiudi</button>
+    </header>
+    @if (details.open) {
+    <div class="detail-layout">
+      <div class="detail-preview">
+        <app-carta-tilt [finitura]="finish()" [immagineUrl]="previewUrl()" [nome]="name() || 'Nuova carta'" />
+        <label>Anteprima finitura
+          <select [ngModel]="finish()" (ngModelChange)="finish.set($event)">
+            @for (value of finishes; track value) { <option [value]="value">{{ finishLabels[value] }}</option> }
+          </select>
+        </label>
+        @if (previewUrl(); as url) {
+        <a class="btn" [href]="url" target="_blank" rel="noopener">Apri immagine originale ↗</a>
+        }
+      </div>
+      <div class="detail-info">
+        @if (formError()) { <p role="alert" class="form-error">{{ formError() }}</p> }
+        @if (editing()) {
+        <form (ngSubmit)="save()">
+          <fieldset [disabled]="saving() || !canEdit()">
+            <label>Nome della carta
+              <input name="nome" required [ngModel]="name()" (ngModelChange)="name.set($event)" />
+            </label>
+            <label>Set
+              <select name="set" required [ngModel]="setId()" (ngModelChange)="setId.set($event)">
+                <option value="" disabled>Scegli un set</option>
+                @for (set of sets(); track set.id) { <option [value]="set.id">{{ set.nome }}</option> }
+              </select>
+            </label>
+            <label>{{ imageKey() ? 'Sostituisci immagine' : 'Immagine' }}
+              <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFile($event)" />
+            </label>
+            <p class="catalog-hint">JPG, PNG o WebP, fino a 15 MB. L’anteprima si aggiorna prima del salvataggio.</p>
+            <button type="submit" class="btn btn-submit" [disabled]="!name().trim() || !setId()">{{ saving() ? 'Salvataggio…' : 'Salva carta' }}</button>
+          </fieldset>
+        </form>
+        } @else {
+        <p><strong>{{ selected()?.nome }}</strong></p>
+        @for (set of sets(); track set.id) {
+          @if (set.id === setId()) { <p>Set: {{ set.nome }}</p> }
+        }
+        <p>Le finiture mostrano come apparirà questa carta nel gioco.</p>
+        @if (canEdit()) {
+        <button type="button" class="btn btn-submit" (click)="editing.set(true)">Modifica carta</button>
+        } @else {
+        <p class="catalog-hint">Attiva la Modalità admin per modificare questa carta.</p>
+        }
+        }
+      </div>
+    </div>
+    }
+  </dialog>
+</app-shell>

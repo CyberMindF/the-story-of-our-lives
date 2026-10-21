@@ -33,6 +33,10 @@
     }
   </nav>
 
+  @if (isAdmin()) {
+  <p><a class="btn" routerLink="/tavolo-da-gioco/carte/catalogo">Anteprima di tutte le carte · Admin</a></p>
+  }
+
   @if (tab() === 'album') {
   <section class="carte-album-panel glass-surface">
     <div class="carte-bustine-strip">
@@ -309,7 +313,10 @@
       <h3>{{ set.nome }} <button type="button" class="btn" (click)="eliminaSet(set.id)">Elimina set</button></h3>
       <ul>
         @for (design of designsBySet().get(set.id) ?? []; track design.id) {
-        <li>{{ design.nome }} <button type="button" class="btn" (click)="eliminaDesign(design.id)">Elimina</button></li>
+        <li>{{ design.nome }}
+          <a class="btn" routerLink="/tavolo-da-gioco/carte/catalogo" [queryParams]="{ carta: design.id }">Anteprima e modifica</a>
+          <button type="button" class="btn" (click)="eliminaDesign(design.id)">Elimina</button>
+        </li>
         }
       </ul>
     </div>
