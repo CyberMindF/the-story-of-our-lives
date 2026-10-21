@@ -1,42 +1,69 @@
-// Maturazione bustine (#e4): 1 bustina ogni 10 minuti di permanenza sul sito, cumulativi anche
-// a più riprese nella giornata (non serve una sessione continua), nessun tetto massimo
-// all'accumulo — deciso esplicitamente da Rory. Calcolo pigro ad ogni lettura/apertura (stesso
-// principio della pulizia media di ponti_chat_messages), niente Cron Trigger dedicato.
+// Maturazione bustine (#e4): 1 bustina ogni 10 minuti in cui il Mondo Bianco resta davvero
+// visibile. La lettura del saldo non deve mai maturare tempo: i minuti arrivano esclusivamente
+// dai tick di presenza e sono deduplicati nel database per utente + minuto UTC.
 const MINUTES_PER_PACK = 10;
+const ACTIVE_TICK_MIN_GAP_SECONDS = 50;
 
-export async function accrueBustine(env, userId) {
+export async function ensureBustineState(env, userId) {
+  const iso = new Date().toISOString();
+  await env.DB
+    .prepare(
+      `INSERT INTO carte_bustine (user_id, quantita_disponibile, minuti_residui, updated_at)
+       VALUES (?, 0, 0, ?)
+       ON CONFLICT(user_id) DO NOTHING`
+    )
+    .bind(userId, iso)
+    .run();
+  return readBustineState(env, userId);
+}
+
+export async function readBustineState(env, userId) {
   const row = await env.DB
     .prepare("SELECT user_id, quantita_disponibile, minuti_residui, updated_at FROM carte_bustine WHERE user_id = ?")
     .bind(userId)
     .first();
 
-  const now = new Date();
   if (!row) {
-    const iso = now.toISOString();
-    await env.DB
-      .prepare("INSERT INTO carte_bustine (user_id, quantita_disponibile, minuti_residui, updated_at) VALUES (?, 0, 0, ?)")
-      .bind(userId, iso)
-      .run();
     return { userId, quantitaDisponibile: 0, minutiResidui: 0 };
   }
 
-  const elapsedMinutes = Math.max(0, Math.floor((now.getTime() - new Date(row.updated_at).getTime()) / 60000));
-  if (elapsedMinutes === 0) {
-    return { userId, quantitaDisponibile: row.quantita_disponibile, minutiResidui: row.minuti_residui };
-  }
+  return { userId, quantitaDisponibile: row.quantita_disponibile, minutiResidui: row.minuti_residui };
+}
 
-  const totalMinutes = row.minuti_residui + elapsedMinutes;
-  const newPacks = Math.floor(totalMinutes / MINUTES_PER_PACK);
-  const remainingMinutes = totalMinutes % MINUTES_PER_PACK;
-  const quantitaDisponibile = row.quantita_disponibile + newPacks;
+export async function recordActiveMinute(env, userId) {
+  await ensureBustineState(env, userId);
+
+  const now = new Date();
   const iso = now.toISOString();
 
-  await env.DB
-    .prepare("UPDATE carte_bustine SET quantita_disponibile = ?, minuti_residui = ?, updated_at = ? WHERE user_id = ?")
-    .bind(quantitaDisponibile, remainingMinutes, iso, userId)
-    .run();
+  // Un solo UPDATE condizionale rende la deduplicazione atomica anche con piu schede aperte.
+  // La tolleranza di 10 secondi assorbe il jitter dei timer senza permettere due accrediti
+  // ravvicinati quando le schede hanno intervalli sfalsati a cavallo del minuto UTC.
+  const updated = await env.DB
+    .prepare(
+      `UPDATE carte_bustine
+       SET quantita_disponibile = quantita_disponibile + CASE WHEN minuti_residui = ? - 1 THEN 1 ELSE 0 END,
+           minuti_residui = (minuti_residui + 1) % ?,
+           ultimo_minuto_attivo = ?,
+           updated_at = ?
+       WHERE user_id = ?
+         AND (ultimo_minuto_attivo IS NULL OR unixepoch(?) - unixepoch(ultimo_minuto_attivo) >= ?)
+         AND (ultimo_minuto_attivo IS NULL OR substr(ultimo_minuto_attivo, 1, 16) < substr(?, 1, 16))
+       RETURNING quantita_disponibile, minuti_residui`
+    )
+    .bind(MINUTES_PER_PACK, MINUTES_PER_PACK, iso, iso, userId, iso, ACTIVE_TICK_MIN_GAP_SECONDS, iso)
+    .first();
 
-  return { userId, quantitaDisponibile, minutiResidui: remainingMinutes };
+  if (updated) {
+    return {
+      userId,
+      quantitaDisponibile: updated.quantita_disponibile,
+      minutiResidui: updated.minuti_residui,
+      minutoRegistrato: true
+    };
+  }
+
+  return { ...(await readBustineState(env, userId)), minutoRegistrato: false };
 }
 
 // Streak "giorni di fila" (#e4, dettagliata il 15/08/2026, rivista lo stesso giorno): premia

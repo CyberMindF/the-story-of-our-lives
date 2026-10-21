@@ -1,6 +1,6 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
-import { accrueBustine, rollFinitura } from "./_shared.js";
+import { readBustineState, rollFinitura } from "./_shared.js";
 
 // Apertura di 1 bustina = 5 carte. Il design pescato è uniforme tra tutti i design esistenti
 // (in tutti i set attivi); la finitura di ciascuna carta segue la piramide ripida pesata
@@ -14,7 +14,7 @@ export async function onRequestPost(context) {
     if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
 
     const userId = session.user.id;
-    const state = await accrueBustine(env, userId);
+    const state = await readBustineState(env, userId);
     if (state.quantitaDisponibile < 1) {
       return json({ error: "Nessuna bustina disponibile." }, 409);
     }

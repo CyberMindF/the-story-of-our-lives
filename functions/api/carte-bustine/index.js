@@ -1,11 +1,10 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
 import { findTradePartner } from "../carte-trade/_users.js";
-import { accrueBustine, checkStreak } from "./_shared.js";
+import { checkStreak, ensureBustineState, readBustineState } from "./_shared.js";
 
-// Stato bustine dell'identità della sessione: fa maturare l'accumulo pigro prima di
-// rispondere, così il saldo mostrato è sempre aggiornato senza bisogno di un cron. Ogni
-// visita alla pagina in una data diversa dall'ultima registrata aggiorna anche la streak
-// "giorni di fila" (#e4) ed eventuali bustine bonus di soglia vengono già incluse nel saldo.
+// Stato bustine dell'utente della sessione. Questa lettura non matura tempo: le bustine
+// passive arrivano soltanto dai tick di presenza del browser. Ogni visita in una data diversa
+// dall'ultima registrata aggiorna invece la streak e il relativo bonus giornaliero.
 export async function onRequestGet(context) {
   const { request, env } = context;
   try {
@@ -14,8 +13,8 @@ export async function onRequestGet(context) {
 
     const partner = await findTradePartner(env, session.user);
     const [state, partnerState] = await Promise.all([
-      accrueBustine(env, session.user.id),
-      partner ? accrueBustine(env, partner.id) : Promise.resolve(null)
+      ensureBustineState(env, session.user.id),
+      partner ? readBustineState(env, partner.id) : Promise.resolve(null)
     ]);
     const streak = await checkStreak(env, session.user.id);
     const quantitaDisponibile = state.quantitaDisponibile + streak.bustineBonus;

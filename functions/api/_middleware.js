@@ -16,6 +16,7 @@ const SAFE_TEST_MUTATIONS = [
   { method: "POST", pattern: /^\/api\/suggestions$/ },
   { method: "POST", pattern: /^\/api\/stories\/suggestions$/ },
   { method: "POST", pattern: /^\/api\/carte-bustine\/apri$/ },
+  { method: "POST", pattern: /^\/api\/carte-bustine\/presenza$/ },
   { method: "POST", pattern: /^\/api\/telemetry\/(events|word-attempts)$/ },
   { method: "PUT", pattern: /^\/api\/crossword\/answers\/[^/]+$/ }
 ];

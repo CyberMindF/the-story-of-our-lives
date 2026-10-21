@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
@@ -249,6 +249,13 @@ export class Carte implements OnInit, OnDestroy {
     return groups;
   });
 
+  constructor() {
+    effect(() => {
+      const balance = this.carteBustineService.balance();
+      if (balance) this.bustineDisponibili.set(balance.quantitaDisponibile);
+    });
+  }
+
   async ngOnInit(): Promise<void> {
     await Promise.all([this.loadBustine(), this.loadCollezione(), this.loadTrades()]);
     this.realtime.on('carte-trade:changed')
@@ -319,6 +326,7 @@ export class Carte implements OnInit, OnDestroy {
       this.avviaAnimazioneBustina();
       this.carteAperte.set(result.carte ?? []);
       this.bustineDisponibili.set(result.quantitaDisponibile ?? 0);
+      this.carteBustineService.updateOwnBalance(result.quantitaDisponibile ?? 0);
       this.carteBustineService.invalidate();
       await this.loadCollezione();
     } catch (error) {

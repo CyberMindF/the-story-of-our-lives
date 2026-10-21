@@ -35,6 +35,7 @@ const ACTIVITY_EVENTS = ['pointerdown', 'keydown'] as const;
 // entro la finestra di inattività di un'ora.
 const ACTIVITY_TOUCH_THROTTLE_MS = 60 * 1000;
 const VERSION_CHECK_INTERVAL_MS = 5 * 60 * 1000;
+const BUSTINE_PRESENCE_INTERVAL_MS = 60 * 1000;
 
 const ROUTE_BODY_CLASSES = [
   'access-locked',
@@ -78,6 +79,8 @@ export class App {
   private readonly currentDeploymentVersion = document.querySelector<HTMLMetaElement>('meta[name="app-version"]')?.content || '';
   private checkingBuildVersion = false;
   private worldSettingsLoadedForUserId: number | null = null;
+  private bustinePresenceTimer: number | null = null;
+  private bustinePresenceUserId: number | null = null;
   protected readonly updateAvailable = signal(false);
   protected readonly showGlobalChat = signal(this.router.url.split('?')[0] !== '/ponti-chat');
 
@@ -91,6 +94,7 @@ export class App {
       )
       .subscribe((event) => {
         this.applyRouteBodyClasses();
+        this.restartBustinePresenceTimer();
         const showChat = event.urlAfterRedirects.split('?')[0] !== '/ponti-chat';
         this.showGlobalChat.set(showChat);
         if (!showChat) this.globalChat.panelOpen.set(false);
@@ -105,6 +109,7 @@ export class App {
     const checkBuildVersion = () => void this.checkBuildVersion();
     const onVisibilityChange = () => {
       if (document.visibilityState === 'visible') checkBuildVersion();
+      this.restartBustinePresenceTimer();
     };
     const versionTimer = window.setInterval(() => {
       if (document.visibilityState === 'visible') checkBuildVersion();
@@ -112,6 +117,7 @@ export class App {
     document.addEventListener('visibilitychange', onVisibilityChange);
     this.destroyRef.onDestroy(() => {
       window.clearInterval(versionTimer);
+      this.stopBustinePresenceTimer();
       document.removeEventListener('visibilitychange', onVisibilityChange);
     });
     checkBuildVersion();
@@ -139,12 +145,14 @@ export class App {
     effect(() => {
       const userId = this.authService.currentUser()?.id;
       if (userId === undefined) {
+        this.stopBustinePresenceTimer();
         this.globalChat.clear();
         this.carteBustineService.clear();
         this.realtimeService.disconnect();
         this.worldSettingsLoadedForUserId = null;
         return;
       }
+      this.restartBustinePresenceTimer();
       this.realtimeService.connect();
       void this.globalChat.startForCurrentUser();
       void this.carteBustineService.load(userId).catch((error) => {
@@ -155,6 +163,37 @@ export class App {
         void this.loadSharedWorldSettings(userId);
       }
     });
+  }
+
+  // Un tick parte solo dopo un minuto intero di visibilita continua. Nascondere la pagina,
+  // cambiare account o fare logout azzera il timer; la deduplicazione definitiva resta sul
+  // server, cosi due schede aperte non raddoppiano le bustine.
+  private restartBustinePresenceTimer(): void {
+    const userId = this.authService.currentUser()?.id;
+    if (userId === undefined || document.visibilityState !== 'visible' || this.router.url.split('?')[0] === '/login') {
+      this.stopBustinePresenceTimer();
+      return;
+    }
+    // Le guardie aggiornano currentUser a ogni navigazione: conserviamo il minuto in corso.
+    if (this.bustinePresenceTimer !== null && this.bustinePresenceUserId === userId) return;
+    this.stopBustinePresenceTimer();
+    this.bustinePresenceUserId = userId;
+
+    this.bustinePresenceTimer = window.setInterval(() => {
+      if (document.visibilityState !== 'visible' || this.authService.currentUser()?.id !== userId) {
+        return;
+      }
+      void this.carteBustineService.recordActiveMinute(userId).catch((error) => {
+        console.warn('Impossibile aggiornare il tempo per le bustine:', error);
+      });
+    }, BUSTINE_PRESENCE_INTERVAL_MS);
+  }
+
+  private stopBustinePresenceTimer(): void {
+    if (this.bustinePresenceTimer === null) return;
+    window.clearInterval(this.bustinePresenceTimer);
+    this.bustinePresenceTimer = null;
+    this.bustinePresenceUserId = null;
   }
 
   private async loadSharedWorldSettings(userId: number): Promise<void> {
