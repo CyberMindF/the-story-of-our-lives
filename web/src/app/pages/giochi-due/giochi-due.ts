@@ -5,13 +5,14 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { AuthService } from '../../core/auth.service';
 import { AppShell } from '../../shell/app-shell';
+import { PetRoom, PetView } from './pet-room';
 
 type Kind = 'trappole' | 'frequenze' | 'nuvola';
 interface Actor { id: number; name: string; }
 interface Challenge {
   id: string; title: string; creator: Actor; traps: number[]; status: 'open' | 'won' | 'lost' | 'cancelled';
-  clues: Record<number, number>;
-  attempt: { player: Actor; position: number; energy: number; steps: number[] } | null;
+  clues: Record<number, number>; rules?: number;
+  attempt: { player: Actor; position: number; energy: number; steps: number[]; flags?: number[]; probed?: number | null } | null;
 }
 interface Room {
   id: string; owner: Actor; partner: Actor | null; status: string; round: number; errors: number;
@@ -19,15 +20,13 @@ interface Room {
   legend: { symbol: string; number: number }[]; lastWrong: boolean;
   instruction: string | null;
 }
-interface GameView {
+interface GameView extends PetView {
   version: number; partner: string; challenges?: Challenge[]; room?: Room | null;
   history?: { id: string; status: string; errors: number; at: number }[];
-  name?: string; affection?: number; decor?: string; myCare?: string[];
-  events?: { actor: string; type: string; at: number }[];
 }
 
 @Component({
-  selector: 'app-giochi-due', imports: [AppShell, RouterLink, FormsModule, DatePipe],
+  selector: 'app-giochi-due', imports: [AppShell, RouterLink, FormsModule, DatePipe, PetRoom],
   templateUrl: './giochi-due.html', styleUrl: './giochi-due.css'
 })
 export class GiochiDue implements OnDestroy {
@@ -42,18 +41,18 @@ export class GiochiDue implements OnDestroy {
   protected readonly error = signal('');
   protected readonly notice = signal('');
   protected readonly selectedId = signal('');
+  protected readonly moveMode = signal<'move' | 'flag' | 'probe'>('move');
+  protected readonly replay = signal(-1);
   protected readonly draft = signal<number[]>([]);
   protected readonly title = signal('');
   protected readonly code = signal('');
-  protected readonly petName = signal('');
-  protected readonly animation = signal('');
   protected readonly cells = Array.from({ length: 25 }, (_, n) => n);
   protected readonly MathFloor = Math.floor;
   protected readonly numbers = [1, 2, 3, 4, 5, 6, 7, 8];
   protected readonly tabs: { id: Kind; icon: string; name: string; description: string }[] = [
-    { id: 'trappole', icon: '✦', name: 'Ti preparo una trappola', description: 'Una sfida da lasciare all’altra persona.' },
-    { id: 'frequenze', icon: '⌁', name: 'Sulla stessa frequenza', description: 'Due schermi. Metà indizi a testa. Una sola soluzione.' },
-    { id: 'nuvola', icon: '♡', name: 'Il nostro piccolo rifugio', description: 'Un gatto, un posto tranquillo, tutte le vostre coccole.' }
+    { id: 'trappole', icon: '💣', name: 'Ti preparo una trappola', description: 'Nascondi le trappole. Vediamo chi arriva in fondo!' },
+    { id: 'frequenze', icon: '🧩', name: 'Sulla stessa frequenza', description: 'Tu hai gli indizi. L’altro ha il codice. Parlatevi!' },
+    { id: 'nuvola', icon: '🐾', name: 'La casa degli animali', description: 'Uova, zampe e qualche disastro sul tappeto.' }
   ];
   protected readonly currentTab = computed(() => this.tabs.find(t => t.id === this.kind())!);
   protected readonly challenges = computed(() => this.data()?.challenges ?? []);
@@ -61,31 +60,18 @@ export class GiochiDue implements OnDestroy {
     ?? this.challenges().find(c => c.status === 'open' && c.creator.id !== this.userId()) ?? this.challenges()[0]);
   protected readonly ownPending = computed(() => this.challenges().some(c => c.creator.id === this.userId() && c.status === 'open'));
   protected readonly room = computed(() => this.data()?.room);
-  protected readonly affection = computed(() => this.data()?.affection ?? 0);
-  protected readonly care = computed(() => this.data()?.myCare ?? []);
-  protected readonly decorations = [
-    { id: 'base', name: 'La finestra', icon: '☁', needed: 0 },
-    { id: 'plant', name: 'Una piantina', icon: '🌱', needed: 3 },
-    { id: 'cushion', name: 'Cuscino morbido', icon: '🧶', needed: 6 },
-    { id: 'stars', name: 'Cielo stellato', icon: '✨', needed: 12 }
-  ];
-  protected readonly careActions = [
-    { id: 'coccola', name: 'Una coccola', icon: '♡' },
-    { id: 'snack', name: 'Uno spuntino', icon: '◒' },
-    { id: 'gioca', name: 'Giochiamo!', icon: '⚽' }
-  ];
+  protected readonly isAdmin = this.auth.isAdmin;
   private generation = 0;
   private reading = false;
   private readError = '';
   private controller: AbortController | null = null;
-  private animationTimer?: ReturnType<typeof setTimeout>;
   private readonly poll = setInterval(() => { if (!document.hidden && !this.busy()) void this.refresh(); }, 3000);
   private readonly visibility = () => { if (!document.hidden) void this.refresh(); };
 
   constructor() {
     document.addEventListener('visibilitychange', this.visibility);
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-      const requested = params.get('gioco');
+      const requested = this.route.snapshot.data['game'] ?? params.get('gioco');
       const next = this.tabs.find(t => t.id === requested)?.id ?? 'trappole';
       if (this.data() && next === this.kind()) return;
       this.generation++;
@@ -123,7 +109,6 @@ export class GiochiDue implements OnDestroy {
   private accept(result: GameView): void {
     if (result.version < (this.data()?.version ?? -1)) return;
     if (result.room?.round !== this.room()?.round || result.room?.id !== this.room()?.id) this.code.set('');
-    if (result.name && (!this.data() || this.petName() === this.data()?.name)) this.petName.set(result.name);
     this.data.set(result);
   }
 
@@ -142,10 +127,7 @@ export class GiochiDue implements OnDestroy {
       this.accept(result);
       if (type === 'answer') this.code.set('');
       if (this.kind() === 'nuvola') {
-        this.animation.set(type);
-        clearTimeout(this.animationTimer);
-        this.animationTimer = setTimeout(() => this.animation.set(''), 2400);
-        this.notice.set(({ coccola: 'Si è avvicinato alla tua mano. Prrrr…', snack: 'Spuntino approvato. Si lecca i baffi!', gioca: 'Un agguato alla pallina. Presa!', rename: 'Il suo nome è aggiornato per entrambi.', decorate: 'Il rifugio ha un nuovo dettaglio.' } as Record<string, string>)[type] ?? 'Salvato.');
+        if (!['memory-flip', 'memory-start'].includes(type) || result.memory?.done) this.notice.set(result.events?.[0]?.text ?? 'Fatto!');
       }
       return true;
     } catch (e) {
@@ -168,13 +150,21 @@ export class GiochiDue implements OnDestroy {
   }
   protected adjacent(a: number, b: number): boolean { return Math.abs(a - b) === 5 || (Math.floor(a / 5) === Math.floor(b / 5) && Math.abs(a - b) === 1); }
   protected canMove(c: Challenge, cell: number): boolean {
-    return !this.busy() && c.status === 'open' && c.attempt?.player.id === this.userId() && this.adjacent(c.attempt.position, cell);
+    if (this.busy() || c.status !== 'open' || c.attempt?.player.id !== this.userId()) return false;
+    if (this.moveMode() === 'flag') return cell > 0 && cell < 24;
+    if (this.moveMode() === 'probe') return c.rules === 2 && c.attempt.probed == null && cell > 0 && cell < 24 && this.adjacent(c.attempt.position, cell);
+    return !c.attempt.flags?.includes(cell) && this.adjacent(c.attempt.position, cell);
   }
+  protected async playCell(c: Challenge, cell: number): Promise<void> {
+    if (await this.act(this.moveMode(), { id: c.id, cell })) { if (this.moveMode() === 'probe') this.moveMode.set('move'); }
+  }
+  protected position(c: Challenge): number { return c.status !== 'open' && this.replay() >= 0 ? c.attempt?.steps[this.replay() - 1] ?? 0 : c.attempt?.position ?? 0; }
   protected cellLabel(c: Challenge, cell: number): string {
-    if (c.attempt?.position === cell) return '●';
-    if (cell === 0) return '↗';
-    if (cell === 24) return '✦';
-    if (c.traps.includes(cell)) return '✕';
+    if (this.position(c) === cell) return '🚶';
+    if (cell === 0) return '🚩';
+    if (cell === 24) return '🏁';
+    if (c.traps.includes(cell)) return '💣';
+    if (c.attempt?.flags?.includes(cell)) return '🚩';
     return c.clues[cell] === undefined ? '' : String(c.clues[cell]);
   }
   protected status(c: Challenge): string {
@@ -184,11 +174,8 @@ export class GiochiDue implements OnDestroy {
   protected async cancelRoom(id: string): Promise<void> {
     if (confirm('Chiudere questa partita per entrambi? Potrete iniziarne una nuova.')) await this.act('cancel', { id });
   }
-  protected eventText(type: string): string {
-    return ({ coccola: 'ha fatto una coccola', snack: 'ha portato uno spuntino', gioca: 'ha giocato con la pallina', rename: 'ha scelto un nuovo nome', decorate: 'ha arredato il rifugio' } as Record<string, string>)[type] ?? type;
-  }
   ngOnDestroy(): void {
-    this.generation++; this.controller?.abort(); clearInterval(this.poll); clearTimeout(this.animationTimer);
+    this.generation++; this.controller?.abort(); clearInterval(this.poll);
     document.removeEventListener('visibilitychange', this.visibility);
   }
 }

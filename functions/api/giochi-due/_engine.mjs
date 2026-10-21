@@ -1,17 +1,17 @@
-export const SYMBOLS = ['☀', '☾', '★', '◆', '♥', '✿', '▲', '●'];
+import { GameError } from './_errors.mjs';
+import { newPets, applyPets, petsView } from './_pets.mjs';
+export { GameError } from './_errors.mjs';
+export const SYMBOLS = ['🌞', '🌙', '⭐', '🍎', '💚', '🌸', '🍕', '🎈'];
 const INSTRUCTIONS = [
   'Traduci i simboli da sinistra a destra e comunica i numeri nello stesso ordine.',
   'Questa serratura legge al contrario: traduci i simboli partendo dall’ultimo e tornando al primo.',
   'Questa serratura fa un giro: traduci i simboli da sinistra a destra, poi sposta il primo numero in fondo al codice.'
 ];
-export class GameError extends Error {
-  constructor(message, status = 400) { super(message); this.status = status; }
-}
 function requireThat(value, message, status) { if (!value) throw new GameError(message, status); }
 export function initialState(kind) {
   if (kind === 'trappole') return { challenges: [], requests: [] };
   if (kind === 'frequenze') return { room: null, history: [], requests: [] };
-  if (kind === 'nuvola') return { name: 'Nuvola', affection: 0, decor: 'base', day: '', care: {}, lastCare: {}, events: [], requests: [] };
+  if (kind === 'nuvola') return newPets();
   throw new GameError('Attività non trovata.', 404);
 }
 export function neighbors(cell) {
@@ -31,7 +31,7 @@ export function safeDistance(traps) {
 export function validateTraps(traps) {
   requireThat(Array.isArray(traps) && traps.length === 6 && new Set(traps).size === 6
     && traps.every(n => Number.isInteger(n) && n > 0 && n < 24), 'Scegli esattamente 6 caselle diverse, senza partenza e arrivo.');
-  requireThat(safeDistance(traps) <= 18, 'Lascia almeno un percorso senza trappole raggiungibile in 18 passi.');
+  requireThat(safeDistance(traps) <= 10, 'Lascia una strada senza trappole lunga al massimo 10 passi.');
 }
 function shuffle(values) {
   const result = [...values];
@@ -49,6 +49,7 @@ export function romeDay(now) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(now));
 }
 export function applyAction(kind, original, action, user, now = Date.now()) {
+  if (kind === 'nuvola') return applyPets(original, action, user, now);
   const state = structuredClone(original);
   const actor = { id: user.id, name: user.nickname };
   if (kind === 'trappole') {
@@ -57,7 +58,7 @@ export function applyAction(kind, original, action, user, now = Date.now()) {
       validateTraps(action.traps);
       const title = typeof action.title === 'string' ? action.title.trim().slice(0, 50) : '';
       state.challenges.unshift({ id: crypto.randomUUID(), title: title || 'Ti preparo una trappola', creator: actor,
-        traps: action.traps, status: 'open', createdAt: now, attempt: null });
+        traps: action.traps, rules: 2, status: 'open', createdAt: now, attempt: null });
       state.challenges = state.challenges.slice(0, 30);
       return state;
     }
@@ -71,17 +72,30 @@ export function applyAction(kind, original, action, user, now = Date.now()) {
     requireThat(c.status === 'open', 'La sfida è già conclusa.', 409);
     if (action.type === 'start') {
       requireThat(!c.attempt, 'La sfida è già iniziata.', 409);
-      c.attempt = { player: actor, position: 0, energy: 18, steps: [], startedAt: now };
+      c.attempt = { player: actor, position: 0, energy: c.rules === 2 ? 12 : 18, steps: [], flags: [], probed: null, startedAt: now };
+    } else if (action.type === 'flag' || action.type === 'probe') {
+      const a = c.attempt;
+      requireThat(a && a.player.id === user.id, 'Inizia prima la sfida.', 403);
+      requireThat(Number.isInteger(action.cell) && action.cell > 0 && action.cell < 24, 'Scegli una casella interna alla mappa.');
+      if (action.type === 'flag') {
+        a.flags ??= [];
+        a.flags = a.flags.includes(action.cell) ? a.flags.filter(n => n !== action.cell) : [...a.flags, action.cell];
+      } else {
+        requireThat(c.rules === 2 && a.probed == null && neighbors(a.position).includes(action.cell), 'Hai una sola sonda: usala su una casella vicina.');
+        a.probed = action.cell;
+      }
     } else if (action.type === 'move') {
       const a = c.attempt;
       requireThat(a && a.player.id === user.id, 'Inizia prima la sfida.', 403);
       requireThat(Number.isInteger(action.cell) && neighbors(a.position).includes(action.cell), 'Scegli una casella adiacente.');
+      requireThat(!a.flags?.includes(action.cell), 'Togli prima la bandierina da questa casella.');
       a.position = action.cell;
-      a.energy = Math.max(0, a.energy - (c.traps.includes(action.cell) ? 3 : 1));
+      const cost = c.traps.includes(action.cell) && (c.rules !== 2 || !a.steps.includes(action.cell)) ? 3 : 1;
+      const enough = a.energy >= cost;
+      a.energy = Math.max(0, a.energy - cost);
       a.steps.push(action.cell);
       // Raggiungere l’arrivo con l’ultimo passo è valido, ma non con energia insufficiente.
-      const spent = a.steps.reduce((sum, cell) => sum + (c.traps.includes(cell) ? 3 : 1), 0);
-      if (a.position === 24 && spent <= 18) c.status = 'won';
+      if (a.position === 24 && enough) c.status = 'won';
       else if (a.energy === 0) c.status = 'lost';
       if (c.status !== 'open') a.finishedAt = now;
     } else throw new GameError('Azione non valida.');
@@ -121,25 +135,6 @@ export function applyAction(kind, original, action, user, now = Date.now()) {
       else if (r.round === 2) { r.status = 'won'; r.finishedAt = now; }
       else r.round++;
     } else throw new GameError('Azione non valida.');
-  } else if (kind === 'nuvola') {
-    if (action.type === 'rename') {
-      requireThat(typeof action.name === 'string' && action.name.trim().length > 0 && action.name.trim().length <= 24, 'Scegli un nome da 1 a 24 caratteri.');
-      state.name = action.name.trim();
-    } else if (action.type === 'decorate') {
-      const cost = { base: 0, plant: 3, cushion: 6, stars: 12 };
-      requireThat(Object.hasOwn(cost, action.decor) && state.affection >= cost[action.decor], 'Questa decorazione non è ancora sbloccata.');
-      state.decor = action.decor;
-    } else if (['coccola', 'snack', 'gioca'].includes(action.type)) {
-      requireThat(now - (state.lastCare[user.id] ?? 0) >= 3000, 'Aspetta un attimo: si sta ancora godendo la coccola.', 429);
-      const day = romeDay(now);
-      if (state.day !== day) { state.day = day; state.care = {}; }
-      const care = state.care[user.id] ?? [];
-      if (!care.includes(action.type)) { state.affection++; care.push(action.type); }
-      state.care[user.id] = care;
-      state.lastCare[user.id] = now;
-    } else throw new GameError('Azione non valida.');
-    state.events.unshift({ actor: actor.name, type: action.type, at: now });
-    state.events = state.events.slice(0, 12);
   } else throw new GameError('Attività non trovata.', 404);
   return state;
 }
@@ -147,7 +142,7 @@ export function applyAction(kind, original, action, user, now = Date.now()) {
 export function publicState(kind, state, userId, now = Date.now()) {
   if (kind === 'trappole') return { challenges: state.challenges.map(c => {
     const reveal = c.creator.id === userId || c.status !== 'open';
-    const visited = [...new Set([0, ...(c.attempt?.steps ?? [])])];
+    const visited = [...new Set([0, ...(c.attempt?.steps ?? []), ...(c.attempt?.probed != null ? [c.attempt.probed] : [])])];
     return { ...c, traps: reveal ? c.traps : c.traps.filter(n => visited.includes(n)),
       clues: Object.fromEntries(visited.map(n => [n, neighbors(n).filter(k => c.traps.includes(k)).length])) };
   }) };
@@ -163,6 +158,5 @@ export function publicState(kind, state, userId, now = Date.now()) {
       sequence: participant && operator && r.status === 'playing' ? current.sequence.slice(0, r.round + 4).map(i => SYMBOLS[i]) : [],
       legend: participant && !operator && r.status === 'playing' ? SYMBOLS.map((symbol, i) => ({ symbol, number: current.mapping[i] })) : [] }, history: state.history };
   }
-  const { requests, lastCare, ...safe } = state;
-  return { ...safe, care: state.day === romeDay(now) ? state.care : {}, myCare: state.day === romeDay(now) ? state.care[userId] ?? [] : [] };
+  return petsView(state, userId, now);
 }

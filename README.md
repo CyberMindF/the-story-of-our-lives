@@ -194,17 +194,21 @@ L'avventura del Gioco di Ruolo era finora un link esterno a un documento Google 
 
 Le tre pagine sono collegate da una barra di pillole in cima (`.ipdv-nav`, stesso pattern dell'indice della Bacheca) invece che solo da link in mezzo al testo o da una sidebar fissa.
 
-## Piccole avventure in due
+## Giochi condivisi
 
-Dal Tavolo da Gioco, tre ingressi portano a `/tavolo-da-gioco/piccole-avventure`:
+Dal Tavolo da Gioco, tre ingressi portano a pagine indipendenti, senza collegamenti incrociati:
 
-- `?gioco=trappole`: griglia 5×5, sei trappole, un tentativo da 18 punti energia. Il server valida la risolvibilità, le mosse e il risultato; chi gioca vede soltanto gli indizi delle caselle visitate. Restano le ultime 30 sfide, con i percorsi giocati.
-- `?gioco=frequenze`: tre serrature con combinazioni generate, legenda privata della guida, sequenza privata dell’esploratore e regole diverse per l’ordine del codice. I ruoli si alternano; entrambi devono entrare dai propri account. Sono conservate la partita in corso e le ultime 20 partite precedenti.
-- `?gioco=nuvola`: gatto condiviso, nome modificabile, tre interazioni animate e decorazioni sbloccabili. Ciascun tipo di cura assegna un punto per utente al giorno, nel fuso Europe/Rome. Nessun decadimento o penalità per l’assenza; nessun legame con bustine o valuta del gioco.
+- `/tavolo-da-gioco/trappole`: griglia 5×5, sei trappole, 12 energia, bandierine e una sonda gratuita su una casella vicina. Primo ingresso su una trappola: costo 3; altri passi: costo 1. Le nuove mappe devono avere una strada sicura di massimo 10 passi. Restano le ultime 30 sfide, con replay del percorso. Le sfide precedenti mantengono le regole originali (18 energia).
+- `/tavolo-da-gioco/frequenze`: tre serrature con combinazioni generate, legenda privata della guida, sequenza privata dell’esploratore e regole diverse per l’ordine del codice. I ruoli si alternano; entrambi devono entrare dai propri account. Sono conservate la partita in corso e le ultime 20 partite precedenti. Gli admin trovano **Prova da solo**: due pannelli controllabili in `/frequenze/prova`, con stato separato per admin (`practice:<id>`) e reset esclusivamente della prova.
+- `/tavolo-da-gioco/animali`: casa e salvadanaio condivisi, sei specie (gatto, cane, volpe, coniglio, papera, istrice), uova scelte o a sorpresa. Il primo uovo è gratuito, le tre azioni di incubazione lo fanno schiudere; le adozioni successive costano 60 monete e richiedono 18 XP totali per ogni animale già presente. Un uovo in incubazione alla volta, massimo 12 animali. La sorpresa preferisce specie mancanti. I cuccioli crescono di dimensioni fino a 18 XP, senza cambiare disegno.
+
+Gli animali hanno proposte di nome indipendenti per i due utenti: l’altro approva una proposta ancora valida. Il portafoglio parte da 30 monete, senza premi basati sul tempo. Il memory condiviso (12 carte) assegna 4–16 monete secondo i tentativi e 3 XP all’animale selezionato, soltanto al completamento. Carte, accoppiamenti e premio sono verificati dal server; una partita incompleta si riprende anche dall’altro account. Lo shop vende giochi interattivi (scatola, pallina, tunnel, vaschetta), decorazioni e spuntini consumabili. Due giochi possono essere posizionati nella stanza; le reazioni e le preferenze si scoprono usandoli.
+
+Le cure e le interazioni assegnano +1 XP per animale, utente e attività al giorno (Europe/Rome); ripeterle resta possibile senza XP aggiuntivi. Nessun decadimento o penalità per assenza. Nessun legame con bustine, altre valute o premi degli altri giochi. La vecchia route `/piccole-avventure?gioco=...` resta compatibile. Il vecchio Nuvola viene convertito nello schema JSON 2 alla prima azione, conservando nome, XP, decorazioni e cure giornaliere: non serve una nuova migrazione SQL.
 
 La migrazione **`0124_add_giochi_due.sql` va applicata prima del rilascio**. Lo stato D1 è separato per coppia di utenti e attività; la coppia segue la stessa selezione del partner delle carte. Gli account di prova non accedono a queste attività condivise. Le azioni usano versioni e identificativi di richiesta per evitare sovrascritture e doppi invii. La pagina si aggiorna ogni tre secondi soltanto quando visibile; non richiede modifiche al Worker realtime. Gli indizi segreti non sono inclusi nelle risposte API dell’altro ruolo.
 
-Verifiche: `npm run test:giochi-due`; dopo `npm run build`, `node scripts/smoke-giochi-due.mjs` prova due sessioni browser contro l’handler API e SQLite in memoria, senza dati di produzione. Il test genera schermate in una directory temporanea e controlla anche il layout mobile. Questa prima versione non include popup promozionali, premi incrociati o il gioco di riordino dei cosmetici.
+Verifiche: `npm run test:giochi-due`; dopo `npm run build`, `node scripts/smoke-giochi-due.mjs` prova due sessioni browser contro l’handler API e SQLite in memoria, senza dati di produzione. Verifica anche la prova admin isolata, uovo/schiusa, proposte di nome, acquisti, premio del memory, persistenza e layout mobile. Genera schermate in una directory temporanea. Non sono inclusi popup promozionali, premi incrociati o il gioco di riordino dei cosmetici.
 
 ## Redirect legacy
 

@@ -11,14 +11,19 @@ export async function onRequest(context) {
     if (session.user.isTest) return json({ error: 'Le attività condivise non sono disponibili per gli account di prova.' }, 403);
     const kind = params.kind;
     const empty = initialState(kind);
-    const partner = await findTradePartner(env, session.user);
+    const url = new URL(request.url);
+    const practice = url.searchParams.get('practice') === '1';
+    if (practice && (session.user.role !== 'admin' || kind !== 'frequenze')) return json({ error: 'Questa prova è riservata agli admin.' }, 403);
+    const seat = url.searchParams.get('seat') === 'B' ? 'B' : 'A';
+    const actor = practice ? { id: seat === 'A' ? -101 : -102, nickname: `Giocatore ${seat}` } : session.user;
+    const partner = practice ? { id: 0, nickname: 'Giocatore di prova' } : await findTradePartner(env, session.user);
     if (!partner) return json({ error: 'Serve anche l’altro account per aprire le attività condivise.' }, 409);
-    const pair = [session.user.id, partner.id].sort((a, b) => a - b).join(':');
+    const pair = practice ? `practice:${session.user.id}` : [session.user.id, partner.id].sort((a, b) => a - b).join(':');
     const db = env.DB.withSession('first-primary');
     const row = await db.prepare('SELECT state_json, version FROM giochi_due WHERE pair_key = ? AND kind = ?').bind(pair, kind).first();
     const state = row ? JSON.parse(row.state_json) : empty;
     const version = row?.version ?? 0;
-    const view = (value, revision) => ({ ...publicState(kind, value, session.user.id), version: revision, partner: partner.nickname });
+    const view = (value, revision) => ({ ...publicState(kind, value, actor.id), version: revision, partner: partner.nickname });
     if (request.method === 'GET') return json(view(state, version));
     // Leggi al massimo 8 KiB anche quando Content-Length non è presente.
     const reader = request.body?.getReader();
@@ -34,10 +39,10 @@ export async function onRequest(context) {
     let payload;
     try { payload = JSON.parse(text + decoder.decode()); } catch { return json({ error: 'Richiesta non valida.' }, 400); }
     if (!payload || typeof payload.requestId !== 'string' || !/^[a-f0-9-]{36}$/.test(payload.requestId)) return json({ error: 'Identificativo richiesta non valido.' }, 400);
-    const requestKey = `${session.user.id}:${payload.requestId}`;
+    const requestKey = `${actor.id}:${payload.requestId}`;
     if (state.requests.includes(requestKey)) return json(view(state, version));
     if (payload.version !== version) return json({ error: 'L’altra persona ha appena aggiornato la partita. Riprova sullo stato aggiornato.' }, 409);
-    const next = applyAction(kind, state, payload, session.user);
+    const next = practice && payload.type === 'practice-reset' ? empty : applyAction(kind, state, payload, actor);
     next.requests = [...state.requests, requestKey].slice(-32);
     const now = new Date().toISOString();
     // INSERT OR IGNORE + compare-and-swap: nessuna azione può sovrascriverne un’altra.

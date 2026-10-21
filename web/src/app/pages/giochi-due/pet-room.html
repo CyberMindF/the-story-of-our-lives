@@ -1,0 +1,67 @@
+<div class="wallet"><span>🏡 La casa è di entrambi. Anche il salvadanaio.</span><strong aria-live="polite">🪙 {{ state().coins ?? 0 }}</strong></div>
+<nav class="pet-tabs" aria-label="Sezioni degli animali">
+  <button type="button" [class.active]="tab() === 'room'" (click)="tab.set('room')">🏠 Stanza</button>
+  <button type="button" [class.active]="tab() === 'memory'" (click)="tab.set('memory')">🃏 Memory</button>
+  <button type="button" [class.active]="tab() === 'shop'" (click)="tab.set('shop')">🛍️ Shop</button>
+  <button type="button" [class.active]="tab() === 'adopt'" (click)="tab.set('adopt')">🥚 Adotta</button>
+</nav>
+@if (state().pets?.length) {
+  <div class="pet-list" role="group" aria-label="I vostri animali">@for (animal of state().pets; track animal.id) {
+    <button type="button" [class.active]="pet()?.id === animal.id" [attr.aria-pressed]="pet()?.id === animal.id" (click)="selected.set(animal.id)">{{ emoji(animal) }} {{ animal.name }}</button>
+  }</div>
+}
+@if (!state().pets?.length && tab() !== 'adopt') {
+  <section class="panel welcome"><span>🥚</span><h2>Chi c’è nell’uovo?</h2><p>Scegli un animale o lascia che sia una sorpresa. Il primo uovo è gratis, e avete già 30 monetine per i primi giochi.</p><button type="button" class="btn primary" (click)="tab.set('adopt')">Scegli il primo uovo</button></section>
+} @else if (tab() === 'room') {
+  @if (pet(); as p) {
+    <div class="room-layout">
+      <section class="panel room-panel">
+        <div class="title-row"><h2>{{ p.name }}</h2><span>{{ p.egg ? '🥚 ' + p.incubation.length + '/3' : (p.xp < 18 ? '🐾 Cucciolo' : '🐾 Adulto') + ' · ' + p.xp + ' XP' }}</span></div>
+        <div class="scene" [attr.data-decor]="state().decor" [attr.data-reaction]="reaction()" [attr.data-species]="p.species">
+          <div class="window" aria-hidden="true"><span class="cloud"></span><span class="moon">🌙</span></div>
+          <div class="rug" aria-hidden="true"></div>
+          @if (state().decor === 'plant') { <span class="plant" aria-hidden="true">🌱</span> }
+          @for (entry of placed(); track entry.side) {
+            <button type="button" class="room-object" [class.left]="entry.side === 'left'" [class.right]="entry.side === 'right'" [class.bouncing]="reaction() === entry.item!.id" [disabled]="busy() || p.egg || !!reaction()" [attr.aria-label]="'Gioca con ' + entry.item!.name" (click)="send('use-item', { itemId: entry.item!.id })"><span>{{ entry.item!.emoji }}</span><small>{{ entry.item!.name }}</small></button>
+          }
+          <div class="pet-walk"><button type="button" class="pet-touch" [style.--growth]="scale()" [disabled]="busy() || p.egg || !!reaction()" [attr.aria-label]="'Accarezza ' + p.name" (click)="send('coccola')"><app-pet-sprite [species]="p.species" [egg]="p.egg" [cracks]="p.incubation.length" [label]="p.name" /></button></div>
+          <span class="reaction-emoji" aria-hidden="true">{{ reaction() === 'coccola' ? '💕' : reaction() === 'snack' ? '😋' : reaction() === 'hatch' ? '🎉' : '🐾' }}</span>
+        </div>
+        @if (p.egg) {
+          <p class="hint">{{ p.surprise ? 'È un uovo a sorpresa. Lo scoprirete quando si schiude!' : 'Uovo scelto: ' + speciesName(p.species) }}</p>
+          <div class="care">@for (action of eggActions; track action.id) { <button type="button" class="btn" [disabled]="busy() || p.incubation.includes(action.id)" (click)="send('incubate', { care: action.id })">{{ action.emoji }} {{ action.label }}{{ p.incubation.includes(action.id) ? ' ✅' : '' }}</button> }</div>
+        } @else {
+          @if (p.xp < 18) { <div class="growth"><progress max="18" [value]="p.xp"></progress><small>{{ 18 - p.xp }} XP per diventare grande. Cresce di dimensioni, resta sempre lui.</small></div> }
+          <div class="care">@for (action of careActions; track action.id) { <button type="button" class="btn" [disabled]="busy() || !!reaction()" (click)="send(action.id)"><span>{{ action.emoji }} {{ action.label }}</span><small>{{ p.myCare.includes(action.id) ? 'Ancora? Certo!' : '+1 XP oggi' }}</small></button> }</div>
+          @if (snacks().length) { <div class="snacks">@for (food of snacks(); track food.id) { <button type="button" class="btn" [disabled]="busy() || !!reaction()" (click)="send('feed', { itemId: food.id })">{{ food.emoji }} {{ food.name }} ×{{ state().food?.[food.id] }}</button> }</div> }
+          <p class="hint">Tocca l’animale o gli oggetti nella stanza. Nessuna fame che scade e niente guai se non entrate.</p>
+          <p class="hint">Le cure danno XP una volta al giorno per persona e attività; il memory dà +3 XP a ogni partita completata.</p>
+        }
+      </section>
+      <aside class="panel">
+        @if (!p.egg) {
+          <h3>📝 Scegliamo il nome</h3><form (ngSubmit)="send('propose-name', { name: name() })"><label>La tua proposta<input name="proposal" maxlength="24" required placeholder="Come lo chiameresti?" [ngModel]="name()" (ngModelChange)="name.set($event)" /></label><button type="submit" class="btn" [disabled]="busy() || !name().trim()">Proponi nome</button></form>
+          @for (proposal of proposals(); track proposal.id) { <div class="proposal"><span><strong>{{ proposal.name }}</strong> · proposto da {{ proposal.by }}</span>@if (proposal.userId !== userId()) { <button type="button" class="btn" [disabled]="busy()" (click)="send('accept-name', { proposalId: proposal.id })">Mi piace, scelgo questo</button> } @else { <small>Aspetta il parere dell’altra persona.</small> }</div> }
+          <h3>🔎 Cosa gli piace?</h3><p class="hint">Gioco preferito: <strong>{{ itemName(p.favoriteToy) }}</strong><br />Spuntino preferito: <strong>{{ itemName(p.favoriteFood) }}</strong></p>
+        }
+        <h3>🧺 I vostri oggetti</h3>
+        @for (item of inventory(); track item.id) { <div class="inventory"><span>{{ item.emoji }} {{ item.name }}</span>@if (item.type === 'toy') { <div><button type="button" class="btn" [disabled]="busy() || state().placed?.['left'] === item.id" (click)="send('place', { itemId: item.id, slot: 'left' })">A sinistra</button><button type="button" class="btn" [disabled]="busy() || state().placed?.['right'] === item.id" (click)="send('place', { itemId: item.id, slot: 'right' })">A destra</button></div> } @else { <button type="button" class="btn" [disabled]="busy() || state().decor === item.id" (click)="send('place', { itemId: item.id })">{{ state().decor === item.id ? 'Nella stanza' : 'Sistema' }}</button> }</div> } @empty { <p class="hint">Lo shop ha scatole, giochi e qualche merenda. Prova a comprare una scatola!</p> }
+      </aside>
+    </div>
+  }
+} @else if (tab() === 'shop') {
+  <section class="panel"><h2>🛍️ Un po’ di shopping</h2><p>Giocattoli da usare, cose per la stanza e spuntini da assaggiare. Gli acquisti sono di entrambi.</p><div class="shop-grid">@for (item of state().shop; track item.id) { <article><span class="shop-emoji">{{ item.emoji }}</span><h3>{{ item.name }}</h3><p>{{ item.description }}</p><button type="button" class="btn" [disabled]="busy() || (state().coins ?? 0) < item.price || (item.type !== 'food' && state().owned?.includes(item.id))" (click)="send('buy', { itemId: item.id })">{{ item.type !== 'food' && state().owned?.includes(item.id) ? '✅ Già vostro' : '🪙 ' + item.price + ' · Compra' }}</button></article> }</div></section>
+} @else if (tab() === 'memory') {
+  <section class="panel memory-panel"><h2>🃏 Trova le coppie</h2><p>Gira due carte alla volta. Potete giocare da soli o darvi una mano dalla stessa stanza, ognuno dal proprio telefono.</p>
+    @if (state().memory; as game) {
+      <p>Per {{ memoryPet() }} · {{ game.turns }} tentativi · {{ game.matched.length / 2 }} coppie su 6</p>
+      <div class="memory-board">@for (card of game.board; track $index) { <button type="button" [class.matched]="game.matched.includes($index)" [class.revealed]="!!card" [disabled]="busy() || flipLocked() || !!card || game.done" [attr.aria-label]="'Carta ' + ($index + 1) + ': ' + (card ?? 'coperta')" (click)="flip($index)">{{ card ?? '🐾' }}</button> }</div>
+      @if (game.done) { <p role="status" class="prize">🎉 Tutte trovate! +{{ game.reward }} monetine e +3 XP.</p> }
+      @if (!game.done) { <p class="hint">La partita resta qui se uscite. Nessun premio finché non sono trovate tutte le coppie.</p> }
+    }
+    @if (!state().memory || state().memory?.done) { <button type="button" class="btn primary" [disabled]="busy() || !pet() || pet()?.egg" (click)="send('memory-start')">{{ state().memory ? 'Un’altra partita' : 'Giochiamo!' }}</button><p class="hint">Premio: da 4 a 16 monetine secondo i tentativi, più 3 XP per l’animale selezionato. Prima fai schiudere l’uovo.</p> }
+  </section>
+} @else if (tab() === 'adopt') {
+  <section class="panel adoption"><div class="big-egg">🥚</div><h2>Un nuovo coinquilino?</h2><p>Scegli chi arriva, oppure scopritelo alla schiusa. Le uova a sorpresa preferiscono specie che non avete ancora.</p><label>Chi vorresti?<select [ngModel]="adoption()" (ngModelChange)="adoption.set($event)"><option value="surprise">🎁 Sorprendimi</option>@for (species of state().species; track species.id) { <option [value]="species.id">{{ species.emoji }} {{ species.name }}</option> }</select></label><p>{{ state().eggPrice ? '🪙 60 monetine · ' + state().totalXp + '/' + state().nextEggXp + ' XP totali' : 'Il primo uovo è gratis!' }}</p><button type="button" class="btn primary" [disabled]="busy() || !canAdopt()" (click)="send('adopt', { species: adoption() })">Adotta l’uovo</button><p class="hint">Un uovo alla volta, fino a 12 animali. Quelli già adottati restano con voi. Dopo l’acquisto trovi l’uovo nella Stanza.</p></section>
+}
+@if (state().events?.length) { <details class="activity"><summary>📒 Cosa è successo</summary><ul>@for (event of state().events; track event.id) { <li><span>{{ event.text }}</span><small>{{ event.actor }} · {{ event.at | date:'dd/MM HH:mm' }}</small></li> }</ul></details> }

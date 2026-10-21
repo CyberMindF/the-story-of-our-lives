@@ -22,7 +22,7 @@ test('trappole: informazioni nascoste, ripresa, movimento e vittoria verificati 
   assert.throws(() => applyAction('trappole', state, { type: 'cancel', id }, rory));
   for (const cell of [1, 2, 3, 4, 9, 14, 19, 24]) state = applyAction('trappole', state, { type: 'move', id, cell }, desy);
   assert.equal(state.challenges[0].status, 'won');
-  assert.equal(state.challenges[0].attempt.energy, 10);
+  assert.equal(state.challenges[0].attempt.energy, 4);
   assert.deepEqual(publicState('trappole', state, 2).challenges[0].traps, traps);
   assert.throws(() => applyAction('trappole', state, { type: 'move', id, cell: 19 }, desy));
 });
@@ -32,9 +32,9 @@ test('trappole: costi, rivelazione e perdita, senza tentativi duplicati', () => 
   state = applyAction('trappole', state, { type: 'start', id }, desy);
   assert.throws(() => applyAction('trappole', state, { type: 'start', id }, desy));
   for (const cell of [1, 6]) state = applyAction('trappole', state, { type: 'move', id, cell }, desy);
-  assert.equal(state.challenges[0].attempt.energy, 14);
+  assert.equal(state.challenges[0].attempt.energy, 8);
   assert.deepEqual(publicState('trappole', state, 2).challenges[0].traps, [6]);
-  for (const cell of [7, 6, 7, 6, 7]) state = applyAction('trappole', state, { type: 'move', id, cell }, desy);
+  for (const cell of [7, 8, 13]) state = applyAction('trappole', state, { type: 'move', id, cell }, desy);
   assert.equal(state.challenges[0].status, 'lost');
   assert.equal(state.challenges[0].attempt.energy, 0);
 });
@@ -77,25 +77,27 @@ test('frequenze: richiede due giocatori, separa gli indizi e alterna i ruoli', (
   state = applyAction('frequenze', state, { type: 'create' }, desy);
   assert.equal(state.history.length, 1); assert.equal(state.room.owner.id, 2);
 });
-test('nuvola: crescita limitata per utente/giorno, nessun decadimento e sblocchi validati', () => {
-  const time = Date.parse('2026-10-21T12:00:00Z');
-  let state = initialState('nuvola');
-  state = applyAction('nuvola', state, { type: 'coccola' }, rory, time);
-  assert.throws(() => applyAction('nuvola', state, { type: 'snack' }, rory, time + 1000));
-  state = applyAction('nuvola', state, { type: 'coccola' }, rory, time + 4000);
-  assert.equal(state.affection, 1);
-  state = applyAction('nuvola', state, { type: 'coccola' }, desy, time + 4000);
-  assert.equal(state.affection, 2);
-  assert.throws(() => applyAction('nuvola', state, { type: 'decorate', decor: 'stars' }, rory, time + 8000));
-  state = applyAction('nuvola', state, { type: 'gioca' }, rory, time + 8000);
-  state = applyAction('nuvola', state, { type: 'decorate', decor: 'plant' }, rory, time + 9000);
-  assert.equal(state.decor, 'plant');
-  assert.equal(publicState('nuvola', state, 1, time + 86400000 * 100).affection, 3);
-  assert.deepEqual(publicState('nuvola', state, 1, time + 86400000).myCare, []);
-  assert.deepEqual(publicState('nuvola', state, 2, time).myCare, ['coccola']);
-  assert.equal(publicState('nuvola', state, 1, time).requests, undefined);
-  assert.throws(() => applyAction('nuvola', state, { type: 'rename', name: ' ' }, rory));
-  assert.equal(applyAction('nuvola', state, { type: 'rename', name: ' Neve ' }, rory).name, 'Neve');
+test('trappole: bandierine, sonda singola e ritorno su una trappola già scoperta', () => {
+  let state = create(); const id = state.challenges[0].id;
+  const act = (type, cell) => { state = applyAction('trappole', state, { type, id, cell }, desy); };
+  act('start'); act('flag', 1);
+  assert.throws(() => act('move', 1));
+  act('flag', 1); act('probe', 1);
+  assert.equal(state.challenges[0].attempt.energy, 12);
+  assert.equal(state.challenges[0].attempt.position, 0);
+  assert.equal(publicState('trappole', state, 2).challenges[0].clues[1], 1);
+  assert.throws(() => act('probe', 5));
+  for (const cell of [1, 6, 1, 6]) act('move', cell);
+  assert.equal(state.challenges[0].attempt.energy, 6);
+});
+test('trappole: una sfida precedente conserva le regole e l’energia originali', () => {
+  let state = create(); const id = state.challenges[0].id;
+  delete state.challenges[0].rules;
+  state = applyAction('trappole', state, { type: 'start', id }, desy);
+  assert.equal(state.challenges[0].attempt.energy, 18);
+  assert.throws(() => applyAction('trappole', state, { type: 'probe', id, cell: 1 }, desy));
+  for (const cell of [1, 6, 1, 6]) state = applyAction('trappole', state, { type: 'move', id, cell }, desy);
+  assert.equal(state.challenges[0].attempt.energy, 10);
 });
 test('giorno delle cure nel fuso italiano, anche durante il cambio stagionale', () => {
   assert.notEqual(romeDay(Date.parse('2026-10-21T21:59:00Z')), romeDay(Date.parse('2026-10-21T22:01:00Z')));

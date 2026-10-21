@@ -5,10 +5,6 @@ h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; margin: .8rem 0; }
 h2 { font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.2; margin: .6rem 0 1rem; }
 h3 { font-size: 1.05rem; margin-block: 1.2rem .8rem; }
 p { line-height: 1.65; }
-.game-tabs { display: flex; gap: .7rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-.game-tabs a { display: flex; align-items: center; gap: .6rem; padding: .85rem 1rem; border: 1px solid var(--border-color); border-radius: 1rem; text-decoration: none; color: var(--text-color); font-size: .85rem; }
-.game-tabs a.active { background: var(--play-tint); border-color: var(--accent-color); }
-.game-tabs a span { font-size: 1.35rem; }
 .play-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; align-items: start; }
 .play-panel { min-width: 0; padding: clamp(1rem, 3vw, 2rem); border: 1px solid var(--border-color); border-radius: 1.5rem; background: color-mix(in srgb, var(--bg-color) 90%, var(--text-color) 3%); }
 .play-panel > :first-child { margin-top: 0; }
@@ -53,46 +49,5 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--accent-color); 
 .text-button { background: transparent; color: var(--muted-color); border: 0; text-decoration: underline; cursor: pointer; padding: .7rem; font: inherit; font-size: .8rem; }
 .history { margin-top: 2rem; text-align: left; font-size: .85rem; }
 .history summary { cursor: pointer; padding: .5rem; }
-.pet-layout { grid-template-columns: 1.25fr 1fr; }
-.pet-panel h2 { font-size: 2.5rem; text-align: center; }
-.pet-scene { position: relative; height: 340px; overflow: hidden; border-radius: 1.5rem; background: linear-gradient(#e8e4ef 0%, #f3ece6 70%, #d8c3b5 70%); isolation: isolate; }
-.pet-window { position: absolute; width: 145px; height: 160px; top: 28px; left: calc(50% - 72px); border: 8px solid #fff8ee; border-radius: 75px 75px 4px 4px; background: linear-gradient(#b9d3e3, #e4edf0); overflow: hidden; }
-.pet-window::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 47%, #fff8ee 47% 53%, transparent 53%); }
-.cloud { position: absolute; width: 70px; height: 25px; border-radius: 50%; background: #fffaf1; opacity: .8; }
-.cloud-one { top: 40px; left: -10px; }.cloud-two { top: 85px; right: -20px; }
-.moon { display: none; }
-.pet-rug { position: absolute; background: #c5b0c7; border: 5px solid #e1cfe0; border-radius: 50%; width: 260px; height: 65px; bottom: 20px; left: calc(50% - 130px); }
-.pet-cat { position: absolute; width: 270px; height: 225px; left: calc(50% - 135px); bottom: 23px; overflow: visible; filter: drop-shadow(0 8px 5px #6e526021); animation: breathe 4s ease-in-out infinite; transform-origin: bottom center; }
-.cat-tail { transform-origin: 210px 200px; animation: tail 3s ease-in-out infinite; }
-.scene-decor { position: absolute; bottom: 65px; right: 15px; font-size: 3.5rem; }
-.pet-heart { position: absolute; font-size: 2.7rem; color: #ae5e7b; left: calc(50% + 60px); top: 70px; opacity: 0; }
-.pet-ball { position: absolute; bottom: 24px; left: 18%; font-size: 2.3rem; color: #b65f7b; text-shadow: 2px 3px #e3a8a0; }
-.pet-snack { display: none; position: absolute; bottom: 30px; right: 25%; font-size: 2rem; color: #946948; }
-[data-decor='cushion'] .pet-rug { height: 75px; background: #b7c9bd; border-color: #d6e2d3; }
-[data-decor='stars'] .pet-window { background: #5d587b; }
-[data-decor='stars'] .cloud { display: none; }
-[data-decor='stars'] .moon { display: block; font-size: 3rem; color: #fff0c6; margin: 1rem; }
-[data-decor='stars'] .scene-decor { color: #fff0c6; top: 35px; bottom: auto; }
-[data-action='coccola'] .pet-heart { animation: heart 2.3s ease-out; }
-[data-action='gioca'] .pet-cat { animation: pounce .7s ease-in-out 3; }
-[data-action='gioca'] .pet-ball { animation: roll .7s ease-in-out 3 alternate; }
-[data-action='snack'] .pet-snack { display: block; }
-[data-action='snack'] .pet-cat { animation: nibble .5s ease-in-out 4; }
-.pet-caption { text-align: center; font-size: .9rem; }
-.care-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
-.care-actions .btn { display: flex; flex-direction: column; gap: .4rem; padding: .8rem .3rem; border-radius: 1rem; font-size: .8rem; }
-.care-actions span { font-size: 1.6rem; }.care-actions small { font-size: .63rem; line-height: 1.4; font-weight: normal; }
-.decorations { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
-.decorations button { display: grid; text-align: left; gap: .4rem; border: 1px solid var(--border-color); border-radius: 1rem; padding: .9rem; color: var(--text-color); background: var(--input-bg); cursor: pointer; }
-.decorations button.selected { outline: 2px solid var(--accent-color); outline-offset: -2px; }
-.decorations button:disabled { opacity: .55; cursor: default; }
-.decorations span { font-size: 1.5rem; }.decorations strong { font-size: .8rem; }.decorations small { font-size: .7rem; }
-.pet-events { list-style: none; padding: 0; }.pet-events li { display: grid; gap: .3rem; border-bottom: 1px solid var(--border-color); padding: .7rem 0; font-size: .82rem; }.pet-events time { color: var(--muted-color); font-size: .7rem; }
-@keyframes breathe { 50% { transform: scaleY(1.018); } }
-@keyframes tail { 50% { transform: rotate(-9deg); } }
-@keyframes heart { 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-40px) rotate(15deg); } }
-@keyframes pounce { 50% { transform: translate(-15px, -18px) rotate(-4deg); } }
-@keyframes roll { to { transform: translateX(140px) rotate(180deg); } }
-@keyframes nibble { 50% { transform: rotate(3deg) translateY(3px); } }
-@media (max-width: 760px) { .play-layout { grid-template-columns: 1fr; }.has-incoming .builder { order: 2; }.game-tabs a { flex: 1 1 100%; }.play-heading { padding-top: 1rem; }.pet-scene { height: 310px; }.symbol-strip { gap: .35rem; }.symbol-strip span { width: 38px; height: 50px; font-size: 1.6rem; } }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } [data-action='coccola'] .pet-heart { opacity: 1; } }
+@media (max-width: 760px) { .play-layout { grid-template-columns: 1fr; }.has-incoming .builder { order: 2; }.play-heading { padding-top: 1rem; }.symbol-strip { gap: .35rem; }.symbol-strip span { width: 38px; height: 50px; font-size: 1.6rem; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

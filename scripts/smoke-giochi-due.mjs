@@ -46,8 +46,8 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const base = `http://127.0.0.1:${server.address().port}`;
 const screenshots = await mkdtemp(join(tmpdir(), 'giochi-due-smoke-'));
 const browser = await chromium.launch();
+const pages = [];
 try {
-  const pages = [];
   const errors = [];
   for (const user of [1, 2]) {
     const context = await browser.newContext({ viewport: { width: 1280, height: 960 }, reducedMotion: 'reduce' });
@@ -56,11 +56,11 @@ try {
       sessionStorage.setItem('noi-crossword-access-session-v1', String(id));
       sessionStorage.setItem('noi-crossword-access-session-touched-at-v1', String(Date.now()));
     }, user);
-    const page = await context.newPage(); page.on('pageerror', error => errors.push(error.message)); pages.push(page);
+    const page = await context.newPage(); page.setDefaultTimeout(15000); page.on('pageerror', error => errors.push(error.message)); pages.push(page);
   }
   const [rory, desy] = pages;
   const go = async (page, kind) => {
-    await page.goto(`${base}/tavolo-da-gioco/piccole-avventure?gioco=${kind}`);
+    await page.goto(`${base}/tavolo-da-gioco/${kind === 'nuvola' ? 'animali' : kind}`);
     await page.locator('.sync-note').waitFor();
   };
   await go(rory, 'trappole');
@@ -78,14 +78,17 @@ try {
     moves++;
     await desy.waitForFunction(count => document.querySelector('.score')?.textContent.includes(`${count} passi`), moves);
   }
-  await desy.getByText('Stella raggiunta!', { exact: false }).waitFor();
-  await desy.reload(); await desy.getByText('Stella raggiunta!', { exact: false }).waitFor();
+  await desy.getByText('Traguardo raggiunto!', { exact: false }).waitFor();
+  await desy.reload(); await desy.getByText('Traguardo raggiunto!', { exact: false }).waitFor();
+  await desy.getByRole('slider').fill('0');
+  assert.equal(await desy.locator('.play-panel').nth(1).locator('.tile').first().getAttribute('class').then(s => s.includes('current')), true);
   await go(rory, 'frequenze');
   await rory.getByRole('button', { name: 'Apri una stanza per due' }).click();
-  await rory.getByRole('heading', { name: 'Una frequenza cerca l’altra.' }).waitFor();
+  await rory.getByRole('heading', { name: 'Manca il secondo giocatore!' }).waitFor();
   await go(desy, 'frequenze');
   await desy.getByRole('button', { name: 'Entra nella partita' }).click();
   for (let turn = 0; turn < 3; turn++) {
+    console.log('Cooperativo, round', turn + 1);
     const explorer = pages[turn % 2], guide = pages[1 - turn % 2];
     await explorer.getByRole('heading', { name: 'Tu vedi i simboli.' }).waitFor();
     await guide.getByRole('heading', { name: 'Tu hai la legenda.' }).waitFor();
@@ -106,27 +109,113 @@ try {
     for (const digit of digits) await explorer.locator('.keypad').getByRole('button', { name: digit, exact: true }).click();
     await explorer.getByRole('button', { name: 'Apri la serratura' }).click();
   }
-  await rory.getByRole('heading', { name: 'Sulla stessa frequenza, davvero.' }).waitFor();
-  await desy.getByRole('heading', { name: 'Sulla stessa frequenza, davvero.' }).waitFor();
+  await rory.getByRole('heading', { name: 'Fatto! Tutte aperte 🎉' }).waitFor();
+  await desy.getByRole('heading', { name: 'Fatto! Tutte aperte 🎉' }).waitFor();
+  const realCoop = db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json;
+  await rory.getByRole('link', { name: /Prova da solo/ }).click();
+  await rory.getByRole('button', { name: 'Apri la stanza come A' }).click();
+  await rory.getByRole('button', { name: 'Entra come B' }).click();
+  for (let turn = 0; turn < 3; turn++) {
+    const panels = rory.locator('.screens section');
+    const explorer = panels.nth(turn % 2), guide = panels.nth(1 - turn % 2);
+    await explorer.getByRole('heading', { name: 'Hai la sequenza' }).waitFor();
+    const legend = Object.fromEntries((await guide.locator('.legend span').allTextContents()).map(s => s.split(' = ')));
+    const symbols = (await explorer.locator('.symbols').textContent()).trim().split(' ');
+    let digits = symbols.map(s => legend[s]);
+    if (turn === 1) digits.reverse();
+    if (turn === 2) digits = [...digits.slice(1), digits[0]];
+    await guide.getByRole('button', { name: 'Sono pronto' }).click();
+    await explorer.getByLabel('Codice').fill(digits.join(''));
+    await explorer.getByRole('button', { name: 'Prova il codice' }).click();
+  }
+  await rory.getByRole('heading', { name: '🎉 Prova completata' }).first().waitFor();
+  await rory.screenshot({ path: join(screenshots, 'frequenze-admin.png'), fullPage: true });
+  await rory.getByRole('button', { name: /Azzera la prova/ }).click();
+  await rory.getByRole('button', { name: 'Apri la stanza come A' }).waitFor();
+  assert.equal(db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json, realCoop);
+  const clickAction = async (page, locator) => {
+    const response = page.waitForResponse(r => r.url().includes('/api/giochi-due/') && r.request().method() === 'POST');
+    await locator.click(); const result = await response;
+    assert.equal(result.status(), 200, await result.text());
+  };
   await go(rory, 'nuvola');
-  await rory.getByRole('button', { name: /Una coccola/ }).click();
-  await rory.getByText('1 piccoli gesti', { exact: true }).waitFor();
+  await rory.getByRole('button', { name: 'Scegli il primo uovo' }).click();
+  await rory.getByLabel('Chi vorresti?').selectOption('cat');
+  await clickAction(rory, rory.getByRole('button', { name: 'Adotta l’uovo' }));
+  await rory.getByRole('button', { name: '🏠 Stanza', exact: true }).click();
+  await rory.screenshot({ path: join(screenshots, 'uovo-desktop.png'), fullPage: true });
+  for (const label of ['Tienilo al caldo', 'Giralo piano', 'Ascolta']) {
+    await clickAction(rory, rory.getByRole('button', { name: new RegExp(label) }));
+  }
+  await rory.getByRole('heading', { name: 'Gattino', exact: true }).waitFor();
   await go(desy, 'nuvola');
-  await desy.getByRole('button', { name: /Uno spuntino/ }).click();
-  await desy.getByText('2 piccoli gesti', { exact: true }).waitFor();
-  await rory.getByText('2 piccoli gesti', { exact: true }).waitFor();
-  await rory.getByLabel('Come lo chiamiamo?').fill('Neve');
-  await rory.getByRole('button', { name: 'Salva il nome' }).click();
-  await desy.getByRole('heading', { name: 'Neve', exact: true }).waitFor();
-  await rory.screenshot({ path: join(screenshots, 'rifugio-desktop.png'), fullPage: true });
+  await rory.getByLabel('La tua proposta').fill('Neve');
+  await clickAction(rory, rory.getByRole('button', { name: 'Proponi nome' }));
+  await desy.getByLabel('La tua proposta').fill('Mochi');
+  // Aspetta la proposta di Rory prima di inviare dal secondo account (versione condivisa).
+  await desy.locator('.proposal strong').filter({ hasText: 'Neve' }).waitFor();
+  await clickAction(desy, desy.getByRole('button', { name: 'Proponi nome' }));
+  await clickAction(desy, desy.getByRole('button', { name: 'Mi piace, scelgo questo' }));
+  await rory.getByRole('heading', { name: 'Neve', exact: true }).waitFor();
+  await rory.getByRole('button', { name: '🛍️ Shop', exact: true }).click();
+  await clickAction(rory, rory.locator('.shop-grid article').filter({ has: rory.getByRole('heading', { name: 'Scatola', exact: true }) }).getByRole('button'));
+  await rory.screenshot({ path: join(screenshots, 'shop-desktop.png'), fullPage: true });
+  await rory.getByRole('button', { name: '🏠 Stanza', exact: true }).click();
+  await clickAction(rory, rory.getByRole('button', { name: 'A sinistra', exact: true }));
+  await clickAction(rory, rory.getByRole('button', { name: 'Gioca con Scatola', exact: true }));
+  await rory.screenshot({ path: join(screenshots, 'animali-desktop.png'), fullPage: true });
+  await desy.getByRole('button', { name: 'Gioca con Scatola', exact: true }).waitFor();
+  await rory.getByRole('button', { name: '🃏 Memory', exact: true }).click();
+  await clickAction(rory, rory.getByRole('button', { name: 'Giochiamo!', exact: true }));
+  // Oracle esclusivamente nel DB in memoria del test, mai nel browser o nell’API pubblica.
+  const memory = JSON.parse(db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='nuvola'").get().state_json).memory;
+  const pairs = Object.values(Object.groupBy(memory.board.map((symbol, i) => ({ symbol, i })), x => x.symbol));
+  for (const pair of pairs) for (const { i } of pair) await clickAction(rory, rory.locator('.memory-board button').nth(i));
+  await rory.getByText('🎉 Tutte trovate! +16 monetine e +3 XP.', { exact: true }).waitFor();
+  assert.equal(await rory.locator('.wallet strong').textContent().then(s => s.trim()), '🪙 34');
+  await rory.screenshot({ path: join(screenshots, 'memory-desktop.png'), fullPage: true });
+  await rory.reload(); await rory.locator('.wallet strong').filter({ hasText: '34' }).waitFor();
+  await rory.getByRole('button', { name: '🃏 Memory', exact: true }).click();
+  await rory.getByText('🎉 Tutte trovate! +16 monetine e +3 XP.', { exact: true }).waitFor();
   await desy.setViewportSize({ width: 390, height: 844 });
   await desy.screenshot({ path: join(screenshots, 'rifugio-mobile.png'), fullPage: true });
   for (const kind of ['trappole', 'frequenze', 'nuvola']) {
     await go(desy, kind);
     assert.equal(await desy.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${kind} mobile overflow`);
   }
+  for (const tab of ['🛍️ Shop', '🃏 Memory', '🥚 Adotta', '🏠 Stanza']) {
+    await desy.getByRole('button', { name: tab, exact: true }).click();
+    assert.equal(await desy.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${tab} mobile overflow`);
+  }
+  // Fixture grafica solo in memoria: tutte le specie, adulto e nome lungo su mobile.
+  const petsRow = db.prepare("SELECT * FROM giochi_due WHERE pair_key='1:2' AND kind='nuvola'").get();
+  const fixture = JSON.parse(petsRow.state_json);
+  fixture.pets[0].xp = 18;
+  for (const species of ['dog', 'fox', 'rabbit', 'duck', 'porcupine']) fixture.pets.push({
+    ...structuredClone(fixture.pets[0]), id: crypto.randomUUID(), species, name: species, proposals: {}
+  });
+  db.prepare("UPDATE giochi_due SET state_json=?, version=version+1 WHERE pair_key='1:2' AND kind='nuvola'").run(JSON.stringify(fixture));
+  await rory.reload(); await rory.locator('.pet-list button').nth(5).waitFor();
+  for (let i = 0; i < 6; i++) {
+    await rory.locator('.pet-list button').nth(i).click();
+    await rory.locator('.scene').screenshot({ path: join(screenshots, `specie-${fixture.pets[i].species}.png`) });
+  }
+  fixture.pets[0].name = 'W'.repeat(24);
+  db.prepare("UPDATE giochi_due SET state_json=?, version=version+1 WHERE pair_key='1:2' AND kind='nuvola'").run(JSON.stringify(fixture));
+  await desy.reload(); await desy.getByRole('heading', { name: fixture.pets[0].name, exact: true }).waitFor();
+  assert.equal(await desy.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'Nome lungo mobile overflow');
+  await desy.goto(`${base}/tavolo-da-gioco/frequenze/prova`);
+  await desy.waitForURL(base + '/');
+  assert.equal(await desy.locator('app-frequenze-prova').count(), 0);
   assert.deepEqual(errors, []);
-  console.log(`PASS: due sessioni, trappole complete e riprese, tre round cooperativi, privacy indizi, cure e nome condivisi, mobile. Screenshot: ${screenshots}`);
+  console.log(`PASS: due sessioni, trappole e replay, tre round cooperativi e prova admin isolata, uovo/schiusa, nomi condivisi, shop e memory con premio persistente, mobile. Screenshot: ${screenshots}`);
+} catch (error) {
+  for (const [i, page] of pages.entries()) {
+    await page.screenshot({ path: join(screenshots, `errore-${i}.png`), fullPage: true });
+    console.error(page.url(), await page.locator('app-giochi-due, app-frequenze-prova').innerText().catch(() => 'Pagina non disponibile'));
+  }
+  console.error('Screenshot:', screenshots);
+  throw error;
 } finally {
   await browser.close(); await new Promise(resolve => server.close(resolve)); db.close();
 }

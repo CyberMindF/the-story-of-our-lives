@@ -187,6 +187,27 @@ export const routes: Routes = [
           import('./pages/tavolo-da-gioco/tavolo-da-gioco').then((m) => m.TavoloDaGioco),
       },
       {
+        path: 'tavolo-da-gioco/trappole',
+        data: { bodyClasses: ['tavolo-page'], game: 'trappole' },
+        loadComponent: () => import('./pages/giochi-due/giochi-due').then((m) => m.GiochiDue),
+      },
+      {
+        path: 'tavolo-da-gioco/frequenze/prova',
+        canActivate: [adminGuard],
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () => import('./pages/giochi-due/frequenze-prova').then((m) => m.FrequenzeProva),
+      },
+      {
+        path: 'tavolo-da-gioco/frequenze',
+        data: { bodyClasses: ['tavolo-page'], game: 'frequenze' },
+        loadComponent: () => import('./pages/giochi-due/giochi-due').then((m) => m.GiochiDue),
+      },
+      {
+        path: 'tavolo-da-gioco/animali',
+        data: { bodyClasses: ['tavolo-page'], game: 'nuvola' },
+        loadComponent: () => import('./pages/giochi-due/giochi-due').then((m) => m.GiochiDue),
+      },
+      {
         path: 'tavolo-da-gioco/piccole-avventure',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/giochi-due/giochi-due').then((m) => m.GiochiDue),
