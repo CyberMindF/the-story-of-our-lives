@@ -20,6 +20,7 @@
     "verify:links": "node scripts/verify-external-links.mjs",
     "test:study-import": "node --test functions/api/study-imports/*.test.mjs",
     "test:study-quiz": "node --test functions/api/study-quizzes/*.test.mjs",
+    "test:giochi-due": "node --test functions/api/giochi-due/*.test.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -187,6 +187,11 @@ export const routes: Routes = [
           import('./pages/tavolo-da-gioco/tavolo-da-gioco').then((m) => m.TavoloDaGioco),
       },
       {
+        path: 'tavolo-da-gioco/piccole-avventure',
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () => import('./pages/giochi-due/giochi-due').then((m) => m.GiochiDue),
+      },
+      {
         path: 'tavolo-da-gioco/gdr',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/gdr/gdr').then((m) => m.Gdr),

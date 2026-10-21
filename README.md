@@ -194,6 +194,18 @@ L'avventura del Gioco di Ruolo era finora un link esterno a un documento Google 
 
 Le tre pagine sono collegate da una barra di pillole in cima (`.ipdv-nav`, stesso pattern dell'indice della Bacheca) invece che solo da link in mezzo al testo o da una sidebar fissa.
 
+## Piccole avventure in due
+
+Dal Tavolo da Gioco, tre ingressi portano a `/tavolo-da-gioco/piccole-avventure`:
+
+- `?gioco=trappole`: griglia 5×5, sei trappole, un tentativo da 18 punti energia. Il server valida la risolvibilità, le mosse e il risultato; chi gioca vede soltanto gli indizi delle caselle visitate. Restano le ultime 30 sfide, con i percorsi giocati.
+- `?gioco=frequenze`: tre serrature con combinazioni generate, legenda privata della guida, sequenza privata dell’esploratore e regole diverse per l’ordine del codice. I ruoli si alternano; entrambi devono entrare dai propri account. Sono conservate la partita in corso e le ultime 20 partite precedenti.
+- `?gioco=nuvola`: gatto condiviso, nome modificabile, tre interazioni animate e decorazioni sbloccabili. Ciascun tipo di cura assegna un punto per utente al giorno, nel fuso Europe/Rome. Nessun decadimento o penalità per l’assenza; nessun legame con bustine o valuta del gioco.
+
+La migrazione **`0124_add_giochi_due.sql` va applicata prima del rilascio**. Lo stato D1 è separato per coppia di utenti e attività; la coppia segue la stessa selezione del partner delle carte. Gli account di prova non accedono a queste attività condivise. Le azioni usano versioni e identificativi di richiesta per evitare sovrascritture e doppi invii. La pagina si aggiorna ogni tre secondi soltanto quando visibile; non richiede modifiche al Worker realtime. Gli indizi segreti non sono inclusi nelle risposte API dell’altro ruolo.
+
+Verifiche: `npm run test:giochi-due`; dopo `npm run build`, `node scripts/smoke-giochi-due.mjs` prova due sessioni browser contro l’handler API e SQLite in memoria, senza dati di produzione. Il test genera schermate in una directory temporanea e controlla anche il layout mobile. Questa prima versione non include popup promozionali, premi incrociati o il gioco di riordino dei cosmetici.
+
 ## Redirect legacy
 
 `web/public/_redirects` fa da ponte con i vecchi short link `rsgmsfcfm.short.gy/<slug>` dell'export originale: ogni slug (`il-calendario`, `la-mappa`, `la-bacheca`, ecc.) reindirizza con 301 alla route Angular corrispondente. Short.gy resta un servizio esterno: per usare questi alias bisogna aggiornare manualmente ogni short link perché punti a `https://<dominio>/<slug>` invece del vecchio URL Notion.
