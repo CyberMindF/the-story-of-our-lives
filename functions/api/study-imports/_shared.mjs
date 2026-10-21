@@ -157,6 +157,7 @@ export function parseStudyBulkSource(value) {
           type,
           line: lineNumber,
           prompt: "",
+          difficultyLevel: null,
           imageUrl: null,
           imageAlt: null,
           referenceAnswer: null,
@@ -322,7 +323,7 @@ function parseQuestionLine(question, line, lineNumber, errors, path, title) {
     return;
   }
   const property = line.match(
-    /^(Domanda|Immagine|Testo immagine|Risposta)\s*:\s*(.*)$/i,
+    /^(Domanda|Livello|Immagine|Testo immagine|Risposta)\s*:\s*(.*)$/i,
   );
   if (!property)
     return errors.push(
@@ -341,6 +342,23 @@ function parseQuestionLine(question, line, lineNumber, errors, path, title) {
         ),
       );
     else question.prompt = text;
+  } else if (key === "livello") {
+    const level = Number(text);
+    if (
+      !/^\d+$/.test(text) ||
+      !Number.isInteger(level) ||
+      level < 1 ||
+      level > 5
+    )
+      errors.push(
+        error(
+          lineNumber,
+          "Il livello deve essere un numero intero da 1 a 5.",
+          path,
+          title,
+        ),
+      );
+    else question.difficultyLevel = level;
   } else if (key === "immagine") {
     if (!isHttpUrl(text))
       errors.push(

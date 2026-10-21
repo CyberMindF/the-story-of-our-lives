@@ -119,7 +119,15 @@
                   [disabled]="folderCardCount(folder.id) === 0 || openingFolderId() !== null"
                   (click)="startFolderStudy(folder)"
                 >
-                  {{ openingFolderId() === folder.id ? 'Apro…' : '▶ Ripassa tutto' }}
+                  {{ openingFolderId() === folder.id ? 'Apro…' : '▶ Ripassa flashcard' }}
+                </button>
+                <button
+                  type="button"
+                  class="btn glass-surface"
+                  [disabled]="folderQuizCount(folder.id) === 0"
+                  (click)="openMixedQuizSetup(folder)"
+                >
+                  {{ activeMixedQuizDraft(folder.id) ? 'Continua quiz misto' : 'Quiz misto' }}
                 </button>
               }
               <button type="button" class="btn glass-surface" (click)="startCreateFolder()">
@@ -194,6 +202,7 @@ Opzioni: originali
 
 ### Singola
 Domanda: Qual è la risposta?
+Livello: 1
 - [x] Corretta
 - [ ] Sbagliata
 
@@ -208,6 +217,11 @@ Domanda: Spiega il concetto.
 Immagine: https://esempio.it/immagine.jpg
 Testo immagine: Descrizione accessibile
 Risposta: Risposta di riferimento facoltativa.</pre>
+                <p class="study-bulk-help">
+                  <code>Livello: 1</code> è facoltativo e appartiene alla singola domanda. Accetta
+                  soltanto numeri interi da 1 a 5; se manca, la domanda viene importata normalmente
+                  senza livello.
+                </p>
               </details>
               <label class="form-field">
                 <span>Testo da importare</span>
@@ -645,7 +659,16 @@ Risposta: Risposta di riferimento facoltativa.</pre>
                         "
                         (click)="startFolderStudy(folder)"
                       >
-                        {{ openingFolderId() === folder.id ? 'Apro…' : '▶ Ripassa tutto' }}
+                        {{ openingFolderId() === folder.id ? 'Apro…' : '▶ Flashcard' }}
+                      </button>
+                      <button
+                        type="button"
+                        class="btn glass-surface study-mixed-action"
+                        [disabled]="folderQuizCount(folder.id) === 0"
+                        [attr.aria-label]="'Crea un quiz misto dalla cartella ' + folder.name"
+                        (click)="openMixedQuizSetup(folder)"
+                      >
+                        {{ activeMixedQuizDraft(folder.id) ? 'Continua quiz' : 'Quiz misto' }}
                       </button>
                       <button
                         type="button"
@@ -764,6 +787,142 @@ Risposta: Risposta di riferimento facoltativa.</pre>
       </section>
     }
   </main>
+
+  @if (mixedQuizTarget(); as folder) {
+    <div class="study-modal-backdrop" (click)="closeMixedQuizSetup()">
+      <section
+        class="study-mixed-dialog card glass-surface"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mixed-quiz-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header>
+          <div>
+            <p class="study-eyebrow">{{ folder.name }}</p>
+            <h2 id="mixed-quiz-title">Prepara un quiz misto</h2>
+          </div>
+          <button
+            type="button"
+            class="btn glass-surface"
+            [disabled]="mixedQuizStarting()"
+            aria-label="Chiudi"
+            (click)="closeMixedQuizSetup()"
+          >
+            ✕
+          </button>
+        </header>
+
+        <p>
+          Sono disponibili {{ folderQuizQuestionCount(folder.id) }} domande in
+          {{ folderQuizCount(folder.id) }} quiz. La selezione viene distribuita tra unità, livelli e
+          pacchetti disponibili.
+        </p>
+
+        <form (ngSubmit)="startMixedQuiz()">
+          <fieldset class="study-mixed-modes">
+            <legend>Come vuoi indicare la quantità?</legend>
+            <label>
+              <input
+                type="radio"
+                name="mixedSelectionMode"
+                value="total"
+                [checked]="mixedSelectionMode() === 'total'"
+                (change)="mixedSelectionMode.set('total')"
+              />
+              <span
+                ><strong>Domande totali</strong
+                ><small>Il totale viene diviso tra le unità.</small></span
+              >
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="mixedSelectionMode"
+                value="per_unit"
+                [checked]="mixedSelectionMode() === 'per_unit'"
+                (change)="mixedSelectionMode.set('per_unit')"
+              />
+              <span
+                ><strong>Domande per unità</strong
+                ><small>La quantità viene richiesta a ogni unità disponibile.</small></span
+              >
+            </label>
+          </fieldset>
+
+          <label class="form-field">
+            <span>
+              {{ mixedSelectionMode() === 'total' ? 'Numero totale' : 'Numero per unità' }}
+            </span>
+            <input
+              type="number"
+              min="1"
+              max="100"
+              required
+              [ngModel]="mixedQuestionCount()"
+              (ngModelChange)="mixedQuestionCount.set(+$event)"
+              name="mixedQuestionCount"
+            />
+          </label>
+
+          <label class="study-mixed-toggle">
+            <input
+              type="checkbox"
+              [checked]="mixedIncludeOpen()"
+              (change)="mixedIncludeOpen.set($any($event.target).checked)"
+            />
+            <span
+              ><strong>Includi risposte aperte</strong
+              ><small>Andranno valutate manualmente.</small></span
+            >
+          </label>
+          <label class="study-mixed-toggle">
+            <input
+              type="checkbox"
+              [checked]="mixedShuffleQuestions()"
+              (change)="mixedShuffleQuestions.set($any($event.target).checked)"
+            />
+            <span
+              ><strong>Ordine casuale</strong
+              ><small>Attivo per impostazione predefinita.</small></span
+            >
+          </label>
+          <label class="study-mixed-toggle">
+            <input
+              type="checkbox"
+              [checked]="mixedCorrectionMode() === 'immediate'"
+              (change)="
+                mixedCorrectionMode.set($any($event.target).checked ? 'immediate' : 'final')
+              "
+            />
+            <span
+              ><strong>Correzione immediata</strong
+              ><small
+                >Se disattiva, le soluzioni restano nascoste fino a “Correggi quiz”.</small
+              ></span
+            >
+          </label>
+
+          @if (mixedQuizError()) {
+            <p class="study-error" role="alert">{{ mixedQuizError() }}</p>
+          }
+          <div class="study-editor-actions">
+            <button
+              type="button"
+              class="btn glass-surface"
+              [disabled]="mixedQuizStarting()"
+              (click)="closeMixedQuizSetup()"
+            >
+              Annulla
+            </button>
+            <button type="submit" class="btn btn-submit" [disabled]="mixedQuizStarting()">
+              {{ mixedQuizStarting() ? 'Preparazione…' : 'Inizia quiz' }}
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  }
 
   <app-confirmation-dialog
     dialogId="delete-study-topic"

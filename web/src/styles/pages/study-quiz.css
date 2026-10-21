@@ -98,6 +98,22 @@
   font-weight: 750;
   text-transform: uppercase;
 }
+.quiz-question-level {
+  display: inline-block;
+  margin-left: 0.55rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 999px;
+  color: var(--muted-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.quiz-question-source {
+  margin: -0.45rem 0 -0.35rem;
+  color: var(--muted-color);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
 .quiz-question h2 {
   margin: 0;
   font-size: clamp(1.15rem, 3vw, 1.5rem);
@@ -228,6 +244,10 @@
 .quiz-history-body article p {
   margin: 0.3rem 0 0;
   color: var(--muted-color);
+}
+.quiz-history-body .quiz-history-source {
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 .btn.is-danger {
   border-color: var(--danger-text-color);

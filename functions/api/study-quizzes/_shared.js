@@ -8,7 +8,8 @@ export async function loadQuizSnapshot(env, quizId) {
     `
     SELECT q.id AS quiz_id, q.title, q.folder_id, q.correction_mode, q.shuffle_questions,
       q.shuffle_options, question.id AS question_id, question.type, question.prompt,
-      question.image_url, question.image_alt, question.reference_answer, question.position AS question_position,
+      question.difficulty_level, question.image_url, question.image_alt, question.reference_answer,
+      question.position AS question_position,
       option_row.id AS option_id, option_row.text AS option_text, option_row.is_correct,
       option_row.position AS option_position
     FROM study_quizzes q
@@ -31,6 +32,7 @@ export async function loadQuizSnapshot(env, quizId) {
         id: row.question_id,
         type: row.type,
         prompt: row.prompt,
+        difficultyLevel: row.difficulty_level,
         imageUrl: row.image_url,
         imageAlt: row.image_alt,
         referenceAnswer: row.reference_answer,

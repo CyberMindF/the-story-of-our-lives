@@ -121,6 +121,8 @@ function createDatabase() {
     "migrations/0117_add_study_bulk_imports.sql",
     "migrations/0118_add_study_quizzes.sql",
     "migrations/0119_add_study_import_reverts.sql",
+    "migrations/0120_add_study_quiz_question_difficulty.sql",
+    "migrations/0121_add_study_mixed_quiz_attempts.sql",
   ]) {
     db.exec(
       fs.readFileSync(

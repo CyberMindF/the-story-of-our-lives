@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
 import { StudyFocusService } from '../../core/study-focus.service';
@@ -19,13 +19,20 @@ interface QuizQuestion {
   id: number;
   type: QuestionType;
   prompt: string;
+  difficultyLevel: number | null;
   imageUrl: string | null;
   imageAlt: string | null;
   referenceAnswer: string | null;
   options: QuizOption[];
+  sourceQuizId?: number;
+  sourceQuizTitle?: string;
+  sourceUnitId?: number;
+  sourceUnitTitle?: string;
+  sourcePath?: string;
 }
 interface QuizSnapshot {
-  quizId: number;
+  quizId: number | null;
+  folderId: number | null;
   title: string;
   correctionMode: 'immediate' | 'final';
   shuffleQuestions: boolean;
@@ -45,7 +52,13 @@ interface AttemptAnswers {
 }
 interface QuizAttempt {
   id: string;
-  quizId: number;
+  quizId: number | null;
+  folderId?: number | null;
+  selectionMode?: 'total' | 'per_unit';
+  requestedCount?: number;
+  includeOpen?: boolean;
+  shuffleQuestions?: boolean;
+  correctionMode?: 'immediate' | 'final';
   userId: number;
   nickname?: string;
   status: 'in_progress' | 'completed';
@@ -67,6 +80,7 @@ interface QuizAttempt {
 })
 export class StudyQuiz implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly api = inject(ApiService);
   protected readonly auth = inject(AuthService);
   private readonly focusMode = inject(StudyFocusService);
@@ -78,6 +92,7 @@ export class StudyQuiz implements OnInit, OnDestroy {
   protected readonly resumed = signal(false);
   protected readonly copiedMessage = signal('');
   private saveTimer: ReturnType<typeof setTimeout> | null = null;
+  protected readonly isMixedQuiz = this.route.snapshot.data['mixedQuiz'] === true;
 
   protected readonly snapshot = computed(() => this.attempt()?.snapshot ?? null);
   protected readonly canComplete = computed(() => {
@@ -87,7 +102,17 @@ export class StudyQuiz implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.focusMode.enterPage();
-    const quizId = Number(this.route.snapshot.paramMap.get('id'));
+    const routeId = this.route.snapshot.paramMap.get('id');
+    if (this.isMixedQuiz) {
+      if (!routeId) {
+        this.error.set('Tentativo non valido.');
+        this.loading.set(false);
+        return;
+      }
+      await this.loadMixedAttempt(routeId);
+      return;
+    }
+    const quizId = Number(routeId);
     if (!Number.isSafeInteger(quizId) || quizId < 1) {
       this.error.set('Quiz non valido.');
       this.loading.set(false);
@@ -177,7 +202,8 @@ export class StudyQuiz implements OnInit, OnDestroy {
   }
   protected async complete(): Promise<void> {
     await this.save('complete');
-    await this.loadHistory(this.attempt()?.quizId ?? 0);
+    const current = this.attempt();
+    if (current) await this.loadHistory(current);
   }
 
   protected async restart(): Promise<void> {
@@ -189,11 +215,43 @@ export class StudyQuiz implements OnInit, OnDestroy {
     )
       return;
     if (current.status === 'in_progress')
-      await fetch(`/api/study-quiz-attempts/${current.id}`, {
+      await fetch(`${this.attemptEndpoint()}/${current.id}`, {
         method: 'DELETE',
         credentials: 'same-origin',
       });
-    await this.start(current.quizId);
+    if (this.isMixedQuiz) {
+      const response = await fetch('/api/study-mixed-quiz-attempts', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          folderId: current.folderId,
+          selectionMode: current.selectionMode,
+          questionCount: current.requestedCount,
+          includeOpen: current.includeOpen,
+          shuffleQuestions: current.shuffleQuestions,
+          correctionMode: current.correctionMode ?? current.snapshot.correctionMode,
+        }),
+      });
+      const result = await this.api.readApiResponse<{
+        attempt?: QuizAttempt;
+        resumed?: boolean;
+        error?: string;
+      }>(response);
+      if (!response.ok || !result.attempt) {
+        this.error.set(result.error || 'Non è stato possibile ripetere il quiz.');
+        return;
+      }
+      this.attempt.set(result.attempt);
+      this.resumed.set(false);
+      await this.router.navigate(['/aula-studio/quiz-misto', result.attempt.id], {
+        replaceUrl: true,
+        state: { newMixedAttempt: true },
+      });
+      await this.loadHistory(result.attempt);
+      return;
+    }
+    if (current.quizId) await this.start(current.quizId);
   }
 
   protected async copyQuestion(question: QuizQuestion): Promise<void> {
@@ -255,10 +313,37 @@ export class StudyQuiz implements OnInit, OnDestroy {
       if (!response.ok || !result.attempt) throw new Error(result.error || 'Avvio non riuscito.');
       this.attempt.set(result.attempt);
       this.resumed.set(result.resumed === true);
-      await this.loadHistory(quizId);
+      await this.loadHistory(result.attempt);
     } catch (error) {
       this.error.set(
         error instanceof Error ? error.message : 'Non è stato possibile aprire il quiz.',
+      );
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  private async loadMixedAttempt(attemptId: string): Promise<void> {
+    this.loading.set(true);
+    this.error.set('');
+    try {
+      const response = await fetch(
+        `/api/study-mixed-quiz-attempts/${encodeURIComponent(attemptId)}`,
+        { credentials: 'same-origin' },
+      );
+      const result = await this.api.readApiResponse<{ attempt?: QuizAttempt; error?: string }>(
+        response,
+      );
+      if (!response.ok || !result.attempt)
+        throw new Error(result.error || 'Caricamento non riuscito.');
+      this.attempt.set(result.attempt);
+      this.resumed.set(
+        result.attempt.status === 'in_progress' && window.history.state?.newMixedAttempt !== true,
+      );
+      await this.loadHistory(result.attempt);
+    } catch (error) {
+      this.error.set(
+        error instanceof Error ? error.message : 'Non è stato possibile aprire il quiz misto.',
       );
     } finally {
       this.loading.set(false);
@@ -291,7 +376,7 @@ export class StudyQuiz implements OnInit, OnDestroy {
     }
     this.saving.set(true);
     try {
-      const response = await fetch(`/api/study-quiz-attempts/${current.id}`, {
+      const response = await fetch(`${this.attemptEndpoint()}/${current.id}`, {
         method: 'PUT',
         credentials: 'same-origin',
         keepalive: action === 'save',
@@ -322,10 +407,10 @@ export class StudyQuiz implements OnInit, OnDestroy {
     }
   }
 
-  private async loadHistory(quizId: number): Promise<void> {
-    if (!quizId) return;
+  private async loadHistory(attempt: QuizAttempt): Promise<void> {
     const all = this.auth.isAdmin() ? '&all=1' : '';
-    const response = await fetch(`/api/study-quiz-attempts?quizId=${quizId}${all}`, {
+    const subject = this.isMixedQuiz ? `folderId=${attempt.folderId}` : `quizId=${attempt.quizId}`;
+    const response = await fetch(`${this.attemptEndpoint()}?${subject}${all}`, {
       credentials: 'same-origin',
     });
     const result = await this.api.readApiResponse<{ attempts?: QuizAttempt[] }>(response);
@@ -338,6 +423,13 @@ export class StudyQuiz implements OnInit, OnDestroy {
   private questionText(question: QuizQuestion): string {
     const answer = this.answerFor(question);
     const lines = [`Domanda: ${question.prompt}`];
+    if (question.sourceUnitTitle || question.sourceQuizTitle)
+      lines.push(
+        `Origine: ${[question.sourceUnitTitle, question.sourceQuizTitle]
+          .filter(Boolean)
+          .join(' › ')}`,
+      );
+    if (question.difficultyLevel) lines.push(`Livello: ${question.difficultyLevel}`);
     if (question.type === 'open') {
       lines.push(`Risposta data: ${answer.text || '—'}`);
       if (answer.revealed && question.referenceAnswer)
@@ -393,5 +485,9 @@ export class StudyQuiz implements OnInit, OnDestroy {
   private showCopied(message: string): void {
     this.copiedMessage.set(message);
     setTimeout(() => this.copiedMessage.set(''), 2200);
+  }
+
+  private attemptEndpoint(): string {
+    return this.isMixedQuiz ? '/api/study-mixed-quiz-attempts' : '/api/study-quiz-attempts';
   }
 }

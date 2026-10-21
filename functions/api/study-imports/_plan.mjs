@@ -213,9 +213,10 @@ export function buildImportStatements({
     statements.push(
       statement(
         `INSERT INTO study_quiz_questions
-        (quiz_id, type, prompt, image_url, image_alt, reference_answer, position)
+        (quiz_id, type, prompt, difficulty_level, image_url, image_alt, reference_answer, position)
        SELECT imported_quiz.id, json_extract(question.value, '$.type'),
-         json_extract(question.value, '$.prompt'), json_extract(question.value, '$.imageUrl'),
+         json_extract(question.value, '$.prompt'), json_extract(question.value, '$.difficultyLevel'),
+         json_extract(question.value, '$.imageUrl'),
          json_extract(question.value, '$.imageAlt'), json_extract(question.value, '$.referenceAnswer'),
          CAST(question.key AS INTEGER)
        FROM json_each(?) AS quiz

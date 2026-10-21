@@ -10,7 +10,10 @@
     } @else if (attempt(); as current) {
       <header class="quiz-heading">
         <div>
-          <p class="quiz-eyebrow">Quiz · {{ current.snapshot.questions.length }} domande</p>
+          <p class="quiz-eyebrow">
+            {{ isMixedQuiz ? 'Quiz misto' : 'Quiz' }} ·
+            {{ current.snapshot.questions.length }} domande
+          </p>
           <h1>{{ current.snapshot.title }}</h1>
           <p>
             {{
@@ -71,6 +74,9 @@
                       ? 'Più risposte'
                       : 'Una risposta'
                 }}</span>
+                @if (question.difficultyLevel) {
+                  <span class="quiz-question-level">Livello {{ question.difficultyLevel }}</span>
+                }
               </div>
               <button
                 type="button"
@@ -81,6 +87,14 @@
                 ⧉ Copia
               </button>
             </header>
+            @if (question.sourceUnitTitle || question.sourceQuizTitle) {
+              <p class="quiz-question-source">
+                {{ question.sourceUnitTitle }}
+                @if (question.sourceQuizTitle) {
+                  <span aria-hidden="true">›</span> {{ question.sourceQuizTitle }}
+                }
+              </p>
+            }
             <h2>{{ question.prompt }}</h2>
             @if (question.imageUrl) {
               <img
@@ -192,7 +206,12 @@
             @if (
               current.snapshot.correctionMode === 'final' && !current.answers.finalCorrectionShown
             ) {
-              <button type="button" class="btn btn-submit" [disabled]="saving()" (click)="correctQuiz()">
+              <button
+                type="button"
+                class="btn btn-submit"
+                [disabled]="saving()"
+                (click)="correctQuiz()"
+              >
                 ✓ Correggi quiz
               </button>
             } @else {
@@ -253,6 +272,17 @@
               @for (question of past.snapshot.questions; track question.id; let index = $index) {
                 <article>
                   <strong>{{ index + 1 }}. {{ question.prompt }}</strong>
+                  @if (question.sourceUnitTitle || question.sourceQuizTitle) {
+                    <p class="quiz-history-source">
+                      {{ question.sourceUnitTitle }}
+                      @if (question.sourceQuizTitle) {
+                        <span aria-hidden="true">›</span> {{ question.sourceQuizTitle }}
+                      }
+                      @if (question.difficultyLevel) {
+                        · Livello {{ question.difficultyLevel }}
+                      }
+                    </p>
+                  }
                   @if (question.type === 'open') {
                     <p>Risposta: {{ past.answers.byQuestion[question.id]?.text || '—' }}</p>
                     <p>

@@ -171,6 +171,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/aula-studio/study-quiz').then((m) => m.StudyQuiz),
       },
       {
+        path: 'aula-studio/quiz-misto/:id',
+        data: { bodyClasses: ['aula-studio-page'], mixedQuiz: true },
+        loadComponent: () => import('./pages/aula-studio/study-quiz').then((m) => m.StudyQuiz),
+      },
+      {
         path: 'aula-studio',
         data: { bodyClasses: ['aula-studio-page'] },
         loadComponent: () => import('./pages/aula-studio/aula-studio').then((m) => m.AulaStudio),

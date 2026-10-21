@@ -83,6 +83,7 @@ Ordine: casuale
 Opzioni: casuali
 ### Singola
 Domanda: Dove si trova il DNA?
+Livello: 2
 - [x] Nel nucleo
 - [ ] Nei ribosomi
 ### Multipla
@@ -99,10 +100,41 @@ Risposta: Contiene il materiale genetico.`);
   assert.equal(result.totalTopics, 1);
   assert.equal(result.totalQuizzes, 1);
   assert.equal(result.totalQuizQuestions, 3);
+  assert.equal(result.paths[0].quizzes[0].questions[0].difficultyLevel, 2);
+  assert.equal(result.paths[0].quizzes[0].questions[1].difficultyLevel, null);
   assert.equal(
     result.paths[0].quizzes[0].questions[2].referenceAnswer,
     "Contiene il materiale genetico.",
   );
+});
+
+test("accetta un livello da 1 a 5 facoltativo per ogni domanda", () => {
+  const result = parseStudyBulkSource(`# Test
+## Quiz: Livelli
+### Singola
+Domanda: Con livello?
+Livello: 5
+- [x] Sì
+- [ ] No
+### Aperta
+Domanda: Senza livello?`);
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.paths[0].quizzes[0].questions[0].difficultyLevel, 5);
+  assert.equal(result.paths[0].quizzes[0].questions[1].difficultyLevel, null);
+});
+
+test("rifiuta livelli vuoti, testuali o fuori dall'intervallo 1-5", () => {
+  for (const invalidLevel of ["", "facile", "0", "6", "2.5"]) {
+    const result = parseStudyBulkSource(`# Test
+## Quiz: Livelli
+### Singola
+Domanda: Quale?
+Livello: ${invalidLevel}
+- [x] A
+- [ ] B`);
+    assert.equal(result.errors.length, 1);
+    assert.match(result.errors[0].message, /livello.*1.*5/i);
+  }
 });
 
 test("valida il numero di risposte corrette per singola e multipla", () => {

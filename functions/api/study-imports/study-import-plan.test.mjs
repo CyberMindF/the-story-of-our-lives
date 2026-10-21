@@ -99,6 +99,7 @@ test("importa quiz, domande e opzioni nello stesso batch", () => {
 Correzione: immediata
 ### Singola
 Domanda: Dove si trova il DNA?
+Livello: 4
 - [x] Nucleo
 - [ ] Membrana
 ### Aperta
@@ -109,6 +110,22 @@ Risposta: Contiene il DNA.`,
   assert.equal(value(db, "SELECT COUNT(*) FROM study_quizzes"), 1);
   assert.equal(value(db, "SELECT COUNT(*) FROM study_quiz_questions"), 2);
   assert.equal(value(db, "SELECT COUNT(*) FROM study_quiz_options"), 2);
+  assert.equal(
+    db
+      .prepare(
+        "SELECT difficulty_level FROM study_quiz_questions WHERE position = 0",
+      )
+      .get().difficulty_level,
+    4,
+  );
+  assert.equal(
+    db
+      .prepare(
+        "SELECT difficulty_level FROM study_quiz_questions WHERE position = 1",
+      )
+      .get().difficulty_level,
+    null,
+  );
   assert.equal(
     db.prepare("SELECT correction_mode FROM study_quizzes").get()
       .correction_mode,
@@ -175,6 +192,8 @@ function createDatabase() {
     "migrations/0116_add_study_folders.sql",
     "migrations/0117_add_study_bulk_imports.sql",
     "migrations/0118_add_study_quizzes.sql",
+    "migrations/0120_add_study_quiz_question_difficulty.sql",
+    "migrations/0121_add_study_mixed_quiz_attempts.sql",
   ]) {
     db.exec(
       fs.readFileSync(

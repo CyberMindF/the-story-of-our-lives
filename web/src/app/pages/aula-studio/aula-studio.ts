@@ -59,6 +59,23 @@ interface StudyQuizSummary {
   updatedAt: string;
 }
 
+interface MixedQuizDraftSummary {
+  id: string;
+  folderId: number;
+  selectionMode: 'total' | 'per_unit';
+  requestedCount: number;
+  includeOpen: boolean;
+  shuffleQuestions: boolean;
+  correctionMode: 'immediate' | 'final';
+  questionCount: number;
+  updatedAt: string;
+}
+
+interface MixedQuizAttemptStart {
+  id: string;
+  folderId: number;
+}
+
 interface TopicDraft {
   title: string;
   pairs: string;
@@ -254,11 +271,20 @@ export class AulaStudio implements OnDestroy {
   protected readonly topics = signal<StudyTopicSummary[]>([]);
   protected readonly folders = signal<StudyFolder[]>([]);
   protected readonly quizzes = signal<StudyQuizSummary[]>([]);
+  protected readonly mixedQuizDrafts = signal<MixedQuizDraftSummary[]>([]);
   protected readonly loading = signal(true);
   protected readonly pageError = signal('');
   protected readonly saving = signal(false);
   protected readonly openingTopicId = signal<number | null>(null);
   protected readonly openingFolderId = signal<number | null>(null);
+  protected readonly mixedQuizTarget = signal<StudyFolder | null>(null);
+  protected readonly mixedSelectionMode = signal<'total' | 'per_unit'>('total');
+  protected readonly mixedQuestionCount = signal(10);
+  protected readonly mixedIncludeOpen = signal(true);
+  protected readonly mixedShuffleQuestions = signal(true);
+  protected readonly mixedCorrectionMode = signal<'immediate' | 'final'>('final');
+  protected readonly mixedQuizStarting = signal(false);
+  protected readonly mixedQuizError = signal('');
 
   protected readonly editingId = signal<number | 'new' | null>(null);
   protected readonly draft = signal<TopicDraft>({ title: '', pairs: '', folderId: null });
@@ -402,6 +428,7 @@ export class AulaStudio implements OnDestroy {
   }
 
   protected openFolder(folderId: number | null): void {
+    this.closeMixedQuizSetup();
     this.cancelEdit();
     this.closeFolderEditor();
     this.currentFolderId.set(folderId);
@@ -674,6 +701,21 @@ export class AulaStudio implements OnDestroy {
       .length;
   }
 
+  protected folderQuizQuestionCount(folderId: number): number {
+    const descendants = this.folderDescendantIds(folderId);
+    return this.quizzes().reduce(
+      (total, quiz) =>
+        quiz.folderId !== null && descendants.has(quiz.folderId)
+          ? total + quiz.questionCount
+          : total,
+      0,
+    );
+  }
+
+  protected activeMixedQuizDraft(folderId: number): MixedQuizDraftSummary | null {
+    return this.mixedQuizDrafts().find((draft) => draft.folderId === folderId) ?? null;
+  }
+
   private folderDescendantIds(folderId: number): Set<number> {
     const descendants = new Set<number>([folderId]);
     let changed = true;
@@ -814,6 +856,73 @@ export class AulaStudio implements OnDestroy {
 
   protected openQuiz(quiz: StudyQuizSummary): void {
     void this.router.navigate(['/aula-studio/quiz', quiz.id]);
+  }
+
+  protected openMixedQuizSetup(folder: StudyFolder): void {
+    const active = this.activeMixedQuizDraft(folder.id);
+    if (active) {
+      void this.router.navigate(['/aula-studio/quiz-misto', active.id]);
+      return;
+    }
+    this.mixedQuizTarget.set(folder);
+    this.mixedSelectionMode.set('total');
+    this.mixedQuestionCount.set(10);
+    this.mixedIncludeOpen.set(true);
+    this.mixedShuffleQuestions.set(true);
+    this.mixedCorrectionMode.set('final');
+    this.mixedQuizError.set('');
+  }
+
+  protected closeMixedQuizSetup(): void {
+    if (this.mixedQuizStarting()) return;
+    this.mixedQuizTarget.set(null);
+    this.mixedQuizError.set('');
+  }
+
+  protected async startMixedQuiz(): Promise<void> {
+    const folder = this.mixedQuizTarget();
+    const questionCount = Number(this.mixedQuestionCount());
+    if (
+      !folder ||
+      !Number.isSafeInteger(questionCount) ||
+      questionCount < 1 ||
+      questionCount > 100
+    ) {
+      this.mixedQuizError.set('Scegli un numero di domande tra 1 e 100.');
+      return;
+    }
+    this.mixedQuizStarting.set(true);
+    this.mixedQuizError.set('');
+    try {
+      const response = await fetch('/api/study-mixed-quiz-attempts', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          folderId: folder.id,
+          selectionMode: this.mixedSelectionMode(),
+          questionCount,
+          includeOpen: this.mixedIncludeOpen(),
+          shuffleQuestions: this.mixedShuffleQuestions(),
+          correctionMode: this.mixedCorrectionMode(),
+        }),
+      });
+      const result = await this.api.readApiResponse<{
+        attempt?: MixedQuizAttemptStart;
+        error?: string;
+      }>(response);
+      if (!response.ok || !result.attempt) throw new Error(result.error || 'Avvio non riuscito.');
+      this.mixedQuizTarget.set(null);
+      await this.router.navigate(['/aula-studio/quiz-misto', result.attempt.id], {
+        state: { newMixedAttempt: true },
+      });
+    } catch (error) {
+      this.mixedQuizError.set(
+        error instanceof Error ? error.message : 'Non è stato possibile creare il quiz misto.',
+      );
+    } finally {
+      this.mixedQuizStarting.set(false);
+    }
   }
 
   protected async deleteQuiz(quiz: StudyQuizSummary): Promise<void> {
@@ -1093,6 +1202,7 @@ export class AulaStudio implements OnDestroy {
       }>(topicResponse);
       const quizResult = await this.api.readApiResponse<{
         quizzes?: StudyQuizSummary[];
+        mixedDrafts?: MixedQuizDraftSummary[];
         error?: string;
       }>(quizResponse);
       if (!topicResponse.ok || !quizResponse.ok)
@@ -1100,6 +1210,7 @@ export class AulaStudio implements OnDestroy {
       this.topics.set(result.topics ?? []);
       this.folders.set(result.folders ?? []);
       this.quizzes.set(quizResult.quizzes ?? []);
+      this.mixedQuizDrafts.set(quizResult.mixedDrafts ?? []);
       if (
         this.currentFolderId() !== null &&
         !(result.folders ?? []).some((folder) => folder.id === this.currentFolderId())
