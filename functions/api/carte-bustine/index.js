@@ -1,4 +1,5 @@
 import { getAuthenticatedSession, json } from "../auth/_shared.js";
+import { findTradePartner } from "../carte-trade/_users.js";
 import { accrueBustine, checkStreak } from "./_shared.js";
 
 // Stato bustine dell'identità della sessione: fa maturare l'accumulo pigro prima di
@@ -11,11 +12,17 @@ export async function onRequestGet(context) {
     const session = await getAuthenticatedSession(request, env);
     if (!session) return json({ error: "Sessione non valida o scaduta." }, 401);
 
-    const state = await accrueBustine(env, session.user.id);
+    const partner = await findTradePartner(env, session.user);
+    const [state, partnerState] = await Promise.all([
+      accrueBustine(env, session.user.id),
+      partner ? accrueBustine(env, partner.id) : Promise.resolve(null)
+    ]);
     const streak = await checkStreak(env, session.user.id);
     const quantitaDisponibile = state.quantitaDisponibile + streak.bustineBonus;
     return json({
       quantitaDisponibile,
+      altroQuantitaDisponibile: partnerState?.quantitaDisponibile ?? null,
+      altroNickname: partner?.nickname ?? null,
       minutiResidui: state.minutiResidui,
       streakCorrente: streak.streakCorrente,
       streakMigliore: streak.streakMigliore,

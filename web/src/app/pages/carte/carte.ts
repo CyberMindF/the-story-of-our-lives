@@ -117,6 +117,7 @@ export class Carte implements OnInit, OnDestroy {
 
   // --- Bustina ---
   protected readonly bustineDisponibili = signal(0);
+  protected readonly altreBustineDisponibili = signal<number | null>(null);
   protected readonly bustineLoadError = signal(false);
   protected readonly streakCorrente = signal(0);
   protected readonly streakMigliore = signal(0);
@@ -287,6 +288,8 @@ export class Carte implements OnInit, OnDestroy {
       // aggiorna invece anche le bustine maturate nel frattempo.
       const data = await this.carteBustineService.load(userId, 5000);
       this.bustineDisponibili.set(data.quantitaDisponibile);
+      this.altreBustineDisponibili.set(data.altroQuantitaDisponibile);
+      if (data.altroNickname) this.partnerNickname.set(data.altroNickname);
       this.streakCorrente.set(data.streakCorrente);
       this.streakMigliore.set(data.streakMigliore);
       this.streakBonusOttenuto.set(data.streakBustineBonus);

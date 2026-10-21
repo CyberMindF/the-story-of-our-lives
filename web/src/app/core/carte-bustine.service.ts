@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 
 export interface CarteBustineState {
   quantitaDisponibile: number;
+  altroQuantitaDisponibile: number | null;
+  altroNickname: string | null;
   minutiResidui: number;
   streakCorrente: number;
   streakMigliore: number;
@@ -64,6 +66,8 @@ export class CarteBustineService {
     const data = (await response.json()) as Partial<CarteBustineState>;
     return {
       quantitaDisponibile: data.quantitaDisponibile ?? 0,
+      altroQuantitaDisponibile: data.altroQuantitaDisponibile ?? null,
+      altroNickname: data.altroNickname ?? null,
       minutiResidui: data.minutiResidui ?? 0,
       streakCorrente: data.streakCorrente ?? 0,
       streakMigliore: data.streakMigliore ?? 0,
