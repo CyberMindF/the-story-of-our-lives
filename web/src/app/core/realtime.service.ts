@@ -77,7 +77,7 @@ export class RealtimeService {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const socketUrl = new URL('/api/realtime', window.location.origin);
     socketUrl.protocol = protocol;
-    socketUrl.searchParams.set('path', window.location.pathname);
+    socketUrl.searchParams.set('path', this.presencePath());
     socketUrl.searchParams.set('visible', String(document.visibilityState === 'visible'));
     const socket = new WebSocket(socketUrl);
     this.socket = socket;
@@ -120,11 +120,16 @@ export class RealtimeService {
 
   private readonly onVisibilityChange = (): void => this.sendPresence();
 
+  private presencePath(): string {
+    // La presenza condivisa non rivela l'apertura dell'utility personale.
+    return window.location.pathname.replace(/\/$/, '') === '/contatore-amore' ? '/profilo' : window.location.pathname;
+  }
+
   private sendPresence(): void {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return;
     this.socket.send(JSON.stringify({
       type: 'presence:update',
-      path: window.location.pathname,
+      path: this.presencePath(),
       visible: document.visibilityState === 'visible'
     }));
   }

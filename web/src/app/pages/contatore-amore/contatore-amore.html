@@ -1,0 +1,145 @@
+<app-shell [showSuggestLink]="false" [trackPageOpened]="false" homeHref="/profilo" homeLabel="Profilo" homeAria="Torna al profilo">
+  <div class="love-page">
+    <header class="page-heading">
+      <p class="eyebrow">🔒 Solo per te</p>
+      <h1>Contatore dell’Amore</h1>
+      <p>Un posto per annotare come ti sei sentito, un episodio alla volta.</p>
+    </header>
+
+    @if (!state() && loading()) { <p class="panel" role="status">Carico il tuo contatore…</p> }
+    @if (!state() && error()) {
+      <div class="panel" role="alert"><p>{{ error() }}</p><button class="btn" (click)="load()">Riprova</button></div>
+    }
+    @if (state(); as data) {
+      <section class="counter-panel panel" aria-label="Registra un episodio" [style.--score-color]="color()">
+        <div class="score-orb">
+          <span aria-hidden="true" class="heart">♡</span>
+          <strong class="score" aria-label="Punteggio attuale" [style.font-size.px]="scoreFontSize()">{{ stats()!.current }}</strong>
+          <span>punti, adesso</span>
+        </div>
+        <p class="baseline">Partenza: {{ data.settings.initialScore }} · da lì, {{ signed(stats()!.net) }}</p>
+        <div class="quick-actions">
+          <button type="button" class="quick positive" [disabled]="busy() || loading() || !!pendingQuick()" (click)="quick(1)" aria-label="Registra un episodio positivo, più 1">
+            <strong>+1</strong><span>Mi ha fatto bene</span>
+          </button>
+          <button type="button" class="quick negative" [disabled]="busy() || loading() || !!pendingQuick()" (click)="quick(-1)" aria-label="Registra un episodio negativo, meno 1">
+            <strong>−1</strong><span>Mi ha fatto male</span>
+          </button>
+        </div>
+        <div class="save-status" role="status" aria-live="polite">{{ busy() ? 'Salvataggio…' : notice() || 'Un clic salva l’episodio. Puoi aggiungere una nota dopo.' }}</div>
+      </section>
+
+      @if (error()) {
+        <div class="error panel" role="alert">
+          <p>{{ error() }}</p>
+          @if (pendingQuick()) {
+            <p>Il salvataggio non è ancora confermato.</p>
+            <button class="btn" [disabled]="busy()" (click)="retryQuick()">Riprova il salvataggio</button>
+          } @else {
+            <button class="btn" [disabled]="busy() || loading()" (click)="load()">Ricarica lo storico</button>
+          }
+        </div>
+      }
+      <blockquote class="gentle-note">{{ phrase() }}</blockquote>
+
+      <section class="panel chart-panel" aria-labelledby="chart-title">
+        <div class="section-heading"><h2 id="chart-title">Come sta andando</h2><span>Ogni punto è un episodio</span></div>
+        <div #plot class="plot">
+          <svg [attr.viewBox]="'0 0 ' + chart().width + ' 260'" role="group" aria-label="Andamento del punteggio nel tempo. Tocca un punto per leggerlo.">
+            @for (tick of chart().ticks; track tick.value) {
+              <line x1="38" [attr.x2]="chart().width - 8" [attr.y1]="tick.y" [attr.y2]="tick.y" class="grid-line" />
+              <text x="30" [attr.y]="tick.y + 5" text-anchor="end" class="axis-label">{{ tick.label }}</text>
+            }
+            <line x1="38" [attr.x2]="chart().width - 8" [attr.y1]="chart().zero" [attr.y2]="chart().zero" class="zero-line" />
+            <polyline [attr.points]="chart().line" class="trend-line" />
+            @for (point of chart().points; track point.id) {
+              <g role="button" tabindex="0" [attr.aria-label]="(point.id === 'initial' ? 'Punteggio iniziale' : (point.time | date:'dd/MM/yyyy HH:mm:ss') + ', variazione ' + signed(point.delta)) + ', totale ' + point.total"
+                (mouseenter)="selectedId.set(point.id)" (focus)="selectedId.set(point.id)" (click)="selectedId.set(point.id)" (keydown.enter)="selectedId.set(point.id)" (keydown.space)="$event.preventDefault(); selectedId.set(point.id)">
+                <circle [attr.cx]="point.x" [attr.cy]="point.y" r="12" class="hit-area" />
+                <circle [attr.cx]="point.x" [attr.cy]="point.y" [attr.r]="selectedPoint()?.id === point.id ? 6 : 3.5" class="data-point" [class.selected]="selectedPoint()?.id === point.id" />
+              </g>
+            }
+          </svg>
+          <div class="time-axis"><time>{{ chart().from | date:chart().timeFormat }}</time><time>{{ chart().to | date:chart().timeFormat }}</time></div>
+        </div>
+        @if (selectedPoint(); as point) {
+          <div class="point-detail" aria-live="polite">
+            <button class="btn point-arrow" aria-label="Punto precedente" (click)="selectAdjacent(-1)" [disabled]="point.id === points()[0].id">←</button>
+            <div><span>{{ point.id === 'initial' ? 'Partenza' : (point.time | date:'dd/MM/yyyy · HH:mm:ss') }}</span>
+              <strong>{{ point.id === 'initial' ? 'Punteggio iniziale' : signed(point.delta) + ' · Totale' }}: {{ point.total }}</strong></div>
+            <button class="btn point-arrow" aria-label="Punto successivo" (click)="selectAdjacent(1)" [disabled]="point.id === points().at(-1)?.id">→</button>
+          </div>
+        }
+        <p class="small-note">La linea tratteggiata è lo zero: una soglia per riflettere, non una decisione automatica. Le frecce permettono di leggere anche punti sovrapposti.</p>
+      </section>
+
+      <section class="stats" aria-label="Statistiche">
+        <div><strong>{{ stats()!.current }}</strong><span>Adesso</span></div>
+        <div><strong>{{ stats()!.positive }}</strong><span>Episodi positivi</span></div>
+        <div><strong>{{ stats()!.negative }}</strong><span>Episodi negativi</span></div>
+        <div><strong>{{ signed(stats()!.net) }}</strong><span>Dalla partenza</span></div>
+        <div><strong>{{ signed(stats()!.week) }}</strong><span>Ultimi 7 giorni</span></div>
+      </section>
+
+      <section class="panel" aria-labelledby="history-title">
+        <div class="section-heading"><h2 id="history-title">I tuoi episodi <small>({{ data.episodes.length }})</small></h2>
+          <button class="btn" (click)="load()" [disabled]="busy() || loading() || !!pendingQuick()">{{ loading() ? 'Aggiorno…' : 'Aggiorna' }}</button></div>
+        <p class="small-note">Dal più recente. Orari nel fuso locale del dispositivo.</p>
+        @if (!data.episodes.length) { <p class="empty">Ancora nessun episodio. Quando vuoi, parti da +1 o −1.</p> }
+        <div class="history-list">
+          @for (episode of history(); track episode.id) {
+            <article class="episode" [attr.data-episode-id]="episode.id">
+              <div class="episode-main">
+                <span class="delta" [class.plus]="episode.delta > 0">{{ signed(episode.delta) }}</span>
+                <div class="episode-copy"><time [attr.datetime]="episode.occurredAt">{{ episode.occurredAt | date:'dd/MM/yyyy · HH:mm:ss' }}</time>
+                  <p>{{ episode.reason || 'Nessuna nota' }}</p></div>
+              </div>
+              <div class="episode-actions">
+                <button class="btn" (click)="startEdit(episode)" [disabled]="busy() || !!pendingQuick()">Modifica</button>
+                <button class="btn" (click)="deleting.set(episode)" [disabled]="busy() || !!pendingQuick()">Elimina</button>
+              </div>
+              @if (deleting()?.id === episode.id) {
+                <div class="delete-confirm" role="group" aria-label="Conferma eliminazione">
+                  <p>Eliminare questo episodio? Il punteggio verrà ricalcolato.</p>
+                  <button class="btn" (click)="remove()" [disabled]="busy()">Sì, elimina</button>
+                  <button class="btn" (click)="deleting.set(null)" [disabled]="busy()">Annulla</button>
+                  @if (error()) { <p role="alert">{{ error() }}</p> }
+                </div>
+              }
+              @if (editing()?.id === episode.id) {
+                <form class="edit-form" (ngSubmit)="saveEdit()">
+                  <label>Data e ora locali<input type="datetime-local" name="episodeDate" step="1" required [(ngModel)]="editDate" /></label>
+                  <label>Punteggio<select name="episodeDelta" aria-label="Punteggio" [(ngModel)]="editDelta"><option [ngValue]="1">+1</option><option [ngValue]="-1">−1</option><option [ngValue]="2">+2 · eccezionale</option><option [ngValue]="-2">−2 · eccezionale</option></select></label>
+                  <label class="wide">Motivazione (facoltativa)<textarea name="episodeReason" maxlength="2000" rows="3" [(ngModel)]="reason"></textarea></label>
+                  <div class="wide episode-actions"><button class="btn btn-submit" type="submit" [disabled]="busy() || !!pendingQuick()">Salva episodio</button><button class="btn" type="button" (click)="editing.set(null)" [disabled]="busy()">Annulla modifica</button></div>
+                  @if (error()) { <p class="wide" role="alert">{{ error() }}</p> }
+                </form>
+              }
+            </article>
+          }
+        </div>
+        @if (data.episodes.length > visibleCount()) { <button class="btn" (click)="visibleCount.set(visibleCount() + 25)">Mostra altri episodi</button> }
+      </section>
+
+      <details class="panel rules"><summary>Regole del gioco</summary>
+        @for (rule of rules; track rule.title) { <h3>{{ rule.title }}</h3><p>{{ rule.text }}</p> }
+        <h3>Regole aggiuntive</h3><ul>@for (rule of extraRules; track rule) { <li>{{ rule }}</li> }</ul>
+      </details>
+      <aside class="panel reminder"><h2>🌿 La regola dei 30 minuti</h2>
+        <p>Quando qualcosa mi ferisce, posso comunicarlo chiaramente e sinceramente.</p>
+        <p>Dopo averlo fatto, cerco di non continuare a sollecitare una risposta o una riparazione.</p>
+        <p>Mi concedo circa 30 minuti per elaborare la delusione e poi provo a riportare l'attenzione sulla mia giornata.</p>
+        <p>Non significa obbligarmi a essere felice o fingere che non sia successo niente. Significa evitare di alimentare volontariamente la rabbia e il rimuginio.</p>
+      </aside>
+      <details class="panel settings"><summary>Punteggio iniziale</summary>
+        <form class="edit-form" (ngSubmit)="saveSettings()">
+          <label>Da quanti punti parti<input type="number" name="initialScore" required step="1" [(ngModel)]="initialScore" /></label>
+          <div class="wide"><p class="small-note">Cambiarlo ricalcola tutto il grafico, senza cancellare gli episodi. La scala dei colori segue la partenza; se scegli zero o meno usa 20 come riferimento.</p>
+            <button class="btn" type="submit" [disabled]="busy() || !!pendingQuick()">Salva partenza</button></div>
+          @if (error()) { <p class="wide" role="alert">{{ error() }}</p> }
+        </form>
+      </details>
+      <p class="privacy-note">🔒 Questi dati sono personali: ogni amministratore vede soltanto i propri episodi. Non vengono condivisi in chat, notifiche o log delle attività.</p>
+    }
+  </div>
+</app-shell>

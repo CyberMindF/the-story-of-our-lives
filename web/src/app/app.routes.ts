@@ -63,6 +63,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/profilo/profilo').then((m) => m.Profilo),
       },
       {
+        path: 'contatore-amore',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/contatore-amore/contatore-amore').then((m) => m.ContatoreAmore),
+      },
+      {
         path: 'log',
         canActivate: [adminGuard],
         data: { bodyClasses: ['log-page'] },

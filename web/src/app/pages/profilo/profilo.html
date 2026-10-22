@@ -40,6 +40,9 @@
   @if (authService.isAdmin()) {
     <section class="profilo-form card glass-surface" aria-labelledby="admin-tools-title">
       <h2 id="admin-tools-title">Strumenti riservati</h2>
+      <div class="profilo-admin-links">
+        <a class="btn" routerLink="/contatore-amore">💗 Contatore dell’Amore · personale</a>
+      </div>
       @if (authService.adminModeEnabled()) {
         <div class="profilo-admin-links">
           <a class="btn" routerLink="/contenuti">📚 Indice dei contenuti</a>

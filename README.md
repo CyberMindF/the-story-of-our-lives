@@ -76,6 +76,36 @@ Entrambe le operazioni sono disponibili nel Profilo con Modalità admin attiva.
 
 Le route protette sono raccolte sotto `authGuard` in `web/src/app/app.routes.ts`. Se sessione o Chiave della scheda non sono valide, il Router conserva la destinazione richiesta e torna al Portone; dopo login, registrazione o conferma della Chiave riprende la navigazione originale. Sono accettate soltanto destinazioni dello stesso dominio e mai URL sotto `/api/`.
 
+## Contatore dell’Amore (privato)
+
+La pagina `/contatore-amore` si apre dal **Profilo → Strumenti riservati**, solo per gli
+amministratori, anche senza Modalità admin attiva. Ogni amministratore vede esclusivamente
+i propri dati: la API verifica ruolo e proprietario su ogni lettura e scrittura. Nessun
+contenuto viene inviato alla telemetria, alle notifiche o alla chat; la presenza condivisa
+mostra soltanto “Profilo”. Non è incluso nell’esportazione dei contenuti condivisi.
+
+Applicare `0125_add_love_counter.sql` prima di pubblicare il frontend. Le due tabelle
+`love_counter_settings` e `love_counter_episodes` sono legate a `users.id`. Il totale è
+sempre derivato dalla base (20, configurabile) e dagli episodi; la base non azzera lo storico.
+Date ISO UTC, visualizzazione e modifica nel fuso locale del dispositivo. La statistica
+settimanale usa gli ultimi sette giorni mobili; le date future non entrano in tale finestra.
+La scala cromatica segue la base positiva, oppure usa 20 come riferimento per basi <= 0.
+
+`POST /api/love-counter` registra ±1 con UUID idempotente e ora server; `PATCH` modifica
+un episodio (±1/±2, nota, data) o la base; `DELETE` elimina un episodio. Le revisioni impediscono
+sovrascritture silenziose fra schede. Le eliminazioni svuotano la nota e mantengono una
+tombstone per impedire che un retry tardivo ricrei l’episodio. Le richieste di salvataggio
+usano `keepalive`: lo stato “Salvato” appare soltanto dopo conferma del server, mentre in caso
+di errore si può riprovare lo stesso inserimento senza duplicarlo. Nessun salvataggio offline.
+
+Verifiche locali senza dati remoti:
+
+```bash
+npm run test:love-counter
+npm run build
+node scripts/smoke-love-counter.mjs
+```
+
 ## Media privati (R2)
 
 Il binding `MEDIA` punta al bucket R2 `the-white-world-media`, privato: nessun accesso pubblico o dominio personalizzato, l'unico modo per leggerlo è `GET /api/media/<percorso>`, che verifica la sessione prima di restituire l'oggetto (401 senza sessione valida, 400 su tentativi di path traversal, 404 se l'oggetto non esiste). Il frontend richiama questo endpoint da pagina già protetta dal guard, non serve altra autenticazione lato client.
