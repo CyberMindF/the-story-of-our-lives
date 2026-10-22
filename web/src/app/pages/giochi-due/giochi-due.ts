@@ -43,7 +43,7 @@ export class GiochiDue implements OnDestroy {
   protected readonly MathFloor = Math.floor;
   protected readonly tabs: { id: Kind; icon: string; name: string; description: string }[] = [
     { id: 'trappole', icon: '💣', name: 'Ti preparo una trappola', description: 'Nascondi le trappole. Vediamo chi arriva in fondo!' },
-    { id: 'frequenze', icon: '📡', name: 'Sulla stessa frequenza', description: 'Metà indizi a testa. Otto modi per capirsi al volo.' },
+    { id: 'frequenze', icon: '📡', name: 'Sulla stessa frequenza', description: 'Una scatola da esplorare in due. E le prove di sempre.' },
     { id: 'nuvola', icon: '🐾', name: 'La casa degli animali', description: 'Uova, zampe e qualche disastro sul tappeto.' }
   ];
   protected readonly currentTab = computed(() => this.tabs.find(t => t.id === this.kind())!);
@@ -56,7 +56,12 @@ export class GiochiDue implements OnDestroy {
   private reading = false;
   private readError = '';
   private controller: AbortController | null = null;
-  private readonly poll = setInterval(() => { if (!document.hidden && !this.busy()) void this.refresh(); }, 3000);
+  private pollTicks = 0;
+  private readonly poll = setInterval(() => {
+    const room = this.data()?.room;
+    const exploring = room?.schema === 2 && room.puzzle?.type === 'machine';
+    if ((++this.pollTicks % 3 === 0 || exploring) && !document.hidden && !this.busy()) void this.refresh();
+  }, 1000);
   private readonly visibility = () => { if (!document.hidden) void this.refresh(); };
 
   constructor() {

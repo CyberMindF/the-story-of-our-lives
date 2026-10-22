@@ -19,7 +19,7 @@ function solveCode(state, now = 3000) {
 
 test('coop: scelta e difficoltà validate, mix vario e catalogo senza duplicati', () => {
   assert.equal(new Set(COOP_CATALOG.map(p => p.id)).size, COOP_CATALOG.length);
-  assert.equal(COOP_CATALOG.length, 8);
+  assert.equal(COOP_CATALOG.length, 9);
   for (const mode of COOP_CATALOG.map(p => p.id)) {
     const state = create({ mode });
     assert.deepEqual(state.room.playlist, [mode]);
@@ -30,6 +30,7 @@ test('coop: scelta e difficoltà validate, mix vario e catalogo senza duplicati'
     assert.equal(state.room.playlist.length, length);
     assert.equal(new Set(state.room.playlist).size, length);
     assert.equal(state.room.playlist.includes('code'), length === 8);
+    assert.equal(state.room.playlist.includes('machine'), false);
     assert.equal(state.room.difficulty, 'normal');
   }
   for (const difficulty of ['easy', 'normal', 'hard']) assert.equal(create({ difficulty }).room.difficulty, difficulty);

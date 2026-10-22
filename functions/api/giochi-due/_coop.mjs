@@ -1,11 +1,12 @@
 import { check } from './_errors.mjs';
 import { PUZZLE_CATALOG, createPuzzle, puzzleView, applyPuzzle } from './_coop-puzzles.mjs';
 import { PIPES_META, createPipes, pipesView, applyPipes } from './_coop-pipes.mjs';
+import { MACHINE_META, createMachine, machineView, applyMachine } from './_coop-machine.mjs';
 
 const SYMBOLS = ['🌞', '🌙', '⭐', '🍎', '💚', '🌸', '🍕', '🎈'];
 export const COOP_CATALOG = [
   { id: 'code', title: 'Il codice', emoji: '🔐', description: 'Una sequenza e una legenda separata. La prova facile per scaldarsi.' },
-  ...PUZZLE_CATALOG, PIPES_META
+  ...PUZZLE_CATALOG, PIPES_META, MACHINE_META
 ];
 const difficulties = ['easy', 'normal', 'hard'];
 function shuffle(values) {
@@ -21,7 +22,7 @@ function makePuzzle(type, difficulty) {
   const p = type === 'code' ? {
     type, difficulty, solved: false, ready: false,
     mapping: shuffle([1, 2, 3, 4, 5, 6, 7, 8]), sequence: shuffle([0, 1, 2, 3, 4, 5, 6, 7]).slice(0, 4)
-  } : type === 'pipes' ? createPipes(difficulty) : createPuzzle(type, difficulty);
+  } : type === 'machine' ? createMachine() : type === 'pipes' ? createPipes(difficulty) : createPuzzle(type, difficulty);
   return { ...p, id: crypto.randomUUID() };
 }
 function startRound(r, now) {
@@ -31,6 +32,7 @@ function startRound(r, now) {
   r.message = ''; r.nextReady = [false, false]; r.restartReady = [false, false];
 }
 function projectPuzzle(p, seat) {
+  if (p.type === 'machine') return machineView(p, seat);
   if (p.type === 'pipes') return pipesView(p, seat);
   if (p.type !== 'code') return puzzleView(p, seat);
   return {
@@ -72,12 +74,13 @@ export function applyCoop(original, action, user, now) {
       difficulty: state.room.difficulty ?? 'easy', results: state.room.results ?? []
     });
     state.history = state.history.slice(0, 20);
-    const varied = shuffle(COOP_CATALOG.filter(c => c.id !== 'code').map(c => c.id));
+    const varied = shuffle(COOP_CATALOG.filter(c => c.id !== 'code' && !c.experimental).map(c => c.id));
     const playlist = mode === 'mix' ? (length === 8 ? ['code', ...varied] : varied.slice(0, length)) : [mode];
     state.room = {
       schema: 2, id: crypto.randomUUID(), owner: { id: user.id, name: user.nickname }, partner: null,
       status: 'waiting', mode, difficulty, playlist, round: 0, errors: 0, results: [],
-      startedAt: now, puzzle: null, nextReady: [false, false], restartReady: [false, false]
+      startedAt: now, puzzle: null, nextReady: [false, false], restartReady: [false, false],
+      roleOffset: mode === 'machine' && action.insideFirst === true ? 1 : 0
     };
     return state;
   }
@@ -115,8 +118,9 @@ export function applyCoop(original, action, user, now) {
     return state;
   }
   // I ruoli si scambiano a ogni prova, senza cambiare i posti A/B della stanza.
-  const puzzleSeat = (userSeat + r.round) % 2;
+  const puzzleSeat = (userSeat + r.round + (r.roleOffset ?? 0)) % 2;
   const result = r.puzzle.type === 'code' ? applyCode(r.puzzle, action, puzzleSeat)
+    : r.puzzle.type === 'machine' ? applyMachine(r.puzzle, action, puzzleSeat)
     : r.puzzle.type === 'pipes' ? applyPipes(r.puzzle, action, puzzleSeat) : applyPuzzle(r.puzzle, action, puzzleSeat);
   r.puzzle = result.puzzle; r.roundMoves++;
   r.restartReady = [false, false];
@@ -137,7 +141,7 @@ export function coopView(state, userId) {
   const common = { catalog: COOP_CATALOG, history: state.history };
   if (!r) return { ...common, room: null };
   const userSeat = seatOf(r, { id: userId });
-  const seat = userSeat < 0 ? -1 : (userSeat + r.round) % 2;
+  const seat = userSeat < 0 ? -1 : (userSeat + r.round + (r.roleOffset ?? 0)) % 2;
   let puzzle = null;
   if (r.status === 'playing' && seat >= 0) {
     const view = projectPuzzle(r.puzzle, seat);

@@ -2,9 +2,10 @@ import { Component, computed, effect, input, output, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { BalancePuzzle, CoopState, MazePuzzle, OrderPuzzle } from './coop-models';
+import { MachineRoom } from './machine-room';
 
 @Component({
-  selector: 'app-coop-room', imports: [FormsModule, DatePipe],
+  selector: 'app-coop-room', imports: [FormsModule, DatePipe, MachineRoom],
   templateUrl: './coop-room.html', styleUrl: './coop-room.css'
 })
 export class CoopRoom {
@@ -34,6 +35,7 @@ export class CoopRoom {
     this.command.emit({ id: r?.id, puzzleId: r?.schema === 2 ? r.puzzle?.id : undefined, round: r?.round, ...extra, type });
   }
   protected create(): void { this.send('create', { mode: this.mode(), difficulty: this.mode() === 'code' ? 'easy' : this.difficulty(), length: this.length() }); }
+  protected createMachine(insideFirst = false): void { this.send('create', {mode: 'machine', difficulty: 'normal', insideFirst}); }
   protected cancel(): void {
     if (confirm('Chiudere la partita per entrambi? Le prove già completate resteranno nello storico.')) this.send('cancel');
   }
@@ -61,6 +63,6 @@ export class CoopRoom {
   protected portX(port: number): number { return [50, 100, 50, 0][port]; }
   protected portY(port: number): number { return [0, 50, 100, 50][port]; }
   protected portNames(ports: number[] | null): string { return ports?.map(n => ['alto', 'destra', 'basso', 'sinistra'][n]).join(' e ') ?? 'tubo dell’altra persona'; }
-  protected difficultyName(value: string): string { return ({easy: 'Facile', normal: 'Normale', hard: 'Difficile'} as Record<string, string>)[value] ?? value; }
+  protected difficultyName(value: string): string { return ({easy: 'Facile', normal: 'Normale', hard: 'Difficile', prototype: 'Prototipo'} as Record<string, string>)[value] ?? value; }
   protected minutes(ms: number): number { return Math.max(1, Math.round(ms / 60000)); }
 }

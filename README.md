@@ -212,6 +212,16 @@ Verifiche: `npm run test:giochi-due`; dopo `npm run build`, `node scripts/smoke-
 
 ### Sulla stessa frequenza: prove e regole
 
+#### Stanza sperimentale: Uno dentro, uno fuori
+
+Dal riquadro dedicato si può aprire **Il marchingegno** scegliendo «Io sto fuori» oppure «Io entro nella scatola». La stanza non entra nei giri misti e non finge di avere tre difficoltà: è un singolo allestimento progettato per provare un nuovo tipo di cooperazione. Si può ripetere e scambiare i ruoli, ma non è ancora un’avventura procedurale.
+
+Fuori ci sono una manovella, due meccanismi e tre spie. Dentro c’è Pip, con piattaforma mobile, scala da srotolare, ingranaggio spostabile, culla di rame e una sfera ingombrante. I giocatori modificano reciprocamente ciò che l’altro può fare: la manovella cambia funzione quando Pip sposta l’ingranaggio. La piattaforma può trasportare Pip oppure la sfera, mai entrambi. L’obiettivo è uscire; il funzionamento si scopre tramite animazioni e reazioni brevi, con tre suggerimenti soltanto su richiesta. I tentativi non comportano penalità e non ci sono timer o requisiti di riflessi.
+
+Le viste API restano distinte: l’esterno non riceve la posizione di Pip o il contenuto della stanza; l’interno non riceve i comandi esterni. Il server valida ogni comando e conserva lo stato nel JSON esistente, senza nuove migrazioni. La sincronizzazione passa a un secondo solo mentre questa stanza è attiva e visibile; gli altri giochi restano a tre secondi. La modalità admin usa gli stessi due punti di vista e permette anche di invertire i ruoli.
+
+`machine.test.mjs` esplora tutti gli stati raggiungibili e verifica che ognuno consenta ancora di raggiungere l’uscita senza reset, oltre a privacy, ruoli, salvataggio e completamento. Lo smoke browser completa la stanza con due account e poi in admin con ruoli invertiti, controlla gli schermi a 320/390 px e conserva screenshot. È una prova di funzionamento, non una valutazione automatica di quanto il gioco sia divertente.
+
 | Prova | Cosa fate | Informazioni e comandi separati |
 | --- | --- | --- |
 | 🔐 Il codice | Traducete quattro simboli in numeri; resta il riscaldamento facile. | Uno ha la sequenza, l’altro la legenda e conferma di essere pronto. |

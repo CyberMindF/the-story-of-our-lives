@@ -1,15 +1,16 @@
 @if (room(); as r) {
   @if (r.schema === 2) {
     @if (r.status === 'waiting') {
-      <section class="coop-panel waiting"><span class="big-icon">📡</span><h2>Manca il secondo giocatore!</h2><p>{{ r.owner.name }} ha aperto una partita: {{ r.total }} {{ r.total === 1 ? 'prova' : 'prove' }} · {{ difficultyName(r.difficulty) }}.</p><p>L’altra persona deve aprire questa pagina dal proprio account. Potete parlare a voce o usare la chat.</p>
+      <section class="coop-panel waiting"><span class="big-icon">📡</span><h2>Manca il secondo giocatore!</h2><p>{{ r.owner.name }} ha aperto {{ r.mode === 'machine' ? 'Il marchingegno · Stanza sperimentale' : 'una partita: ' + r.total + ' prove · ' + difficultyName(r.difficulty) }}.</p><p>L’altra persona deve aprire questa pagina dal proprio account. Potete parlare a voce o usare la chat.</p>
         @if (r.owner.id !== userId()) { <button class="btn primary" [disabled]="busy()" (click)="send('join')">Entra nella partita</button> }
       </section>
     } @else if (r.status === 'playing') {
       @if (r.puzzle; as p) {
-        <section class="coop-panel puzzle-panel" [class.compact]="compact()">
+        <section class="coop-panel puzzle-panel" [class.compact]="compact()" [class.machine-panel]="p.type === 'machine'">
           <div class="puzzle-meta"><span>Prova {{ r.round + 1 }}/{{ r.total }} · {{ difficultyName(p.difficulty) }}</span><span>Il tuo lato: {{ r.seat === 0 ? 'A' : 'B' }}</span></div>
           <h2>{{ p.emoji }} {{ p.title }}</h2><p class="objective">{{ p.objective }}</p><p class="private-note">👀 {{ p.instructions }}</p>
           @switch (p.type) {
+            @case ('machine') { <app-machine-room [puzzle]="p" [busy]="busy()" (command)="send($event.type,$event)" /> }
             @case ('code') {
               @if (p.role === 'explorer') {
                 <div class="symbol-strip" aria-label="Sequenza da descrivere">@for (symbol of p.sequence; track $index) { <span>{{ symbol }}</span> }</div>
@@ -70,7 +71,7 @@
             }
           }
           @if (r.message) { <p class="feedback" role="status">{{ r.message }}</p> }
-          <footer class="puzzle-footer"><span>{{ r.roundMoves }} azioni · {{ r.roundErrors }} errori · {{ r.hintsUsed }} aiuti</span><div class="button-row"><button class="btn" [disabled]="busy() || r.hintsUsed >= 3" (click)="send('hint')">💡 {{ r.hintsUsed ? 'Altro suggerimento' : 'Un suggerimento' }} ({{ r.hintsUsed }}/3)</button><button class="text-button" [disabled]="busy() || r.restartReady[r.userSeat]" (click)="send('restart-puzzle')">{{ r.restartReady[r.userSeat] ? 'Aspettiamo l’altra persona' : r.restartReady[1-r.userSeat] ? 'Conferma nuovo schema' : 'Proviamo un altro schema' }}</button></div>
+          <footer class="puzzle-footer"><span>{{ p.type === 'machine' ? 'Esplorate con calma. Nessuna penalità per i tentativi.' : r.roundMoves + ' azioni · ' + r.roundErrors + ' errori · ' + r.hintsUsed + ' aiuti' }}</span><div class="button-row"><button class="btn" [disabled]="busy() || r.hintsUsed >= 3" (click)="send('hint')">💡 {{ r.hintsUsed ? 'Altro suggerimento' : 'Un suggerimento' }} ({{ r.hintsUsed }}/3)</button><button class="text-button" [disabled]="busy() || r.restartReady[r.userSeat]" (click)="send('restart-puzzle')">{{ r.restartReady[r.userSeat] ? 'Aspettiamo l’altra persona' : r.restartReady[1-r.userSeat] ? 'Conferma nuovo schema' : p.type === 'machine' ? 'Rimettiamo tutto a posto' : 'Proviamo un altro schema' }}</button></div>
             @if (p.hints.length) { <ol class="hints">@for (hint of p.hints; track $index) { <li>{{ hint }}</li> }</ol> }
           </footer>
         </section>
@@ -96,12 +97,13 @@
 }
 @if (!room() || room()?.status === 'won' || room()?.status === 'cancelled') {
   @if (canCreate()) {
+    <section class="coop-panel machine-invitation"><p class="hint">🧪 UNA COSA NUOVA DA PROVARE</p><h2>🧰 Uno dentro, uno fuori</h2><p>C’è qualcuno nella scatola. Fuori, una manovella. Vediamo cosa succede?</p><div class="button-row"><button class="btn primary" [disabled]="busy()" (click)="createMachine()">Io sto fuori</button><button class="btn" [disabled]="busy()" (click)="createMachine(true)">Io entro nella scatola</button></div><small>Una stanza da esplorare, non un quiz. Prototipo senza difficoltà e senza timer. Potete rifarla scambiandovi i ruoli.</small></section>
     <section class="coop-panel setup"><h2>Che prova facciamo?</h2><p>Non vedete le stesse cose e non avete tutti i comandi. Parlatevi, provate, ragionate insieme. Il codice è solo il riscaldamento.</p>
       <div class="setup-fields"><label>Tipo di partita<select [ngModel]="mode()" (ngModelChange)="mode.set($event)"><option value="mix">🎲 Partita mista</option>@for (item of state().catalog; track item.id) { <option [value]="item.id">{{ item.emoji }} {{ item.title }}</option> }</select></label>
-        <label>Difficoltà<select [disabled]="mode() === 'code'" [ngModel]="mode() === 'code' ? 'easy' : difficulty()" (ngModelChange)="difficulty.set($event)"><option value="easy">Facile</option><option value="normal">Normale</option><option value="hard">Difficile</option></select></label>
+        @if (mode() !== 'machine') { <label>Difficoltà<select [disabled]="mode() === 'code'" [ngModel]="mode() === 'code' ? 'easy' : difficulty()" (ngModelChange)="difficulty.set($event)"><option value="easy">Facile</option><option value="normal">Normale</option><option value="hard">Difficile</option></select></label> } @else { <p class="hint">Stanza sperimentale: un solo allestimento, nessun livello di difficoltà.</p> }
         @if (mode() === 'mix') { <label>Quante prove?<select [ngModel]="length()" (ngModelChange)="length.set($event)"><option [ngValue]="3">3 prove diverse</option><option [ngValue]="5">5 prove diverse</option><option [ngValue]="8">Giro completo: tutte e 8</option></select></label> }
       </div><button class="btn primary" [disabled]="busy()" (click)="create()">Apri una stanza per due</button><p class="hint">Niente conto alla rovescia. Potete uscire e riprendere; gli errori non cancellano le prove finite. Le partite miste da 3 o 5 prove partono dai nuovi puzzle, senza ripetizioni.</p>
-      <details [open]="!compact()" class="catalog"><summary>Le {{ state().catalog?.length ?? 8 }} prove</summary><div class="catalog-grid">@for (item of state().catalog; track item.id) { <button type="button" [attr.aria-pressed]="mode() === item.id" (click)="mode.set(item.id)"><span>{{ item.emoji }}</span><strong>{{ item.title }}</strong><small>{{ item.description }}</small></button> }</div></details>
+      <details [open]="!compact()" class="catalog"><summary>Le prove e la stanza sperimentale</summary><div class="catalog-grid">@for (item of state().catalog; track item.id) { <button type="button" [attr.aria-pressed]="mode() === item.id" (click)="mode.set(item.id)"><span>{{ item.emoji }}</span><strong>{{ item.title }}</strong><small>{{ item.description }}</small></button> }</div></details>
     </section>
   } @else { <p>Apri prima una stanza con il giocatore A.</p> }
 }

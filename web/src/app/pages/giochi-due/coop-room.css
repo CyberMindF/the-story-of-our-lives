@@ -1,4 +1,5 @@
 :host { display:block; }
+.machine-invitation{border:2px solid var(--accent-color)}.machine-invitation small{display:block;line-height:1.6;color:var(--muted-color)}.machine-panel .private-note{padding:.5rem 0;border:0;background:none;font-size:.85rem}.machine-panel .puzzle-meta{font-size:.75rem}@media(max-width:600px){.coop-panel.machine-panel{padding:.75rem}.machine-panel h2{font-size:1.3rem}}
 .maze-cell{border-radius:0!important}
 @media(max-width:680px){:host{margin-left:35px}}
 .col-clue small,.row-clue small{display:block;font-size:.6rem;font-weight:normal;color:var(--muted-color)}

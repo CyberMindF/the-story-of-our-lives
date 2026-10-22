@@ -1,4 +1,4 @@
-export interface CoopCatalogItem { id: string; title: string; emoji: string; description: string; }
+export interface CoopCatalogItem { id: string; title: string; emoji: string; description: string; experimental?: boolean; }
 interface Actor { id: number; name: string; }
 interface PuzzleBase { id: string; title: string; emoji: string; instructions: string; objective: string; hints: string[]; difficulty: string; solved: boolean; }
 export interface CodePuzzle extends PuzzleBase { type: 'code'; role: string; ready: boolean; sequence: string[]; legend: {symbol: string; number: number}[]; }
@@ -9,7 +9,12 @@ export interface DossierPuzzle extends PuzzleBase { type: 'dossier'; suspects: {
 export interface MosaicPuzzle extends PuzzleBase { type: 'mosaic'; size: number; grid: boolean[]; ownedCells: number[]; rowClues: number[][] | null; columnClues: number[][] | null; confirmed: boolean[]; }
 export interface BalancePuzzle extends PuzzleBase { type: 'balance'; weights: {index: number; value: number; selected: boolean}[]; target: number; selectedCounts: number[]; confirmed: boolean[]; }
 export interface PipesPuzzle extends PuzzleBase { type: 'pipes'; size: number; cells: {index: number; ports: number[] | null; owned: boolean; lit: boolean | null}[]; source: number; sink: number; confirmed: boolean[]; }
-export type CoopPuzzle = CodePuzzle | MazePuzzle | CircuitPuzzle | OrderPuzzle | DossierPuzzle | MosaicPuzzle | BalancePuzzle | PipesPuzzle;
+export interface MachinePuzzle extends PuzzleBase {
+  type: 'machine'; role: 'outside' | 'inside';
+  outside?: {drive: 'lift' | 'dynamo'; turns: number; lamps: number; note: string};
+  inside?: {lift: number; actor: number; aboard: boolean; ladder: boolean; drive: 'lift' | 'dynamo'; ball: number | 'lift'; glowing: boolean; doorOpen: boolean; note: string};
+}
+export type CoopPuzzle = CodePuzzle | MazePuzzle | CircuitPuzzle | OrderPuzzle | DossierPuzzle | MosaicPuzzle | BalancePuzzle | PipesPuzzle | MachinePuzzle;
 export interface CoopResult { type: string; title: string; emoji: string; errors: number; hints: number; moves: number; durationMs: number; }
 export interface ModernCoopRoom {
   schema: 2; id: string; owner: Actor; partner: Actor | null; status: string; mode: string; difficulty: string;

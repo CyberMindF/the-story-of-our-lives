@@ -188,6 +188,34 @@ try {
     assert.equal(finished.errors, 0, family + ' unexpected errors');
     assert.equal(finished.results.length, 1); assert.equal(finished.results[0].type, family);
   }
+  // Una stanza interattiva: il percorso passa da entrambi i dispositivi, senza soluzioni nell’API.
+  const machineSteps = [
+    [1,'👣 Sali sulla piattaforma'],[0,'Gira avanti ↪️'],[1,'👣 Salta sul ripiano'],[1,'Srotola la scala'],[1,'🟡 Spingi la sfera'],
+    [0,'↩️ Gira indietro'],[1,'🪜 Scendi'],[1,'🟡 Spingi la sfera'],[1,'🪜 Sali'],[1,'Sposta l’ingranaggio'],
+    [0,'Gira avanti ↪️'],[0,'Gira avanti ↪️'],[0,'Gira avanti ↪️'],[1,'Sposta l’ingranaggio'],
+    [1,'🪜 Scendi'],[1,'🟡 Spingi la sfera'],[0,'Gira avanti ↪️'],[0,'Gira avanti ↪️'],
+    [1,'🪜 Sali'],[1,'🪜 Sali'],[1,'🟡 Spingi la sfera'],[1,'Apri la porticina']
+  ];
+  await go(rory,'frequenze');
+  await clickAction(rory,rory.getByRole('button',{name:'Io sto fuori',exact:true}));
+  await go(desy,'frequenze');
+  await clickAction(desy,desy.getByRole('button',{name:'Entra nella partita',exact:true}));
+  await freshPuzzle(rory); await freshPuzzle(desy);
+  assert.equal(await rory.locator('.inner-stage').count(),0); assert.equal(await desy.locator('.outer-stage').count(),0);
+  for (const [index,page] of pages.entries()) {
+    for (const width of [1280,390,320]) {
+      await page.setViewportSize({width,height:900});
+      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`Machine ${index} ${width} overflow`);
+      await page.screenshot({path:join(screenshots,`machine-${index}-${width}.png`),fullPage:true});
+    }
+    await page.setViewportSize({width:1280,height:960});
+  }
+  for (const [index,[seat,label]] of machineSteps.entries()) {
+    await coopAction(seat,page=>page.getByRole('button',{name:label,exact:true}));
+    if(index===12) {await freshPuzzle(desy);await desy.screenshot({path:join(screenshots,'machine-charged.png'),fullPage:true});}
+  }
+  assert.equal(coopState().room.status,'won'); assert.equal(coopState().room.errors,0);
+  await rory.reload(); await rory.getByRole('heading',{name:'Partita completata!',exact:true}).waitFor();
   const realCoop = db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json;
   await rory.getByRole('link', { name: /Prova da solo/ }).click();
   const panels = rory.locator('.screens > section');
@@ -205,6 +233,15 @@ try {
   await clickAction(rory, rory.getByRole('button', { name: /Azzera la prova/ }));
   await explorer.getByRole('button', { name: 'Apri una stanza per due' }).waitFor();
   assert.equal(db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json, realCoop);
+  // Stessa stanza in admin con A dentro e B fuori: controlli e stato invertiti realmente.
+  await clickAction(rory,explorer.getByRole('button',{name:'Io entro nella scatola',exact:true}));
+  await clickAction(rory,guide.getByRole('button',{name:'Entra nella partita',exact:true}));
+  await explorer.locator('.inner-stage').waitFor(); await guide.locator('.outer-stage').waitFor();
+  await rory.screenshot({path:join(screenshots,'machine-admin.png'),fullPage:true});
+  for (const [seat,label] of machineSteps) await clickAction(rory,panels.nth(1-seat).getByRole('button',{name:label,exact:true}));
+  await explorer.getByRole('heading',{name:'Partita completata!',exact:true}).waitFor();
+  await clickAction(rory,rory.getByRole('button',{name:/Azzera la prova/}));
+  assert.equal(db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json,realCoop);
   // Layout più densi: tabelloni difficili, due pannelli admin e schermi stretti.
   await explorer.getByLabel(/^Tipo di partita/).selectOption('pipes');
   await explorer.getByLabel(/^Difficoltà/).selectOption('hard');
@@ -309,7 +346,7 @@ try {
   await desy.waitForURL(base + '/');
   assert.equal(await desy.locator('app-frequenze-prova').count(), 0);
   assert.deepEqual(errors, []);
-  console.log(`PASS: due sessioni, trappole e replay, tutte le 8 famiglie cooperative tramite UI, screenshot desktop/mobile e layout difficili a 390/320px, prova admin isolata, uovo/schiusa, nomi condivisi, shop e memory con premio persistente. Screenshot: ${screenshots}`);
+  console.log(`PASS: due sessioni, trappole e replay, 8 famiglie cooperative e marchingegno completato anche in admin a ruoli invertiti, screenshot desktop/mobile a 390/320px, prova admin isolata, uovo/schiusa, nomi condivisi, shop e memory con premio persistente. Screenshot: ${screenshots}`);
 } catch (error) {
   for (const [i, page] of pages.entries()) {
     await page.screenshot({ path: join(screenshots, `errore-${i}.png`), fullPage: true });
