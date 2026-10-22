@@ -40,15 +40,28 @@ await page.addInitScript(() => {
   sessionStorage.setItem('noi-crossword-access-session-touched-at-v1',String(Date.now()));
 });
 const routes = ['il-prezzo-della-verita/avventura','la-casa-che-trattiene-il-respiro'];
-const assertSeparate = async selector => {
+const assertChatReachable = async () => {
+  assert.equal(await page.locator('.global-chat-trigger').evaluate(el => {
+    const r = el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));
+  }),true,'Il cerchio chat deve restare raggiungibile anche con la scheda aperta');
+};
+const assertTriggerBesideChat = async () => {
+  const panel = await page.locator('.gdr-panel-trigger').boundingBox(), chat = await page.locator('.global-chat-trigger').boundingBox();
+  assert.ok(panel && chat, 'Scheda e chat devono essere visibili');
+  assert.ok(panel.x + panel.width + 10 <= chat.x, `Il pulsante Scheda deve stare alla sinistra della chat: scheda=${JSON.stringify(panel)}, chat=${JSON.stringify(chat)}`);
+  assert.ok(Math.abs(panel.y + panel.height - (chat.y + chat.height)) <= 2, 'I due pulsanti devono essere allineati in basso');
+  assert.ok(panel.y >= 0 && panel.x >= 0, 'Il pulsante Scheda esce dallo schermo');
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'Overflow orizzontale');
+  await assertChatReachable();
+};
+const assertSheetSeparate = async () => {
+  const selector = '.gdr-panel-sheet';
   const panel = await page.locator(selector).boundingBox(), chat = await page.locator('.global-chat-trigger').boundingBox();
   assert.ok(panel && chat, 'Scheda e chat devono essere visibili');
   assert.ok(panel.y + panel.height + 12 <= chat.y, `${selector} invade lo spazio della chat`);
   assert.ok(panel.y >= 0 && panel.x >= 0, 'La scheda esce dallo schermo');
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'Overflow orizzontale');
-  assert.equal(await page.locator('.global-chat-trigger').evaluate(el => {
-    const r = el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));
-  }),true,'Il cerchio chat deve restare raggiungibile anche con la scheda aperta');
+  await assertChatReachable();
 };
 try {
   for (const [index, route] of routes.entries()) {
@@ -56,20 +69,20 @@ try {
       await page.setViewportSize({width,height});
       await page.goto(`${base}/tavolo-da-gioco/gdr/${route}`);
       await page.locator('.gdr-panel-trigger').waitFor(); await page.locator('.global-chat-trigger.has-unread').waitFor();
-      await assertSeparate('.gdr-panel-trigger');
+      await assertTriggerBesideChat();
       await page.getByRole('button',{name:'Scheda',exact:true}).click();
       await page.locator('.gdr-field-row').nth(14).waitFor();
-      await assertSeparate('.gdr-panel-sheet');
+      await assertSheetSeparate();
       await page.locator('.gdr-field-row').last().scrollIntoViewIfNeeded();
       const sheet = await page.locator('.gdr-panel-sheet').boundingBox(), last = await page.locator('.gdr-field-row').last().boundingBox();
       assert.ok(last.y + last.height <= sheet.y + sheet.height, 'Ultimo campo tagliato');
       if ([1280,390,320].includes(width)) await page.screenshot({path:join(screenshots,`gdr-${index}-${width}.png`),fullPage:true});
       await page.getByRole('button',{name:'Chiudi la scheda',exact:true}).click();
-      await assertSeparate('.gdr-panel-trigger');
+      await assertTriggerBesideChat();
     }
   }
   assert.deepEqual(errors,[]);
-  console.log(`PASS: entrambe le avventure, 6 viewport (320–1280px e landscape), scheda chiusa/aperta, badge non letti, chat raggiungibile e ultimo campo visibile. Screenshot: ${screenshots}`);
+  console.log(`PASS: entrambe le avventure, 6 viewport (320–1280px e landscape), pulsante Scheda a sinistra della chat, pannello separato, badge non letti e ultimo campo visibile. Screenshot: ${screenshots}`);
 } catch (error) {
   await page.screenshot({path:join(screenshots,'errore.png'),fullPage:true});
   console.error('Screenshot:',screenshots); throw error;

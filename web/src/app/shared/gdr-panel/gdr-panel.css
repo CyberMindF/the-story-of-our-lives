@@ -1,16 +1,18 @@
 :host {
   display: contents;
-  /* La chat globale occupa 3.5rem nell'angolo in basso a destra.
-     Lasciamo spazio anche al badge/rimbalzo, senza cambiare lo z-index. */
+  /* Il foglio aperto resta sopra ai controlli; il pulsante, invece, condivide
+     la stessa riga della chat e si appoggia subito alla sua sinistra. */
   --gdr-panel-bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 3.5rem + 1.25rem);
+  --gdr-trigger-bottom: max(1rem, env(safe-area-inset-bottom));
+  --gdr-trigger-right: calc(max(1rem, env(safe-area-inset-right)) + 3.5rem + 1rem);
 }
 
 .gdr-panel-trigger {
   --glass-background: color-mix(in srgb, var(--button-bg) 88%, transparent);
   --glass-filter: blur(10px);
   position: fixed;
-  right: max(1.25rem, env(safe-area-inset-right));
-  bottom: var(--gdr-panel-bottom);
+  right: var(--gdr-trigger-right);
+  bottom: var(--gdr-trigger-bottom);
   z-index: 190;
   display: flex;
   align-items: center;
@@ -76,6 +78,15 @@
     max-height: min(80dvh, calc(100dvh - var(--gdr-panel-bottom) - 1rem), 42rem);
     border-radius: 1.4rem;
     animation: gdr-panel-slide-up .22s ease-out;
+  }
+}
+
+/* La chat passa al margine mobile soltanto sotto 480px: i due controlli devono
+   adottare la stessa soglia per rimanere perfettamente allineati. */
+@media (max-width: 480px) {
+  :host {
+    --gdr-trigger-bottom: max(.6rem, env(safe-area-inset-bottom));
+    --gdr-trigger-right: calc(max(.6rem, env(safe-area-inset-right)) + 3.5rem + 1rem);
   }
 }
 
