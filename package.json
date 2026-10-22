@@ -22,6 +22,7 @@
     "test:study-quiz": "node --test functions/api/study-quizzes/*.test.mjs",
     "test:giochi-due": "node --test functions/api/giochi-due/*.test.mjs",
     "test:love-counter": "node --test functions/api/love-counter/*.test.mjs",
+    "test:card-image-paste": "node scripts/smoke-card-image-paste.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

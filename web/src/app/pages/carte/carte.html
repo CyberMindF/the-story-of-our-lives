@@ -279,7 +279,7 @@
   }
 
   @if (tab() === 'editor' && canEdit()) {
-  <section class="carte-editor-panel glass-surface">
+  <section class="carte-editor-panel glass-surface" (paste)="onDesignPaste($event)">
     @if (editorLoadError()) {
     <p class="carte-error">Non è stato possibile caricare l'editor.</p>
     }
@@ -304,6 +304,13 @@
     <input type="text" placeholder="Nome della carta" [ngModel]="nuovoDesignNome()"
       (ngModelChange)="nuovoDesignNome.set($event)" />
     <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onDesignFileSelected($event)" />
+    <p class="carte-editor-paste-hint"><span aria-hidden="true">📋</span> Oppure copia un’immagine e premi <kbd>Ctrl</kbd> + <kbd>V</kbd> o <kbd>Cmd</kbd> + <kbd>V</kbd> mentre sei nell’Editor.</p>
+    @if (nuovoDesignPreview(); as preview) {
+    <div class="carte-editor-image-ready" role="status">
+      <img [src]="preview" alt="Anteprima dell’immagine pronta per la nuova carta" />
+      <span>Immagine pronta: {{ nuovoDesignFile()?.name || 'immagine dagli appunti' }}</span>
+    </div>
+    }
     <button type="button" class="btn btn-submit" [disabled]="uploadingDesign()" (click)="creaDesign()">
       {{ uploadingDesign() ? 'Caricamento…' : 'Crea carta' }}
     </button>

@@ -5,6 +5,7 @@ import { AuthService } from '../../core/auth.service';
 import { AppShell } from '../../shell/app-shell';
 import { CartaTilt } from '../../shared/carta-tilt/carta-tilt';
 import { CARTA_FINITURE, CARTA_FINITURA_LABELS, CartaFinitura } from '../../shared/carta-finiture';
+import { cardImageError, imageFromClipboard } from '../../shared/card-image-file';
 
 interface Design {
   id: string;
@@ -112,15 +113,15 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
-    this.formError.set('');
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 15 * 1024 * 1024 || file.size === 0) {
-      this.formError.set('Scegli un’immagine JPG, PNG o WebP non vuota, fino a 15 MB.');
-      input.value = '';
-      return;
-    }
-    this.clearFile();
-    this.file = file;
-    this.filePreview.set(URL.createObjectURL(file));
+    if (!this.useFile(file)) input.value = '';
+  }
+
+  protected onPaste(event: ClipboardEvent): void {
+    if (!this.editing() || !this.canEdit() || this.saving()) return;
+    const file = imageFromClipboard(event);
+    if (!file) return; // L'incolla di testo continua a funzionare normalmente nei campi.
+    event.preventDefault();
+    this.useFile(file);
   }
 
   protected async save(): Promise<void> {
@@ -177,6 +178,16 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     if (url) URL.revokeObjectURL(url);
     this.filePreview.set(null);
     this.file = null;
+  }
+
+  private useFile(file: File): boolean {
+    const error = cardImageError(file);
+    this.formError.set(error ?? '');
+    if (error) return false;
+    this.clearFile();
+    this.file = file;
+    this.filePreview.set(URL.createObjectURL(file));
+    return true;
   }
 
   ngOnDestroy(): void {

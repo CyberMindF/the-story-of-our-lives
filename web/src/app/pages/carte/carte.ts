@@ -12,6 +12,7 @@ import { CartaBack } from '../../shared/carta-back/carta-back';
 import { CartaPack } from '../../shared/carta-pack/carta-pack';
 import { CartaAlbumPicker, CartaAlbumPickerItem } from '../../shared/carta-album-picker/carta-album-picker';
 import { RealtimeService } from '../../core/realtime.service';
+import { cardImageError, imageFromClipboard } from '../../shared/card-image-file';
 
 // Stessa formula di streakDayBonus() in functions/api/carte-bustine/_shared.js — qui serve solo
 // per disegnare il calendario, il bonus vero lo assegna sempre il server. Ogni giorno dà
@@ -239,6 +240,7 @@ export class Carte implements OnInit, OnDestroy {
   protected readonly nuovoDesignSetId = signal('');
   protected readonly nuovoDesignNome = signal('');
   protected readonly nuovoDesignFile = signal<File | null>(null);
+  protected readonly nuovoDesignPreview = signal<string | null>(null);
   protected readonly uploadingDesign = signal(false);
   protected readonly editorError = signal('');
 
@@ -385,6 +387,7 @@ export class Carte implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.animazioneBustinaTimer) clearTimeout(this.animazioneBustinaTimer);
+    this.clearNewDesignFile();
   }
 
   protected onModalBackdropClick(event: MouseEvent): void {
@@ -612,7 +615,16 @@ export class Carte implements OnInit, OnDestroy {
 
   protected onDesignFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.nuovoDesignFile.set(input.files?.[0] ?? null);
+    const file = input.files?.[0];
+    if (file && !this.useNewDesignFile(file)) input.value = '';
+  }
+
+  protected onDesignPaste(event: ClipboardEvent): void {
+    if (this.uploadingDesign()) return;
+    const file = imageFromClipboard(event);
+    if (!file) return;
+    event.preventDefault();
+    this.useNewDesignFile(file);
   }
 
   protected async creaDesign(): Promise<void> {
@@ -647,7 +659,7 @@ export class Carte implements OnInit, OnDestroy {
       if (!ok) throw new Error('Non è stato possibile creare la carta.');
 
       this.nuovoDesignNome.set('');
-      this.nuovoDesignFile.set(null);
+      this.clearNewDesignFile();
       await this.loadEditorData();
     } catch (error) {
       this.editorError.set(error instanceof Error ? error.message : 'Non è stato possibile creare la carta.');
@@ -668,5 +680,22 @@ export class Carte implements OnInit, OnDestroy {
       return;
     }
     await this.loadEditorData();
+  }
+
+  private useNewDesignFile(file: File): boolean {
+    const error = cardImageError(file);
+    this.editorError.set(error ?? '');
+    if (error) return false;
+    this.clearNewDesignFile();
+    this.nuovoDesignFile.set(file);
+    this.nuovoDesignPreview.set(URL.createObjectURL(file));
+    return true;
+  }
+
+  private clearNewDesignFile(): void {
+    const preview = this.nuovoDesignPreview();
+    if (preview) URL.revokeObjectURL(preview);
+    this.nuovoDesignPreview.set(null);
+    this.nuovoDesignFile.set(null);
   }
 }

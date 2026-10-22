@@ -57,7 +57,7 @@
     }
   }
 
-  <dialog #details class="catalog-dialog" (cancel)="cancelDialog($event)" aria-labelledby="catalog-detail-title">
+  <dialog #details class="catalog-dialog" (cancel)="cancelDialog($event)" (paste)="onPaste($event)" aria-labelledby="catalog-detail-title">
     <header class="detail-heading">
       <h2 id="catalog-detail-title">{{ selected() ? (editing() ? 'Modifica carta' : selected()!.nome) : 'Nuova carta' }}</h2>
       <button type="button" class="btn" [disabled]="saving()" (click)="close()" aria-label="Chiudi anteprima">Chiudi</button>
@@ -92,7 +92,7 @@
             <label>{{ imageKey() ? 'Sostituisci immagine' : 'Immagine' }}
               <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFile($event)" />
             </label>
-            <p class="catalog-hint">JPG, PNG o WebP, fino a 15 MB. L’anteprima si aggiorna prima del salvataggio.</p>
+            <p class="catalog-hint paste-hint"><span aria-hidden="true">📋</span> JPG, PNG o WebP, fino a 15 MB. Puoi anche copiare un’immagine e premere <kbd>Ctrl</kbd> + <kbd>V</kbd> o <kbd>Cmd</kbd> + <kbd>V</kbd> in questa finestra.</p>
             <button type="submit" class="btn btn-submit" [disabled]="!name().trim() || !setId()">{{ saving() ? 'Salvataggio…' : 'Salva carta' }}</button>
           </fieldset>
         </form>

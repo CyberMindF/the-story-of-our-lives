@@ -353,6 +353,11 @@ app-carta-back { display: block; width: 100%; }
 .carte-editor-panel h2 { margin-top: 1.4rem; }
 .carte-trade-panel h2:first-child,
 .carte-editor-panel h2:first-child { margin-top: 0; }
+.carte-editor-paste-hint { margin: 0; padding: .75rem; border: 1px dashed var(--border-color); border-radius: .7rem; color: var(--muted-color); font-size: .85rem; line-height: 1.5; }
+.carte-editor-paste-hint kbd { display: inline-block; padding: .06rem .3rem; border: 1px solid var(--border-color); border-bottom-width: 2px; border-radius: .3rem; background: var(--button-bg); color: var(--text-color); font: inherit; font-size: .78rem; }
+.carte-editor-image-ready { display: flex; align-items: center; gap: .75rem; min-width: 0; color: var(--muted-color); font-size: .85rem; }
+.carte-editor-image-ready img { width: 4.5rem; height: 4.5rem; object-fit: contain; flex: 0 0 auto; border: 1px solid var(--border-color); border-radius: .6rem; background: var(--input-bg); }
+.carte-editor-image-ready span { overflow-wrap: anywhere; }
 
 .carte-slot--clickable { cursor: pointer; }
 .carte-slot--clickable:hover,
