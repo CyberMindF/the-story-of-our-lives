@@ -1,1 +1,28 @@
-/* You can add global styles to this file, and also import other style files */
+/* Le aree interne scorrevoli (menu, chat, pannelli, elenchi) usano una barra discreta
+   coerente con il tema. Il selettore parte dai discendenti di body: la scrollbar principale
+   della pagina resta affidata al browser, mentre i riquadri non mostrano più il binario nativo. */
+body * {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted-color) 55%, transparent) transparent;
+}
+
+body *::-webkit-scrollbar {
+  width: 0.42rem;
+  height: 0.42rem;
+}
+
+body *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body *::-webkit-scrollbar-thumb {
+  border: 0.08rem solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted-color) 55%, transparent);
+  background-clip: padding-box;
+}
+
+body *::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--text-color) 68%, transparent);
+  background-clip: padding-box;
+}
