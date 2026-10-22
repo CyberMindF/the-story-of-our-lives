@@ -24,6 +24,11 @@
     "test:love-counter": "node --test functions/api/love-counter/*.test.mjs",
     "test:card-image-paste": "node scripts/smoke-card-image-paste.mjs",
     "test:navigation-scrollbar": "node scripts/smoke-navigation-scrollbar.mjs",
+    "test:bacheca-performance": "node scripts/smoke-bacheca-performance.mjs",
+    "test:media-range": "node --test functions/api/media/*.test.mjs",
+    "generate:bacheca-thumbnails": "node scripts/generate-bacheca-thumbnails.mjs",
+    "upload:bacheca-thumbnails:local": "node scripts/upload-bacheca-media.mjs --thumbnails --local",
+    "upload:bacheca-thumbnails:prod": "node scripts/upload-bacheca-media.mjs --thumbnails --remote",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

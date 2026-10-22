@@ -18,6 +18,10 @@
     }
   </nav>
 
+  @if (loading()) {
+    <p class="memory-loading card glass-surface" role="status">Sto aprendo i ricordi…</p>
+  }
+
   <main class="memory-book">
     @for (period of layoutPeriods(); track period.id) {
       <section class="memory-period">
@@ -79,68 +83,74 @@
               </div>
             }
 
-            @if (editingDayId() === day.id) {
-              @if (contentSaveError()) {
-                <app-content-message [message]="contentSaveError()" tone="error" [panel]="true" />
-              }
-              <app-bacheca-day-editor
-                [content]="{ rows: day.rows }"
-                [saving]="contentSaving()"
-                (save)="saveDayContent(day.id, $event)"
-                (dirtyChange)="contentDirty.set($event)"
-                (cancelled)="toggleContentEditor(day.id)"
-              />
-            } @else {
-              <div class="memory-rows">
-                @for (row of day.rows; track $index; let rowIndex = $index) {
-                  <section class="memory-row" [class.is-gallery]="rowPhotos(row).length === row.columns.length && rowPhotos(row).length > 1">
-                    @for (column of row.columns; track $index; let colIndex = $index) {
-                      <div class="memory-column" [style.--column-width]="column.width">
-                        @for (block of column.blocks; track $index; let blockIndex = $index) {
-                          <div
-                            [id]="blockDomId(day.id, rowIndex, colIndex, blockIndex)"
-                            [class.memory-block-highlight]="highlightedBlockId() === blockDomId(day.id, rowIndex, colIndex, blockIndex)"
-                          >
-                          @switch (block.type) {
-                            @case ('text') {
-                              <p class="memory-prose">
-                                {{ block.text }}
-                                @if (block.link) {
-                                  <a class="memory-inline-link" [href]="block.link.href" target="_blank">{{ block.link.label }} ↗</a>
-                                }
-                              </p>
-                            }
-                            @case ('photo') {
-                              <figure class="memory-photo">
-                                <button (click)="openLightbox(rowPhotos(row), rowPhotos(row).indexOf(block))">
-                                  <img [src]="mediaUrl(block.key)" [alt]="block.caption || 'Foto della Bacheca'" loading="lazy" />
-                                </button>
-                                @if (block.caption) {
-                                  <figcaption>{{ block.caption }}</figcaption>
-                                }
-                              </figure>
-                            }
-                            @case ('audio') {
-                              <app-audio-player class="memory-audio" [src]="mediaUrl(block.key)" [label]="block.label || 'Ascolta'" />
-                            }
-                            @case ('video') {
-                              <figure class="memory-media" [class.is-vertical]="block.vertical">
-                                @if (block.label) {
-                                  <figcaption>{{ block.label }}</figcaption>
-                                }
-                                <video [src]="mediaUrl(block.key)" controls preload="metadata"></video>
-                              </figure>
-                            }
-                            @case ('link') {
-                              <a class="memory-external" [href]="block.href" target="_blank">{{ block.caption || 'Apri questo ricordo' }} ↗</a>
-                            }
-                          }
-                          </div>
-                        }
-                      </div>
-                    }
-                  </section>
+            @defer (on viewport) {
+              @if (editingDayId() === day.id) {
+                @if (contentSaveError()) {
+                  <app-content-message [message]="contentSaveError()" tone="error" [panel]="true" />
                 }
+                <app-bacheca-day-editor
+                  [content]="{ rows: day.rows }"
+                  [saving]="contentSaving()"
+                  (save)="saveDayContent(day.id, $event)"
+                  (dirtyChange)="contentDirty.set($event)"
+                  (cancelled)="toggleContentEditor(day.id)"
+                />
+              } @else {
+                <div class="memory-rows">
+                  @for (row of day.rows; track $index; let rowIndex = $index) {
+                    <section class="memory-row" [class.is-gallery]="rowPhotos(row).length === row.columns.length && rowPhotos(row).length > 1">
+                      @for (column of row.columns; track $index; let colIndex = $index) {
+                        <div class="memory-column" [style.--column-width]="column.width">
+                          @for (block of column.blocks; track $index; let blockIndex = $index) {
+                            <div
+                              [id]="blockDomId(day.id, rowIndex, colIndex, blockIndex)"
+                              [class.memory-block-highlight]="highlightedBlockId() === blockDomId(day.id, rowIndex, colIndex, blockIndex)"
+                            >
+                            @switch (block.type) {
+                              @case ('text') {
+                                <p class="memory-prose">
+                                  {{ block.text }}
+                                  @if (block.link) {
+                                    <a class="memory-inline-link" [href]="block.link.href" target="_blank">{{ block.link.label }} ↗</a>
+                                  }
+                                </p>
+                              }
+                              @case ('photo') {
+                                <figure class="memory-photo">
+                                  <button (click)="openLightbox(rowPhotos(row), rowPhotos(row).indexOf(block))">
+                                    <img [src]="mediaUrl(block.thumbKey ?? block.key)" [alt]="block.caption || 'Foto della Bacheca'" loading="lazy" decoding="async" />
+                                  </button>
+                                  @if (block.caption) {
+                                    <figcaption>{{ block.caption }}</figcaption>
+                                  }
+                                </figure>
+                              }
+                              @case ('audio') {
+                                <app-audio-player class="memory-audio" [src]="mediaUrl(block.key)" [label]="block.label || 'Ascolta'" />
+                              }
+                              @case ('video') {
+                                <figure class="memory-media" [class.is-vertical]="block.vertical">
+                                  @if (block.label) {
+                                    <figcaption>{{ block.label }}</figcaption>
+                                  }
+                                  <video [src]="mediaUrl(block.key)" controls preload="none"></video>
+                                </figure>
+                              }
+                              @case ('link') {
+                                <a class="memory-external" [href]="block.href" target="_blank">{{ block.caption || 'Apri questo ricordo' }} ↗</a>
+                              }
+                            }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </section>
+                  }
+                </div>
+              }
+            } @placeholder {
+              <div class="memory-day-placeholder" aria-hidden="true">
+                <span></span><span></span><span></span>
               </div>
             }
           </article>

@@ -1,4 +1,5 @@
 import { getAuthenticatedSession } from "../auth/_shared.js";
+import { applyByteRangeHeaders, parseByteRange } from "./_range.mjs";
 
 // Serve un oggetto privato da R2 soltanto dopo aver verificato la sessione dell'utente.
 export async function onRequestGet(context) {
@@ -13,7 +14,27 @@ export async function onRequestGet(context) {
     return new Response("Percorso non valido.", { status: 400 });
   }
 
-  const object = await context.env.MEDIA.get(key);
+  const rangeHeader = context.request.headers.get("Range");
+  let object;
+  let fullSize;
+  let range = null;
+
+  if (rangeHeader) {
+    const metadata = await context.env.MEDIA.head(key);
+    if (!metadata) return new Response("Non trovato.", { status: 404 });
+    fullSize = metadata.size;
+    range = parseByteRange(rangeHeader, fullSize);
+    if (!range) {
+      return new Response("Intervallo non valido.", {
+        status: 416,
+        headers: { "Content-Range": `bytes */${fullSize}`, "Accept-Ranges": "bytes" }
+      });
+    }
+    object = await context.env.MEDIA.get(key, { range });
+  } else {
+    object = await context.env.MEDIA.get(key);
+    fullSize = object?.size;
+  }
   if (!object) {
     return new Response("Non trovato.", { status: 404 });
   }
@@ -22,6 +43,11 @@ export async function onRequestGet(context) {
   object.writeHttpMetadata(headers);
   headers.set("etag", object.httpEtag);
   headers.set("Cache-Control", "private, max-age=300");
+  headers.set("Accept-Ranges", "bytes");
 
-  return new Response(object.body, { headers });
+  if (range) {
+    applyByteRangeHeaders(headers, range, fullSize);
+  }
+
+  return new Response(object.body, { status: range ? 206 : 200, headers });
 }

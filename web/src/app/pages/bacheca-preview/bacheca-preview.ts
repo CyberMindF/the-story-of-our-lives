@@ -53,6 +53,7 @@ export class BachecaPreview implements OnInit, AfterViewInit {
   protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
 
   @ViewChild('lightbox') private lightboxRef?: ElementRef<HTMLDialogElement>;
+  protected readonly loading = signal(true);
   protected readonly loadError = signal(false);
   protected readonly activeGallery = signal<PhotoBlock[]>([]);
   protected readonly activeIndex = signal(0);
@@ -121,16 +122,25 @@ export class BachecaPreview implements OnInit, AfterViewInit {
       return;
     }
     const blockParam = this.route.snapshot.queryParamMap.get('blocco');
+    const dayTargetId = this.dayId(
+      { id: period.id, title: period.title, days: [] },
+      { id: day.id, title: day.title ?? undefined, slug: day.slug, rows: day.content.rows, memoryDate: day.memoryDate }
+    );
     const targetId = blockParam
       ? this.blockDomId(day.id, ...(blockParam.split('-').map(Number) as [number, number, number]))
-      : this.dayId(
-          { id: period.id, title: period.title, days: [] },
-          { id: day.id, title: day.title ?? undefined, slug: day.slug, rows: day.content.rows, memoryDate: day.memoryDate }
-        );
+      : dayTargetId;
     if (blockParam) {
       this.highlightedBlockId.set(targetId);
     }
-    requestAnimationFrame(() => this.scrollToTargetUntilStable(targetId));
+    requestAnimationFrame(() => {
+      // I contenuti dei giorni vengono creati solo quando il relativo articolo entra nel
+      // viewport. Per un deep-link a un blocco portiamo prima in vista il giorno: questo
+      // attiva il blocco differito, poi lo scroll stabile può trovare il media richiesto.
+      if (blockParam) {
+        document.getElementById(dayTargetId)?.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
+      this.scrollToTargetUntilStable(targetId);
+    });
   }
 
   // Le foto/i video del giorno caricano con `loading="lazy"` e senza dimensioni riservate:
@@ -139,7 +149,7 @@ export class BachecaPreview implements OnInit, AfterViewInit {
   // all'inizio finisce quindi molto lontano dal bersaglio reale. Si ripete lo scroll finché
   // la posizione del target non resta stabile per un breve periodo (o scade un timeout).
   private scrollToTargetUntilStable(targetId: string): void {
-    const deadline = Date.now() + 4000;
+    const deadline = Date.now() + 8000;
     let lastTop: number | null = null;
     let stableSince: number | null = null;
 
@@ -245,6 +255,8 @@ export class BachecaPreview implements OnInit, AfterViewInit {
   }
 
   private async loadLayout(): Promise<void> {
+    this.loading.set(true);
+    this.loadError.set(false);
     try {
       const [periodsRes, daysRes] = await Promise.all([
         fetch('/api/bacheca-periods', { credentials: 'same-origin', headers: { Accept: 'application/json' } }),
@@ -262,6 +274,8 @@ export class BachecaPreview implements OnInit, AfterViewInit {
     } catch (error) {
       console.error(error);
       this.loadError.set(true);
+    } finally {
+      this.loading.set(false);
     }
   }
 
