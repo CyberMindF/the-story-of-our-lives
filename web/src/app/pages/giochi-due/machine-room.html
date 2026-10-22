@@ -1,8 +1,8 @@
-<div class="machine-game">
+<div class="machine-game" (keydown.escape)="escape()">
   <div class="side-tag"><span>{{ puzzle().role === 'outside' ? '🖐️ FUORI' : '🐾 DENTRO' }}</span><small>Stanza 01 · Il marchingegno</small></div>
   @if (puzzle().outside; as o) {
-    <div class="machine-stage outer-stage">
-      <svg viewBox="0 0 620 430" role="img" aria-label="Una scatola meccanica con manovella, cinghia, bobina e tre spie">
+    <div class="machine-stage outer-stage" [class.working]="busy()" [attr.data-touch]="touched()">
+      <svg viewBox="0 0 620 430" aria-hidden="true">
         <rect class="wood shadow" x="24" y="30" width="572" height="370" rx="30" />
         <rect class="inset" x="48" y="54" width="524" height="322" rx="20" />
         <path class="seam" d="M48 164H572 M175 54V164 M445 54V164" />
@@ -12,21 +12,43 @@
         @for (n of [0,1,2]; track n) { <circle class="lamp" [class.on]="o.lamps > n" [attr.cx]="282+n*28" cy="137" r="8" /> }
         <g [class.engaged]="o.drive === 'lift'" class="mechanism"><path class="belt" d="M100 94V138 M143 94V138" /><circle cx="122" cy="94" r="22" /><circle cx="122" cy="138" r="22" /><path d="M110 94H134 M122 82V106 M110 138H134 M122 126V150" /></g>
         <g [class.engaged]="o.drive === 'dynamo'" class="mechanism"><path class="coil" d="M470 93Q510 75 550 93M470 103Q510 85 550 103M470 113Q510 95 550 113M470 123Q510 105 550 123M470 133Q510 115 550 133" /><path d="M492 146H528" /></g>
+        @if (puzzle().mechanics === 2) {
+          <circle class="cog-socket" cx="510" cy="112" r="21" />
+          @if (o.cog) { <text class="object" x="510" y="123">⚙️</text> }
+          <g [class.drawer-open]="o.drawer" class="drawer-art"><rect class="drawer-back" x="68" y="274" width="96" height="76" rx="8" />
+            @if (o.drawer && !o.cog) { <text class="object" x="116" y="311">⚙️</text> }
+            <rect class="drawer-front" x="68" [attr.y]="o.drawer ? 327 : 274" width="96" [attr.height]="o.drawer ? 26 : 76" rx="6" /><path class="handle" [attr.d]="o.drawer ? 'M100 341H132' : 'M100 314H132'" />
+          </g>
+          <path class="lock-rod" [attr.d]="o.clutch ? 'M116 246V286' : 'M116 229V259'" />
+          <g class="latch-art" [class.released]="o.unlatched"><rect class="socket" x="460" y="277" width="88" height="34" rx="8" /><path class="handle" [attr.d]="o.unlatched ? 'M505 294H560' : 'M464 294H520'" /><circle class="knob" [attr.cx]="o.unlatched ? 541 : 490" cy="294" r="9" /></g>
+        }
         <path class="wire" [class.active]="o.drive === 'lift'" d="M265 230L122 200V165" /><path class="wire" [class.active]="o.drive === 'dynamo'" d="M355 230L510 200V150" />
         <circle class="crank-ring" cx="310" cy="268" r="79" /><circle class="crank-ring inner" cx="310" cy="268" r="59" />
-        <g class="crank" [style.transform]="'rotate('+o.turns*60+'deg)'">
+        @if (puzzle().mechanics === 2) { <path class="transmission" [class.loose]="!o.clutch" [attr.d]="o.drive === 'lift' ? (o.clutch ? 'M260 236L105 138 M280 212L140 116' : 'M260 236Q150 260 105 138 M280 212Q195 219 140 116') : (o.clutch ? 'M360 236L527 138 M340 212L492 116' : 'M360 236Q470 260 527 138 M340 212Q425 219 492 116')" /> }
+        <g class="crank" [style.transform]="'rotate('+(o.turns*60+crankPreview())+'deg)'">
           <path d="M310 268L354 222" /><circle cx="354" cy="222" r="18" /><circle class="screw" cx="310" cy="268" r="10" />
         </g>
-        <text x="114" y="286" class="scribble">↶</text><text x="507" y="286" class="scribble">↷</text>
+        <text x="272" y="281" class="turn-mark">↶</text><text x="347" y="281" class="turn-mark">↷</text>
         <text x="310" y="365" class="tiny">C’È QUALCUNO LÌ DENTRO?</text>
       </svg>
+      @if (puzzle().mechanics === 2) {
+        <button class="scene-hit pulley-left" data-target="lift" aria-label="Ruota sinistra" [disabled]="busy()" (click)="target('lift')"></button>
+        <button class="scene-hit pulley-right" data-target="dynamo" aria-label="Ruota destra" [disabled]="busy()" (click)="target('dynamo')"></button>
+        <button class="scene-hit belt-hit draggable" [class.selected]="selected() === 'belt'" [style.left.%]="o.drive === 'lift' ? 32 : 68" aria-label="Cinghia" [attr.aria-pressed]="selected() === 'belt'" [disabled]="busy()" (click)="choose('belt')" (pointerdown)="start($event,'belt')" (pointermove)="move($event)" (pointerup)="end($event)" (pointercancel)="escape()"></button>
+        <button class="scene-hit drawer-hit" [style.top.%]="o.drawer ? 79 : 72" aria-label="Cassetto" [disabled]="busy()" (click)="act('drawer')"></button>
+        @if (o.drawer && !o.cog) { <button class="scene-hit cog-hit draggable" [class.selected]="selected() === 'cog'" aria-label="Ingranaggio nel cassetto" [attr.aria-pressed]="selected() === 'cog'" [disabled]="busy()" (click)="choose('cog')" (pointerdown)="start($event,'cog')" (pointermove)="move($event)" (pointerup)="end($event)" (pointercancel)="escape()"></button> }
+        <button class="scene-hit latch-hit" aria-label="Chiavistello" [disabled]="busy()" (click)="act('latch')"></button>
+      }
+      <button class="scene-hit crank-hit crank-back draggable" aria-label="Manovella antioraria" [disabled]="busy()" (click)="act('crank',{direction:-1})" (pointerdown)="start($event,'crank')" (pointermove)="move($event)" (pointerup)="end($event)" (pointercancel)="escape()"></button>
+      <button class="scene-hit crank-hit crank-forward draggable" aria-label="Manovella oraria" [disabled]="busy()" (click)="act('crank',{direction:1})" (pointerdown)="start($event,'crank')" (pointermove)="move($event)" (pointerup)="end($event)" (pointercancel)="escape()"></button>
+      @if (ghost(); as g) { <span class="drag-ghost" [style.left.%]="g.x/620*100" [style.top.%]="g.y/430*100">{{ selected() === 'cog' ? '⚙️' : '➰' }}</span> }
     </div>
-    <div class="crank-controls"><button type="button" [disabled]="busy()" (click)="send('crank',{direction:-1})">↩️ Gira indietro</button><button type="button" [disabled]="busy()" (click)="send('crank',{direction:1})">Gira avanti ↪️</button></div>
-    <p class="machine-note" aria-live="polite">{{ o.note }}</p>
+    <details class="machine-sounds"><summary>👂 Cosa si sente?</summary><p class="machine-note">{{ o.note }}</p></details>
+    <span class="sr-only" aria-live="polite">{{ o.note }}</span>
   }
   @if (puzzle().inside; as s) {
-    <div class="machine-stage inner-stage">
-      <svg viewBox="0 0 620 430" role="img" [attr.aria-label]="'Interno della scatola. Pip al piano '+s.actor+'. Piattaforma al piano '+s.lift+'.'">
+    <div class="machine-stage inner-stage" [class.working]="busy()" [attr.data-touch]="touched()">
+      <svg viewBox="0 0 620 430" aria-hidden="true">
         <rect class="wood" x="24" y="30" width="572" height="370" rx="30" /><rect class="room-dark" x="48" y="49" width="524" height="333" rx="15" />
         <rect class="shaft" x="452" y="54" width="97" height="320" rx="12" />
         @for (floor of [0,1,2]; track floor) { <path class="floor" [attr.d]="'M60 '+floorY(floor)+'H438'" /><text class="floor-number" x="416" [attr.y]="floorY(floor)-12">{{ floor === 0 ? '●' : floor === 1 ? '●●' : '●●●' }}</text> }
@@ -37,12 +59,14 @@
         </g>
         <path class="wire" [class.active]="s.drive === 'dynamo'" d="M205 204V315H250" />
         <path class="wire" [class.active]="s.drive === 'lift'" d="M218 203H439V61H500" />
-        <rect class="socket" x="175" y="179" width="62" height="44" rx="9" /><text class="object" x="206" y="210">⚙️</text>
+        <rect class="socket" x="175" y="179" width="62" height="44" rx="9" />
+        @if (puzzle().mechanics === 2) { <path class="lever" [attr.d]="s.clutch ? 'M206 204L225 213' : 'M206 204L187 182'" /><circle class="knob" [attr.cx]="s.clutch ? 225 : 187" [attr.cy]="s.clutch ? 213 : 182" r="7" /><path class="cable" d="M175 202H144V258H60" /> }
+        @else { <text class="object" x="206" y="210">⚙️</text> }
         @if (!s.ladder) { <text class="object" x="96" y="211">🪜</text> }
         <path class="cradle" d="M220 326Q250 373 280 326" /><path class="coil" d="M222 346H278 M225 352H275 M235 358H265" />
         <rect class="door" [class.open]="s.doorOpen" x="142" y="52" width="48" height="48" rx="18" /><circle class="knob" cx="178" cy="79" r="3" />
         <path class="cradle" d="M228 86Q250 107 272 86" /><path class="wire" [class.active]="s.doorOpen" d="M228 92H194" />
-        <g class="ball moving" [class.glowing]="s.glowing" [style.transform]="'translate('+(s.ball === 'lift' ? 500 : s.ball === 1 ? 310 : 250)+'px,'+(floorY(s.ball === 'lift' ? s.lift : s.ball)-24)+'px)'">
+        <g class="ball moving" [class.glowing]="s.glowing" [class.picked]="selected() === 'ball'" [style.transform]="'translate('+ballX()+'px,'+ballY()+'px)'">
           <circle class="orb-glow" r="31" /><circle class="orb" r="19" /><path class="orb-mark" d="M-7 -11L5 -3L-3 3L8 12" />
         </g>
         <g class="pip moving" [style.transform]="'translate('+(s.aboard ? 500 : 365)+'px,'+(floorY(s.actor)-8)+'px)'">
@@ -51,20 +75,17 @@
         </g>
         <text class="tiny" x="310" y="414">PIP · {{ s.aboard ? 'SULLA PIATTAFORMA' : 'SUL RIPIANO' }}</text>
       </svg>
-      @if (!s.aboard && s.actor === 1) {
-        @if (!s.ladder) { <button class="hotspot rope-spot" type="button" [disabled]="busy()" aria-label="Srotola la scala" title="Tira il gancio" (click)="send('ladder')">🪜</button> }
-        <button class="hotspot gear-spot" type="button" [disabled]="busy()" aria-label="Sposta l’ingranaggio" title="Sposta l’ingranaggio" (click)="send('gear')">⚙️</button>
-      }
-      @if (!s.aboard && s.actor === 2) { <button class="hotspot exit-spot" type="button" [disabled]="busy()" aria-label="Apri la porticina" title="Apri la porticina" (click)="send('exit')">🚪</button> }
+      @for (floor of [0,1,2]; track floor) { <button class="scene-hit floor-hit" [style.top.%]="(floorY(floor)-14)/430*100" [attr.data-target]="'floor-'+floor" [attr.aria-label]="'Ripiano '+floor" [disabled]="busy()" (click)="target('floor-'+floor)"></button> }
+      <button class="scene-hit platform-hit" data-target="platform" [style.top.%]="(floorY(s.lift)-5)/430*100" aria-label="Piattaforma" [disabled]="busy()" (click)="target('platform')"></button>
+      @if (!s.ladder) { <button class="scene-hit rope-spot" [disabled]="busy()" aria-label="Rotolo di corda" (click)="act('ladder')"></button> }
+      <button class="scene-hit gear-spot" [disabled]="busy()" [attr.aria-label]="puzzle().mechanics === 2 ? 'Leva' : 'Ingranaggio interno'" (click)="act('gear')"></button>
+      <button class="scene-hit exit-spot" [disabled]="busy()" aria-label="Porticina" (click)="act('exit')"></button>
+      <button class="scene-hit ball-hit draggable" [class.selected]="selected() === 'ball'" [attr.aria-pressed]="selected() === 'ball'" [style.left.%]="ballX()/620*100" [style.top.%]="ballY()/430*100" aria-label="Sfera" [disabled]="busy()" (click)="choose('ball')" (pointerdown)="start($event,'ball')" (pointermove)="move($event)" (pointerup)="end($event)" (pointercancel)="escape()"></button>
+      @if (ghost(); as g) { <span class="drag-ghost" [style.left.%]="g.x/620*100" [style.top.%]="g.y/430*100">🟡</span> }
     </div>
-    <div class="inside-controls">
-      <button type="button" [disabled]="busy()" (click)="send(s.aboard ? 'step' : 'board')">{{ s.aboard ? '👣 Salta sul ripiano' : '👣 Sali sulla piattaforma' }}</button>
-      @if (!s.aboard && (s.ball === s.actor || (s.ball === 'lift' && s.lift === s.actor))) { <button type="button" [disabled]="busy()" (click)="send('cargo')">🟡 Spingi la sfera</button> }
-      @if (s.ladder && !s.aboard) {
-        <button type="button" [disabled]="busy() || s.actor === 2" (click)="send('climb',{to:s.actor+1})">🪜 Sali</button>
-        <button type="button" [disabled]="busy() || s.actor === 0" (click)="send('climb',{to:s.actor-1})">🪜 Scendi</button>
-      }
-    </div>
-    <p class="machine-note" aria-live="polite">{{ s.note }}</p>
+    <span class="sr-only">Pip al ripiano {{ s.actor }}{{ s.aboard ? ', sulla piattaforma' : '' }}. Piattaforma al ripiano {{ s.lift }}.</span>
+    <details class="machine-sounds"><summary>👂 Cosa si sente?</summary><p class="machine-note">{{ s.note }}</p></details>
+    <span class="sr-only" aria-live="polite">{{ s.note }}</span>
   }
+  <p class="touch-help">Tocca gli oggetti. Per spostarli, trascina oppure tocca l’oggetto e poi dove vuoi metterlo.</p>
 </div>

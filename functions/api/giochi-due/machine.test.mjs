@@ -5,18 +5,30 @@ import { initialState, applyAction, publicState, GameError } from './_engine.mjs
 
 const actions = [
   [0, {type: 'machine-crank', direction: 1}], [0, {type: 'machine-crank', direction: -1}],
+  ...['drawer','cog','latch'].map(t => [0, {type: 'machine-' + t}]),
+  ...['lift','dynamo'].map(drive => [0, {type: 'machine-belt', drive}]),
   ...['board', 'step', 'gear', 'ladder', 'cargo', 'exit'].map(t => [1, {type: 'machine-' + t}]),
   ...[0, 1, 2].map(to => [1, {type: 'machine-climb', to}])
 ];
-const key = p => JSON.stringify([p.lift, p.aboard ? -1 : p.actor, p.aboard, p.ladder, p.drive, p.ball, p.charge, p.solved]);
+const key = p => JSON.stringify([p.lift, p.aboard ? -1 : p.actor, p.aboard, p.ladder, p.drive, p.ball, p.charge, p.solved, p.clutch, p.drawer, p.cog, p.unlatched]);
 const step = (p, type, extra = {}, seat = 1) => applyMachine(p, {type: 'machine-' + type, ...extra}, seat).puzzle;
 
-export const walkthrough = [
+const legacyWalkthrough = [
   [1,'board'], [0,'crank',{direction:1}], [1,'step'], [1,'ladder'], [1,'cargo'],
   [0,'crank',{direction:-1}], [1,'climb',{to:0}], [1,'cargo'], [1,'climb',{to:1}], [1,'gear'],
   [0,'crank',{direction:1}], [0,'crank',{direction:1}], [0,'crank',{direction:1}], [1,'gear'],
   [1,'climb',{to:0}], [1,'cargo'], [0,'crank',{direction:1}], [0,'crank',{direction:1}],
   [1,'climb',{to:1}], [1,'climb',{to:2}], [1,'cargo'], [1,'exit']
+];
+export const walkthrough = [
+  [1,'board'], [0,'crank',{direction:1}], [1,'step'], [1,'ladder'],
+  [1,'gear'], [0,'drawer'], [0,'cog'], [1,'gear'], [1,'cargo'],
+  [0,'crank',{direction:-1}], [1,'climb',{to:0}], [1,'cargo'], [1,'climb',{to:1}],
+  [1,'gear'], [0,'belt',{drive:'dynamo'}], [1,'gear'],
+  [0,'crank',{direction:1}], [0,'crank',{direction:1}], [0,'crank',{direction:1}],
+  [1,'gear'], [0,'belt',{drive:'lift'}], [1,'gear'],
+  [1,'climb',{to:0}], [1,'cargo'], [0,'crank',{direction:1}], [0,'crank',{direction:1}],
+  [1,'climb',{to:1}], [1,'climb',{to:2}], [1,'cargo'], [0,'latch'], [1,'exit']
 ];
 
 test('machine: stanza completabile con strumenti complementari, non con un solo ruolo', () => {
@@ -50,7 +62,7 @@ test('machine: tutti gli stati raggiungibili hanno una strada verso l’uscita, 
       if (!seen.has(id)) { seen.add(id); queue.push(next); }
     }
   }
-  assert.ok(seen.size > 100); assert.ok(seen.size < 5000);
+  assert.ok(seen.size > 100); assert.ok(seen.size < 50000);
   const recoverable = new Set(wins);
   for (let i = 0; i < wins.length; i++) for (const parent of parents.get(wins[i]) ?? []) {
     if (!recoverable.has(parent)) { recoverable.add(parent); wins.push(parent); }
@@ -67,13 +79,41 @@ test('machine: ruoli, input, limiti e proiezioni private sono verificati dal ser
   assert.throws(() => applyMachine(p,{type:'machine-exit'},2),GameError);
   const outside = machineView({...p,secret:'hidden'},0), inside = machineView(p,1);
   assert.equal(outside.inside, undefined); assert.equal(inside.outside, undefined);
-  assert.deepEqual(Object.keys(outside.outside).sort(), ['drive','lamps','note','turns']);
+  assert.deepEqual(Object.keys(outside.outside).sort(), ['clutch','cog','drawer','drive','lamps','note','turns','unlatched']);
   assert.equal(JSON.stringify(outside).includes('hidden'),false);
   assert.equal(JSON.stringify(inside).includes('"charge"'),false);
   const missing = step(p,'board');
   assert.equal(step(missing,'cargo').ball,1);
   assert.equal(step(p,'crank',{direction:-1},0).lift,0);
   assert.equal(step(p,'exit').solved,false);
+});
+
+test('machine: trasmissione e cassetto richiedono la leva interna, la bobina richiede il pezzo esterno', () => {
+  let p = createMachine();
+  assert.equal(step(p,'belt',{drive:'dynamo'},0).drive,'lift');
+  assert.equal(step(p,'drawer',{},0).drawer,false);
+  assert.equal(step(p,'cog',{},0).cog,false);
+  assert.equal(step(p,'latch',{},0).unlatched,false);
+  p = {...p,actor:1}; p = step(p,'gear');
+  assert.equal(p.clutch,false);
+  assert.equal(step(p,'crank',{direction:1},0).lift,0);
+  p = step(p,'belt',{drive:'dynamo'},0); p = step(p,'gear');
+  p.ball = 0;
+  assert.equal(step(p,'crank',{direction:1},0).charge,0);
+  for (const drive of [null,0,'nope',{},['lift']]) assert.throws(()=>step(p,'belt',{drive},0),GameError);
+  assert.throws(()=>step(p,'cargo',{from:1,to:'lift'}),GameError);
+  assert.throws(()=>step(p,'cargo',{from:0,to:'lift',lift:2}),GameError);
+  assert.throws(()=>step(p,'cargo',{from:0,to:2}),GameError);
+  assert.equal(step({...p,actor:2,ball:2,charge:3},'exit').solved,false);
+});
+
+test('machine: le partite precedenti restano completabili con le regole originali', () => {
+  let p = createMachine();
+  for (const field of ['mechanics','clutch','drawer','cog','unlatched']) delete p[field];
+  assert.equal(machineView(p,0).mechanics,1);
+  assert.throws(()=>step(p,'belt',{drive:'dynamo'},0),GameError);
+  for (const [seat,action,extra] of legacyWalkthrough) p = step(JSON.parse(JSON.stringify(p)),action,extra,seat);
+  assert.equal(p.solved,true);
 });
 
 test('machine: stanza reale, scelta ruoli, salvataggio, storico e richieste obsolete', () => {

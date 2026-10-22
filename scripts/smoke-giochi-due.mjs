@@ -50,7 +50,7 @@ const pages = [];
 try {
   const errors = [];
   for (const user of [1, 2]) {
-    const context = await browser.newContext({ viewport: { width: 1280, height: 960 }, reducedMotion: 'reduce' });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 960 }, reducedMotion: 'reduce', hasTouch: true });
     await context.addCookies([{ name: 'smoke-user', value: String(user), url: base }]);
     await context.addInitScript(id => {
       sessionStorage.setItem('noi-crossword-access-session-v1', String(id));
@@ -190,12 +190,33 @@ try {
   }
   // Una stanza interattiva: il percorso passa da entrambi i dispositivi, senza soluzioni nell’API.
   const machineSteps = [
-    [1,'👣 Sali sulla piattaforma'],[0,'Gira avanti ↪️'],[1,'👣 Salta sul ripiano'],[1,'Srotola la scala'],[1,'🟡 Spingi la sfera'],
-    [0,'↩️ Gira indietro'],[1,'🪜 Scendi'],[1,'🟡 Spingi la sfera'],[1,'🪜 Sali'],[1,'Sposta l’ingranaggio'],
-    [0,'Gira avanti ↪️'],[0,'Gira avanti ↪️'],[0,'Gira avanti ↪️'],[1,'Sposta l’ingranaggio'],
-    [1,'🪜 Scendi'],[1,'🟡 Spingi la sfera'],[0,'Gira avanti ↪️'],[0,'Gira avanti ↪️'],
-    [1,'🪜 Sali'],[1,'🪜 Sali'],[1,'🟡 Spingi la sfera'],[1,'Apri la porticina']
+    [1,'Piattaforma'],[0,'Manovella oraria'],[1,'Ripiano 1'],[1,'Rotolo di corda'],
+    [1,'Leva'],[0,'Cassetto'],[0,'Ingranaggio nel cassetto','Ruota destra'],[1,'Leva'],[1,'Sfera','Piattaforma'],
+    [0,'Manovella antioraria'],[1,'Ripiano 0'],[1,'Sfera','Ripiano 0'],[1,'Ripiano 1'],
+    [1,'Leva'],[0,'Cinghia','Ruota destra'],[1,'Leva'],
+    [0,'Manovella oraria'],[0,'Manovella oraria'],[0,'Manovella oraria'],
+    [1,'Leva'],[0,'Cinghia','Ruota sinistra'],[1,'Leva'],
+    [1,'Ripiano 0'],[1,'Sfera','Piattaforma'],[0,'Manovella oraria'],[0,'Manovella oraria'],
+    [1,'Ripiano 1'],[1,'Ripiano 2'],[1,'Sfera','Ripiano 2'],[0,'Chiavistello'],[1,'Porticina']
   ];
+  const machineAction = async (page, scope, label, destination, drag = false) => {
+    const source = scope.getByRole('button',{name:label,exact:true});
+    if (destination && !drag) await source.tap();
+    const response = page.waitForResponse(r=>r.url().includes('/api/giochi-due/') && r.request().method()==='POST');
+    const target = scope.getByRole('button',{name:destination || label,exact:true});
+    if (drag && label === 'Manovella oraria') {
+      const stage = scope.locator('.outer-stage'); await stage.scrollIntoViewIfNeeded(); const box = await stage.boundingBox();
+      await page.mouse.move(box.x+box.width*348/620,box.y+box.height*255/430); await page.mouse.down();
+      await page.mouse.move(box.x+box.width*330/620,box.y+box.height*310/430,{steps:12}); await page.mouse.up();
+    } else if (destination && drag) {
+      await source.scrollIntoViewIfNeeded(); const a = await source.boundingBox(), b = await target.boundingBox();
+      await page.mouse.move(a.x+a.width/2,a.y+a.height/2); await page.mouse.down();
+      await page.mouse.move(b.x+b.width*(destination.startsWith('Ripiano')?.85:.5),b.y+b.height/2,{steps:12}); await page.mouse.up();
+    } else if ((destination || label).startsWith('Ripiano')) {
+      const box=await target.boundingBox(); await target[drag?'click':'tap']({position:{x:box.width*.85,y:box.height/2}});
+    } else await target[drag?'click':'tap']();
+    const result=await response; assert.equal(result.status(),200,await result.text());
+  };
   await go(rory,'frequenze');
   await clickAction(rory,rory.getByRole('button',{name:'Io sto fuori',exact:true}));
   await go(desy,'frequenze');
@@ -210,11 +231,19 @@ try {
     }
     await page.setViewportSize({width:1280,height:960});
   }
-  for (const [index,[seat,label]] of machineSteps.entries()) {
-    await coopAction(seat,page=>page.getByRole('button',{name:label,exact:true}));
-    if(index===12) {await freshPuzzle(desy);await desy.screenshot({path:join(screenshots,'machine-charged.png'),fullPage:true});}
+  // Selezione da tastiera ed Escape senza inviare comandi.
+  await rory.getByRole('button',{name:'Cinghia',exact:true}).focus();
+  await rory.keyboard.press('Enter');
+  await rory.waitForFunction(()=>document.querySelector('[aria-label="Cinghia"]')?.getAttribute('aria-pressed')==='true');
+  await rory.keyboard.press('Escape');
+  await rory.waitForFunction(()=>document.querySelector('[aria-label="Cinghia"]')?.getAttribute('aria-pressed')==='false');
+  for (const [index,[seat,label,destination]] of machineSteps.entries()) {
+    await freshPuzzle(pages[seat]);
+    await machineAction(pages[seat],pages[seat],label,destination,true);
+    if(index===18) {await freshPuzzle(desy);await desy.screenshot({path:join(screenshots,'machine-charged.png'),fullPage:true});}
   }
   assert.equal(coopState().room.status,'won'); assert.equal(coopState().room.errors,0);
+  assert.equal(coopState().room.results[0].moves,machineSteps.length,'Un drag non deve inviare anche un click');
   await rory.reload(); await rory.getByRole('heading',{name:'Partita completata!',exact:true}).waitFor();
   const realCoop = db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json;
   await rory.getByRole('link', { name: /Prova da solo/ }).click();
@@ -238,10 +267,12 @@ try {
   await clickAction(rory,guide.getByRole('button',{name:'Entra nella partita',exact:true}));
   await explorer.locator('.inner-stage').waitFor(); await guide.locator('.outer-stage').waitFor();
   await rory.screenshot({path:join(screenshots,'machine-admin.png'),fullPage:true});
-  for (const [seat,label] of machineSteps) await clickAction(rory,panels.nth(1-seat).getByRole('button',{name:label,exact:true}));
+  await rory.setViewportSize({width:390,height:844});
+  for (const [seat,label,destination] of machineSteps) await machineAction(rory,panels.nth(1-seat),label,destination);
   await explorer.getByRole('heading',{name:'Partita completata!',exact:true}).waitFor();
   await clickAction(rory,rory.getByRole('button',{name:/Azzera la prova/}));
   assert.equal(db.prepare("SELECT state_json FROM giochi_due WHERE pair_key='1:2' AND kind='frequenze'").get().state_json,realCoop);
+  await rory.setViewportSize({width:1280,height:960});
   // Layout più densi: tabelloni difficili, due pannelli admin e schermi stretti.
   await explorer.getByLabel(/^Tipo di partita/).selectOption('pipes');
   await explorer.getByLabel(/^Difficoltà/).selectOption('hard');

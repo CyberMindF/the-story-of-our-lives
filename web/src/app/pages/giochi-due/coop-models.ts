@@ -10,9 +10,9 @@ export interface MosaicPuzzle extends PuzzleBase { type: 'mosaic'; size: number;
 export interface BalancePuzzle extends PuzzleBase { type: 'balance'; weights: {index: number; value: number; selected: boolean}[]; target: number; selectedCounts: number[]; confirmed: boolean[]; }
 export interface PipesPuzzle extends PuzzleBase { type: 'pipes'; size: number; cells: {index: number; ports: number[] | null; owned: boolean; lit: boolean | null}[]; source: number; sink: number; confirmed: boolean[]; }
 export interface MachinePuzzle extends PuzzleBase {
-  type: 'machine'; role: 'outside' | 'inside';
-  outside?: {drive: 'lift' | 'dynamo'; turns: number; lamps: number; note: string};
-  inside?: {lift: number; actor: number; aboard: boolean; ladder: boolean; drive: 'lift' | 'dynamo'; ball: number | 'lift'; glowing: boolean; doorOpen: boolean; note: string};
+  type: 'machine'; role: 'outside' | 'inside'; mechanics: number;
+  outside?: {drive: 'lift' | 'dynamo'; turns: number; lamps: number; clutch: boolean; drawer: boolean; cog: boolean; unlatched: boolean; note: string};
+  inside?: {lift: number; actor: number; aboard: boolean; ladder: boolean; drive: 'lift' | 'dynamo'; clutch: boolean; ball: number | 'lift'; glowing: boolean; doorOpen: boolean; note: string};
 }
 export type CoopPuzzle = CodePuzzle | MazePuzzle | CircuitPuzzle | OrderPuzzle | DossierPuzzle | MosaicPuzzle | BalancePuzzle | PipesPuzzle | MachinePuzzle;
 export interface CoopResult { type: string; title: string; emoji: string; errors: number; hints: number; moves: number; durationMs: number; }
