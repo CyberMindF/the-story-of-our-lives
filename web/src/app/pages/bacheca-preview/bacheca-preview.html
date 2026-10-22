@@ -230,7 +230,16 @@
   @if (activeGallery().length > 1) {
     <button class="memory-lightbox-nav next" (click)="stepLightbox(1)">›</button>
   }
-  <button class="memory-lightbox-close" (click)="closeLightbox()">×</button>
+  <button
+    type="button"
+    class="memory-lightbox-close"
+    aria-label="Chiudi foto"
+    (click)="closeLightbox()"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  </button>
 </dialog>
 
 <app-confirmation-dialog

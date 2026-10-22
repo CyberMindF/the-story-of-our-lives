@@ -98,7 +98,20 @@ try {
 
   await page.locator('#periodo-giorno-1 .memory-photo button').first().click();
   assert.equal(await page.locator('.memory-lightbox img').getAttribute('src'), '/api/media/bacheca/giorno-1/original/1.jpg');
-  await page.locator('.memory-lightbox-close').click();
+  const closeButton = page.locator('.memory-lightbox-close');
+  assert.equal(await closeButton.getAttribute('aria-label'), 'Chiudi foto');
+  assert.equal(await closeButton.locator('svg').count(), 1);
+  const closeAlignment = await closeButton.evaluate((button) => {
+    const buttonRect = button.getBoundingClientRect();
+    const iconRect = button.querySelector('svg').getBoundingClientRect();
+    return {
+      horizontal: Math.abs(buttonRect.left + buttonRect.width / 2 - (iconRect.left + iconRect.width / 2)),
+      vertical: Math.abs(buttonRect.top + buttonRect.height / 2 - (iconRect.top + iconRect.height / 2)),
+    };
+  });
+  assert.ok(closeAlignment.horizontal < 0.5, `Close icon is not horizontally centered: ${closeAlignment.horizontal}px`);
+  assert.ok(closeAlignment.vertical < 0.5, `Close icon is not vertically centered: ${closeAlignment.vertical}px`);
+  await closeButton.click();
 
   await page.getByRole('link', { name: 'Giorno 19', exact: true }).click();
   await page.locator('#periodo-giorno-19 .memory-photo img').first().waitFor();
