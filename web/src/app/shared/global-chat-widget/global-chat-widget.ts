@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, afterNextRender, inject, signal } from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild, afterNextRender, effect, inject, signal, untracked } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,6 +13,8 @@ import { GlobalChatService } from '../../core/global-chat.service';
 })
 export class GlobalChatWidget {
   protected readonly chat = inject(GlobalChatService);
+  private readonly injector = inject(Injector);
+  private waitingForFirstMessages = false;
   protected readonly open = signal(false);
   protected readonly text = signal('');
   protected readonly sending = signal(false);
@@ -22,12 +24,25 @@ export class GlobalChatWidget {
   @ViewChild('log') private log?: ElementRef<HTMLElement>;
   @ViewChild('fileInput') private fileInput?: ElementRef<HTMLInputElement>;
 
+  constructor() {
+    effect(() => {
+      const opened = this.open(), count = this.chat.messages().length;
+      // Se la prima risposta arriva dopo l'apertura, partiamo comunque dall'ultimo messaggio.
+      // Gli aggiornamenti successivi non devono interrompere chi sta leggendo più indietro.
+      if (opened && count && this.waitingForFirstMessages) {
+        this.waitingForFirstMessages = false;
+        untracked(() => this.scheduleScrollToBottom());
+      }
+    });
+  }
+
   protected toggle(): void {
     this.open.update((value) => !value);
     this.chat.panelOpen.set(this.open());
+    this.waitingForFirstMessages = this.open() && this.chat.messages().length === 0;
     if (this.open()) {
       void this.chat.markRead();
-      afterNextRender(() => this.scrollToBottom());
+      this.scheduleScrollToBottom();
     }
   }
 
@@ -45,7 +60,7 @@ export class GlobalChatWidget {
     }
     this.text.set('');
     this.clearPendingFile();
-    afterNextRender(() => this.scrollToBottom());
+    this.scheduleScrollToBottom();
   }
 
   protected onComposerKeydown(event: KeyboardEvent): void {
@@ -83,6 +98,10 @@ export class GlobalChatWidget {
   }
 
   protected mediaUrl = this.chat.mediaUrl.bind(this.chat);
+
+  private scheduleScrollToBottom(): void {
+    afterNextRender(() => this.scrollToBottom(), { injector: this.injector });
+  }
 
   private scrollToBottom(): void {
     const element = this.log?.nativeElement;

@@ -1,11 +1,16 @@
-:host { display: contents; }
+:host {
+  display: contents;
+  /* La chat globale occupa 3.5rem nell'angolo in basso a destra.
+     Lasciamo spazio anche al badge/rimbalzo, senza cambiare lo z-index. */
+  --gdr-panel-bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 3.5rem + 1.25rem);
+}
 
 .gdr-panel-trigger {
   --glass-background: color-mix(in srgb, var(--button-bg) 88%, transparent);
   --glass-filter: blur(10px);
   position: fixed;
-  right: 1.25rem;
-  bottom: 1.25rem;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: var(--gdr-panel-bottom);
   z-index: 190;
   display: flex;
   align-items: center;
@@ -47,8 +52,8 @@
   /* Desktop: card ancorata in basso a destra, non un foglio che taglia tutto lo schermo —
      ancorata anche in alto (invece di un max-height percentuale) così si apre più alta. */
   top: 5rem;
-  right: 1.25rem;
-  bottom: 1.25rem;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: var(--gdr-panel-bottom);
   left: auto;
   width: min(92vw, 25rem);
   border-radius: 1.1rem;
@@ -63,12 +68,13 @@
 @media (max-width: 640px) {
   .gdr-panel-sheet {
     top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: max(.6rem, env(safe-area-inset-left));
+    right: max(.6rem, env(safe-area-inset-right));
+    bottom: var(--gdr-panel-bottom);
     width: auto;
-    max-height: min(80vh, 42rem);
-    border-radius: 1.4rem 1.4rem 0 0;
+    max-height: min(80vh, calc(100vh - var(--gdr-panel-bottom) - 1rem), 42rem);
+    max-height: min(80dvh, calc(100dvh - var(--gdr-panel-bottom) - 1rem), 42rem);
+    border-radius: 1.4rem;
     animation: gdr-panel-slide-up .22s ease-out;
   }
 }

@@ -24,9 +24,10 @@
           <button type="button" class="global-chat-icon-btn" (click)="toggle()" aria-label="Chiudi chat">×</button>
         </div>
       </header>
-      <div class="global-chat-log" #log aria-live="polite">
-        @if (chat.loading()) { <p class="global-chat-empty">Caricamento…</p> }
-        @if (!chat.loading() && chat.messages().length === 0) { <p class="global-chat-empty">Ancora nessun messaggio.</p> }
+      <div class="global-chat-log" #log aria-live="polite" [attr.aria-busy]="chat.loading()">
+        @if (chat.messages().length === 0) {
+          <p class="global-chat-empty">{{ chat.loading() ? 'Caricamento…' : 'Ancora nessun messaggio.' }}</p>
+        }
         @for (message of chat.messages(); track message.id; let index = $index) {
           @if (chat.startsNewDay(index)) {
             <div class="global-chat-day"><span>{{ message.createdAt | date: 'EEEE d MMMM' }}</span></div>
