@@ -66,7 +66,6 @@
       }
     </div>
 
-    @if (tarocchiTotali() > 0 || canEdit()) {
     <section class="carte-arcani-strip" aria-labelledby="carte-arcani-title">
       <div class="carte-arcani-mark" aria-hidden="true">🔮</div>
       <div class="carte-arcani-info">
@@ -91,13 +90,11 @@
       <p class="carte-error carte-arcani-error">{{ evocazioneError() }}</p>
       }
     </section>
-    }
 
     @if (albumLoadError()) {
     <p class="carte-error">Non è stato possibile caricare l'album.</p>
     }
 
-    @if (tarocchiTotali() > 0) {
     <div class="carte-album-type-tabs" role="tablist" aria-label="Tipo di album">
       <button type="button" role="tab" [class.is-active]="albumTipo() === 'normale'"
         [attr.aria-selected]="albumTipo() === 'normale'" (click)="selectAlbumTipo('normale')">Carte</button>
@@ -109,7 +106,6 @@
     @if (albumTipo() === 'tarocchi') {
     <p class="carte-arcani-progress">Tu {{ tarocchiMiei() }}/{{ tarocchiTotali() }} ·
       {{ partnerNickname() ?? otherLabel() }} {{ tarocchiAltro() }}/{{ tarocchiTotali() }}</p>
-    }
     }
 
     <div class="carte-finitura-tabs" role="tablist" aria-label="Finitura">
