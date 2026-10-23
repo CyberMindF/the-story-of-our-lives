@@ -97,10 +97,28 @@
                 <div class="episode-copy"><time [attr.datetime]="episode.occurredAt">{{ episode.occurredAt | date:'dd/MM/yyyy · HH:mm:ss' }}</time>
                   <p>{{ episode.reason || 'Nessuna nota' }}</p></div>
               </div>
-              <div class="episode-actions">
-                <button class="btn" type="button" (click)="copyEpisode(episode)" aria-label="Copia episodio">{{ copiedEpisodeId() === episode.id ? 'Copiato ✓' : 'Copia' }}</button>
-                <button class="btn" (click)="startEdit(episode)" [disabled]="busy() || !!pendingQuick()">Modifica</button>
-                <button class="btn" (click)="deleting.set(episode)" [disabled]="busy() || !!pendingQuick()">Elimina</button>
+              <div class="episode-menu" (click)="$event.stopPropagation()">
+                <button
+                  type="button"
+                  class="episode-menu-trigger"
+                  aria-label="Azioni episodio"
+                  aria-haspopup="menu"
+                  [attr.aria-expanded]="openEpisodeMenuId() === episode.id"
+                  (click)="toggleEpisodeMenu($event, episode.id)"
+                >
+                  @if (copiedEpisodeId() === episode.id) {
+                    <span aria-hidden="true">✓</span>
+                  } @else {
+                    <span class="episode-menu-dots" aria-hidden="true">•••</span>
+                  }
+                </button>
+                @if (openEpisodeMenuId() === episode.id) {
+                  <div class="episode-menu-popover" role="menu">
+                    <button type="button" role="menuitem" (click)="copyEpisode(episode); openEpisodeMenuId.set(null)">Copia</button>
+                    <button type="button" role="menuitem" (click)="startEdit(episode); openEpisodeMenuId.set(null)" [disabled]="busy() || !!pendingQuick()">Modifica</button>
+                    <button type="button" role="menuitem" class="danger" (click)="deleting.set(episode); openEpisodeMenuId.set(null)" [disabled]="busy() || !!pendingQuick()">Elimina</button>
+                  </div>
+                }
               </div>
               @if (deleting()?.id === episode.id) {
                 <div class="delete-confirm" role="group" aria-label="Conferma eliminazione">

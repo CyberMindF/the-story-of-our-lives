@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, computed, effect, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, computed, effect, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
@@ -24,7 +24,7 @@ export class ContatoreAmore implements OnDestroy {
     const current = this.stats()?.current ?? 0;
     const initial = this.state()?.settings.initialScore ?? 20;
     const reference = initial > 0 ? initial : 20;
-    return Math.max(0, Math.min(92, current / reference * 92));
+    return Math.max(0, Math.min(100, current / reference * 100));
   });
   readonly scoreFontSize = computed(() => Math.min(88, 180 / (String(this.stats()?.current ?? 20).length * .65)));
   readonly points = computed(() => this.state() ? timeline(this.state()!) : []);
@@ -35,6 +35,7 @@ export class ContatoreAmore implements OnDestroy {
   readonly editing = signal<Episode | null>(null);
   readonly deleting = signal<Episode | null>(null);
   readonly copiedEpisodeId = signal<string | null>(null);
+  readonly openEpisodeMenuId = signal<string | null>(null);
   readonly pendingQuick = signal<{ id: string; delta: number } | null>(null);
   reason = '';
   editDate = '';
@@ -74,6 +75,17 @@ export class ContatoreAmore implements OnDestroy {
 
   ngOnDestroy(): void {
     if (this.copyResetTimer) clearTimeout(this.copyResetTimer);
+  }
+
+  @HostListener('document:click')
+  @HostListener('document:keydown.escape')
+  closeEpisodeMenu(): void {
+    this.openEpisodeMenuId.set(null);
+  }
+
+  toggleEpisodeMenu(event: Event, episodeId: string): void {
+    event.stopPropagation();
+    this.openEpisodeMenuId.update((current) => current === episodeId ? null : episodeId);
   }
 
   async load(): Promise<void> {
