@@ -6,6 +6,12 @@ vedono subito senza scorrere; tutto quello già completato è più sotto, in ord
 
 ## Da fare / in corso
 
+- #e26 — Gamification leggera del Mondo Bianco: introdurre in futuro piccole missioni di
+  scoperta e obiettivi settimanali che accompagnino verso sezioni e contenuti diversi senza
+  premiare click vuoti o trasformare il sito in una lista di compiti. Le ricompense devono
+  essere **bustine di carte**, non monete o una nuova valuta. Il sistema potrà riusare le
+  informazioni già disponibili su novità viste, visite e attività reali, mostrando progressi
+  chiari e lasciando le ricompense abbastanza rare da rimanere interessanti.
 - #e25 — Centro notifiche interno al sito: aggiungere nella barra condivisa la classica campanellina
   con badge dei non letti e pannello apribile, senza Service Worker, permessi browser o notifiche sul
   telefono. Conservare in D1 notifiche appartenenti a `users.id`, con tipo, testo breve, destinazione,

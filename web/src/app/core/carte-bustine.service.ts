@@ -25,6 +25,7 @@ export interface CarteBustineState {
 @Injectable({ providedIn: 'root' })
 export class CarteBustineService {
   readonly balance = signal<CarteBustineBalance | null>(null);
+  readonly state = signal<CarteBustineState | null>(null);
   private userId: number | null = null;
   private request: Promise<CarteBustineState> | null = null;
   private loadedAt = 0;
@@ -46,6 +47,7 @@ export class CarteBustineService {
           quantitaDisponibile: state.quantitaDisponibile,
           minutiResidui: state.minutiResidui
         });
+        this.state.set(state);
         return state;
       })
       .catch((error) => {
@@ -68,6 +70,7 @@ export class CarteBustineService {
     this.request = null;
     this.loadedAt = 0;
     this.balance.set(null);
+    this.state.set(null);
   }
 
   async recordActiveMinute(userId: number): Promise<CarteBustineBalance> {
@@ -85,6 +88,7 @@ export class CarteBustineService {
     };
     if (this.userId === userId) {
       this.balance.set(balance);
+      this.state.update((state) => state ? { ...state, ...balance } : state);
       if (this.request) {
         this.request = this.request.then((state) => ({ ...state, ...balance }));
       }
@@ -99,6 +103,7 @@ export class CarteBustineService {
       minutiResidui: minutiResidui ?? current?.minutiResidui ?? 0
     };
     this.balance.set(balance);
+    this.state.update((state) => state ? { ...state, ...balance } : state);
   }
 
   private async fetchState(): Promise<CarteBustineState> {

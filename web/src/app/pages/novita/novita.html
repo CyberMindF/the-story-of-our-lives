@@ -1,0 +1,76 @@
+<app-shell homeHref="/" homeAria="Torna al Mondo Bianco" homeLabel="Il Mondo Bianco">
+  <div class="updates-page">
+    <header class="updates-hero">
+      <p class="eyebrow">✨ Cosa ti sei persa?</p>
+      <h1>Le Novità</h1>
+      <p>Tutto quello che è comparso nel Mondo Bianco, anche quando non stavi guardando.</p>
+    </header>
+
+    <div class="updates-tabs" role="tablist">
+      <button type="button" role="tab" [class.is-active]="tab() === 'contenuto'" (click)="tab.set('contenuto')">Da scoprire</button>
+      <button type="button" role="tab" [class.is-active]="tab() === 'mondo'" (click)="tab.set('mondo')">Novità del Mondo</button>
+    </div>
+
+    @if (loading()) { <p class="status">Cerco le ultime novità…</p> }
+    @if (error()) { <p class="status error" role="alert">{{ error() }}</p> }
+    @if (notice()) { <p class="status" role="status">{{ notice() }}</p> }
+
+    <section class="updates-timeline" [attr.aria-label]="tab() === 'contenuto' ? 'Contenuti da scoprire' : 'Novità del Mondo'">
+      @for (update of filteredUpdates(); track update.id) {
+        <article class="update-card card glass-surface">
+          <span class="update-emoji" aria-hidden="true">{{ update.emoji }}</span>
+          <div class="update-copy">
+            <time [attr.datetime]="update.publishedAt">{{ update.publishedAt | date:'dd MMMM yyyy' }}</time>
+            <h2>{{ update.title }}</h2>
+            @if (update.body) { <p>{{ update.body }}</p> }
+            @if (update.route) { <a class="btn" [routerLink]="update.route">{{ update.ctaLabel || 'Apri' }}</a> }
+          </div>
+          @if (canEdit()) {
+            <div class="editor-actions"><button class="btn" type="button" (click)="editUpdate(update)">Modifica</button><button class="btn danger" type="button" (click)="deleteUpdate(update)">Elimina</button></div>
+          }
+        </article>
+      } @empty { @if (!loading()) { <p class="empty">Qui non c’è ancora niente.</p> } }
+    </section>
+
+    @if (canEdit()) {
+      <section class="admin-studio card glass-surface" aria-labelledby="update-editor-title">
+        <header><div><p class="eyebrow">Modalità admin</p><h2 id="update-editor-title">Gestione delle novità</h2></div><button type="button" class="btn" (click)="editUpdate(null)">+ Nuova voce</button></header>
+        <form id="update-editor" class="editor-form" (ngSubmit)="saveUpdate()">
+          <label>Sezione<select name="updateKind" [(ngModel)]="updateKind"><option value="contenuto">Da scoprire</option><option value="mondo">Novità del Mondo</option></select></label>
+          <label>Emoji<input name="updateEmoji" maxlength="24" [(ngModel)]="updateEmoji" /></label>
+          <label class="wide">Titolo<input name="updateTitle" maxlength="120" required [(ngModel)]="updateTitle" /></label>
+          <label class="wide">Descrizione<textarea name="updateBody" maxlength="1000" rows="3" [(ngModel)]="updateBody"></textarea></label>
+          <label>Collegamento <span>facoltativo</span><input name="updateRoute" placeholder="/lettere" [(ngModel)]="updateRoute" /></label>
+          <label>Testo pulsante<input name="updateCta" maxlength="60" placeholder="Apri" [(ngModel)]="updateCta" /></label>
+          <label>Data e ora<input type="datetime-local" name="updateDate" required [(ngModel)]="updateDate" /></label>
+          <label class="check"><input type="checkbox" name="updateActive" [(ngModel)]="updateActive" /> Pubblicata</label>
+          <div class="wide form-actions"><button class="btn btn-submit" type="submit" [disabled]="saving()">{{ editingUpdateId() ? 'Salva modifiche' : 'Pubblica novità' }}</button></div>
+        </form>
+      </section>
+
+      <section class="admin-studio card glass-surface" aria-labelledby="promo-editor-title">
+        <header><div><p class="eyebrow">Campagne</p><h2 id="promo-editor-title">Pubblicità del Mondo Bianco</h2></div><button type="button" class="btn" (click)="editPromo(null)">+ Nuova pubblicità</button></header>
+        <p class="admin-intro">Può pubblicizzare una sezione oppure essere semplicemente un messaggio dedicato. Senza collegamento, verrà mostrato solo il testo.</p>
+        <form id="promo-editor" class="editor-form" (ngSubmit)="savePromo()">
+          <label>Dicitura<select name="promoLabel" [(ngModel)]="promoLabel"><option value="commerciale">Messaggio commerciale</option><option value="consiglia">Il Mondo Bianco consiglia</option><option value="sponsor">Lo sponsor di oggi</option><option value="promozionale">Spazio promozionale</option></select></label>
+          <label>Emoji<input name="promoEmoji" maxlength="24" [(ngModel)]="promoEmoji" /></label>
+          <label class="wide">Titolo<input name="promoTitle" maxlength="120" required [(ngModel)]="promoTitle" /></label>
+          <label class="wide">Messaggio<textarea name="promoBody" maxlength="1200" rows="4" required [(ngModel)]="promoBody"></textarea></label>
+          <label>Collegamento <span>facoltativo</span><input name="promoRoute" placeholder="/cuffiette" [(ngModel)]="promoRoute" /></label>
+          <label>Testo pulsante<input name="promoCta" maxlength="60" placeholder="Vai a vedere" [(ngModel)]="promoCta" /></label>
+          <label>Mostra a<select name="promoTarget" [(ngModel)]="promoTarget"><option value="lei">Solo a lei</option><option value="lui">Solo a lui</option><option value="tutti">A entrambi</option></select></label>
+          <label>Posizione<select name="promoPlacement" [(ngModel)]="promoPlacement"><option value="automatico">Automatica</option><option value="lato">Laterale</option><option value="alto">In alto</option><option value="basso">In basso</option></select></label>
+          <label>Non ripeterla per<input type="number" name="promoCooldown" min="1" max="365" [(ngModel)]="promoCooldownDays" /><span>giorni</span></label>
+          <label class="check"><input type="checkbox" name="promoActive" [(ngModel)]="promoActive" /> Attiva</label>
+          <div class="wide form-actions"><button class="btn btn-submit" type="submit" [disabled]="saving()">{{ editingPromoId() ? 'Salva campagna' : 'Crea pubblicità' }}</button></div>
+        </form>
+
+        <div class="campaign-list">
+          @for (promo of campaigns(); track promo.id) {
+            <article [class.is-inactive]="!promo.active"><span>{{ promo.emoji }}</span><div><small>{{ labelForPromo(promo.label) }} · {{ promo.targetIdentity === 'tutti' ? 'entrambi' : 'solo ' + promo.targetIdentity }}</small><strong>{{ promo.title }}</strong><p>{{ promo.body }}</p></div><div class="editor-actions"><button type="button" class="btn" (click)="editPromo(promo)">Modifica</button><button type="button" class="btn danger" (click)="deletePromo(promo)">Elimina</button></div></article>
+          } @empty { <p class="empty">Nessuna campagna disponibile.</p> }
+        </div>
+      </section>
+    }
+  </div>
+</app-shell>

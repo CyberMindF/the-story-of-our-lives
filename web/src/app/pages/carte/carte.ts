@@ -344,9 +344,6 @@ export class Carte implements OnInit, OnDestroy {
       this.streakBonusOttenuto.set(data.streakBustineBonus);
       this.evocazioniDisponibili.set(data.evocazioniDisponibili);
       this.bustineSenzaEvocazione.set(data.bustineSenzaEvocazione);
-      if (data.streakPrimaVisitaOggi) {
-        this.streakModalOpen.set(true);
-      }
     } catch (error) {
       console.error('Errore nel caricamento delle bustine:', error);
       this.bustineLoadError.set(true);

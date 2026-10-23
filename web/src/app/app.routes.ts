@@ -69,6 +69,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/contatore-amore/contatore-amore').then((m) => m.ContatoreAmore),
       },
       {
+        path: 'novita',
+        data: { bodyClasses: ['novita-page'] },
+        loadComponent: () => import('./pages/novita/novita').then((m) => m.Novita),
+      },
+      {
         path: 'log',
         canActivate: [adminGuard],
         data: { bodyClasses: ['log-page'] },

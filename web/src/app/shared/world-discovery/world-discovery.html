@@ -1,0 +1,56 @@
+@if (updateModalOpen()) {
+  <div class="discovery-backdrop" role="dialog" aria-modal="true" aria-labelledby="discovery-title">
+    <section class="discovery-modal glass-surface">
+      <header class="discovery-heading">
+        <div><span class="discovery-kicker">Dal tuo ultimo giro</span><h2 id="discovery-title">Cosa ti sei persa?</h2></div>
+        <button type="button" class="discovery-close" aria-label="Chiudi le novità" (click)="closeUpdates()">×</button>
+      </header>
+      <div class="discovery-tabs" role="tablist" aria-label="Tipi di novità">
+        <button type="button" role="tab" [attr.aria-selected]="updateTab() === 'contenuto'" [class.is-active]="updateTab() === 'contenuto'"
+          [disabled]="!hasKind('contenuto')" (click)="selectTab('contenuto')">Da scoprire</button>
+        <button type="button" role="tab" [attr.aria-selected]="updateTab() === 'mondo'" [class.is-active]="updateTab() === 'mondo'"
+          [disabled]="!hasKind('mondo')" (click)="selectTab('mondo')">Novità del Mondo</button>
+      </div>
+      <div class="discovery-list">
+        @for (update of visibleUpdates(); track update.id) {
+          <article class="discovery-update">
+            <span class="discovery-emoji" aria-hidden="true">{{ update.emoji }}</span>
+            <div><h3>{{ update.title }}</h3>@if (update.body) { <p>{{ update.body }}</p> }</div>
+            @if (update.route) {
+              <a class="btn" [routerLink]="update.route" (click)="closeUpdates()">{{ update.ctaLabel || 'Apri' }}</a>
+            }
+          </article>
+        }
+      </div>
+      <footer class="discovery-footer">
+        <a class="btn" routerLink="/novita" (click)="closeUpdates()">Vedi tutte le novità</a>
+        <button type="button" class="btn btn-submit" (click)="closeUpdates()">Continua</button>
+      </footer>
+    </section>
+  </div>
+}
+
+@if (rewardModalOpen() && reward(); as daily) {
+  <div class="discovery-backdrop" role="dialog" aria-modal="true" aria-labelledby="daily-reward-title">
+    <section class="daily-reward glass-surface">
+      <span class="daily-reward-pack"><app-carta-pack size="display" /></span>
+      <span class="discovery-kicker">Ricompensa giornaliera</span>
+      <h2 id="daily-reward-title">+{{ daily.streakBustineBonus }} {{ daily.streakBustineBonus === 1 ? 'bustina' : 'bustine' }}</h2>
+      <p>Giorno {{ daily.streakCorrente }} di fila. Le bustine sono già state aggiunte alla tua collezione.</p>
+      <div class="daily-reward-actions">
+        <button type="button" class="btn" (click)="closeReward()">Continua</button>
+        <a class="btn btn-submit" routerLink="/tavolo-da-gioco/carte" (click)="closeReward()">Vai alle carte</a>
+      </div>
+    </section>
+  </div>
+}
+
+@if (promoVisible() && promo(); as ad) {
+  <aside [class]="promoClass()" aria-label="Messaggio promozionale">
+    <button type="button" class="world-promo-close" aria-label="Chiudi pubblicità" (click)="closePromo()">×</button>
+    <span class="world-promo-label">{{ promoLabel() }}</span>
+    <span class="world-promo-emoji" aria-hidden="true">{{ ad.emoji }}</span>
+    <div class="world-promo-copy"><strong>{{ ad.title }}</strong><p>{{ ad.body }}</p></div>
+    @if (ad.route) { <a class="btn" [routerLink]="ad.route" (click)="closePromo()">{{ ad.ctaLabel || 'Apri' }}</a> }
+  </aside>
+}

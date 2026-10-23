@@ -59,5 +59,6 @@ export const WORLD_PLACES: readonly WorldPlace[] = [
 
   { id: 'impostazioni-mondo', emoji: '🎛️', route: '/impostazioni-mondo', fallbackName: 'Il Centro di Controllo', fallbackDescription: 'Un posto per personalizzare il nostro mondo', group: 'mondo', primary: true, homeArea: 'osservatorio' },
   { id: 'il-cielo', emoji: '🌌', route: '/il-cielo', fallbackName: 'Il Cielo', fallbackDescription: 'Uno spazio vuoto e calmo per goderti il cielo del mondo bianco', group: 'mondo', primary: true, homeArea: 'osservatorio' },
+  { id: 'novita', emoji: '✨', route: '/novita', fallbackName: 'Le Novità', fallbackDescription: 'Quello che è comparso nel Mondo Bianco mentre non guardavi', group: 'mondo', primary: true, homeArea: 'osservatorio' },
   { id: 'profilo', emoji: '👤', route: '/profilo', fallbackName: 'Il Profilo', fallbackDescription: 'Se vuoi cambiare password o il tuo nome', group: 'mondo' }
 ];

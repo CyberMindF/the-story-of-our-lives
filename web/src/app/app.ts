@@ -26,6 +26,7 @@ import { WorldFireworks } from './shared/world-fireworks';
 import { GlobalChatWidget } from './shared/global-chat-widget/global-chat-widget';
 import { GlobalChatService } from './core/global-chat.service';
 import { StudyFocusService } from './core/study-focus.service';
+import { WorldDiscovery } from './shared/world-discovery/world-discovery';
 
 // Eventi usati come "prova di attività" per rinnovare lo sblocco della Chiave (vedi
 // AuthService.touchAccessUnlock) — non serve seguire ogni movimento del mouse, basta sapere
@@ -51,6 +52,7 @@ const ROUTE_BODY_CLASSES = [
   'stories-page',
   'suggerimenti-page',
   'impostazioni-mondo-page',
+  'novita-page',
   'sky-view-page',
   'aula-studio-page',
   'tavolo-page',
@@ -59,7 +61,7 @@ const ROUTE_BODY_CLASSES = [
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, GlobalChatWidget, WorldStars, WorldShootingStars, WorldLanterns, WorldMoon, WorldSparkles, WorldLeaves, WorldWaves, WorldFish, WorldPetals, WorldBubbles, WorldHearts, WorldPearlShimmers, WorldSilk, WorldStickers, WorldBalloons, WorldFireworks],
+  imports: [RouterOutlet, GlobalChatWidget, WorldDiscovery, WorldStars, WorldShootingStars, WorldLanterns, WorldMoon, WorldSparkles, WorldLeaves, WorldWaves, WorldFish, WorldPetals, WorldBubbles, WorldHearts, WorldPearlShimmers, WorldSilk, WorldStickers, WorldBalloons, WorldFireworks],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

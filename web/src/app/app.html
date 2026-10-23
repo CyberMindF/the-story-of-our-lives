@@ -23,6 +23,9 @@
   </aside>
 }
 <router-outlet />
+@if (authService.currentUser()) {
+  <app-world-discovery />
+}
 @if (authService.currentUser() && showGlobalChat()) {
   <app-global-chat-widget />
 }
