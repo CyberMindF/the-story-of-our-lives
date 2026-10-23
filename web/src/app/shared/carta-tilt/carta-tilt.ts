@@ -103,7 +103,7 @@ export class CartaTilt implements AfterViewChecked, OnDestroy {
   //    colori della finitura precedente sui poligoni già esistenti — è il bug del "fantasma
   //    rubino dentro l'album smeraldo" segnalato da Rory.
   ngAfterViewChecked(): void {
-    if (!this.isGemma || !this.foilSvgRef) return;
+    if (!this.isGemma || this.variante === 'tarocco' || !this.foilSvgRef) return;
     const svg = this.foilSvgRef.nativeElement;
 
     if (svg.childElementCount === 0) {
@@ -190,8 +190,8 @@ export class CartaTilt implements AfterViewChecked, OnDestroy {
       const frame = this.frameRef.nativeElement;
       applyCartaPointer(frame, px, py);
 
-      if (this.isMetallo) this.metallicFoil?.setPointer(px, py);
-      if (this.isGemma) {
+      if (this.isMetallo && this.variante !== 'tarocco') this.metallicFoil?.setPointer(px, py);
+      if (this.isGemma && this.variante !== 'tarocco') {
         if (frame.classList.contains('is-entering')) {
           // Il primo evento avvia l'interpolazione; quelli successivi aggiornano solo il
           // bersaglio, senza riavviare continuamente i 140ms.
@@ -213,8 +213,8 @@ export class CartaTilt implements AfterViewChecked, OnDestroy {
       // centro, la striscia di luce restava "bloccata" invece di rientrare (segnalato da Rory).
       resetCartaPointer(frame);
 
-      if (this.isMetallo) this.metallicFoil?.resetPointer();
-      if (this.isGemma) this.animateFoilTo(...CARTA_REST_LIGHT, 500);
+      if (this.isMetallo && this.variante !== 'tarocco') this.metallicFoil?.resetPointer();
+      if (this.isGemma && this.variante !== 'tarocco') this.animateFoilTo(...CARTA_REST_LIGHT, 500);
     });
   }
 

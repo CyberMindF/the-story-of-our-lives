@@ -5,6 +5,7 @@
   perspective: 900px;
   container-type: size;
 }
+:host.carta-tilt-host--tarocco { aspect-ratio: 2 / 3; }
 
 .carta-tilt-frame {
   --rx: 0deg;
@@ -68,33 +69,56 @@
   background-repeat: no-repeat;
 }
 
-/* I Tarocchi caricati sono gia opere complete: contengono numero, cornice e titolo. La
-   modalita dedicata usa quindi quasi tutta la superficie e non aggiunge la targhetta delle
-   carte fotografiche. Rimane un bordo esterno sottile, sufficiente a mostrare il materiale
-   Bianca/Argento/Oro/Gemma senza creare l'effetto di una carta dentro un'altra carta. */
+/* I Tarocchi sono gia carte complete in rapporto 2:3: niente finestra interna, niente colore
+   sopra l'opera e nessuna seconda cornice larga attorno all'illustrazione. */
 .carta-tilt-frame--tarocco .carta-tilt-art {
-  inset: 2.5% 5%;
+  inset: 0;
+  background-size: cover;
 }
-.carta-tilt-frame--tarocco[data-finitura='argento']::after,
-.carta-tilt-frame--tarocco[data-finitura='oro']::after {
-  content: '';
-  position: absolute;
-  z-index: 3;
-  inset: 2.5% 5%;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  background:
-    linear-gradient(118deg, transparent 18%, rgb(255 255 255 / .04) 35%, rgb(255 255 255 / .38) 48%, rgb(255 255 255 / .08) 56%, transparent 72%);
-  background-size: 220% 220%;
-  background-position: var(--mx) var(--my);
-}
-.carta-tilt-frame--tarocco[data-finitura='oro']::after {
-  background-image: linear-gradient(118deg, transparent 18%, rgb(255 219 116 / .04) 35%, rgb(255 238 174 / .4) 48%, rgb(255 190 64 / .1) 56%, transparent 72%);
-}
-.carta-tilt-frame--tarocco .carta-tilt-gloss { z-index: 3; opacity: .45; }
-.carta-tilt-frame--tarocco .carta-tilt-foil { z-index: 3; opacity: .24; }
-.carta-tilt-frame--tarocco .carta-tilt-glass { z-index: 4; opacity: .58; }
 .carta-tilt-frame--tarocco .carta-tilt-rim { z-index: 5; }
+
+/* Finitura del Tarocco: un taglio sottile, simile alla costa metallizzata di una carta vera.
+   Il doppio mask sottrae tutto il centro, perciò nessun pixel dell'artwork viene tinto. */
+.carta-tilt-tarot-finish {
+  --finish-a: #d8dde4;
+  --finish-b: #ffffff;
+  --finish-c: #77808b;
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  border-radius: inherit;
+  padding: clamp(2px, 1.15cqw, 5px);
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--mx) var(--my), rgb(255 255 255 / .92) 0 3%, transparent 17%),
+    conic-gradient(from 205deg, var(--finish-c), var(--finish-a) 18%, var(--finish-b) 29%, var(--finish-a) 42%, var(--finish-c) 62%, var(--finish-b) 78%, var(--finish-a));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  filter: saturate(.92) brightness(1.04);
+}
+.carta-tilt-frame--tarocco[data-finitura='oro'] .carta-tilt-tarot-finish {
+  --finish-a: #d5a737; --finish-b: #fff1a6; --finish-c: #765017;
+}
+.carta-tilt-frame--tarocco[data-finitura='onice'] .carta-tilt-tarot-finish {
+  --finish-a: #34353c; --finish-b: #a9abb6; --finish-c: #050507;
+}
+.carta-tilt-frame--tarocco[data-finitura='smeraldo'] .carta-tilt-tarot-finish {
+  --finish-a: #087c5c; --finish-b: #8ef4bd; --finish-c: #013b31;
+}
+.carta-tilt-frame--tarocco[data-finitura='rubino'] .carta-tilt-tarot-finish {
+  --finish-a: #ae2344; --finish-b: #ff9a9f; --finish-c: #4c071c;
+}
+.carta-tilt-frame--tarocco[data-finitura='zaffiro'] .carta-tilt-tarot-finish {
+  --finish-a: #2458b5; --finish-b: #98d4ff; --finish-c: #071b57;
+}
+.carta-tilt-frame--tarocco[data-finitura='diamante'] .carta-tilt-tarot-finish {
+  --finish-a: #b9f3ff; --finish-b: #fff4ff; --finish-c: #a5a4f2;
+  background:
+    radial-gradient(circle at var(--mx) var(--my), rgb(255 255 255 / .98) 0 3%, transparent 17%),
+    conic-gradient(from 205deg, #8be7ff, #fff 14%, #d7aaff 29%, #fff0a3 44%, #a9ffd2 58%, #fff 73%, #9ab8ff 88%, #8be7ff);
+}
 
 .carta-tilt-fallback {
   font-size: min(45cqw, 45cqh, 12rem);
@@ -171,4 +195,7 @@
   border-radius: inherit;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
   pointer-events: none;
+}
+.carta-tilt-frame--tarocco .carta-tilt-rim {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / .22), inset 0 0 .35rem rgb(0 0 0 / .18);
 }

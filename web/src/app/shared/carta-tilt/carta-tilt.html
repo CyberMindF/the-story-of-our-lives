@@ -1,29 +1,36 @@
 <div #frame class="carta-tilt-frame" [class.carta-tilt-frame--tarocco]="variante === 'tarocco'"
   [attr.data-finitura]="finitura">
-  @if (isMetallo) {
-    <app-metallic-foil [preset]="metalPreset" [interactive]="false" />
-  } @else if (isGemma) {
-    <div class="carta-tilt-gem-base" [style.background-image]="gemMaterialStyle"></div>
-    <svg #foilSvg class="carta-tilt-foil" viewBox="0 0 1 1" preserveAspectRatio="none"></svg>
-  } @else {
-    <div class="carta-tilt-bianca-surface"></div>
+  @if (variante !== 'tarocco') {
+    @if (isMetallo) {
+      <app-metallic-foil [preset]="metalPreset" [interactive]="false" />
+    } @else if (isGemma) {
+      <div class="carta-tilt-gem-base" [style.background-image]="gemMaterialStyle"></div>
+      <svg #foilSvg class="carta-tilt-foil" viewBox="0 0 1 1" preserveAspectRatio="none"></svg>
+    } @else {
+      <div class="carta-tilt-bianca-surface"></div>
+    }
   }
 
-  <!-- La finestra dell'illustrazione e' identica per TUTTE le rarita': cambia soltanto il
-       materiale dietro e attorno. In questo modo lo stesso design mantiene sempre composizione
-       e dimensioni, da Bianca a Diamante. -->
+  <!-- L'immagine resta identica per tutte le rarita. Nei Tarocchi occupa l'intera carta;
+       nelle carte normali conserva la finestra e la targhetta del design originale. -->
   <div class="carta-tilt-art" [style.background-image]="backgroundImage">
     @if (!immagineUrl) {
       <span class="carta-tilt-fallback" aria-hidden="true">🃏</span>
     }
   </div>
 
-  @if (isGemma) {
-    <div class="carta-tilt-glass"></div>
-  } @else if (!isMetallo) {
-    <!-- Vernice lucida trasparente della Bianca: e' una finitura superficiale sopra carta
-         avorio opaca, non una lamincard di plastica trasparente. -->
-    <div class="carta-tilt-gloss"></div>
+  @if (variante !== 'tarocco') {
+    @if (isGemma) {
+      <div class="carta-tilt-glass"></div>
+    } @else if (!isMetallo) {
+      <!-- Vernice lucida trasparente della Bianca: e' una finitura superficiale sopra carta
+           avorio opaca, non una lamincard di plastica trasparente. -->
+      <div class="carta-tilt-gloss"></div>
+    }
+  } @else if (finitura !== 'flat') {
+    <!-- I Tarocchi sono opere complete. La finitura vive soltanto sul taglio esterno della
+         carta: non colora né copre l'illustrazione già impaginata. -->
+    <div class="carta-tilt-tarot-finish"></div>
   }
 
   <div class="carta-tilt-rim"></div>
