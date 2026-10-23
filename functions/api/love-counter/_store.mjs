@@ -14,7 +14,9 @@ export async function counterRequest(request, database, userId) {
   let body;
   if (method !== 'GET') {
     const raw = await request.text();
-    check(raw.length <= 12000, 'Richiesta troppo grande.');
+    // Il commento può contenere anche una risposta lunga copiata dalla chat. Il limite da
+    // 1 MB protegge soltanto il Worker da payload anomali: non è un limite editoriale.
+    check(raw.length <= 1_000_000, 'Richiesta troppo grande.');
     try { body = JSON.parse(raw); } catch { throw new CounterError('JSON non valido.'); }
     check(body && typeof body === 'object' && !Array.isArray(body), 'Richiesta non valida.');
   }
@@ -41,8 +43,7 @@ export async function counterRequest(request, database, userId) {
       check(DELTAS.includes(body.delta), 'Scegli +1, −1, +2 o −2.');
       check(typeof body.reason === 'string' && body.reason.length <= 2000, 'La motivazione può contenere al massimo 2000 caratteri.');
       if (body.psychologistComment !== undefined) {
-        check(typeof body.psychologistComment === 'string' && body.psychologistComment.length <= 2000,
-          'Il commento dello psicologo può contenere al massimo 2000 caratteri.');
+        check(typeof body.psychologistComment === 'string', 'Il commento dello psicologo non è valido.');
       }
       check(typeof body.occurredAt === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(body.occurredAt)
         && Number.isFinite(Date.parse(body.occurredAt)) && new Date(body.occurredAt).toISOString() === body.occurredAt, 'Data e ora non valide.');

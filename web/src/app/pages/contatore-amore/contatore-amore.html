@@ -146,7 +146,7 @@
                   <label>Data e ora locali<input type="datetime-local" name="episodeDate" step="1" required [(ngModel)]="editDate" /></label>
                   <label>Punteggio<select name="episodeDelta" aria-label="Punteggio" [(ngModel)]="editDelta"><option [ngValue]="1">+1</option><option [ngValue]="-1">−1</option><option [ngValue]="2">+2 · eccezionale</option><option [ngValue]="-2">−2 · eccezionale</option></select></label>
                   <label class="wide">Motivazione (facoltativa)<textarea name="episodeReason" maxlength="2000" rows="3" [(ngModel)]="reason"></textarea></label>
-                  <label class="wide">Commento dello psicologo (chat) <span class="optional">facoltativo</span><textarea name="episodePsychologistComment" maxlength="2000" rows="4" [(ngModel)]="psychologistComment"></textarea></label>
+                  <label class="wide">Commento dello psicologo (chat) <span class="optional">facoltativo</span><textarea name="episodePsychologistComment" rows="7" [(ngModel)]="psychologistComment"></textarea></label>
                   <div class="wide episode-actions"><button class="btn btn-submit" type="submit" [disabled]="busy() || !!pendingQuick()">Salva episodio</button><button class="btn" type="button" (click)="editing.set(null)" [disabled]="busy()">Annulla modifica</button></div>
                   @if (error()) { <p class="wide" role="alert">{{ error() }}</p> }
                 </form>
