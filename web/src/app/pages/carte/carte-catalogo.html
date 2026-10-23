@@ -11,12 +11,14 @@
     <div>
       <p class="eyebrow">Editor</p>
       <h2 id="catalog-editor-title">Crea e organizza</h2>
-      <p>Crea prima un set oppure aggiungi una carta a uno dei set esistenti.</p>
+      <p>I set normali raccolgono le carte; per i Tarocchi crea un mazzo e poi aggiungi le singole lame.</p>
     </div>
     <div class="catalog-heading-actions">
       <button type="button" class="btn" [disabled]="loading() || !!error()" (click)="openSet(null)">+ Nuovo set</button>
       <button type="button" class="btn btn-submit" [disabled]="loading() || !!error() || !sets().length" (click)="open(null)">+ Nuova carta</button>
-      <button type="button" class="btn btn-arcano" [disabled]="loading() || !!error()" (click)="openTarot()">🔮 Nuovo Tarocco</button>
+      <button type="button" class="btn btn-arcano" [disabled]="loading() || !!error()" (click)="openSet(null, 'tarocchi')">🔮 Nuovo mazzo</button>
+      <button type="button" class="btn btn-arcano" [disabled]="loading() || !!error() || !tarotSets().length"
+        [title]="!tarotSets().length ? 'Crea prima un mazzo di Tarocchi' : ''" (click)="openTarot()">+ Nuovo Tarocco</button>
     </div>
   </section>
 
@@ -54,42 +56,47 @@
         <div>
           <h2>{{ group.nome }} <span>{{ setCardCount(group.id) }} carte</span></h2>
           @if (group.tipo === 'tarocchi') {
-          <p>🔮 Tarocchi · {{ categoryLabels[group.categoriaTarocco || 'maggiori'] }}</p>
+          <p>🔮 Mazzo di Tarocchi{{ group.descrizione ? ' · ' + group.descrizione : '' }}</p>
           } @else if (group.descrizione) {
           <p>{{ group.descrizione }}</p>
           }
         </div>
         @if (canEdit()) {
         <div class="catalog-set-actions">
-          <button type="button" class="btn" (click)="open(null, group.id)">+ Carta</button>
-          <button type="button" class="btn" (click)="openSet(group)">Modifica set</button>
+          <button type="button" class="btn" (click)="group.tipo === 'tarocchi' ? openTarot(group.id) : open(null, group.id)">
+            {{ group.tipo === 'tarocchi' ? '+ Tarocco' : '+ Carta' }}
+          </button>
+          <button type="button" class="btn" (click)="openSet(group)">Modifica {{ group.tipo === 'tarocchi' ? 'mazzo' : 'set' }}</button>
         </div>
         }
       </header>
+      @for (section of group.sections; track section.categoria || 'normale') {
+      @if (group.tipo === 'tarocchi' && section.categoria) {
+      <h3 class="catalog-section-title">{{ categoryLabels[section.categoria] }} <span>{{ section.cards.length }}</span></h3>
+      }
       <div class="catalog-grid">
-        @for (card of group.cards; track card.id) {
-        <article class="catalog-card glass-surface">
-          <button type="button" class="catalog-preview" (click)="open(card)" [attr.aria-label]="'Apri anteprima di ' + card.nome">
-            @if (imageUrl(card.immagineKey); as url) {
-            <img [src]="url" [alt]="card.nome" loading="lazy" decoding="async" width="300" height="400" />
-            } @else {
-            <span class="catalog-placeholder">🃏<small>Immagine non presente</small></span>
-            }
-          </button>
-          <h3>{{ card.nome }}</h3>
-          <button type="button" class="btn" (click)="open(card)">Anteprima{{ canEdit() ? ' e modifica' : '' }}</button>
-        </article>
-        }
-        @empty {
-        @if (canEdit()) {
-        <button type="button" class="catalog-add-card" (click)="open(null, group.id)">
-          <span aria-hidden="true">＋</span>Aggiungi la prima carta
-        </button>
-        } @else {
-        <p class="catalog-empty">Questo set è ancora vuoto.</p>
-        }
+        @for (card of section.cards; track card.id) {
+          <article class="catalog-card glass-surface">
+            <button type="button" class="catalog-preview" (click)="open(card)" [attr.aria-label]="'Apri anteprima di ' + card.nome">
+              @if (imageUrl(card.immagineKey); as url) {
+              <img [src]="url" [alt]="card.nome" loading="lazy" decoding="async" width="300" height="400" />
+              } @else {
+              <span class="catalog-placeholder">🃏<small>Immagine non presente</small></span>
+              }
+            </button>
+            <h3>{{ card.numeroTarocco ? card.numeroTarocco + ' · ' : '' }}{{ card.nome }}</h3>
+            <button type="button" class="btn" (click)="open(card)">Anteprima e modifica</button>
+          </article>
         }
       </div>
+      }
+      @empty {
+      <div class="catalog-grid">
+        <button type="button" class="catalog-add-card" (click)="group.tipo === 'tarocchi' ? openTarot(group.id) : open(null, group.id)">
+          <span aria-hidden="true">＋</span>{{ group.tipo === 'tarocchi' ? 'Aggiungi il primo Tarocco' : 'Aggiungi la prima carta' }}
+        </button>
+      </div>
+      }
     </section>
     } @empty {
     <p class="catalog-empty">{{ sets().length ? 'Nessuna carta corrisponde ai filtri.' : 'Non ci sono ancora set. Crea qui il primo set e poi aggiungi le carte.' }}</p>
@@ -123,8 +130,16 @@
             <label>Nome della carta
               <input name="nome" required [ngModel]="name()" (ngModelChange)="name.set($event)" />
             </label>
-            @if (creatingTarot()) {
-            <label>Categoria
+            <label>{{ isTarot() ? 'Mazzo' : 'Set' }}
+              <select name="set" required [ngModel]="setId()" (ngModelChange)="setId.set($event)">
+                <option value="" disabled>Scegli {{ isTarot() ? 'un mazzo' : 'un set' }}</option>
+                @for (set of (creatingTarot() ? tarotSets() : sets()); track set.id) {
+                <option [value]="set.id">{{ set.nome }}{{ !creatingTarot() && set.tipo === 'tarocchi' ? ' · Tarocchi' : '' }}</option>
+                }
+              </select>
+            </label>
+            @if (isTarot()) {
+            <label>Sezione del mazzo
               <select name="tarotCategory" [ngModel]="tarotCategory()" (ngModelChange)="tarotCategory.set($event)">
                 <option value="maggiori">Arcani Maggiori</option>
                 <option value="bastoni">Bastoni</option>
@@ -134,29 +149,26 @@
                 <option value="speciali">Presagi · carte bonus senza numero</option>
               </select>
             </label>
-            <p class="catalog-hint">Se la categoria non esiste ancora, verrà creato automaticamente il relativo set.</p>
-            } @else {
-            <label>Set
-              <select name="set" required [ngModel]="setId()" (ngModelChange)="setId.set($event)">
-                <option value="" disabled>Scegli un set</option>
-                @for (set of sets(); track set.id) { <option [value]="set.id">{{ set.nome }}{{ set.tipo === 'tarocchi' ? ' · Tarocchi' : '' }}</option> }
-              </select>
+            <label>Numero <span class="optional">facoltativo</span>
+              <input name="tarotNumber" maxlength="20" placeholder="Es. VI" [ngModel]="tarotNumber()"
+                (ngModelChange)="tarotNumber.set($event)" />
             </label>
             }
             <label>{{ imageKey() ? 'Sostituisci immagine' : 'Immagine' }}
               <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFile($event)" />
             </label>
             <p class="catalog-hint paste-hint"><span aria-hidden="true">📋</span> JPG, PNG o WebP, fino a 15 MB. Puoi anche copiare un’immagine e premere <kbd>Ctrl</kbd> + <kbd>V</kbd> o <kbd>Cmd</kbd> + <kbd>V</kbd> in questa finestra.</p>
-            <button type="submit" class="btn btn-submit" [disabled]="!name().trim() || (!creatingTarot() && !setId())">{{ saving() ? 'Salvataggio…' : (creatingTarot() ? 'Crea Tarocco' : 'Salva carta') }}</button>
+            <button type="submit" class="btn btn-submit" [disabled]="!name().trim() || !setId()">{{ saving() ? 'Salvataggio…' : (creatingTarot() ? 'Crea Tarocco' : 'Salva carta') }}</button>
           </fieldset>
         </form>
         } @else {
         <p><strong>{{ selected()?.nome }}</strong></p>
         @for (set of sets(); track set.id) {
-          @if (set.id === setId()) { <p>Set: {{ set.nome }}</p> }
+          @if (set.id === setId()) { <p>{{ set.tipo === 'tarocchi' ? 'Mazzo' : 'Set' }}: {{ set.nome }}</p> }
         }
         <p>Le finiture mostrano come apparirà questa carta nel gioco.</p>
         @if (isTarot()) {
+        <p>{{ categoryLabels[tarotCategory()] }}{{ tarotNumber() ? ' · ' + tarotNumber() : '' }}</p>
         <p class="catalog-hint">Il Tarocco usa l'immagine completa senza aggiungere la targhetta delle carte normali.</p>
         }
         @if (canEdit()) {
@@ -176,14 +188,14 @@
   <dialog #setDetails class="catalog-dialog catalog-set-dialog" (cancel)="cancelSetDialog($event)"
     aria-labelledby="catalog-set-title">
     <header class="detail-heading">
-      <h2 id="catalog-set-title">{{ selectedSet() ? 'Modifica set' : 'Nuovo set' }}</h2>
+      <h2 id="catalog-set-title">{{ selectedSet() ? (setType() === 'tarocchi' ? 'Modifica mazzo' : 'Modifica set') : (setType() === 'tarocchi' ? 'Nuovo mazzo di Tarocchi' : 'Nuovo set') }}</h2>
       <button type="button" class="btn" [disabled]="setSaving()" (click)="closeSet()" aria-label="Chiudi">Chiudi</button>
     </header>
     @if (setDetails.open) {
     <form (ngSubmit)="saveSet()">
       <fieldset [disabled]="setSaving() || !canEdit()">
         @if (setError()) { <p role="alert" class="form-error">{{ setError() }}</p> }
-        <label>Nome del set
+        <label>{{ setType() === 'tarocchi' ? 'Nome del mazzo' : 'Nome del set' }}
           <input name="setName" required [ngModel]="setName()" (ngModelChange)="setName.set($event)" />
         </label>
         <label>Descrizione <span class="optional">facoltativa</span>
@@ -192,21 +204,9 @@
         <label>Tipo
           <select name="setType" [ngModel]="setType()" (ngModelChange)="setType.set($event)">
             <option value="normale">Carte normali</option>
-            <option value="tarocchi">Tarocchi</option>
+            <option value="tarocchi">Mazzo di Tarocchi</option>
           </select>
         </label>
-        @if (setType() === 'tarocchi') {
-        <label>Categoria
-          <select name="setCategory" [ngModel]="setCategory()" (ngModelChange)="setCategory.set($event)">
-            <option value="maggiori">Arcani Maggiori</option>
-            <option value="bastoni">Bastoni</option>
-            <option value="coppe">Coppe</option>
-            <option value="spade">Spade</option>
-            <option value="denari">Denari</option>
-            <option value="speciali">Presagi · carte bonus senza numero</option>
-          </select>
-        </label>
-        }
         <div class="detail-actions">
           <button type="submit" class="btn btn-submit" [disabled]="!setName().trim()">
             {{ setSaving() ? 'Salvataggio…' : (selectedSet() ? 'Salva modifiche' : 'Crea set') }}

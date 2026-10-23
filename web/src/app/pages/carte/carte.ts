@@ -32,6 +32,9 @@ interface CartaPescata {
   designId: string;
   designNome: string;
   immagineKey: string | null;
+  categoriaTarocco?: CategoriaTarocco | null;
+  numeroTarocco?: string | null;
+  setNome?: string;
 }
 
 interface CartaCollezione {
@@ -43,6 +46,7 @@ interface CartaCollezione {
   setNome: string;
   setTipo: AlbumTipo;
   categoriaTarocco: CategoriaTarocco | null;
+  numeroTarocco: string | null;
   immagineKey: string | null;
   quantitaMia: number;
   quantitaAltro: number;
@@ -82,6 +86,8 @@ interface CandidatoArcano {
   immagineKey: string | null;
   finitura: Finitura;
   categoriaTarocco: CategoriaTarocco | null;
+  numeroTarocco: string | null;
+  setNome: string;
 }
 
 interface OffertaArcana {
@@ -203,6 +209,14 @@ export class Carte implements OnInit, OnDestroy {
   protected readonly finituraAttiva = signal<Finitura>('flat');
   protected readonly finiture = CARTA_FINITURE;
   protected readonly finituraLabels = CARTA_FINITURA_LABELS;
+  protected readonly categoriaTaroccoLabels: Record<CategoriaTarocco, string> = {
+    maggiori: 'Arcani Maggiori',
+    bastoni: 'Bastoni',
+    coppe: 'Coppe',
+    spade: 'Spade',
+    denari: 'Denari',
+    speciali: 'Presagi'
+  };
 
   protected readonly tarocchiTotali = computed(() => new Set(
     this.collezione().filter((carta) => carta.setTipo === 'tarocchi').map((carta) => carta.designId)
@@ -216,12 +230,25 @@ export class Carte implements OnInit, OnDestroy {
 
   protected readonly fogli = computed(() => {
     const finitura = this.finituraAttiva();
-    const bySet = new Map<string, { setNome: string; carte: CartaCollezione[] }>();
+    const bySet = new Map<string, {
+      setNome: string;
+      categoriaTarocco: CategoriaTarocco | null;
+      carte: CartaCollezione[];
+    }>();
     for (const carta of this.collezione()) {
       if (carta.setTipo !== this.albumTipo()) continue;
       if (carta.finitura !== finitura) continue;
-      if (!bySet.has(carta.setId)) bySet.set(carta.setId, { setNome: carta.setNome, carte: [] });
-      bySet.get(carta.setId)!.carte.push(carta);
+      const key = carta.setTipo === 'tarocchi'
+        ? `${carta.setId}:${carta.categoriaTarocco ?? 'speciali'}`
+        : carta.setId;
+      if (!bySet.has(key)) {
+        bySet.set(key, {
+          setNome: carta.setNome,
+          categoriaTarocco: carta.setTipo === 'tarocchi' ? (carta.categoriaTarocco ?? 'speciali') : null,
+          carte: []
+        });
+      }
+      bySet.get(key)!.carte.push(carta);
     }
     return [...bySet.values()];
   });

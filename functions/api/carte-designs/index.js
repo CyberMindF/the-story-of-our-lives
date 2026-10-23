@@ -37,8 +37,12 @@ export async function onRequestPost(context) {
     if (!Number.isInteger(setId)) return json({ error: "Set non valido." }, 400);
     if (!nome) return json({ error: "Nome non valido." }, 400);
 
-    const set = await env.DB.prepare("SELECT id FROM carte_sets WHERE id = ?").bind(setId).first();
+    const set = await env.DB.prepare("SELECT id, COALESCE(tipo, 'normale') AS tipo FROM carte_sets WHERE id = ?").bind(setId).first();
     if (!set) return json({ error: "Set non trovato." }, 404);
+    const categoriaTarocco = normalizeCategoriaTarocco(payload?.categoriaTarocco, set.tipo);
+    const numeroTarocco = normalizeNumeroTarocco(payload?.numeroTarocco, set.tipo);
+    if (categoriaTarocco === undefined) return json({ error: "Sezione del Tarocco non valida." }, 400);
+    if (numeroTarocco === undefined) return json({ error: "Numero del Tarocco non valido." }, 400);
 
     const maxPosition = await env.DB.prepare("SELECT MAX(position) AS max FROM carte_designs WHERE set_id = ?").bind(setId).first();
     const position = (maxPosition?.max ?? -1) + 1;
@@ -46,10 +50,11 @@ export async function onRequestPost(context) {
 
     const created = await env.DB
       .prepare(
-        `INSERT INTO carte_designs (set_id, nome, immagine_key, position, created_by, created_at)
-         VALUES (?, ?, ?, ?, ?, ?) RETURNING *`
+        `INSERT INTO carte_designs
+           (set_id, nome, immagine_key, categoria_tarocco, numero_tarocco, position, created_by, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`
       )
-      .bind(setId, nome, immagineKey, position, session.user.id, now)
+      .bind(setId, nome, immagineKey, categoriaTarocco, numeroTarocco, position, session.user.id, now)
       .first();
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
@@ -71,6 +76,22 @@ export function toDesignView(row) {
     setId: String(row.set_id),
     nome: row.nome,
     immagineKey: row.immagine_key,
+    categoriaTarocco: row.categoria_tarocco ?? null,
+    numeroTarocco: row.numero_tarocco ?? null,
     position: row.position
   };
+}
+
+export function normalizeCategoriaTarocco(value, tipo) {
+  if (tipo !== "tarocchi") return null;
+  const allowed = new Set(["maggiori", "bastoni", "coppe", "spade", "denari", "speciali"]);
+  return typeof value === "string" && allowed.has(value) ? value : undefined;
+}
+
+export function normalizeNumeroTarocco(value, tipo) {
+  if (tipo !== "tarocchi") return null;
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed.length <= 20 ? (trimmed || null) : undefined;
 }

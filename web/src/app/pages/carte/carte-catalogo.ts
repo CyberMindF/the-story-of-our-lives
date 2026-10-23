@@ -12,19 +12,20 @@ interface Design {
   setId: string;
   nome: string;
   immagineKey: string | null;
+  categoriaTarocco: CategoriaTarocco | null;
+  numeroTarocco: string | null;
   position: number;
 }
+type CategoriaTarocco = 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari' | 'speciali';
 interface CardSet {
   id: string;
   nome: string;
   descrizione: string | null;
   tipo: 'normale' | 'tarocchi';
-  categoriaTarocco: 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari' | 'speciali' | null;
   position: number;
 }
 
 type SetTipo = CardSet['tipo'];
-type CategoriaTarocco = NonNullable<CardSet['categoriaTarocco']>;
 
 @Component({
   selector: 'app-carte-catalogo',
@@ -58,11 +59,11 @@ export class CarteCatalogo implements OnInit, OnDestroy {
   protected readonly finishLabels = CARTA_FINITURA_LABELS;
   protected readonly creatingTarot = signal(false);
   protected readonly tarotCategory = signal<CategoriaTarocco>('maggiori');
+  protected readonly tarotNumber = signal('');
   protected readonly selectedSet = signal<CardSet | null>(null);
   protected readonly setName = signal('');
   protected readonly setDescription = signal('');
   protected readonly setType = signal<SetTipo>('normale');
-  protected readonly setCategory = signal<CategoriaTarocco>('maggiori');
   protected readonly setSaving = signal(false);
   protected readonly setError = signal('');
   protected readonly categoryLabels: Record<CategoriaTarocco, string> = {
@@ -73,10 +74,12 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     denari: 'Denari',
     speciali: 'Presagi'
   };
+  protected readonly categoryOrder: CategoriaTarocco[] = ['maggiori', 'bastoni', 'coppe', 'spade', 'denari', 'speciali'];
   private file: File | null = null;
   protected readonly previewUrl = computed(() => this.filePreview() ?? this.imageUrl(this.imageKey()));
   protected readonly isTarot = computed(() => this.creatingTarot()
     || this.sets().find((set) => set.id === this.setId())?.tipo === 'tarocchi');
+  protected readonly tarotSets = computed(() => this.sets().filter((set) => set.tipo === 'tarocchi'));
   protected readonly filtered = computed(() => {
     const term = this.search().trim().toLocaleLowerCase('it');
     const setId = this.filterSet();
@@ -88,7 +91,15 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     const filterSet = this.filterSet();
     return this.sets()
       .filter((set) => !filterSet || set.id === filterSet)
-      .map((set) => ({ ...set, cards: this.filtered().filter((card) => card.setId === set.id) }))
+      .map((set) => {
+        const cards = this.filtered().filter((card) => card.setId === set.id);
+        const sections = set.tipo === 'tarocchi'
+          ? this.categoryOrder
+            .map((categoria) => ({ categoria, cards: cards.filter((card) => card.categoriaTarocco === categoria) }))
+            .filter((section) => section.cards.length > 0)
+          : [{ categoria: null, cards }];
+        return { ...set, cards, sections };
+      })
       .filter((set) => !term || set.cards.length > 0);
   });
 
@@ -127,6 +138,8 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     this.creatingTarot.set(false);
     this.name.set(card?.nome ?? '');
     this.setId.set(card?.setId ?? (preferredSetId || this.filterSet() || this.sets()[0]?.id || ''));
+    this.tarotCategory.set(card?.categoriaTarocco ?? 'maggiori');
+    this.tarotNumber.set(card?.numeroTarocco ?? '');
     this.imageKey.set(card?.immagineKey ?? null);
     this.editing.set(card === null);
     this.finish.set('flat');
@@ -134,14 +147,15 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     this.details.nativeElement.showModal();
   }
 
-  protected openTarot(): void {
-    if (!this.canEdit()) return;
+  protected openTarot(preferredSetId = ''): void {
+    if (!this.canEdit() || this.tarotSets().length === 0) return;
     this.clearFile();
     this.selected.set(null);
     this.creatingTarot.set(true);
     this.tarotCategory.set('maggiori');
+    this.tarotNumber.set('');
     this.name.set('');
-    this.setId.set('');
+    this.setId.set(this.tarotSets().some((set) => set.id === preferredSetId) ? preferredSetId : this.tarotSets()[0].id);
     this.imageKey.set(null);
     this.editing.set(true);
     this.finish.set('flat');
@@ -178,8 +192,8 @@ export class CarteCatalogo implements OnInit, OnDestroy {
   protected async save(): Promise<void> {
     if (!this.canEdit() || this.saving()) return;
     const nome = this.name().trim();
-    if (!nome || (!this.creatingTarot() && !this.setId())) {
-      this.formError.set(this.creatingTarot() ? 'Inserisci il nome del Tarocco.' : 'Inserisci il nome e scegli un set.');
+    if (!nome || !this.setId()) {
+      this.formError.set(this.creatingTarot() ? 'Inserisci il nome e scegli un mazzo.' : 'Inserisci il nome e scegli un set.');
       return;
     }
     this.saving.set(true);
@@ -192,30 +206,17 @@ export class CarteCatalogo implements OnInit, OnDestroy {
         this.imageKey.set(result.key);
         this.clearFile();
       }
-      if (this.creatingTarot()) {
-        const categoria = this.tarotCategory();
-        let tarotSet = this.sets().find((set) => set.tipo === 'tarocchi' && set.categoriaTarocco === categoria);
-        if (!tarotSet) {
-          tarotSet = await this.request<CardSet>('/api/carte-sets', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              nome: this.categoryLabels[categoria],
-              tipo: 'tarocchi',
-              categoriaTarocco: categoria
-            })
-          });
-          const createdSet = tarotSet;
-          this.sets.update((items) => [...items, createdSet]
-            .sort((a, b) => a.position - b.position || Number(a.id) - Number(b.id)));
-        }
-        this.setId.set(tarotSet.id);
-      }
       const current = this.selected();
       const saved = await this.request<Design>(current ? `/api/carte-designs/${current.id}` : '/api/carte-designs', {
         method: current ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, setId: Number(this.setId()), immagineKey: this.imageKey() })
+        body: JSON.stringify({
+          nome,
+          setId: Number(this.setId()),
+          immagineKey: this.imageKey(),
+          categoriaTarocco: this.isTarot() ? this.tarotCategory() : null,
+          numeroTarocco: this.isTarot() ? this.tarotNumber().trim() || null : null
+        })
       });
       this.designs.update((items) => [...items.filter((item) => item.id !== saved.id), saved]
         .sort((a, b) => a.position - b.position || Number(a.id) - Number(b.id)));
@@ -233,13 +234,12 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     }
   }
 
-  protected openSet(set: CardSet | null): void {
+  protected openSet(set: CardSet | null, type: SetTipo = 'normale'): void {
     if (!this.canEdit()) return;
     this.selectedSet.set(set);
     this.setName.set(set?.nome ?? '');
     this.setDescription.set(set?.descrizione ?? '');
-    this.setType.set(set?.tipo ?? 'normale');
-    this.setCategory.set(set?.categoriaTarocco ?? 'maggiori');
+    this.setType.set(set?.tipo ?? type);
     this.setError.set('');
     this.setDetails.nativeElement.showModal();
   }
@@ -271,8 +271,7 @@ export class CarteCatalogo implements OnInit, OnDestroy {
         body: JSON.stringify({
           nome,
           descrizione: this.setDescription().trim(),
-          tipo: this.setType(),
-          categoriaTarocco: this.setType() === 'tarocchi' ? this.setCategory() : null
+          tipo: this.setType()
         })
       });
       this.sets.update((items) => [...items.filter((item) => item.id !== saved.id), saved]

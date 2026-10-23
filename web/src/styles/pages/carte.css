@@ -235,6 +235,7 @@
   padding-bottom: .6rem;
   border-bottom: 1px solid var(--panel-border-color);
 }
+.carte-pagina-titolo span { margin-left: .45rem; color: var(--muted-color); font-size: .72em; font-weight: 500; }
 
 /* Le due sezioni (tuo album / album dell'altro) impilate, non affiancate: più leggibili su
    schermi stretti e più facili da confrontare scorrendo invece di dividere l'attenzione in
@@ -483,6 +484,7 @@ app-carta-back { display: block; width: 100%; }
 .carte-evocazione-option:disabled { cursor: wait; opacity: .65; transform: none; }
 .carte-evocazione-option app-carta-tilt { width: 100%; max-width: 13rem; }
 .carte-evocazione-option strong { margin-top: .25rem; font-size: .9rem; }
+.carte-evocazione-option small { color: var(--modal-muted-color); font-size: .68rem; line-height: 1.25; }
 .carte-evocazione-option span { color: var(--modal-muted-color); font-size: .75rem; }
 .carte-evocazione-selected { width: min(62vw, 19rem); }
 .carte-evocazione-selected app-carta-tilt { width: 100%; }

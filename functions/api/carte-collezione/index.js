@@ -27,7 +27,7 @@ export async function onRequestGet(context) {
       .prepare(
         `SELECT
            s.id AS set_id, s.nome AS set_nome, COALESCE(s.tipo, 'normale') AS set_tipo,
-           s.categoria_tarocco AS categoria_tarocco,
+           des.categoria_tarocco AS categoria_tarocco, des.numero_tarocco AS numero_tarocco,
            des.id AS design_id, des.nome AS design_nome, des.immagine_key AS design_immagine_key,
            f.finitura AS finitura,
            cd.id AS definizione_id, cd.immagine_key AS definizione_immagine_key,
@@ -60,7 +60,8 @@ export async function onRequestGet(context) {
         setId: String(row.set_id),
         setNome: row.set_nome,
         setTipo: row.set_tipo,
-        categoriaTarocco: row.set_tipo === "tarocchi" ? (row.categoria_tarocco ?? "speciali") : null,
+        categoriaTarocco: row.categoria_tarocco,
+        numeroTarocco: row.numero_tarocco,
         immagineKey: row.definizione_immagine_key ?? row.design_immagine_key,
         quantitaMia: row.quantita_mia,
         quantitaAltro: row.quantita_altro

@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
-import { normalizeCategoriaTarocco, toSetView } from "./index.js";
+import { toSetView } from "./index.js";
 
 export async function onRequestPut(context) {
   const { request, env, params } = context;
@@ -24,15 +24,9 @@ export async function onRequestPut(context) {
     const tipo = payload?.tipo === undefined ? (existing.tipo ?? "normale")
       : payload.tipo === "tarocchi" ? "tarocchi" : payload.tipo === "normale" ? "normale" : null;
     if (!tipo) return json({ error: "Tipo di set non valido." }, 400);
-    const categoriaTarocco = normalizeCategoriaTarocco(
-      payload?.categoriaTarocco === undefined ? existing.categoria_tarocco : payload.categoriaTarocco,
-      tipo
-    );
-    if (categoriaTarocco === undefined) return json({ error: "Categoria dei Tarocchi non valida." }, 400);
-
     await env.DB.prepare(
       "UPDATE carte_sets SET nome = ?, descrizione = ?, tipo = ?, categoria_tarocco = ? WHERE id = ?"
-    ).bind(nome, descrizione || null, tipo, categoriaTarocco, id).run();
+    ).bind(nome, descrizione || null, tipo, null, id).run();
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
       section: "carte",

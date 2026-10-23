@@ -15,7 +15,8 @@ export async function onRequestPost(context) {
     const candidate = await env.DB
       .prepare(
         `SELECT o.id AS offerta_id, c.id AS candidato_id, c.design_id, c.finitura,
-                d.nome AS design_nome, d.immagine_key
+                d.nome AS design_nome, d.immagine_key, d.categoria_tarocco, d.numero_tarocco,
+                s.nome AS set_nome
          FROM carte_evocazioni_offerte o
          JOIN carte_evocazioni_candidati c ON c.offerta_id = o.id
          JOIN carte_designs d ON d.id = c.design_id
@@ -78,7 +79,10 @@ export async function onRequestPost(context) {
           designId: String(candidate.design_id),
           designNome: candidate.design_nome,
           immagineKey: candidate.immagine_key,
-          finitura: candidate.finitura
+          finitura: candidate.finitura,
+          categoriaTarocco: candidate.categoria_tarocco,
+          numeroTarocco: candidate.numero_tarocco,
+          setNome: candidate.set_nome
         },
         evocazioniDisponibili: state.evocazioniDisponibili
       });

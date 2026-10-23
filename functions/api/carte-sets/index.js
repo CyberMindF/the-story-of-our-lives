@@ -30,9 +30,7 @@ export async function onRequestPost(context) {
     const nome = typeof payload?.nome === "string" ? payload.nome.trim() : "";
     const descrizione = typeof payload?.descrizione === "string" ? payload.descrizione.trim() : "";
     const tipo = payload?.tipo === "tarocchi" ? "tarocchi" : "normale";
-    const categoriaTarocco = normalizeCategoriaTarocco(payload?.categoriaTarocco, tipo);
     if (!nome) return json({ error: "Nome non valido." }, 400);
-    if (categoriaTarocco === undefined) return json({ error: "Categoria dei Tarocchi non valida." }, 400);
 
     const slug = nome
       .toLowerCase()
@@ -55,7 +53,7 @@ export async function onRequestPost(context) {
         `INSERT INTO carte_sets (slug, nome, descrizione, tipo, categoria_tarocco, position, created_by, created_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`
       )
-      .bind(slug, nome, descrizione || null, tipo, categoriaTarocco, position, session.user.id, now)
+      .bind(slug, nome, descrizione || null, tipo, null, position, session.user.id, now)
       .first();
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
@@ -79,16 +77,7 @@ export function toSetView(row) {
     nome: row.nome,
     descrizione: row.descrizione,
     tipo,
-    // Nel database NULL identifica i Presagi quando il set e un Tarocco. In questo
-    // modo la categoria bonus resta compatibile con il vincolo delle migrazioni precedenti.
-    categoriaTarocco: tipo === "tarocchi" ? (row.categoria_tarocco ?? "speciali") : null,
+    categoriaTarocco: null,
     position: row.position
   };
-}
-
-export function normalizeCategoriaTarocco(value, tipo) {
-  if (tipo !== "tarocchi") return null;
-  const allowed = new Set(["maggiori", "bastoni", "coppe", "spade", "denari"]);
-  if (value === "speciali" || value === null) return null;
-  return typeof value === "string" && allowed.has(value) ? value : undefined;
 }

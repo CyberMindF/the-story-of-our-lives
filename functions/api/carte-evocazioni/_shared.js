@@ -33,7 +33,7 @@ export async function readOpenOffer(env, userId) {
     .prepare(
       `SELECT c.id AS candidato_id, c.finitura, c.position,
               d.id AS design_id, d.nome AS design_nome, d.immagine_key,
-              s.categoria_tarocco
+              d.categoria_tarocco, d.numero_tarocco, s.nome AS set_nome
        FROM carte_evocazioni_candidati c
        JOIN carte_designs d ON d.id = c.design_id
        JOIN carte_sets s ON s.id = d.set_id
@@ -64,7 +64,9 @@ export async function readOpenOffer(env, userId) {
       designNome: row.design_nome,
       immagineKey: row.immagine_key,
       finitura: row.finitura,
-      categoriaTarocco: row.categoria_tarocco ?? "speciali"
+      categoriaTarocco: row.categoria_tarocco,
+      numeroTarocco: row.numero_tarocco,
+      setNome: row.set_nome
     }))
   };
 }

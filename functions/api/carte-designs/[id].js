@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
-import { toDesignView } from "./index.js";
+import { normalizeCategoriaTarocco, normalizeNumeroTarocco, toDesignView } from "./index.js";
 
 export async function onRequestPut(context) {
   const { request, env, params } = context;
@@ -17,23 +17,35 @@ export async function onRequestPut(context) {
     const nome = typeof payload?.nome === "string" ? payload.nome.trim() : "";
     if (!nome) return json({ error: "Nome non valido." }, 400);
 
-    const existing = await env.DB.prepare("SELECT id, set_id, immagine_key FROM carte_designs WHERE id = ?").bind(id).first();
+    const existing = await env.DB.prepare(
+      "SELECT id, set_id, immagine_key, categoria_tarocco, numero_tarocco FROM carte_designs WHERE id = ?"
+    ).bind(id).first();
     if (!existing) return json({ error: "Carta non trovata." }, 404);
 
     const setId = payload?.setId === undefined ? existing.set_id : Number(payload.setId);
     if (!Number.isInteger(setId) || setId <= 0) return json({ error: "Set non valido." }, 400);
-    const set = await env.DB.prepare("SELECT id FROM carte_sets WHERE id = ?").bind(setId).first();
+    const set = await env.DB.prepare("SELECT id, COALESCE(tipo, 'normale') AS tipo FROM carte_sets WHERE id = ?").bind(setId).first();
     if (!set) return json({ error: "Set non trovato." }, 404);
+    const categoriaTarocco = normalizeCategoriaTarocco(
+      payload?.categoriaTarocco === undefined ? existing.categoria_tarocco : payload.categoriaTarocco,
+      set.tipo
+    );
+    const numeroTarocco = normalizeNumeroTarocco(
+      payload?.numeroTarocco === undefined ? existing.numero_tarocco : payload.numeroTarocco,
+      set.tipo
+    );
+    if (categoriaTarocco === undefined) return json({ error: "Sezione del Tarocco non valida." }, 400);
+    if (numeroTarocco === undefined) return json({ error: "Numero del Tarocco non valido." }, 400);
     // Omettere l'immagine mantiene quella corrente; null la rimuove esplicitamente.
     const immagineKey = payload?.immagineKey === undefined ? existing.immagine_key
       : typeof payload.immagineKey === "string" && payload.immagineKey.trim() ? payload.immagineKey.trim() : null;
 
     await env.DB.prepare(
-      `UPDATE carte_designs SET nome = ?, immagine_key = ?,
+      `UPDATE carte_designs SET nome = ?, immagine_key = ?, categoria_tarocco = ?, numero_tarocco = ?,
        position = CASE WHEN set_id = ? THEN position
          ELSE (SELECT COALESCE(MAX(position), -1) + 1 FROM carte_designs WHERE set_id = ?) END,
        set_id = ? WHERE id = ?`
-    ).bind(nome, immagineKey, setId, setId, setId, id).run();
+    ).bind(nome, immagineKey, categoriaTarocco, numeroTarocco, setId, setId, setId, id).run();
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
       section: "carte",

@@ -24,6 +24,8 @@ input, select { box-sizing: border-box; width: 100%; min-width: 0; padding: .7re
 .catalog-set-heading p { margin: .3rem 0 0; color: var(--muted-color); font-size: .9rem; }
 .catalog-set h2 { display: flex; align-items: baseline; flex-wrap: wrap; gap: .8rem; margin: 0; }
 .catalog-set h2 span { font-size: .85rem; font-weight: normal; color: var(--muted-color); }
+.catalog-section-title { display: flex; align-items: baseline; gap: .55rem; margin: 1.4rem 0 .7rem; color: var(--text-color); font-size: 1rem; }
+.catalog-section-title span { color: var(--muted-color); font-size: .78rem; font-weight: normal; }
 .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr)); gap: 1rem; }
 .catalog-card { min-width: 0; border: 1px solid var(--border-color); border-radius: 1rem; padding: .75rem; display: flex; flex-direction: column; align-items: stretch; }
 .catalog-preview { display: block; width: 100%; padding: 0; border: 0; border-radius: .65rem; overflow: hidden; background: var(--input-bg); color: var(--text-color); cursor: pointer; aspect-ratio: 3 / 4; }
