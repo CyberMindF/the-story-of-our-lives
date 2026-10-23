@@ -1,4 +1,12 @@
-export interface Episode { id: string; delta: number; reason: string; occurredAt: string; createdAt: string; revision: number; }
+export interface Episode {
+  id: string;
+  delta: number;
+  reason: string;
+  psychologistComment: string;
+  occurredAt: string;
+  createdAt: string;
+  revision: number;
+}
 export interface CounterState { settings: { initialScore: number; createdAt: string; revision: number }; episodes: Episode[]; }
 export interface CounterPoint { id: string; time: number; delta: number; total: number; }
 

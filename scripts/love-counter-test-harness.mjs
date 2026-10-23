@@ -7,6 +7,7 @@ export function createCounterHarness() {
   const sqlite = new DatabaseSync(':memory:');
   sqlite.exec('PRAGMA foreign_keys = ON; CREATE TABLE users (id INTEGER PRIMARY KEY); INSERT INTO users VALUES (1), (2), (3);');
   sqlite.exec(readFileSync(new URL('../migrations/0125_add_love_counter.sql', import.meta.url), 'utf8'));
+  sqlite.exec(readFileSync(new URL('../migrations/0130_add_love_counter_psychologist_comment.sql', import.meta.url), 'utf8'));
   const users = {
     1: { id: 1, nickname: 'Admin uno', role: 'admin', identity: 'lui', isTest: false },
     2: { id: 2, nickname: 'Admin due', role: 'admin', identity: 'lei', isTest: false },

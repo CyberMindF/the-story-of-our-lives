@@ -40,20 +40,28 @@ export async function counterRequest(request, database, userId) {
     if (method === 'PATCH') {
       check(DELTAS.includes(body.delta), 'Scegli +1, −1, +2 o −2.');
       check(typeof body.reason === 'string' && body.reason.length <= 2000, 'La motivazione può contenere al massimo 2000 caratteri.');
+      if (body.psychologistComment !== undefined) {
+        check(typeof body.psychologistComment === 'string' && body.psychologistComment.length <= 2000,
+          'Il commento dello psicologo può contenere al massimo 2000 caratteri.');
+      }
       check(typeof body.occurredAt === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(body.occurredAt)
         && Number.isFinite(Date.parse(body.occurredAt)) && new Date(body.occurredAt).toISOString() === body.occurredAt, 'Data e ora non valide.');
-      queries.push(db.prepare(`UPDATE love_counter_episodes SET delta = ?, reason = ?, occurred_at = ?, revision = revision + 1
+      const psychologistComment = body.psychologistComment === undefined ? null : body.psychologistComment.trim();
+      queries.push(db.prepare(`UPDATE love_counter_episodes SET delta = ?, reason = ?,
+        psychologist_comment = CASE WHEN ? IS NULL THEN psychologist_comment ELSE ? END,
+        occurred_at = ?, revision = revision + 1
         WHERE user_id = ? AND id = ? AND revision = ? AND deleted_at IS NULL`)
-        .bind(body.delta, body.reason.trim(), body.occurredAt, userId, body.id, body.revision));
+        .bind(body.delta, body.reason.trim(), psychologistComment, psychologistComment, body.occurredAt, userId, body.id, body.revision));
     } else {
       // Conserviamo solo una tombstone per l'idempotenza: la motivazione eliminata viene rimossa.
-      queries.push(db.prepare(`UPDATE love_counter_episodes SET deleted_at = ?, reason = '', revision = revision + 1
+      queries.push(db.prepare(`UPDATE love_counter_episodes SET deleted_at = ?, reason = '', psychologist_comment = '', revision = revision + 1
         WHERE user_id = ? AND id = ? AND revision = ? AND deleted_at IS NULL`).bind(now, userId, body.id, body.revision));
     }
     guarded = true;
   }
   queries.push(db.prepare('SELECT initial_score AS initialScore, created_at AS createdAt, revision FROM love_counter_settings WHERE user_id = ?').bind(userId));
-  queries.push(db.prepare(`SELECT id, delta, reason, occurred_at AS occurredAt, created_at AS createdAt, revision
+  queries.push(db.prepare(`SELECT id, delta, reason, psychologist_comment AS psychologistComment,
+    occurred_at AS occurredAt, created_at AS createdAt, revision
     FROM love_counter_episodes WHERE user_id = ? AND deleted_at IS NULL ORDER BY occurred_at, created_at, id`).bind(userId));
   const results = await db.batch(queries);
   if (guarded && results[1].meta.changes !== 1) throw new CounterError('Questo elemento è cambiato o è stato eliminato in un’altra scheda. Ricarica lo storico prima di modificarlo.', 409);

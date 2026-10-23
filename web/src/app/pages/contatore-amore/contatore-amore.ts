@@ -38,6 +38,7 @@ export class ContatoreAmore implements OnDestroy {
   readonly openEpisodeMenuId = signal<string | null>(null);
   readonly pendingQuick = signal<{ id: string; delta: number } | null>(null);
   reason = '';
+  psychologistComment = '';
   editDate = '';
   editDelta = 1;
   initialScore = 20;
@@ -116,7 +117,7 @@ export class ContatoreAmore implements OnDestroy {
   }
 
   startEdit(episode: Episode): void {
-    this.editing.set(episode); this.reason = episode.reason; this.editDelta = episode.delta;
+    this.editing.set(episode); this.reason = episode.reason; this.psychologistComment = episode.psychologistComment ?? ''; this.editDelta = episode.delta;
     this.editDate = localDateTime(episode.occurredAt); this.error.set(''); this.notice.set('');
   }
 
@@ -130,7 +131,14 @@ export class ContatoreAmore implements OnDestroy {
     }
     // Conserva l'istante esatto se l'utente modifica soltanto testo/punteggio (anche durante il cambio DST).
     const occurredAt = entered === localDateTime(episode.occurredAt) ? episode.occurredAt : date.toISOString();
-    if (await this.mutate('PATCH', { id: episode.id, revision: episode.revision, delta: Number(this.editDelta), reason: this.reason, occurredAt })) this.editing.set(null);
+    if (await this.mutate('PATCH', {
+      id: episode.id,
+      revision: episode.revision,
+      delta: Number(this.editDelta),
+      reason: this.reason,
+      psychologistComment: this.psychologistComment,
+      occurredAt,
+    })) this.editing.set(null);
   }
 
   async remove(): Promise<void> {
@@ -145,11 +153,14 @@ export class ContatoreAmore implements OnDestroy {
   async copyEpisode(episode: Episode): Promise<void> {
     const [date, time] = localDateTime(episode.occurredAt).split('T');
     const [year, month, day] = date.split('-');
-    const text = [
+    const lines = [
       `Data e ora: ${day}/${month}/${year} · ${time}`,
       `Punteggio: ${this.signed(episode.delta)}`,
       `Motivazione: ${episode.reason.trim() || 'Nessuna motivazione'}`,
-    ].join('\n');
+    ];
+    const psychologistComment = episode.psychologistComment?.trim();
+    if (psychologistComment) lines.push(`Commento dello psicologo (chat): ${psychologistComment}`);
+    const text = lines.join('\n');
     try {
       await navigator.clipboard.writeText(text);
       this.copiedEpisodeId.set(episode.id);

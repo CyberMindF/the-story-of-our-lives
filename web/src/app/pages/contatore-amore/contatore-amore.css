@@ -59,6 +59,10 @@ g:focus-visible .hit-area { stroke: var(--focus-color, #d573a0); stroke-width: 2
 .episode-copy { min-width: 0; }
 .episode time { font-size: .82rem; color: var(--muted-color); }
 .episode p { white-space: pre-wrap; overflow-wrap: anywhere; margin: 6px 0 0; line-height: 1.5; }
+.psychologist-comment { margin-top: 14px; padding: 11px 13px; border-left: 3px solid color-mix(in srgb, #d978a4 58%, var(--panel-border-color)); border-radius: 0 12px 12px 0; background: color-mix(in srgb, #d978a4 8%, transparent); }
+.psychologist-comment strong { display: block; font-size: .76rem; color: var(--muted-color); }
+.psychologist-comment p { margin-top: 5px; }
+.optional { color: var(--muted-color); font-size: .78rem; font-weight: normal; }
 .episode-menu { position: relative; flex: 0 0 auto; margin-left: auto; }
 .episode-menu-trigger { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1px solid color-mix(in srgb, var(--panel-border-color) 72%, transparent); border-radius: 13px; background: color-mix(in srgb, var(--text-color) 5%, transparent); color: var(--muted-color); box-shadow: inset 0 1px #ffffff20, 0 4px 12px #00000012; cursor: pointer; transition: background .16s, border-color .16s, color .16s, transform .16s; }
 .episode-menu-trigger:hover, .episode-menu-trigger[aria-expanded="true"] { border-color: color-mix(in srgb, var(--text-color) 22%, var(--panel-border-color)); background: color-mix(in srgb, var(--text-color) 10%, transparent); color: var(--text-color); transform: translateY(-1px); }

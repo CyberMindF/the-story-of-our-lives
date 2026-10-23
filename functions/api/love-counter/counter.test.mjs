@@ -31,9 +31,10 @@ test('click rapidi idempotenti, server UTC, modifica retroattiva, conflitti, eli
   state = await (await add(call, 1, -1)).json();
   assert.equal(state.episodes.length, 2); assert.equal(statistics(state).current, 20);
   const episode = state.episodes.find(e => e.id === id);
-  const edit = { ...episode, delta: -2, reason: '  Nota privata 💗  ', occurredAt: '2026-01-01T10:00:00.000Z' };
+  const edit = { ...episode, delta: -2, reason: '  Nota privata 💗  ', psychologistComment: '  Risposta ricevuta in chat  ', occurredAt: '2026-01-01T10:00:00.000Z' };
   state = await (await call(1, 'PATCH', edit)).json();
   assert.equal(state.episodes[0].reason, 'Nota privata 💗');
+  assert.equal(state.episodes[0].psychologistComment, 'Risposta ricevuta in chat');
   assert.equal(statistics(state).current, 17);
   assert.equal(timeline(state)[0].total, 20); assert.ok(timeline(state)[0].time < timeline(state)[1].time);
   assert.equal((await call(1, 'PATCH', edit)).status, 409);
@@ -41,14 +42,15 @@ test('click rapidi idempotenti, server UTC, modifica retroattiva, conflitti, eli
   assert.equal(statistics(state).current, 19);
   await add(call, 1, 1, id);
   assert.equal((await (await call(1)).json()).episodes.length, 1, 'Il retry non resuscita episodi eliminati');
-  assert.equal(sqlite.prepare('SELECT reason FROM love_counter_episodes WHERE id = ?').get(id).reason, '');
+  const deleted = sqlite.prepare('SELECT reason, psychologist_comment FROM love_counter_episodes WHERE id = ?').get(id);
+  assert.equal(deleted.reason, ''); assert.equal(deleted.psychologist_comment, '');
 });
 
 test('validazione: delta, nota, data impossibile/ambigua, base intera, JSON e metodi', async t => {
   const { call, api, db } = setup(t);
   const state = await (await add(call, 1)).json(), episode = state.episodes[0];
   for (const delta of [0, 3, '1', null, 1.5, 2]) assert.equal((await add(call, 1, delta)).status, 400);
-  for (const invalid of [{ delta: 0 }, { reason: 'x'.repeat(2001) }, { reason: null }, { occurredAt: '2026-02-30T10:00:00.000Z' }, { occurredAt: '2026-01-01T10:00' }, { revision: -1 }]) {
+  for (const invalid of [{ delta: 0 }, { reason: 'x'.repeat(2001) }, { reason: null }, { psychologistComment: 'x'.repeat(2001) }, { psychologistComment: null }, { occurredAt: '2026-02-30T10:00:00.000Z' }, { occurredAt: '2026-01-01T10:00' }, { revision: -1 }]) {
     assert.equal((await call(1, 'PATCH', { ...episode, ...invalid })).status, 400);
   }
   for (const initialScore of [1.5, '20', null]) assert.equal((await call(1, 'PATCH', { action: 'settings', initialScore, revision: 0 })).status, 400);
