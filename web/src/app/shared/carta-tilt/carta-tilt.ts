@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, HostBinding, HostListener, Input, NgZone, OnDestroy, ViewChild, inject } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, HostBinding, HostListener, Input, NgZone, OnChanges, OnDestroy, SimpleChanges, ViewChild, inject } from '@angular/core';
 import { MetallicFoil } from '../metallic-foil/metallic-foil';
 import { HOLO_PALETTES, HoloFragment, computeFragmentStyle, getHoloFragments } from './holo-mosaic';
 import { MetalPreset } from '../metallic-foil/metal-palette';
@@ -9,6 +9,7 @@ import { CartaNameplate } from '../carta-nameplate/carta-nameplate';
 export type { CartaFinitura } from '../carta-finiture';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
+export type CartaVariante = 'normale' | 'fullart' | 'tarocco';
 
 // Tilt 3D continuo + foil, con due effetti visivi DIVERSI a seconda della finitura (richiesto
 // esplicitamente da Rory, non intercambiabili):
@@ -31,14 +32,14 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
   styleUrl: './carta-tilt.css',
   templateUrl: './carta-tilt.html'
 })
-export class CartaTilt implements AfterViewChecked, OnDestroy {
+export class CartaTilt implements AfterViewChecked, OnChanges, OnDestroy {
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly zone = inject(NgZone);
 
   @Input({ required: true }) finitura: CartaFinitura = 'flat';
   @Input() immagineUrl: string | null = null;
   @Input() nome = '';
-  @Input() variante: 'normale' | 'tarocco' = 'normale';
+  @Input() variante: CartaVariante = 'normale';
 
   @ViewChild('frame', { static: true }) private readonly frameRef!: ElementRef<HTMLElement>;
   @ViewChild('foilSvg') private readonly foilSvgRef?: ElementRef<SVGSVGElement>;
@@ -47,6 +48,23 @@ export class CartaTilt implements AfterViewChecked, OnDestroy {
   @HostBinding('class.carta-tilt-host') readonly hostClass = true;
   @HostBinding('class.carta-tilt-host--tarocco') protected get tarotHostClass(): boolean {
     return this.variante === 'tarocco';
+  }
+  @HostBinding('class.carta-tilt-host--fullart') protected get fullArtHostClass(): boolean {
+    return this.isFullArt;
+  }
+  @HostBinding('style.aspect-ratio') protected get hostAspectRatio(): string | null {
+    if (!this.isFullArt) return null;
+    return this.imageAspectRatio ?? (this.variante === 'tarocco' ? '2 / 3' : '3 / 4');
+  }
+
+  protected get isFullArt(): boolean {
+    return this.variante !== 'normale';
+  }
+
+  private imageAspectRatio: string | null = null;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['immagineUrl']) this.imageAspectRatio = null;
   }
 
   // Getter, non un campo di classe: un campo inizializzato subito leggerebbe this.finitura
@@ -103,7 +121,7 @@ export class CartaTilt implements AfterViewChecked, OnDestroy {
   //    colori della finitura precedente sui poligoni già esistenti — è il bug del "fantasma
   //    rubino dentro l'album smeraldo" segnalato da Rory.
   ngAfterViewChecked(): void {
-    if (!this.isGemma || this.variante === 'tarocco' || !this.foilSvgRef) return;
+    if (!this.isGemma || this.isFullArt || !this.foilSvgRef) return;
     const svg = this.foilSvgRef.nativeElement;
 
     if (svg.childElementCount === 0) {
@@ -190,8 +208,8 @@ export class CartaTilt implements AfterViewChecked, OnDestroy {
       const frame = this.frameRef.nativeElement;
       applyCartaPointer(frame, px, py);
 
-      if (this.isMetallo && this.variante !== 'tarocco') this.metallicFoil?.setPointer(px, py);
-      if (this.isGemma && this.variante !== 'tarocco') {
+      if (this.isMetallo && !this.isFullArt) this.metallicFoil?.setPointer(px, py);
+      if (this.isGemma && !this.isFullArt) {
         if (frame.classList.contains('is-entering')) {
           // Il primo evento avvia l'interpolazione; quelli successivi aggiornano solo il
           // bersaglio, senza riavviare continuamente i 140ms.
@@ -213,13 +231,20 @@ export class CartaTilt implements AfterViewChecked, OnDestroy {
       // centro, la striscia di luce restava "bloccata" invece di rientrare (segnalato da Rory).
       resetCartaPointer(frame);
 
-      if (this.isMetallo && this.variante !== 'tarocco') this.metallicFoil?.resetPointer();
-      if (this.isGemma && this.variante !== 'tarocco') this.animateFoilTo(...CARTA_REST_LIGHT, 500);
+      if (this.isMetallo && !this.isFullArt) this.metallicFoil?.resetPointer();
+      if (this.isGemma && !this.isFullArt) this.animateFoilTo(...CARTA_REST_LIGHT, 500);
     });
   }
 
   protected get backgroundImage(): string {
     return this.immagineUrl ? `url("${this.immagineUrl}")` : 'none';
+  }
+
+  protected onFullArtImageLoad(event: Event): void {
+    const image = event.currentTarget as HTMLImageElement;
+    if (image.naturalWidth > 0 && image.naturalHeight > 0) {
+      this.imageAspectRatio = `${image.naturalWidth} / ${image.naturalHeight}`;
+    }
   }
 
   protected get gemMaterialStyle(): string {

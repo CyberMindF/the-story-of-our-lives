@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { AppShell } from '../../shell/app-shell';
-import { CartaTilt } from '../../shared/carta-tilt/carta-tilt';
+import { CartaTilt, CartaVariante } from '../../shared/carta-tilt/carta-tilt';
 import { CARTA_FINITURE, CARTA_FINITURA_LABELS, CartaFinitura } from '../../shared/carta-finiture';
 import { cardImageError, imageFromClipboard } from '../../shared/card-image-file';
 
@@ -14,9 +14,11 @@ interface Design {
   immagineKey: string | null;
   categoriaTarocco: CategoriaTarocco | null;
   numeroTarocco: string | null;
+  formato: CardFormat;
   position: number;
 }
 type CategoriaTarocco = 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari' | 'speciali';
+type CardFormat = 'classica' | 'fullart';
 interface CardSet {
   id: string;
   nome: string;
@@ -60,6 +62,7 @@ export class CarteCatalogo implements OnInit, OnDestroy {
   protected readonly creatingTarot = signal(false);
   protected readonly tarotCategory = signal<CategoriaTarocco>('maggiori');
   protected readonly tarotNumber = signal('');
+  protected readonly format = signal<CardFormat>('classica');
   protected readonly selectedSet = signal<CardSet | null>(null);
   protected readonly setName = signal('');
   protected readonly setDescription = signal('');
@@ -79,6 +82,9 @@ export class CarteCatalogo implements OnInit, OnDestroy {
   protected readonly previewUrl = computed(() => this.filePreview() ?? this.imageUrl(this.imageKey()));
   protected readonly isTarot = computed(() => this.creatingTarot()
     || this.sets().find((set) => set.id === this.setId())?.tipo === 'tarocchi');
+  protected readonly previewVariant = computed<CartaVariante>(() => this.isTarot()
+    ? 'tarocco'
+    : this.format() === 'fullart' ? 'fullart' : 'normale');
   protected readonly tarotSets = computed(() => this.sets().filter((set) => set.tipo === 'tarocchi'));
   protected readonly filtered = computed(() => {
     const term = this.search().trim().toLocaleLowerCase('it');
@@ -140,6 +146,7 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     this.setId.set(card?.setId ?? (preferredSetId || this.filterSet() || this.sets()[0]?.id || ''));
     this.tarotCategory.set(card?.categoriaTarocco ?? 'maggiori');
     this.tarotNumber.set(card?.numeroTarocco ?? '');
+    this.format.set(card?.formato ?? 'classica');
     this.imageKey.set(card?.immagineKey ?? null);
     this.editing.set(card === null);
     this.finish.set('flat');
@@ -154,6 +161,7 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     this.creatingTarot.set(true);
     this.tarotCategory.set('maggiori');
     this.tarotNumber.set('');
+    this.format.set('fullart');
     this.name.set('');
     this.setId.set(this.tarotSets().some((set) => set.id === preferredSetId) ? preferredSetId : this.tarotSets()[0].id);
     this.imageKey.set(null);
@@ -215,7 +223,8 @@ export class CarteCatalogo implements OnInit, OnDestroy {
           setId: Number(this.setId()),
           immagineKey: this.imageKey(),
           categoriaTarocco: this.isTarot() ? this.tarotCategory() : null,
-          numeroTarocco: this.isTarot() ? this.tarotNumber().trim() || null : null
+          numeroTarocco: this.isTarot() ? this.tarotNumber().trim() || null : null,
+          formato: this.isTarot() ? 'fullart' : this.format()
         })
       });
       this.designs.update((items) => [...items.filter((item) => item.id !== saved.id), saved]

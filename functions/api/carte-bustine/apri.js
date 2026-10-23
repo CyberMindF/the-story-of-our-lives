@@ -91,6 +91,7 @@ export async function onRequestPost(context) {
     const { results: cards } = await env.DB
       .prepare(
         `SELECT cd.id AS id, cd.finitura AS finitura, des.id AS design_id, des.nome AS design_nome,
+                des.formato AS formato,
                 COALESCE(cd.immagine_key, des.immagine_key) AS immagine_key
          FROM carte_definizioni cd
          JOIN carte_designs des ON des.id = cd.design_id
@@ -106,6 +107,7 @@ export async function onRequestPost(context) {
         finitura: card.finitura,
         designId: String(card.design_id),
         designNome: card.design_nome,
+        formato: card.formato ?? "classica",
         immagineKey: card.immagine_key
       };
     });

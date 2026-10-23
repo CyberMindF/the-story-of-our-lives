@@ -1,7 +1,7 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
-import { normalizeCategoriaTarocco, normalizeNumeroTarocco, toDesignView } from "./index.js";
+import { normalizeCategoriaTarocco, normalizeFormato, normalizeNumeroTarocco, toDesignView } from "./index.js";
 
 export async function onRequestPut(context) {
   const { request, env, params } = context;
@@ -18,7 +18,7 @@ export async function onRequestPut(context) {
     if (!nome) return json({ error: "Nome non valido." }, 400);
 
     const existing = await env.DB.prepare(
-      "SELECT id, set_id, immagine_key, categoria_tarocco, numero_tarocco FROM carte_designs WHERE id = ?"
+      "SELECT id, set_id, immagine_key, categoria_tarocco, numero_tarocco, formato FROM carte_designs WHERE id = ?"
     ).bind(id).first();
     if (!existing) return json({ error: "Carta non trovata." }, 404);
 
@@ -36,16 +36,17 @@ export async function onRequestPut(context) {
     );
     if (categoriaTarocco === undefined) return json({ error: "Sezione del Tarocco non valida." }, 400);
     if (numeroTarocco === undefined) return json({ error: "Numero del Tarocco non valido." }, 400);
+    const formato = normalizeFormato(payload?.formato === undefined ? existing.formato : payload.formato, set.tipo);
     // Omettere l'immagine mantiene quella corrente; null la rimuove esplicitamente.
     const immagineKey = payload?.immagineKey === undefined ? existing.immagine_key
       : typeof payload.immagineKey === "string" && payload.immagineKey.trim() ? payload.immagineKey.trim() : null;
 
     await env.DB.prepare(
-      `UPDATE carte_designs SET nome = ?, immagine_key = ?, categoria_tarocco = ?, numero_tarocco = ?,
+      `UPDATE carte_designs SET nome = ?, immagine_key = ?, categoria_tarocco = ?, numero_tarocco = ?, formato = ?,
        position = CASE WHEN set_id = ? THEN position
          ELSE (SELECT COALESCE(MAX(position), -1) + 1 FROM carte_designs WHERE set_id = ?) END,
        set_id = ? WHERE id = ?`
-    ).bind(nome, immagineKey, categoriaTarocco, numeroTarocco, setId, setId, setId, id).run();
+    ).bind(nome, immagineKey, categoriaTarocco, numeroTarocco, formato, setId, setId, setId, id).run();
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
       section: "carte",

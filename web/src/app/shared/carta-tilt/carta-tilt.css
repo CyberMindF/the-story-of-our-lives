@@ -5,7 +5,6 @@
   perspective: 900px;
   container-type: size;
 }
-:host.carta-tilt-host--tarocco { aspect-ratio: 2 / 3; }
 
 .carta-tilt-frame {
   --rx: 0deg;
@@ -69,13 +68,18 @@
   background-repeat: no-repeat;
 }
 
-/* I Tarocchi sono gia carte complete in rapporto 2:3: niente finestra interna, niente colore
-   sopra l'opera e nessuna seconda cornice larga attorno all'illustrazione. */
-.carta-tilt-frame--tarocco .carta-tilt-art {
+/* Le Full art sono gia carte complete: niente finestra interna, niente colore sopra l'opera
+   e nessuna seconda cornice larga. Il contenitore prende il rapporto dell'immagine sorgente. */
+.carta-tilt-frame--fullart .carta-tilt-art {
   inset: 0;
-  background-size: cover;
 }
-.carta-tilt-frame--tarocco .carta-tilt-rim { z-index: 5; }
+.carta-tilt-art-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.carta-tilt-frame--fullart .carta-tilt-rim { z-index: 5; }
 
 /* Finitura del Tarocco: un taglio sottile, simile alla costa metallizzata di una carta vera.
    Il doppio mask sottrae tutto il centro, perciò nessun pixel dell'artwork viene tinto. */
@@ -98,22 +102,22 @@
   mask-composite: exclude;
   filter: saturate(.92) brightness(1.04);
 }
-.carta-tilt-frame--tarocco[data-finitura='oro'] .carta-tilt-tarot-finish {
+.carta-tilt-frame--fullart[data-finitura='oro'] .carta-tilt-tarot-finish {
   --finish-a: #d5a737; --finish-b: #fff1a6; --finish-c: #765017;
 }
-.carta-tilt-frame--tarocco[data-finitura='onice'] .carta-tilt-tarot-finish {
+.carta-tilt-frame--fullart[data-finitura='onice'] .carta-tilt-tarot-finish {
   --finish-a: #34353c; --finish-b: #a9abb6; --finish-c: #050507;
 }
-.carta-tilt-frame--tarocco[data-finitura='smeraldo'] .carta-tilt-tarot-finish {
+.carta-tilt-frame--fullart[data-finitura='smeraldo'] .carta-tilt-tarot-finish {
   --finish-a: #087c5c; --finish-b: #8ef4bd; --finish-c: #013b31;
 }
-.carta-tilt-frame--tarocco[data-finitura='rubino'] .carta-tilt-tarot-finish {
+.carta-tilt-frame--fullart[data-finitura='rubino'] .carta-tilt-tarot-finish {
   --finish-a: #ae2344; --finish-b: #ff9a9f; --finish-c: #4c071c;
 }
-.carta-tilt-frame--tarocco[data-finitura='zaffiro'] .carta-tilt-tarot-finish {
+.carta-tilt-frame--fullart[data-finitura='zaffiro'] .carta-tilt-tarot-finish {
   --finish-a: #2458b5; --finish-b: #98d4ff; --finish-c: #071b57;
 }
-.carta-tilt-frame--tarocco[data-finitura='diamante'] .carta-tilt-tarot-finish {
+.carta-tilt-frame--fullart[data-finitura='diamante'] .carta-tilt-tarot-finish {
   --finish-a: #b9f3ff; --finish-b: #fff4ff; --finish-c: #a5a4f2;
   background:
     radial-gradient(circle at var(--mx) var(--my), rgb(255 255 255 / .98) 0 3%, transparent 17%),
@@ -196,6 +200,6 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
   pointer-events: none;
 }
-.carta-tilt-frame--tarocco .carta-tilt-rim {
+.carta-tilt-frame--fullart .carta-tilt-rim {
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / .22), inset 0 0 .35rem rgb(0 0 0 / .18);
 }

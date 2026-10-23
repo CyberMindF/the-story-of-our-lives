@@ -1,6 +1,7 @@
 <div #frame class="carta-tilt-frame" [class.carta-tilt-frame--tarocco]="variante === 'tarocco'"
+  [class.carta-tilt-frame--fullart]="isFullArt"
   [attr.data-finitura]="finitura">
-  @if (variante !== 'tarocco') {
+  @if (!isFullArt) {
     @if (isMetallo) {
       <app-metallic-foil [preset]="metalPreset" [interactive]="false" />
     } @else if (isGemma) {
@@ -11,15 +12,19 @@
     }
   }
 
-  <!-- L'immagine resta identica per tutte le rarita. Nei Tarocchi occupa l'intera carta;
-       nelle carte normali conserva la finestra e la targhetta del design originale. -->
-  <div class="carta-tilt-art" [style.background-image]="backgroundImage">
-    @if (!immagineUrl) {
+  <!-- Le Full art usano l'immagine vera per ricavarne le proporzioni originali. -->
+  @if (isFullArt && immagineUrl) {
+    <img class="carta-tilt-art carta-tilt-art-image" [src]="immagineUrl" [alt]="nome"
+      (load)="onFullArtImageLoad($event)" />
+  } @else {
+    <div class="carta-tilt-art" [style.background-image]="backgroundImage">
+      @if (!immagineUrl) {
       <span class="carta-tilt-fallback" aria-hidden="true">🃏</span>
-    }
-  </div>
+      }
+    </div>
+  }
 
-  @if (variante !== 'tarocco') {
+  @if (!isFullArt) {
     @if (isGemma) {
       <div class="carta-tilt-glass"></div>
     } @else if (!isMetallo) {
@@ -28,13 +33,13 @@
       <div class="carta-tilt-gloss"></div>
     }
   } @else if (finitura !== 'flat') {
-    <!-- I Tarocchi sono opere complete. La finitura vive soltanto sul taglio esterno della
+    <!-- Le Full art sono opere complete. La finitura vive soltanto sul taglio esterno della
          carta: non colora né copre l'illustrazione già impaginata. -->
     <div class="carta-tilt-tarot-finish"></div>
   }
 
   <div class="carta-tilt-rim"></div>
-  @if (variante !== 'tarocco') {
+  @if (!isFullArt) {
     <app-carta-nameplate [nome]="nome" />
   }
 </div>

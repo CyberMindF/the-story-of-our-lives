@@ -6,7 +6,7 @@ import { AppShell } from '../../shell/app-shell';
 import { AuthService, UserIdentity } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 import { CarteBustineService } from '../../core/carte-bustine.service';
-import { CartaTilt } from '../../shared/carta-tilt/carta-tilt';
+import { CartaTilt, CartaVariante } from '../../shared/carta-tilt/carta-tilt';
 import { CARTA_FINITURE, CARTA_FINITURA_LABELS, CartaFinitura } from '../../shared/carta-finiture';
 import { CartaBack } from '../../shared/carta-back/carta-back';
 import { CartaPack } from '../../shared/carta-pack/carta-pack';
@@ -23,6 +23,7 @@ function streakDayBonus(day: number): number {
 type Finitura = CartaFinitura;
 type Tab = 'album' | 'scambi';
 type AlbumTipo = 'normale' | 'tarocchi';
+type CardFormat = 'classica' | 'fullart';
 type CategoriaTarocco = 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari' | 'speciali';
 type TradeStato = 'proposto' | 'accettato' | 'rifiutato' | 'controproposto';
 
@@ -32,6 +33,7 @@ interface CartaPescata {
   designId: string;
   designNome: string;
   immagineKey: string | null;
+  formato?: CardFormat;
   categoriaTarocco?: CategoriaTarocco | null;
   numeroTarocco?: string | null;
   setNome?: string;
@@ -47,6 +49,7 @@ interface CartaCollezione {
   setTipo: AlbumTipo;
   categoriaTarocco: CategoriaTarocco | null;
   numeroTarocco: string | null;
+  formato: CardFormat;
   immagineKey: string | null;
   quantitaMia: number;
   quantitaAltro: number;
@@ -59,6 +62,7 @@ interface TradeItem {
   designNome: string;
   immagineKey: string | null;
   setTipo: AlbumTipo;
+  formato: CardFormat;
   quantita: number;
 }
 
@@ -199,7 +203,7 @@ export class Carte implements OnInit, OnDestroy {
     finitura: Finitura;
     immagineUrl: string | null;
     nome: string;
-    variante: 'normale' | 'tarocco';
+    variante: CartaVariante;
   } | null>(null);
   protected readonly cartaIngranditaGirata = signal(false);
 
@@ -262,7 +266,7 @@ export class Carte implements OnInit, OnDestroy {
     finitura: carta.finitura,
     immagineUrl: this.immagineUrl(carta.immagineKey),
     quantita: carta.quantitaMia,
-    variante: carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'
+    variante: this.varianteCarta(carta)
   })));
   protected readonly carteAltroPicker = computed<CartaAlbumPickerItem[]>(() => this.carteAltroPossedute().map((carta) => ({
     id: carta.definizioneId ?? '',
@@ -270,7 +274,7 @@ export class Carte implements OnInit, OnDestroy {
     finitura: carta.finitura,
     immagineUrl: this.immagineUrl(carta.immagineKey),
     quantita: carta.quantitaAltro,
-    variante: carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'
+    variante: this.varianteCarta(carta)
   })));
 
   // --- Scambi ---
@@ -539,14 +543,20 @@ export class Carte implements OnInit, OnDestroy {
     immagineKey: string | null;
     designNome: string;
     setTipo?: AlbumTipo;
+    formato?: CardFormat;
   }): void {
     this.cartaIngranditaGirata.set(false);
     this.cartaIngrandita.set({
       finitura: carta.finitura,
       immagineUrl: this.immagineUrl(carta.immagineKey),
       nome: carta.designNome,
-      variante: carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'
+      variante: this.varianteCarta(carta)
     });
+  }
+
+  protected varianteCarta(carta: { setTipo?: AlbumTipo; formato?: CardFormat }): CartaVariante {
+    if (carta.setTipo === 'tarocchi') return 'tarocco';
+    return carta.formato === 'fullart' ? 'fullart' : 'normale';
   }
 
   protected giraCartaIngrandita(): void {

@@ -41,6 +41,7 @@ export async function onRequestPost(context) {
     if (!set) return json({ error: "Set non trovato." }, 404);
     const categoriaTarocco = normalizeCategoriaTarocco(payload?.categoriaTarocco, set.tipo);
     const numeroTarocco = normalizeNumeroTarocco(payload?.numeroTarocco, set.tipo);
+    const formato = normalizeFormato(payload?.formato, set.tipo);
     if (categoriaTarocco === undefined) return json({ error: "Sezione del Tarocco non valida." }, 400);
     if (numeroTarocco === undefined) return json({ error: "Numero del Tarocco non valido." }, 400);
 
@@ -51,10 +52,10 @@ export async function onRequestPost(context) {
     const created = await env.DB
       .prepare(
         `INSERT INTO carte_designs
-           (set_id, nome, immagine_key, categoria_tarocco, numero_tarocco, position, created_by, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`
+           (set_id, nome, immagine_key, categoria_tarocco, numero_tarocco, formato, position, created_by, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`
       )
-      .bind(setId, nome, immagineKey, categoriaTarocco, numeroTarocco, position, session.user.id, now)
+      .bind(setId, nome, immagineKey, categoriaTarocco, numeroTarocco, formato, position, session.user.id, now)
       .first();
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
@@ -78,8 +79,14 @@ export function toDesignView(row) {
     immagineKey: row.immagine_key,
     categoriaTarocco: row.categoria_tarocco ?? null,
     numeroTarocco: row.numero_tarocco ?? null,
+    formato: row.formato ?? "classica",
     position: row.position
   };
+}
+
+export function normalizeFormato(value, tipo) {
+  if (tipo === "tarocchi") return "fullart";
+  return value === "fullart" ? "fullart" : "classica";
 }
 
 export function normalizeCategoriaTarocco(value, tipo) {

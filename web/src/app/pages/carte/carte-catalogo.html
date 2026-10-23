@@ -85,6 +85,9 @@
               }
             </button>
             <h3>{{ card.numeroTarocco ? card.numeroTarocco + ' · ' : '' }}{{ card.nome }}</h3>
+            @if (card.formato === 'fullart' && group.tipo !== 'tarocchi') {
+            <small class="catalog-hint">Full art</small>
+            }
             <button type="button" class="btn" (click)="open(card)">Anteprima e modifica</button>
           </article>
         }
@@ -112,7 +115,7 @@
     <div class="detail-layout">
       <div class="detail-preview">
         <app-carta-tilt [finitura]="finish()" [immagineUrl]="previewUrl()" [nome]="name() || 'Nuova carta'"
-          [variante]="isTarot() ? 'tarocco' : 'normale'" />
+          [variante]="previewVariant()" />
         <label>Anteprima finitura
           <select [ngModel]="finish()" (ngModelChange)="finish.set($event)">
             @for (value of finishes; track value) { <option [value]="value">{{ finishLabels[value] }}</option> }
@@ -153,6 +156,14 @@
               <input name="tarotNumber" maxlength="20" placeholder="Es. VI" [ngModel]="tarotNumber()"
                 (ngModelChange)="tarotNumber.set($event)" />
             </label>
+            <p class="catalog-hint">I Tarocchi usano automaticamente il formato Full art.</p>
+            } @else {
+            <label>Formato
+              <select name="format" [ngModel]="format()" (ngModelChange)="format.set($event)">
+                <option value="classica">Classica · immagine nella cornice</option>
+                <option value="fullart">Full art · immagine a tutta carta</option>
+              </select>
+            </label>
             }
             <label>{{ imageKey() ? 'Sostituisci immagine' : 'Immagine' }}
               <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFile($event)" />
@@ -170,6 +181,8 @@
         @if (isTarot()) {
         <p>{{ categoryLabels[tarotCategory()] }}{{ tarotNumber() ? ' · ' + tarotNumber() : '' }}</p>
         <p class="catalog-hint">Il Tarocco usa l'immagine completa senza aggiungere la targhetta delle carte normali.</p>
+        } @else if (format() === 'fullart') {
+        <p class="catalog-hint">Formato Full art: l'immagine riempie la carta e ne determina le proporzioni.</p>
         }
         @if (canEdit()) {
         <div class="detail-actions">

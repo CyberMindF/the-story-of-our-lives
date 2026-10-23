@@ -97,7 +97,7 @@ async function fetchItems(env, tradeId, lato) {
     .prepare(
       `SELECT cd.id AS id, cd.finitura AS finitura, des.id AS design_id, des.nome AS design_nome,
               COALESCE(cd.immagine_key, des.immagine_key) AS immagine_key, cti.quantita AS quantita,
-              COALESCE(s.tipo, 'normale') AS set_tipo
+              COALESCE(s.tipo, 'normale') AS set_tipo, des.formato AS formato
        FROM carte_trade_items cti
        JOIN carte_definizioni cd ON cd.id = cti.carta_definizione_id
        JOIN carte_designs des ON des.id = cd.design_id
@@ -114,6 +114,7 @@ async function fetchItems(env, tradeId, lato) {
     designNome: row.design_nome,
     immagineKey: row.immagine_key,
     setTipo: row.set_tipo,
+    formato: row.formato ?? "classica",
     quantita: row.quantita
   }));
 }

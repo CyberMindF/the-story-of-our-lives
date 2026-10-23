@@ -1,6 +1,6 @@
 import { Component, EventEmitter, HostListener, Input, Output, signal } from '@angular/core';
 import { CartaFinitura, CARTA_FINITURA_LABELS, CARTA_FINITURE } from '../carta-finiture';
-import { CartaTilt } from '../carta-tilt/carta-tilt';
+import { CartaTilt, CartaVariante } from '../carta-tilt/carta-tilt';
 
 export interface CartaAlbumPickerItem {
   id: string;
@@ -8,7 +8,7 @@ export interface CartaAlbumPickerItem {
   finitura: CartaFinitura;
   immagineUrl: string | null;
   quantita: number;
-  variante: 'normale' | 'tarocco';
+  variante: CartaVariante;
 }
 
 @Component({

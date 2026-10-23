@@ -28,6 +28,7 @@ export async function onRequestGet(context) {
         `SELECT
            s.id AS set_id, s.nome AS set_nome, COALESCE(s.tipo, 'normale') AS set_tipo,
            des.categoria_tarocco AS categoria_tarocco, des.numero_tarocco AS numero_tarocco,
+           des.formato AS formato,
            des.id AS design_id, des.nome AS design_nome, des.immagine_key AS design_immagine_key,
            f.finitura AS finitura,
            cd.id AS definizione_id, cd.immagine_key AS definizione_immagine_key,
@@ -62,6 +63,7 @@ export async function onRequestGet(context) {
         setTipo: row.set_tipo,
         categoriaTarocco: row.categoria_tarocco,
         numeroTarocco: row.numero_tarocco,
+        formato: row.formato ?? "classica",
         immagineKey: row.definizione_immagine_key ?? row.design_immagine_key,
         quantitaMia: row.quantita_mia,
         quantitaAltro: row.quantita_altro
