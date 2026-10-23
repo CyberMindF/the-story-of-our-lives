@@ -14,7 +14,12 @@ interface Design {
   immagineKey: string | null;
   position: number;
 }
-interface CardSet { id: string; nome: string; }
+interface CardSet {
+  id: string;
+  nome: string;
+  tipo: 'normale' | 'tarocchi';
+  categoriaTarocco: 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari' | null;
+}
 
 @Component({
   selector: 'app-carte-catalogo',
@@ -47,6 +52,7 @@ export class CarteCatalogo implements OnInit, OnDestroy {
   protected readonly finishLabels = CARTA_FINITURA_LABELS;
   private file: File | null = null;
   protected readonly previewUrl = computed(() => this.filePreview() ?? this.imageUrl(this.imageKey()));
+  protected readonly isTarot = computed(() => this.sets().find((set) => set.id === this.setId())?.tipo === 'tarocchi');
   protected readonly filtered = computed(() => {
     const term = this.search().trim().toLocaleLowerCase('it');
     const setId = this.filterSet();

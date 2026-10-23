@@ -1,4 +1,5 @@
-<div #frame class="carta-tilt-frame">
+<div #frame class="carta-tilt-frame" [class.carta-tilt-frame--tarocco]="variante === 'tarocco'"
+  [attr.data-finitura]="finitura">
   @if (isMetallo) {
     <app-metallic-foil [preset]="metalPreset" [interactive]="false" />
   } @else if (isGemma) {
@@ -26,5 +27,7 @@
   }
 
   <div class="carta-tilt-rim"></div>
-  <app-carta-nameplate [nome]="nome" />
+  @if (variante !== 'tarocco') {
+    <app-carta-nameplate [nome]="nome" />
+  }
 </div>

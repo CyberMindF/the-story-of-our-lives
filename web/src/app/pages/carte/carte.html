@@ -71,11 +71,53 @@
       }
     </div>
 
+    @if (tarocchiTotali() > 0 || canEdit()) {
+    <section class="carte-arcani-strip" aria-labelledby="carte-arcani-title">
+      <div class="carte-arcani-mark" aria-hidden="true">🔮</div>
+      <div class="carte-arcani-info">
+        <div class="carte-arcani-heading">
+          <h2 id="carte-arcani-title">Evocazioni arcane</h2>
+          <span>{{ evocazioniDisponibili() }} disponibili</span>
+        </div>
+        <div class="carte-arcani-pity" aria-label="Progresso verso l'evocazione garantita">
+          @for (step of evocazioneSteps; track step) {
+          <span [class.is-filled]="step <= bustineSenzaEvocazione()"></span>
+          }
+        </div>
+        <p>Ogni bustina ha il 20% di possibilità. La prossima è garantita entro
+          <strong>{{ bustineAllaGaranzia() }}</strong> {{ bustineAllaGaranzia() === 1 ? 'bustina' : 'bustine' }}.</p>
+      </div>
+      <button type="button" class="btn carte-arcani-button"
+        [disabled]="evocando() || (evocazioniDisponibili() < 1 && !offertaArcana())"
+        (click)="apriEvocazione()">
+        {{ evocando() ? 'Apertura…' : (offertaArcana() ? 'Riprendi evocazione' : 'Evoca un Tarocco') }}
+      </button>
+      @if (evocazioneError() && !evocazioneModalOpen()) {
+      <p class="carte-error carte-arcani-error">{{ evocazioneError() }}</p>
+      }
+    </section>
+    }
+
     @if (albumLoadError()) {
     <p class="carte-error">Non è stato possibile caricare l'album.</p>
     }
 
-    <div class="carte-finitura-tabs" role="tablist">
+    @if (tarocchiTotali() > 0) {
+    <div class="carte-album-type-tabs" role="tablist" aria-label="Tipo di album">
+      <button type="button" role="tab" [class.is-active]="albumTipo() === 'normale'"
+        [attr.aria-selected]="albumTipo() === 'normale'" (click)="selectAlbumTipo('normale')">Carte</button>
+      <button type="button" role="tab" [class.is-active]="albumTipo() === 'tarocchi'"
+        [attr.aria-selected]="albumTipo() === 'tarocchi'" (click)="selectAlbumTipo('tarocchi')">
+        Tarocchi · {{ tarocchiMiei() }}/{{ tarocchiTotali() }}
+      </button>
+    </div>
+    @if (albumTipo() === 'tarocchi') {
+    <p class="carte-arcani-progress">Tu {{ tarocchiMiei() }}/{{ tarocchiTotali() }} ·
+      {{ partnerNickname() ?? otherLabel() }} {{ tarocchiAltro() }}/{{ tarocchiTotali() }}</p>
+    }
+    }
+
+    <div class="carte-finitura-tabs" role="tablist" aria-label="Finitura">
       @for (finitura of finiture; track finitura) {
       <button type="button" role="tab" class="carte-finitura-tab" [class.is-active]="finituraAttiva() === finitura"
         [attr.aria-selected]="finituraAttiva() === finitura" (click)="selectFinitura(finitura)">
@@ -98,7 +140,7 @@
             (keydown.enter)="carta.quantitaMia > 0 && ingrandisciCarta(carta)">
             @if (carta.quantitaMia > 0) {
             <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)"
-              [nome]="carta.designNome" />
+              [nome]="carta.designNome" [variante]="carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'" />
             @if (carta.quantitaMia > 1) {
             <span class="carte-card-badge">×{{ carta.quantitaMia }}</span>
             }
@@ -121,7 +163,7 @@
             (keydown.enter)="carta.quantitaAltro > 0 && ingrandisciCarta(carta)">
             @if (carta.quantitaAltro > 0) {
             <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)"
-              [nome]="carta.designNome" />
+              [nome]="carta.designNome" [variante]="carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'" />
             @if (carta.quantitaAltro > 1) {
             <span class="carte-card-badge">×{{ carta.quantitaAltro }}</span>
             }
@@ -175,7 +217,7 @@
           @if (cartaPerId(item.carteDefinizioneId); as carta) {
           <article class="carte-trade-draft-item">
             <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)"
-              [nome]="carta.designNome" />
+              [nome]="carta.designNome" [variante]="carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'" />
             <div><strong>{{ carta.designNome }}</strong><small>{{ finituraLabels[carta.finitura] }} · ×{{ item.quantita
                 }}</small></div>
             <button type="button" class="carte-trade-remove" (click)="rimuoviOfferta($index)"
@@ -210,7 +252,7 @@
           @if (cartaPerId(item.carteDefinizioneId); as carta) {
           <article class="carte-trade-draft-item">
             <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)"
-              [nome]="carta.designNome" />
+              [nome]="carta.designNome" [variante]="carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'" />
             <div><strong>{{ carta.designNome }}</strong><small>{{ finituraLabels[carta.finitura] }} · ×{{ item.quantita
                 }}</small></div>
             <button type="button" class="carte-trade-remove" (click)="rimuoviRichiesta($index)"
@@ -253,7 +295,8 @@
         <div class="carte-trade-items"><small>Chi propone offre</small>
           @for (item of trade.offerta; track item.carteDefinizioneId) {
           <div class="carte-trade-item"><app-carta-tilt [finitura]="item.finitura"
-              [immagineUrl]="immagineUrl(item.immagineKey)" [nome]="item.designNome" /><span><strong>{{ item.designNome
+              [immagineUrl]="immagineUrl(item.immagineKey)" [nome]="item.designNome"
+              [variante]="item.setTipo === 'tarocchi' ? 'tarocco' : 'normale'" /><span><strong>{{ item.designNome
                 }}</strong><small>{{ finituraLabels[item.finitura] }} · ×{{ item.quantita }}</small></span></div>
           } @empty { <p class="carte-trade-empty">Nessuna carta</p> }
         </div>
@@ -261,7 +304,8 @@
         <div class="carte-trade-items"><small>In cambio riceve</small>
           @for (item of trade.richiesta; track item.carteDefinizioneId) {
           <div class="carte-trade-item"><app-carta-tilt [finitura]="item.finitura"
-              [immagineUrl]="immagineUrl(item.immagineKey)" [nome]="item.designNome" /><span><strong>{{ item.designNome
+              [immagineUrl]="immagineUrl(item.immagineKey)" [nome]="item.designNome"
+              [variante]="item.setTipo === 'tarocchi' ? 'tarocco' : 'normale'" /><span><strong>{{ item.designNome
                 }}</strong><small>{{ finituraLabels[item.finitura] }} · ×{{ item.quantita }}</small></span></div>
           } @empty { <p class="carte-trade-empty">Nessuna carta</p> }
         </div>
@@ -292,6 +336,19 @@
       (ngModelChange)="nuovoSetNome.set($event)" />
     <input type="text" placeholder="Descrizione (opzionale)" [ngModel]="nuovoSetDescrizione()"
       (ngModelChange)="nuovoSetDescrizione.set($event)" />
+    <select [ngModel]="nuovoSetTipo()" (ngModelChange)="nuovoSetTipo.set($event)">
+      <option value="normale">Carte normali</option>
+      <option value="tarocchi">Tarocchi</option>
+    </select>
+    @if (nuovoSetTipo() === 'tarocchi') {
+    <select [ngModel]="nuovoSetCategoriaTarocco()" (ngModelChange)="nuovoSetCategoriaTarocco.set($event)">
+      <option value="maggiori">Arcani Maggiori</option>
+      <option value="bastoni">Bastoni</option>
+      <option value="coppe">Coppe</option>
+      <option value="spade">Spade</option>
+      <option value="denari">Denari</option>
+    </select>
+    }
     <button type="button" class="btn btn-submit" (click)="creaSet()">Crea set</button>
 
     <h2>Nuova carta</h2>
@@ -317,7 +374,10 @@
 
     @for (set of sets(); track set.id) {
     <div class="carte-editor-set">
-      <h3>{{ set.nome }} <button type="button" class="btn" (click)="eliminaSet(set.id)">Elimina set</button></h3>
+      <h3>{{ set.nome }}
+        @if (set.tipo === 'tarocchi') { <span class="carte-editor-set-kind">Tarocchi</span> }
+        <button type="button" class="btn" (click)="eliminaSet(set.id)">Elimina set</button>
+      </h3>
       <ul>
         @for (design of designsBySet().get(set.id) ?? []; track design.id) {
         <li>{{ design.nome }}
@@ -335,6 +395,9 @@
     (click)="onModalBackdropClick($event)">
     <div class="modal-card carte-reveal-card">
       <h2>{{ animazioneBustina() ? 'Apriamo la bustina…' : 'Hai pescato' }}</h2>
+      @if (!animazioneBustina() && evocazioneOttenutaUltimaBustina()) {
+      <p class="carte-evocazione-found" role="status"><span aria-hidden="true">🔮</span> Evocazione Arcana trovata</p>
+      }
 
       @if (animazioneBustina()) {
       <div class="carte-pack-opening" aria-hidden="true">
@@ -408,6 +471,39 @@
     </div>
   </div>
 
+  <div class="modal" [class.hidden]="!evocazioneModalOpen()" role="dialog" aria-modal="true"
+    aria-labelledby="evocazione-title" (click)="onEvocazioneBackdropClick($event)">
+    <div class="modal-card carte-evocazione-modal">
+      @if (arcanoScelto(); as carta) {
+      <p class="carte-evocazione-symbol" aria-hidden="true">🔮</p>
+      <h2 id="evocazione-title">Hai scelto {{ carta.designNome }}</h2>
+      <div class="carte-evocazione-selected">
+        <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="immagineUrl(carta.immagineKey)"
+          [nome]="carta.designNome" variante="tarocco" />
+      </div>
+      <p class="carte-slot-finitura">{{ finituraLabels[carta.finitura] }}</p>
+      <button type="button" class="btn btn-submit" (click)="chiudiEvocazione()">Conserva</button>
+      } @else if (offertaArcana(); as offerta) {
+      <p class="carte-evocazione-symbol" aria-hidden="true">🔮</p>
+      <h2 id="evocazione-title">Scegli un Tarocco</h2>
+      <p class="carte-evocazione-hint">Puoi conservarne uno soltanto.</p>
+      @if (evocazioneError()) { <p class="carte-error">{{ evocazioneError() }}</p> }
+      <div class="carte-evocazione-options">
+        @for (candidato of offerta.candidati; track candidato.id) {
+        <button type="button" class="carte-evocazione-option" [disabled]="scegliendoArcano()"
+          (click)="scegliArcano(candidato)">
+          <app-carta-tilt [finitura]="candidato.finitura" [immagineUrl]="immagineUrl(candidato.immagineKey)"
+            [nome]="candidato.designNome" variante="tarocco" />
+          <strong>{{ candidato.designNome }}</strong>
+          <span>{{ finituraLabels[candidato.finitura] }}</span>
+        </button>
+        }
+      </div>
+      <button type="button" class="btn" [disabled]="scegliendoArcano()" (click)="chiudiEvocazione()">Scegli dopo</button>
+      }
+    </div>
+  </div>
+
   <div class="modal" [class.hidden]="!cartaIngrandita()" role="dialog" aria-modal="true"
     (click)="onIngranditaBackdropClick($event)">
     <div class="modal-card carte-ingrandita-card">
@@ -415,7 +511,8 @@
       <div class="carte-ingrandita-wrapper" [class.is-back]="cartaIngranditaGirata()">
         <div class="carte-ingrandita-inner">
           <div class="carte-ingrandita-face carte-ingrandita-face--front">
-            <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="carta.immagineUrl" [nome]="carta.nome" />
+            <app-carta-tilt [finitura]="carta.finitura" [immagineUrl]="carta.immagineUrl" [nome]="carta.nome"
+              [variante]="carta.variante" />
           </div>
           <div class="carte-ingrandita-face carte-ingrandita-face--back">
             <app-carta-back />

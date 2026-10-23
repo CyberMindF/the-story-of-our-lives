@@ -8,6 +8,7 @@ export interface CartaAlbumPickerItem {
   finitura: CartaFinitura;
   immagineUrl: string | null;
   quantita: number;
+  variante: 'normale' | 'tarocco';
 }
 
 @Component({

@@ -23,6 +23,8 @@ export async function onRequestGet(context) {
       altroQuantitaDisponibile: partnerState?.quantitaDisponibile ?? null,
       altroNickname: partner?.nickname ?? null,
       minutiResidui: state.minutiResidui,
+      evocazioniDisponibili: state.evocazioniDisponibili,
+      bustineSenzaEvocazione: state.bustineSenzaEvocazione,
       streakCorrente: streak.streakCorrente,
       streakMigliore: streak.streakMigliore,
       streakBustineBonus: streak.bustineBonus,

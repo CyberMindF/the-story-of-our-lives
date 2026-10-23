@@ -38,12 +38,16 @@ export class CartaTilt implements AfterViewChecked, OnDestroy {
   @Input({ required: true }) finitura: CartaFinitura = 'flat';
   @Input() immagineUrl: string | null = null;
   @Input() nome = '';
+  @Input() variante: 'normale' | 'tarocco' = 'normale';
 
   @ViewChild('frame', { static: true }) private readonly frameRef!: ElementRef<HTMLElement>;
   @ViewChild('foilSvg') private readonly foilSvgRef?: ElementRef<SVGSVGElement>;
   @ViewChild(MetallicFoil) private readonly metallicFoil?: MetallicFoil;
 
   @HostBinding('class.carta-tilt-host') readonly hostClass = true;
+  @HostBinding('class.carta-tilt-host--tarocco') protected get tarotHostClass(): boolean {
+    return this.variante === 'tarocco';
+  }
 
   // Getter, non un campo di classe: un campo inizializzato subito leggerebbe this.finitura
   // PRIMA che Angular assegni il valore reale dell'@Input (i campi di classe si valutano nel

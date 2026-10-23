@@ -19,12 +19,25 @@ export async function onRequestPost(context) {
       return json({ error: "Nessuna bustina disponibile." }, 409);
     }
 
-    const { results: designs } = await env.DB.prepare("SELECT id FROM carte_designs").all();
+    const { results: designs } = await env.DB
+      .prepare(
+        `SELECT des.id
+         FROM carte_designs des
+         JOIN carte_sets s ON s.id = des.set_id
+         WHERE COALESCE(s.tipo, 'normale') = 'normale'`
+      )
+      .all();
     if (designs.length === 0) {
       return json({ error: "Nessuna carta disponibile al momento." }, 409);
     }
 
     const now = new Date().toISOString();
+    // Un'evocazione ha il 20% di probabilita per bustina. Dopo sette aperture consecutive
+    // senza trovarne una, l'ottava e garantita: il contatore viene restituito alla UI, che
+    // puo quindi dichiarare con precisione entro quante bustine arrivera la prossima.
+    const evocazioneOttenuta = state.bustineSenzaEvocazione >= 7 || Math.random() < 0.20;
+    const evocazioniDisponibili = state.evocazioniDisponibili + (evocazioneOttenuta ? 1 : 0);
+    const bustineSenzaEvocazione = evocazioneOttenuta ? 0 : state.bustineSenzaEvocazione + 1;
     const drawn = [];
     for (let i = 0; i < 5; i++) {
       const design = designs[Math.floor(Math.random() * designs.length)];
@@ -46,8 +59,13 @@ export async function onRequestPost(context) {
 
     const statements = [
       env.DB
-        .prepare("UPDATE carte_bustine SET quantita_disponibile = quantita_disponibile - 1, updated_at = ? WHERE user_id = ?")
-        .bind(now, userId)
+        .prepare(
+          `UPDATE carte_bustine
+           SET quantita_disponibile = quantita_disponibile - 1,
+               evocazioni_disponibili = ?, bustine_senza_evocazione = ?, updated_at = ?
+           WHERE user_id = ?`
+        )
+        .bind(evocazioniDisponibili, bustineSenzaEvocazione, now, userId)
     ];
     for (const definizioneId of drawn) {
       statements.push(
@@ -66,7 +84,7 @@ export async function onRequestPost(context) {
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
       section: "carte",
       eventType: "carte_bustina_aperta",
-      metadata: { definizioneIds: drawn }
+      metadata: { definizioneIds: drawn, evocazioneOttenuta }
     }));
 
     const placeholders = drawn.map(() => "?").join(", ");
@@ -92,7 +110,13 @@ export async function onRequestPost(context) {
       };
     });
 
-    return json({ carte: orderedCards, quantitaDisponibile: state.quantitaDisponibile - 1 });
+    return json({
+      carte: orderedCards,
+      quantitaDisponibile: state.quantitaDisponibile - 1,
+      evocazioneOttenuta,
+      evocazioniDisponibili,
+      bustineSenzaEvocazione
+    });
   } catch (error) {
     console.error(JSON.stringify({ event: "carte_bustine_apri_error", message: error.message }));
     return json({ error: "Non è stato possibile aprire la bustina." }, 500);

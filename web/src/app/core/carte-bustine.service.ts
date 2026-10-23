@@ -10,6 +10,8 @@ export interface CarteBustineState {
   altroQuantitaDisponibile: number | null;
   altroNickname: string | null;
   minutiResidui: number;
+  evocazioniDisponibili: number;
+  bustineSenzaEvocazione: number;
   streakCorrente: number;
   streakMigliore: number;
   streakBustineBonus: number;
@@ -111,6 +113,8 @@ export class CarteBustineService {
       altroQuantitaDisponibile: data.altroQuantitaDisponibile ?? null,
       altroNickname: data.altroNickname ?? null,
       minutiResidui: data.minutiResidui ?? 0,
+      evocazioniDisponibili: data.evocazioniDisponibili ?? 0,
+      bustineSenzaEvocazione: data.bustineSenzaEvocazione ?? 0,
       streakCorrente: data.streakCorrente ?? 0,
       streakMigliore: data.streakMigliore ?? 0,
       streakBustineBonus: data.streakBustineBonus ?? 0,

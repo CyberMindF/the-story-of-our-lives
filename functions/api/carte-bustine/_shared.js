@@ -19,15 +19,25 @@ export async function ensureBustineState(env, userId) {
 
 export async function readBustineState(env, userId) {
   const row = await env.DB
-    .prepare("SELECT user_id, quantita_disponibile, minuti_residui, updated_at FROM carte_bustine WHERE user_id = ?")
+    .prepare(
+      `SELECT user_id, quantita_disponibile, minuti_residui, evocazioni_disponibili,
+              bustine_senza_evocazione, updated_at
+       FROM carte_bustine WHERE user_id = ?`
+    )
     .bind(userId)
     .first();
 
   if (!row) {
-    return { userId, quantitaDisponibile: 0, minutiResidui: 0 };
+    return { userId, quantitaDisponibile: 0, minutiResidui: 0, evocazioniDisponibili: 0, bustineSenzaEvocazione: 0 };
   }
 
-  return { userId, quantitaDisponibile: row.quantita_disponibile, minutiResidui: row.minuti_residui };
+  return {
+    userId,
+    quantitaDisponibile: row.quantita_disponibile,
+    minutiResidui: row.minuti_residui,
+    evocazioniDisponibili: row.evocazioni_disponibili ?? 0,
+    bustineSenzaEvocazione: row.bustine_senza_evocazione ?? 0
+  };
 }
 
 export async function recordActiveMinute(env, userId) {

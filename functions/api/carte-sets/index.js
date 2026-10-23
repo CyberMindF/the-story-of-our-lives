@@ -29,7 +29,10 @@ export async function onRequestPost(context) {
     const payload = await readJson(request);
     const nome = typeof payload?.nome === "string" ? payload.nome.trim() : "";
     const descrizione = typeof payload?.descrizione === "string" ? payload.descrizione.trim() : "";
+    const tipo = payload?.tipo === "tarocchi" ? "tarocchi" : "normale";
+    const categoriaTarocco = normalizeCategoriaTarocco(payload?.categoriaTarocco, tipo);
     if (!nome) return json({ error: "Nome non valido." }, 400);
+    if (categoriaTarocco === undefined) return json({ error: "Categoria dei Tarocchi non valida." }, 400);
 
     const slug = nome
       .toLowerCase()
@@ -49,10 +52,10 @@ export async function onRequestPost(context) {
 
     const created = await env.DB
       .prepare(
-        `INSERT INTO carte_sets (slug, nome, descrizione, position, created_by, created_at)
-         VALUES (?, ?, ?, ?, ?, ?) RETURNING *`
+        `INSERT INTO carte_sets (slug, nome, descrizione, tipo, categoria_tarocco, position, created_by, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`
       )
-      .bind(slug, nome, descrizione || null, position, session.user.id, now)
+      .bind(slug, nome, descrizione || null, tipo, categoriaTarocco, position, session.user.id, now)
       .first();
 
     context.waitUntil(recordEvent(env, { userId: session.user.id, sessionId: session.sessionId }, {
@@ -69,5 +72,19 @@ export async function onRequestPost(context) {
 }
 
 export function toSetView(row) {
-  return { id: String(row.id), slug: row.slug, nome: row.nome, descrizione: row.descrizione, position: row.position };
+  return {
+    id: String(row.id),
+    slug: row.slug,
+    nome: row.nome,
+    descrizione: row.descrizione,
+    tipo: row.tipo ?? "normale",
+    categoriaTarocco: row.categoria_tarocco ?? null,
+    position: row.position
+  };
+}
+
+export function normalizeCategoriaTarocco(value, tipo) {
+  if (tipo !== "tarocchi") return null;
+  const allowed = new Set(["maggiori", "bastoni", "coppe", "spade", "denari"]);
+  return typeof value === "string" && allowed.has(value) ? value : undefined;
 }

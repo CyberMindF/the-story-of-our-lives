@@ -68,6 +68,34 @@
   background-repeat: no-repeat;
 }
 
+/* I Tarocchi caricati sono gia opere complete: contengono numero, cornice e titolo. La
+   modalita dedicata usa quindi quasi tutta la superficie e non aggiunge la targhetta delle
+   carte fotografiche. Rimane un bordo esterno sottile, sufficiente a mostrare il materiale
+   Bianca/Argento/Oro/Gemma senza creare l'effetto di una carta dentro un'altra carta. */
+.carta-tilt-frame--tarocco .carta-tilt-art {
+  inset: 2.5% 5%;
+}
+.carta-tilt-frame--tarocco[data-finitura='argento']::after,
+.carta-tilt-frame--tarocco[data-finitura='oro']::after {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  inset: 2.5% 5%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    linear-gradient(118deg, transparent 18%, rgb(255 255 255 / .04) 35%, rgb(255 255 255 / .38) 48%, rgb(255 255 255 / .08) 56%, transparent 72%);
+  background-size: 220% 220%;
+  background-position: var(--mx) var(--my);
+}
+.carta-tilt-frame--tarocco[data-finitura='oro']::after {
+  background-image: linear-gradient(118deg, transparent 18%, rgb(255 219 116 / .04) 35%, rgb(255 238 174 / .4) 48%, rgb(255 190 64 / .1) 56%, transparent 72%);
+}
+.carta-tilt-frame--tarocco .carta-tilt-gloss { z-index: 3; opacity: .45; }
+.carta-tilt-frame--tarocco .carta-tilt-foil { z-index: 3; opacity: .24; }
+.carta-tilt-frame--tarocco .carta-tilt-glass { z-index: 4; opacity: .58; }
+.carta-tilt-frame--tarocco .carta-tilt-rim { z-index: 5; }
+
 .carta-tilt-fallback {
   font-size: min(45cqw, 45cqh, 12rem);
   pointer-events: none;

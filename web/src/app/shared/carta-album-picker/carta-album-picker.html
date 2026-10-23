@@ -1,6 +1,7 @@
 <button type="button" class="carta-picker-trigger" (click)="open.set(true)">
   @if (selected; as card) {
-  <app-carta-tilt [finitura]="card.finitura" [immagineUrl]="card.immagineUrl" [nome]="card.nome" />
+  <app-carta-tilt [finitura]="card.finitura" [immagineUrl]="card.immagineUrl" [nome]="card.nome"
+    [variante]="card.variante" />
   <span><strong>{{ card.nome }}</strong><small>{{ labels[card.finitura] }} · ×{{ card.quantita }}</small></span>
   <span class="carta-picker-change">Cambia</span>
   } @else {
@@ -26,7 +27,8 @@
     <div class="carta-picker-grid">
       @for (card of filteredCards; track card.id) {
       <button type="button" class="carta-picker-card" [class.is-selected]="card.id === selectedId" (click)="choose(card)">
-        <app-carta-tilt [finitura]="card.finitura" [immagineUrl]="card.immagineUrl" [nome]="card.nome" />
+        <app-carta-tilt [finitura]="card.finitura" [immagineUrl]="card.immagineUrl" [nome]="card.nome"
+          [variante]="card.variante" />
         <strong>{{ card.nome }}</strong>
         <small>{{ labels[card.finitura] }} · ×{{ card.quantita }}</small>
       </button>

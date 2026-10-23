@@ -23,6 +23,8 @@ function streakDayBonus(day: number): number {
 
 type Finitura = CartaFinitura;
 type Tab = 'album' | 'scambi' | 'editor';
+type AlbumTipo = 'normale' | 'tarocchi';
+type CategoriaTarocco = 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari';
 type TradeStato = 'proposto' | 'accettato' | 'rifiutato' | 'controproposto';
 
 interface CartaPescata {
@@ -40,6 +42,8 @@ interface CartaCollezione {
   designNome: string;
   setId: string;
   setNome: string;
+  setTipo: AlbumTipo;
+  categoriaTarocco: CategoriaTarocco | null;
   immagineKey: string | null;
   quantitaMia: number;
   quantitaAltro: number;
@@ -51,6 +55,7 @@ interface TradeItem {
   designId: string;
   designNome: string;
   immagineKey: string | null;
+  setTipo: AlbumTipo;
   quantita: number;
 }
 
@@ -76,6 +81,8 @@ interface CartaSet {
   slug: string;
   nome: string;
   descrizione: string | null;
+  tipo: AlbumTipo;
+  categoriaTarocco: CategoriaTarocco | null;
   position: number;
 }
 
@@ -85,6 +92,21 @@ interface CartaDesign {
   nome: string;
   immagineKey: string | null;
   position: number;
+}
+
+interface CandidatoArcano {
+  id: string;
+  designId: string;
+  designNome: string;
+  immagineKey: string | null;
+  finitura: Finitura;
+  categoriaTarocco: CategoriaTarocco | null;
+}
+
+interface OffertaArcana {
+  id: string;
+  createdAt: string;
+  candidati: CandidatoArcano[];
 }
 
 const IDENTITY_LABELS: Record<UserIdentity, string> = { lui: 'lui', lei: 'lei' };
@@ -117,6 +139,7 @@ export class Carte implements OnInit, OnDestroy {
   protected readonly isAdmin = this.authService.isAdmin;
 
   protected readonly tab = signal<Tab>('album');
+  protected readonly albumTipo = signal<AlbumTipo>('normale');
 
   // --- Bustina ---
   protected readonly bustineDisponibili = signal(0);
@@ -150,6 +173,19 @@ export class Carte implements OnInit, OnDestroy {
   // finitura. Dopo "Rivela" resta visibile il fronte; il click successivo passa alla carta
   // seguente, nuovamente coperta.
   protected readonly cartaInEvidenzaCoperta = signal(true);
+  protected readonly evocazioneOttenutaUltimaBustina = signal(false);
+
+  // --- Evocazioni arcane ---
+  protected readonly evocazioniDisponibili = signal(0);
+  protected readonly bustineSenzaEvocazione = signal(0);
+  protected readonly evocando = signal(false);
+  protected readonly scegliendoArcano = signal(false);
+  protected readonly evocazioneError = signal('');
+  protected readonly offertaArcana = signal<OffertaArcana | null>(null);
+  protected readonly arcanoScelto = signal<CartaPescata | null>(null);
+  protected readonly evocazioneModalOpen = signal(false);
+  protected readonly evocazioneSteps = Array.from({ length: 8 }, (_, index) => index + 1);
+  protected readonly bustineAllaGaranzia = computed(() => Math.max(1, 8 - this.bustineSenzaEvocazione()));
 
   // Carta mostrata in grande al centro (quella non ancora in riga); null quando sono già
   // state rivelate tutte.
@@ -175,7 +211,12 @@ export class Carte implements OnInit, OnDestroy {
   // Vista a schermo intero di una singola carta (click su uno slot dell'album): stessa
   // finitura/immagine, solo più grande, per vedere davvero il foil che a dimensione slot è
   // troppo piccolo per giudicare (richiesta esplicita di Rory dopo aver visto l'album).
-  protected readonly cartaIngrandita = signal<{ finitura: Finitura; immagineUrl: string | null; nome: string } | null>(null);
+  protected readonly cartaIngrandita = signal<{
+    finitura: Finitura;
+    immagineUrl: string | null;
+    nome: string;
+    variante: 'normale' | 'tarocco';
+  } | null>(null);
   protected readonly cartaIngranditaGirata = signal(false);
 
   // --- Album ---
@@ -185,10 +226,21 @@ export class Carte implements OnInit, OnDestroy {
   protected readonly finiture = CARTA_FINITURE;
   protected readonly finituraLabels = CARTA_FINITURA_LABELS;
 
+  protected readonly tarocchiTotali = computed(() => new Set(
+    this.collezione().filter((carta) => carta.setTipo === 'tarocchi').map((carta) => carta.designId)
+  ).size);
+  protected readonly tarocchiMiei = computed(() => new Set(
+    this.collezione().filter((carta) => carta.setTipo === 'tarocchi' && carta.quantitaMia > 0).map((carta) => carta.designId)
+  ).size);
+  protected readonly tarocchiAltro = computed(() => new Set(
+    this.collezione().filter((carta) => carta.setTipo === 'tarocchi' && carta.quantitaAltro > 0).map((carta) => carta.designId)
+  ).size);
+
   protected readonly fogli = computed(() => {
     const finitura = this.finituraAttiva();
     const bySet = new Map<string, { setNome: string; carte: CartaCollezione[] }>();
     for (const carta of this.collezione()) {
+      if (carta.setTipo !== this.albumTipo()) continue;
       if (carta.finitura !== finitura) continue;
       if (!bySet.has(carta.setId)) bySet.set(carta.setId, { setNome: carta.setNome, carte: [] });
       bySet.get(carta.setId)!.carte.push(carta);
@@ -204,14 +256,16 @@ export class Carte implements OnInit, OnDestroy {
     nome: carta.designNome,
     finitura: carta.finitura,
     immagineUrl: this.immagineUrl(carta.immagineKey),
-    quantita: carta.quantitaMia
+    quantita: carta.quantitaMia,
+    variante: carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'
   })));
   protected readonly carteAltroPicker = computed<CartaAlbumPickerItem[]>(() => this.carteAltroPossedute().map((carta) => ({
     id: carta.definizioneId ?? '',
     nome: carta.designNome,
     finitura: carta.finitura,
     immagineUrl: this.immagineUrl(carta.immagineKey),
-    quantita: carta.quantitaAltro
+    quantita: carta.quantitaAltro,
+    variante: carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'
   })));
 
   // --- Scambi ---
@@ -237,6 +291,8 @@ export class Carte implements OnInit, OnDestroy {
   protected readonly editorLoadError = signal(false);
   protected readonly nuovoSetNome = signal('');
   protected readonly nuovoSetDescrizione = signal('');
+  protected readonly nuovoSetTipo = signal<AlbumTipo>('normale');
+  protected readonly nuovoSetCategoriaTarocco = signal<CategoriaTarocco>('maggiori');
   protected readonly nuovoDesignSetId = signal('');
   protected readonly nuovoDesignNome = signal('');
   protected readonly nuovoDesignFile = signal<File | null>(null);
@@ -261,7 +317,7 @@ export class Carte implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    await Promise.all([this.loadBustine(), this.loadCollezione(), this.loadTrades()]);
+    await Promise.all([this.loadBustine(), this.loadCollezione(), this.loadTrades(), this.loadEvocazioni()]);
     this.realtime.on('carte-trade:changed')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
@@ -304,6 +360,8 @@ export class Carte implements OnInit, OnDestroy {
       this.streakCorrente.set(data.streakCorrente);
       this.streakMigliore.set(data.streakMigliore);
       this.streakBonusOttenuto.set(data.streakBustineBonus);
+      this.evocazioniDisponibili.set(data.evocazioniDisponibili);
+      this.bustineSenzaEvocazione.set(data.bustineSenzaEvocazione);
       if (data.streakPrimaVisitaOggi) {
         this.streakModalOpen.set(true);
       }
@@ -317,6 +375,7 @@ export class Carte implements OnInit, OnDestroy {
     if (this.opening() || this.bustineDisponibili() < 1) return;
     this.opening.set(true);
     this.openError.set('');
+    this.evocazioneOttenutaUltimaBustina.set(false);
 
     try {
       const response = await fetch('/api/carte-bustine/apri', { method: 'POST', credentials: 'same-origin' });
@@ -332,6 +391,9 @@ export class Carte implements OnInit, OnDestroy {
       this.bustineDisponibili.set(result.quantitaDisponibile ?? 0);
       this.carteBustineService.updateOwnBalance(result.quantitaDisponibile ?? 0);
       this.carteBustineService.invalidate();
+      this.evocazioneOttenutaUltimaBustina.set(result.evocazioneOttenuta === true);
+      this.evocazioniDisponibili.set(result.evocazioniDisponibili ?? this.evocazioniDisponibili());
+      this.bustineSenzaEvocazione.set(result.bustineSenzaEvocazione ?? this.bustineSenzaEvocazione());
       await this.loadCollezione();
     } catch (error) {
       this.openError.set(error instanceof Error ? error.message : 'Non è stato possibile aprire la bustina.');
@@ -416,9 +478,98 @@ export class Carte implements OnInit, OnDestroy {
     this.finituraAttiva.set(finitura);
   }
 
-  protected ingrandisciCarta(carta: { finitura: Finitura; immagineKey: string | null; designNome: string }): void {
+  protected selectAlbumTipo(tipo: AlbumTipo): void {
+    this.albumTipo.set(tipo);
+  }
+
+  // --- Evocazioni arcane ---
+  private async loadEvocazioni(): Promise<void> {
+    try {
+      const response = await fetch('/api/carte-evocazioni', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+      if (!response.ok) return;
+      const result = await response.json();
+      this.evocazioniDisponibili.set(result.evocazioniDisponibili ?? this.evocazioniDisponibili());
+      this.bustineSenzaEvocazione.set(result.bustineSenzaEvocazione ?? this.bustineSenzaEvocazione());
+      this.offertaArcana.set(result.offerta ?? null);
+    } catch {
+      // Lo stato principale delle bustine resta disponibile. Un eventuale errore viene
+      // mostrato soltanto quando l'utente prova davvero ad aprire un'evocazione.
+    }
+  }
+
+  protected async apriEvocazione(): Promise<void> {
+    if (this.evocando() || (this.evocazioniDisponibili() < 1 && !this.offertaArcana())) return;
+    if (this.offertaArcana()) {
+      this.evocazioneModalOpen.set(true);
+      return;
+    }
+    this.evocando.set(true);
+    this.evocazioneError.set('');
+    this.arcanoScelto.set(null);
+    try {
+      const response = await fetch('/api/carte-evocazioni/apri', { method: 'POST', credentials: 'same-origin' });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof result.error === 'string' ? result.error : "Non è stato possibile aprire l'evocazione.");
+      this.offertaArcana.set(result.offerta ?? null);
+      this.evocazioniDisponibili.set(result.evocazioniDisponibili ?? this.evocazioniDisponibili());
+      this.evocazioneModalOpen.set(true);
+    } catch (error) {
+      this.evocazioneError.set(error instanceof Error ? error.message : "Non è stato possibile aprire l'evocazione.");
+    } finally {
+      this.evocando.set(false);
+    }
+  }
+
+  protected async scegliArcano(candidato: CandidatoArcano): Promise<void> {
+    const offerta = this.offertaArcana();
+    if (!offerta || this.scegliendoArcano()) return;
+    this.scegliendoArcano.set(true);
+    this.evocazioneError.set('');
+    try {
+      const response = await fetch(`/api/carte-evocazioni/${offerta.id}/scegli`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ candidateId: Number(candidato.id) })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof result.error === 'string' ? result.error : 'Non è stato possibile conservare il Tarocco.');
+      this.arcanoScelto.set(result.carta ?? null);
+      this.evocazioniDisponibili.set(result.evocazioniDisponibili ?? this.evocazioniDisponibili());
+      await this.loadCollezione();
+    } catch (error) {
+      this.evocazioneError.set(error instanceof Error ? error.message : 'Non è stato possibile conservare il Tarocco.');
+    } finally {
+      this.scegliendoArcano.set(false);
+    }
+  }
+
+  protected chiudiEvocazione(): void {
+    this.evocazioneModalOpen.set(false);
+    if (this.arcanoScelto()) {
+      this.offertaArcana.set(null);
+      this.arcanoScelto.set(null);
+    }
+    this.evocazioneError.set('');
+  }
+
+  protected onEvocazioneBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget && !this.scegliendoArcano()) this.chiudiEvocazione();
+  }
+
+  protected ingrandisciCarta(carta: {
+    finitura: Finitura;
+    immagineKey: string | null;
+    designNome: string;
+    setTipo?: AlbumTipo;
+  }): void {
     this.cartaIngranditaGirata.set(false);
-    this.cartaIngrandita.set({ finitura: carta.finitura, immagineUrl: this.immagineUrl(carta.immagineKey), nome: carta.designNome });
+    this.cartaIngrandita.set({
+      finitura: carta.finitura,
+      immagineUrl: this.immagineUrl(carta.immagineKey),
+      nome: carta.designNome,
+      variante: carta.setTipo === 'tarocchi' ? 'tarocco' : 'normale'
+    });
   }
 
   protected giraCartaIngrandita(): void {
@@ -601,7 +752,9 @@ export class Carte implements OnInit, OnDestroy {
 
     const ok = await this.api.sendAuthenticatedJson('/api/carte-sets', {
       nome,
-      descrizione: this.nuovoSetDescrizione().trim() || undefined
+      descrizione: this.nuovoSetDescrizione().trim() || undefined,
+      tipo: this.nuovoSetTipo(),
+      categoriaTarocco: this.nuovoSetTipo() === 'tarocchi' ? this.nuovoSetCategoriaTarocco() : undefined
     }, 'POST');
     if (!ok) {
       this.editorError.set('Non è stato possibile creare il set.');
@@ -610,6 +763,8 @@ export class Carte implements OnInit, OnDestroy {
 
     this.nuovoSetNome.set('');
     this.nuovoSetDescrizione.set('');
+    this.nuovoSetTipo.set('normale');
+    this.nuovoSetCategoriaTarocco.set('maggiori');
     await this.loadEditorData();
   }
 
@@ -660,7 +815,7 @@ export class Carte implements OnInit, OnDestroy {
 
       this.nuovoDesignNome.set('');
       this.clearNewDesignFile();
-      await this.loadEditorData();
+      await Promise.all([this.loadEditorData(), this.loadCollezione()]);
     } catch (error) {
       this.editorError.set(error instanceof Error ? error.message : 'Non è stato possibile creare la carta.');
     } finally {
@@ -670,7 +825,7 @@ export class Carte implements OnInit, OnDestroy {
 
   protected async eliminaDesign(id: string): Promise<void> {
     await this.api.sendAuthenticatedJson(`/api/carte-designs/${id}`, {}, 'DELETE');
-    await this.loadEditorData();
+    await Promise.all([this.loadEditorData(), this.loadCollezione()]);
   }
 
   protected async eliminaSet(id: string): Promise<void> {
