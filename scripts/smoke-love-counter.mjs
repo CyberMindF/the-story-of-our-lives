@@ -94,7 +94,7 @@ try {
     const copyButton = copiedEpisode.getByRole('menuitem', { name: 'Copia', exact: true });
     await copyButton.click();
     assert.equal(await page.evaluate(() => navigator.clipboard.readText()), 'Data e ora: 01/07/2026 · 17:00:00\nPunteggio: −2\nMotivazione: Una nota privata 💗');
-    assert.equal((await copiedEpisode.getByRole('button', { name: 'Azioni episodio', exact: true }).textContent())?.trim(), '✓');
+    assert.equal(await copiedEpisode.getByRole('button', { name: 'Azioni episodio', exact: true }).locator('.episode-menu-icon.success').count(), 1);
     await page.locator('summary').filter({ hasText: 'Punteggio iniziale' }).click();
     await page.getByLabel('Da quanti punti parti').fill('0');
     await page.getByRole('button', { name: 'Salva partenza', exact: true }).click(); await score(page, -1);

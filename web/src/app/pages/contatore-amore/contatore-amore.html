@@ -107,9 +107,15 @@
                   (click)="toggleEpisodeMenu($event, episode.id)"
                 >
                   @if (copiedEpisodeId() === episode.id) {
-                    <span aria-hidden="true">✓</span>
+                    <svg class="episode-menu-icon success" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m6.5 12.5 3.3 3.3 7.7-8" />
+                    </svg>
                   } @else {
-                    <span class="episode-menu-dots" aria-hidden="true">•••</span>
+                    <svg class="episode-menu-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="5" r="1.7" />
+                      <circle cx="12" cy="12" r="1.7" />
+                      <circle cx="12" cy="19" r="1.7" />
+                    </svg>
                   }
                 </button>
                 @if (openEpisodeMenuId() === episode.id) {
