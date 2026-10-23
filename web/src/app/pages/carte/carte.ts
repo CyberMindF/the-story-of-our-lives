@@ -12,7 +12,6 @@ import { CartaBack } from '../../shared/carta-back/carta-back';
 import { CartaPack } from '../../shared/carta-pack/carta-pack';
 import { CartaAlbumPicker, CartaAlbumPickerItem } from '../../shared/carta-album-picker/carta-album-picker';
 import { RealtimeService } from '../../core/realtime.service';
-import { cardImageError, imageFromClipboard } from '../../shared/card-image-file';
 
 // Stessa formula di streakDayBonus() in functions/api/carte-bustine/_shared.js — qui serve solo
 // per disegnare il calendario, il bonus vero lo assegna sempre il server. Ogni giorno dà
@@ -22,7 +21,7 @@ function streakDayBonus(day: number): number {
 }
 
 type Finitura = CartaFinitura;
-type Tab = 'album' | 'scambi' | 'editor';
+type Tab = 'album' | 'scambi';
 type AlbumTipo = 'normale' | 'tarocchi';
 type CategoriaTarocco = 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari';
 type TradeStato = 'proposto' | 'accettato' | 'rifiutato' | 'controproposto';
@@ -76,24 +75,6 @@ interface Trade {
   richiesta: TradeItem[];
 }
 
-interface CartaSet {
-  id: string;
-  slug: string;
-  nome: string;
-  descrizione: string | null;
-  tipo: AlbumTipo;
-  categoriaTarocco: CategoriaTarocco | null;
-  position: number;
-}
-
-interface CartaDesign {
-  id: string;
-  setId: string;
-  nome: string;
-  immagineKey: string | null;
-  position: number;
-}
-
 interface CandidatoArcano {
   id: string;
   designId: string;
@@ -112,10 +93,8 @@ interface OffertaArcana {
 const IDENTITY_LABELS: Record<UserIdentity, string> = { lui: 'lui', lei: 'lei' };
 
 // Route + card di #e4 (gioco di carte collezionabili) — vedi documentazione/e4-carte-collezionabili.md per il
-// design completo. Un'unica pagina a tab (Bustina/Album/Scambi/+Editor per l'admin) invece di
-// route separate: stesso principio già usato dal pannello GDR, evita di duplicare shell/hero
-// per una feature che è concettualmente un solo posto. L'editor è inline dietro canEdit(),
-// non su una route admin dedicata (pattern dominante nel sito, vedi Barattolo dei Pensieri).
+// design completo. Album e scambi restano qui; il Catalogo admin raccoglie in un solo posto
+// anteprime, set e caricamento delle carte, evitando un secondo editor testuale duplicato.
 @Component({
   selector: 'app-carte',
   standalone: true,
@@ -285,30 +264,6 @@ export class Carte implements OnInit, OnDestroy {
   protected readonly proponendo = signal(false);
   protected readonly tradeError = signal('');
 
-  // --- Editor admin ---
-  protected readonly sets = signal<CartaSet[]>([]);
-  protected readonly designs = signal<CartaDesign[]>([]);
-  protected readonly editorLoadError = signal(false);
-  protected readonly nuovoSetNome = signal('');
-  protected readonly nuovoSetDescrizione = signal('');
-  protected readonly nuovoSetTipo = signal<AlbumTipo>('normale');
-  protected readonly nuovoSetCategoriaTarocco = signal<CategoriaTarocco>('maggiori');
-  protected readonly nuovoDesignSetId = signal('');
-  protected readonly nuovoDesignNome = signal('');
-  protected readonly nuovoDesignFile = signal<File | null>(null);
-  protected readonly nuovoDesignPreview = signal<string | null>(null);
-  protected readonly uploadingDesign = signal(false);
-  protected readonly editorError = signal('');
-
-  protected readonly designsBySet = computed(() => {
-    const groups = new Map<string, CartaDesign[]>();
-    for (const design of this.designs()) {
-      if (!groups.has(design.setId)) groups.set(design.setId, []);
-      groups.get(design.setId)!.push(design);
-    }
-    return groups;
-  });
-
   constructor() {
     effect(() => {
       const balance = this.carteBustineService.balance();
@@ -325,9 +280,6 @@ export class Carte implements OnInit, OnDestroy {
           void Promise.all([this.loadTrades(), this.loadCollezione()]);
         }
       });
-    if (this.canEdit()) {
-      await this.loadEditorData();
-    }
   }
 
   protected selectTab(tab: Tab): void {
@@ -449,7 +401,6 @@ export class Carte implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.animazioneBustinaTimer) clearTimeout(this.animazioneBustinaTimer);
-    this.clearNewDesignFile();
   }
 
   protected onModalBackdropClick(event: MouseEvent): void {
@@ -728,129 +679,4 @@ export class Carte implements OnInit, OnDestroy {
       : item);
   }
 
-  // --- Editor admin ---
-  private async loadEditorData(): Promise<void> {
-    try {
-      const [setsRes, designsRes] = await Promise.all([
-        fetch('/api/carte-sets', { credentials: 'same-origin', headers: { Accept: 'application/json' } }),
-        fetch('/api/carte-designs', { credentials: 'same-origin', headers: { Accept: 'application/json' } })
-      ]);
-      if (!setsRes.ok || !designsRes.ok) throw new Error('Caricamento fallito.');
-      const setsData = (await setsRes.json()) as { sets?: CartaSet[] };
-      const designsData = (await designsRes.json()) as { designs?: CartaDesign[] };
-      this.sets.set(setsData.sets ?? []);
-      this.designs.set(designsData.designs ?? []);
-    } catch (error) {
-      console.error("Errore nel caricamento dell'editor:", error);
-      this.editorLoadError.set(true);
-    }
-  }
-
-  protected async creaSet(): Promise<void> {
-    const nome = this.nuovoSetNome().trim();
-    if (!nome) return;
-
-    const ok = await this.api.sendAuthenticatedJson('/api/carte-sets', {
-      nome,
-      descrizione: this.nuovoSetDescrizione().trim() || undefined,
-      tipo: this.nuovoSetTipo(),
-      categoriaTarocco: this.nuovoSetTipo() === 'tarocchi' ? this.nuovoSetCategoriaTarocco() : undefined
-    }, 'POST');
-    if (!ok) {
-      this.editorError.set('Non è stato possibile creare il set.');
-      return;
-    }
-
-    this.nuovoSetNome.set('');
-    this.nuovoSetDescrizione.set('');
-    this.nuovoSetTipo.set('normale');
-    this.nuovoSetCategoriaTarocco.set('maggiori');
-    await this.loadEditorData();
-  }
-
-  protected onDesignFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file && !this.useNewDesignFile(file)) input.value = '';
-  }
-
-  protected onDesignPaste(event: ClipboardEvent): void {
-    if (this.uploadingDesign()) return;
-    const file = imageFromClipboard(event);
-    if (!file) return;
-    event.preventDefault();
-    this.useNewDesignFile(file);
-  }
-
-  protected async creaDesign(): Promise<void> {
-    const setId = this.nuovoDesignSetId();
-    const nome = this.nuovoDesignNome().trim();
-    const file = this.nuovoDesignFile();
-    if (!setId || !nome) {
-      this.editorError.set('Set e nome sono obbligatori.');
-      return;
-    }
-
-    this.uploadingDesign.set(true);
-    this.editorError.set('');
-
-    try {
-      let immagineKey: string | undefined;
-      if (file) {
-        const uploadResponse = await fetch('/api/carte-media/upload?type=photo', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'Content-Type': file.type },
-          body: file
-        });
-        const uploadResult = await uploadResponse.json().catch(() => ({}));
-        if (!uploadResponse.ok) {
-          throw new Error(typeof uploadResult.error === 'string' ? uploadResult.error : "Upload dell'immagine non riuscito.");
-        }
-        immagineKey = uploadResult.key;
-      }
-
-      const ok = await this.api.sendAuthenticatedJson('/api/carte-designs', { setId: Number(setId), nome, immagineKey }, 'POST');
-      if (!ok) throw new Error('Non è stato possibile creare la carta.');
-
-      this.nuovoDesignNome.set('');
-      this.clearNewDesignFile();
-      await Promise.all([this.loadEditorData(), this.loadCollezione()]);
-    } catch (error) {
-      this.editorError.set(error instanceof Error ? error.message : 'Non è stato possibile creare la carta.');
-    } finally {
-      this.uploadingDesign.set(false);
-    }
-  }
-
-  protected async eliminaDesign(id: string): Promise<void> {
-    await this.api.sendAuthenticatedJson(`/api/carte-designs/${id}`, {}, 'DELETE');
-    await Promise.all([this.loadEditorData(), this.loadCollezione()]);
-  }
-
-  protected async eliminaSet(id: string): Promise<void> {
-    const ok = await this.api.sendAuthenticatedJson(`/api/carte-sets/${id}`, {}, 'DELETE');
-    if (!ok) {
-      this.editorError.set('Non è stato possibile eliminare il set: contiene ancora delle carte.');
-      return;
-    }
-    await this.loadEditorData();
-  }
-
-  private useNewDesignFile(file: File): boolean {
-    const error = cardImageError(file);
-    this.editorError.set(error ?? '');
-    if (error) return false;
-    this.clearNewDesignFile();
-    this.nuovoDesignFile.set(file);
-    this.nuovoDesignPreview.set(URL.createObjectURL(file));
-    return true;
-  }
-
-  private clearNewDesignFile(): void {
-    const preview = this.nuovoDesignPreview();
-    if (preview) URL.revokeObjectURL(preview);
-    this.nuovoDesignPreview.set(null);
-    this.nuovoDesignFile.set(null);
-  }
 }

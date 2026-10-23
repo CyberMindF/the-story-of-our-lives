@@ -1,6 +1,7 @@
 :host { display: block; }
 .catalog-heading, .detail-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .catalog-heading { margin-block: 1.5rem; flex-wrap: wrap; }
+.catalog-heading-actions, .catalog-set-actions, .detail-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
 h1 { margin: .3rem 0 .6rem; }
 .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .75rem; color: var(--muted-color); }
 .catalog-heading p { max-width: 46rem; }
@@ -11,7 +12,10 @@ label { display: grid; gap: .4rem; font-size: .9rem; }
 input, select { box-sizing: border-box; width: 100%; min-width: 0; padding: .7rem; border: 1px solid var(--border-color); border-radius: .6rem; background: var(--input-bg); color: var(--text-color); font: inherit; }
 .catalog-filters p { margin: 0 0 .7rem; color: var(--muted-color); }
 .catalog-set { margin-block: 2rem; }
-.catalog-set h2 { display: flex; align-items: baseline; flex-wrap: wrap; gap: .8rem; }
+.catalog-set-heading { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 1rem; }
+.catalog-set-heading > div:first-child { min-width: 0; }
+.catalog-set-heading p { margin: .3rem 0 0; color: var(--muted-color); font-size: .9rem; }
+.catalog-set h2 { display: flex; align-items: baseline; flex-wrap: wrap; gap: .8rem; margin: 0; }
 .catalog-set h2 span { font-size: .85rem; font-weight: normal; color: var(--muted-color); }
 .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr)); gap: 1rem; }
 .catalog-card { min-width: 0; border: 1px solid var(--border-color); border-radius: 1rem; padding: .75rem; display: flex; flex-direction: column; align-items: stretch; }
@@ -19,6 +23,9 @@ input, select { box-sizing: border-box; width: 100%; min-width: 0; padding: .7re
 .catalog-preview img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .catalog-card h3 { font-size: 1rem; overflow-wrap: anywhere; margin: .8rem 0; flex: 1; }
 .catalog-card .btn { font-size: .85rem; }
+.catalog-add-card { min-height: 15rem; border: 1px dashed var(--border-color); border-radius: 1rem; background: transparent; color: var(--muted-color); font: inherit; cursor: pointer; display: grid; place-content: center; gap: .7rem; }
+.catalog-add-card span { color: var(--accent-color); font-size: 2rem; }
+.catalog-add-card:hover { border-color: var(--accent-color); color: var(--text-color); }
 .catalog-placeholder { display: grid; place-content: center; gap: .75rem; height: 100%; font-size: 3rem; }
 .catalog-placeholder small { font-size: .8rem; }
 .catalog-empty { padding: 2rem 0; }
@@ -31,6 +38,11 @@ input, select { box-sizing: border-box; width: 100%; min-width: 0; padding: .7re
 .detail-preview { min-width: 0; display: grid; align-content: start; gap: 1rem; }
 .detail-preview app-carta-tilt { display: block; width: min(100%, 300px); margin-inline: auto; }
 .detail-info { min-width: 0; overflow-wrap: anywhere; }
+.detail-actions { margin-top: 1rem; }
+.btn-danger { border-color: color-mix(in srgb, #ff6b6b 55%, var(--border-color)); color: color-mix(in srgb, #ff8b8b 80%, var(--text-color)); }
+.btn-danger:hover:not(:disabled) { background: color-mix(in srgb, #9f2430 38%, transparent); }
+.optional { color: var(--muted-color); font-weight: normal; }
+.catalog-set-dialog { width: min(560px, calc(100vw - 2rem)); }
 fieldset { display: grid; gap: 1rem; margin: 0; padding: 0; border: 0; min-width: 0; }
 .form-error { color: var(--text-color); border-left: 3px solid var(--accent-color); padding-left: .75rem; }
 .paste-hint { padding: .75rem; border: 1px dashed var(--border-color); border-radius: .7rem; background: color-mix(in srgb, var(--input-bg) 78%, transparent); }
@@ -40,4 +52,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent-color); 
   .catalog-dialog { padding: 1rem; }
   .detail-layout { grid-template-columns: 1fr; gap: 1rem; }
   .detail-preview app-carta-tilt { width: min(55vw, 240px); }
+  .catalog-set-heading { align-items: stretch; flex-direction: column; }
+  .catalog-set-actions .btn { flex: 1; }
 }

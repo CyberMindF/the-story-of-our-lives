@@ -27,15 +27,10 @@
       <span class="carte-tab-badge">{{ tradesInSospeso() }}</span>
       }
     </button>
-    @if (canEdit()) {
-    <button type="button" role="tab" class="carte-tab" [class.is-active]="tab() === 'editor'"
-      (click)="selectTab('editor')">Editor</button>
+    @if (isAdmin()) {
+    <a class="carte-tab" routerLink="/tavolo-da-gioco/carte/catalogo">Catalogo</a>
     }
   </nav>
-
-  @if (isAdmin()) {
-  <p><a class="btn" routerLink="/tavolo-da-gioco/carte/catalogo">Anteprima di tutte le carte · Admin</a></p>
-  }
 
   @if (tab() === 'album') {
   <section class="carte-album-panel glass-surface">
@@ -318,75 +313,6 @@
       }
     </article>
     } @empty { <p class="carte-trade-history-empty">Non ci sono ancora scambi. La prima proposta può partire da qui.</p>
-    }
-  </section>
-  }
-
-  @if (tab() === 'editor' && canEdit()) {
-  <section class="carte-editor-panel glass-surface" (paste)="onDesignPaste($event)">
-    @if (editorLoadError()) {
-    <p class="carte-error">Non è stato possibile caricare l'editor.</p>
-    }
-    @if (editorError()) {
-    <p class="carte-error">{{ editorError() }}</p>
-    }
-
-    <h2>Nuovo set</h2>
-    <input type="text" placeholder="Nome del set" [ngModel]="nuovoSetNome()"
-      (ngModelChange)="nuovoSetNome.set($event)" />
-    <input type="text" placeholder="Descrizione (opzionale)" [ngModel]="nuovoSetDescrizione()"
-      (ngModelChange)="nuovoSetDescrizione.set($event)" />
-    <select [ngModel]="nuovoSetTipo()" (ngModelChange)="nuovoSetTipo.set($event)">
-      <option value="normale">Carte normali</option>
-      <option value="tarocchi">Tarocchi</option>
-    </select>
-    @if (nuovoSetTipo() === 'tarocchi') {
-    <select [ngModel]="nuovoSetCategoriaTarocco()" (ngModelChange)="nuovoSetCategoriaTarocco.set($event)">
-      <option value="maggiori">Arcani Maggiori</option>
-      <option value="bastoni">Bastoni</option>
-      <option value="coppe">Coppe</option>
-      <option value="spade">Spade</option>
-      <option value="denari">Denari</option>
-    </select>
-    }
-    <button type="button" class="btn btn-submit" (click)="creaSet()">Crea set</button>
-
-    <h2>Nuova carta</h2>
-    <select [ngModel]="nuovoDesignSetId()" (ngModelChange)="nuovoDesignSetId.set($event)">
-      <option value="">— scegli un set —</option>
-      @for (set of sets(); track set.id) {
-      <option [value]="set.id">{{ set.nome }}</option>
-      }
-    </select>
-    <input type="text" placeholder="Nome della carta" [ngModel]="nuovoDesignNome()"
-      (ngModelChange)="nuovoDesignNome.set($event)" />
-    <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onDesignFileSelected($event)" />
-    <p class="carte-editor-paste-hint"><span aria-hidden="true">📋</span> Oppure copia un’immagine e premi <kbd>Ctrl</kbd> + <kbd>V</kbd> o <kbd>Cmd</kbd> + <kbd>V</kbd> mentre sei nell’Editor.</p>
-    @if (nuovoDesignPreview(); as preview) {
-    <div class="carte-editor-image-ready" role="status">
-      <img [src]="preview" alt="Anteprima dell’immagine pronta per la nuova carta" />
-      <span>Immagine pronta: {{ nuovoDesignFile()?.name || 'immagine dagli appunti' }}</span>
-    </div>
-    }
-    <button type="button" class="btn btn-submit" [disabled]="uploadingDesign()" (click)="creaDesign()">
-      {{ uploadingDesign() ? 'Caricamento…' : 'Crea carta' }}
-    </button>
-
-    @for (set of sets(); track set.id) {
-    <div class="carte-editor-set">
-      <h3>{{ set.nome }}
-        @if (set.tipo === 'tarocchi') { <span class="carte-editor-set-kind">Tarocchi</span> }
-        <button type="button" class="btn" (click)="eliminaSet(set.id)">Elimina set</button>
-      </h3>
-      <ul>
-        @for (design of designsBySet().get(set.id) ?? []; track design.id) {
-        <li>{{ design.nome }}
-          <a class="btn" routerLink="/tavolo-da-gioco/carte/catalogo" [queryParams]="{ carta: design.id }">Anteprima e modifica</a>
-          <button type="button" class="btn" (click)="eliminaDesign(design.id)">Elimina</button>
-        </li>
-        }
-      </ul>
-    </div>
     }
   </section>
   }

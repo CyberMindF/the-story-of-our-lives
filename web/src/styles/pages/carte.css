@@ -34,6 +34,7 @@
   display: inline-flex;
   align-items: center;
   gap: .4rem;
+  text-decoration: none;
 }
 .carte-tab.is-active {
   background: color-mix(in srgb, var(--accent-color) 55%, transparent);
@@ -49,8 +50,7 @@
 }
 
 .carte-album-panel,
-.carte-trade-panel,
-.carte-editor-panel {
+.carte-trade-panel {
   border-width: 1px;
   border-style: solid;
   border-radius: 1rem;
@@ -395,16 +395,9 @@ app-carta-back { display: block; width: 100%; }
   .carte-trade-submit .btn { width: 100%; }
 }
 
-.carte-editor-set { margin-block: .8rem; }
-.carte-editor-set-kind { margin-inline: .35rem; color: #d8ad68; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
-.carte-editor-set ul { list-style: none; margin: .4rem 0 0; padding: 0; display: grid; gap: .3rem; }
-
 .carte-trade-panel input,
 .carte-trade-panel select,
-.carte-trade-panel textarea,
-.carte-editor-panel input,
-.carte-editor-panel select,
-.carte-editor-panel textarea {
+.carte-trade-panel textarea {
   width: 100%;
   box-sizing: border-box;
   border: 1px solid var(--border-color);
@@ -416,17 +409,9 @@ app-carta-back { display: block; width: 100%; }
   margin-bottom: .5rem;
 }
 .carte-trade-panel input::placeholder,
-.carte-trade-panel textarea::placeholder,
-.carte-editor-panel input::placeholder { color: var(--muted-color); opacity: 1; }
-.carte-trade-panel h2,
-.carte-editor-panel h2 { margin-top: 1.4rem; }
-.carte-trade-panel h2:first-child,
-.carte-editor-panel h2:first-child { margin-top: 0; }
-.carte-editor-paste-hint { margin: 0; padding: .75rem; border: 1px dashed var(--border-color); border-radius: .7rem; color: var(--muted-color); font-size: .85rem; line-height: 1.5; }
-.carte-editor-paste-hint kbd { display: inline-block; padding: .06rem .3rem; border: 1px solid var(--border-color); border-bottom-width: 2px; border-radius: .3rem; background: var(--button-bg); color: var(--text-color); font: inherit; font-size: .78rem; }
-.carte-editor-image-ready { display: flex; align-items: center; gap: .75rem; min-width: 0; color: var(--muted-color); font-size: .85rem; }
-.carte-editor-image-ready img { width: 4.5rem; height: 4.5rem; object-fit: contain; flex: 0 0 auto; border: 1px solid var(--border-color); border-radius: .6rem; background: var(--input-bg); }
-.carte-editor-image-ready span { overflow-wrap: anywhere; }
+.carte-trade-panel textarea::placeholder { color: var(--muted-color); opacity: 1; }
+.carte-trade-panel h2 { margin-top: 1.4rem; }
+.carte-trade-panel h2:first-child { margin-top: 0; }
 
 .carte-slot--clickable { cursor: pointer; }
 .carte-slot--clickable:hover,

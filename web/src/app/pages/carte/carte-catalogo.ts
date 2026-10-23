@@ -17,9 +17,14 @@ interface Design {
 interface CardSet {
   id: string;
   nome: string;
+  descrizione: string | null;
   tipo: 'normale' | 'tarocchi';
   categoriaTarocco: 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari' | null;
+  position: number;
 }
+
+type SetTipo = CardSet['tipo'];
+type CategoriaTarocco = NonNullable<CardSet['categoriaTarocco']>;
 
 @Component({
   selector: 'app-carte-catalogo',
@@ -31,6 +36,7 @@ export class CarteCatalogo implements OnInit, OnDestroy {
   private readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   @ViewChild('details', { static: true }) private details!: ElementRef<HTMLDialogElement>;
+  @ViewChild('setDetails', { static: true }) private setDetails!: ElementRef<HTMLDialogElement>;
   protected readonly canEdit = computed(() => this.auth.isAdmin() && this.auth.adminModeEnabled() && !this.auth.currentUser()?.isTest);
   protected readonly designs = signal<Design[]>([]);
   protected readonly sets = signal<CardSet[]>([]);
@@ -50,6 +56,20 @@ export class CarteCatalogo implements OnInit, OnDestroy {
   protected readonly finish = signal<CartaFinitura>('flat');
   protected readonly finishes = CARTA_FINITURE;
   protected readonly finishLabels = CARTA_FINITURA_LABELS;
+  protected readonly selectedSet = signal<CardSet | null>(null);
+  protected readonly setName = signal('');
+  protected readonly setDescription = signal('');
+  protected readonly setType = signal<SetTipo>('normale');
+  protected readonly setCategory = signal<CategoriaTarocco>('maggiori');
+  protected readonly setSaving = signal(false);
+  protected readonly setError = signal('');
+  protected readonly categoryLabels: Record<CategoriaTarocco, string> = {
+    maggiori: 'Arcani Maggiori',
+    bastoni: 'Bastoni',
+    coppe: 'Coppe',
+    spade: 'Spade',
+    denari: 'Denari'
+  };
   private file: File | null = null;
   protected readonly previewUrl = computed(() => this.filePreview() ?? this.imageUrl(this.imageKey()));
   protected readonly isTarot = computed(() => this.sets().find((set) => set.id === this.setId())?.tipo === 'tarocchi');
@@ -59,9 +79,14 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     return this.designs().filter((card) => (!setId || card.setId === setId)
       && (!term || card.nome.toLocaleLowerCase('it').includes(term)));
   });
-  protected readonly groups = computed(() => this.sets()
-    .map((set) => ({ ...set, cards: this.filtered().filter((card) => card.setId === set.id) }))
-    .filter((set) => set.cards.length > 0));
+  protected readonly groups = computed(() => {
+    const term = this.search().trim();
+    const filterSet = this.filterSet();
+    return this.sets()
+      .filter((set) => !filterSet || set.id === filterSet)
+      .map((set) => ({ ...set, cards: this.filtered().filter((card) => card.setId === set.id) }))
+      .filter((set) => !term || set.cards.length > 0);
+  });
 
   async ngOnInit(): Promise<void> {
     await this.load();
@@ -91,12 +116,12 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     return key ? `/api/media/${key}` : null;
   }
 
-  protected open(card: Design | null): void {
+  protected open(card: Design | null, preferredSetId = ''): void {
     if (!card && !this.canEdit()) return;
     this.clearFile();
     this.selected.set(card);
     this.name.set(card?.nome ?? '');
-    this.setId.set(card?.setId ?? (this.filterSet() || this.sets()[0]?.id || ''));
+    this.setId.set(card?.setId ?? (preferredSetId || this.filterSet() || this.sets()[0]?.id || ''));
     this.imageKey.set(card?.immagineKey ?? null);
     this.editing.set(card === null);
     this.finish.set('flat');
@@ -168,6 +193,100 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     }
   }
 
+  protected openSet(set: CardSet | null): void {
+    if (!this.canEdit()) return;
+    this.selectedSet.set(set);
+    this.setName.set(set?.nome ?? '');
+    this.setDescription.set(set?.descrizione ?? '');
+    this.setType.set(set?.tipo ?? 'normale');
+    this.setCategory.set(set?.categoriaTarocco ?? 'maggiori');
+    this.setError.set('');
+    this.setDetails.nativeElement.showModal();
+  }
+
+  protected closeSet(): void {
+    if (this.setSaving()) return;
+    this.setDetails.nativeElement.close();
+  }
+
+  protected cancelSetDialog(event: Event): void {
+    event.preventDefault();
+    this.closeSet();
+  }
+
+  protected async saveSet(): Promise<void> {
+    if (!this.canEdit() || this.setSaving()) return;
+    const nome = this.setName().trim();
+    if (!nome) {
+      this.setError.set('Inserisci il nome del set.');
+      return;
+    }
+    this.setSaving.set(true);
+    this.setError.set('');
+    const current = this.selectedSet();
+    try {
+      const saved = await this.request<CardSet>(current ? `/api/carte-sets/${current.id}` : '/api/carte-sets', {
+        method: current ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome,
+          descrizione: this.setDescription().trim(),
+          tipo: this.setType(),
+          categoriaTarocco: this.setType() === 'tarocchi' ? this.setCategory() : null
+        })
+      });
+      this.sets.update((items) => [...items.filter((item) => item.id !== saved.id), saved]
+        .sort((a, b) => a.position - b.position || Number(a.id) - Number(b.id)));
+      this.filterSet.set(saved.id);
+      this.search.set('');
+      this.notice.set(current ? `Set “${saved.nome}” aggiornato.` : `Set “${saved.nome}” creato.`);
+      this.setDetails.nativeElement.close();
+    } catch (error) {
+      this.setError.set(this.errorMessage(error));
+    } finally {
+      this.setSaving.set(false);
+    }
+  }
+
+  protected setCardCount(setId: string): number {
+    return this.designs().filter((card) => card.setId === setId).length;
+  }
+
+  protected async deleteSet(set: CardSet): Promise<void> {
+    if (!this.canEdit() || this.setSaving() || this.setCardCount(set.id) > 0) return;
+    if (!window.confirm(`Eliminare il set “${set.nome}”?`)) return;
+    this.setSaving.set(true);
+    this.setError.set('');
+    try {
+      await this.request<{ ok: boolean }>(`/api/carte-sets/${set.id}`, { method: 'DELETE' });
+      this.sets.update((items) => items.filter((item) => item.id !== set.id));
+      if (this.filterSet() === set.id) this.filterSet.set('');
+      this.notice.set(`Set “${set.nome}” eliminato.`);
+      if (this.setDetails.nativeElement.open) this.setDetails.nativeElement.close();
+    } catch (error) {
+      this.setError.set(this.errorMessage(error));
+    } finally {
+      this.setSaving.set(false);
+    }
+  }
+
+  protected async deleteCard(card: Design): Promise<void> {
+    if (!this.canEdit() || this.saving()) return;
+    if (!window.confirm(`Eliminare la carta “${card.nome}”? Verrà rimossa anche dagli album.`)) return;
+    this.saving.set(true);
+    this.formError.set('');
+    try {
+      await this.request<{ ok: boolean }>(`/api/carte-designs/${card.id}`, { method: 'DELETE' });
+      this.designs.update((items) => items.filter((item) => item.id !== card.id));
+      this.notice.set(`“${card.nome}” eliminata dal gioco.`);
+      this.details.nativeElement.close();
+    } catch (error) {
+      this.formError.set(this.errorMessage(error));
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
   private async request<T>(url: string, init: RequestInit = {}): Promise<T> {
     const response = await fetch(url, { credentials: 'same-origin', ...init });
     const data = await response.json();
@@ -198,6 +317,7 @@ export class CarteCatalogo implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.clearFile();
-    this.details.nativeElement.close();
+    if (this.details.nativeElement.open) this.details.nativeElement.close();
+    if (this.setDetails.nativeElement.open) this.setDetails.nativeElement.close();
   }
 }
