@@ -60,7 +60,7 @@ export async function onRequestGet(context) {
         setId: String(row.set_id),
         setNome: row.set_nome,
         setTipo: row.set_tipo,
-        categoriaTarocco: row.categoria_tarocco,
+        categoriaTarocco: row.set_tipo === "tarocchi" ? (row.categoria_tarocco ?? "speciali") : null,
         immagineKey: row.definizione_immagine_key ?? row.design_immagine_key,
         quantitaMia: row.quantita_mia,
         quantitaAltro: row.quantita_altro

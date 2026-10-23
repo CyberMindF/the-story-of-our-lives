@@ -64,7 +64,7 @@ export async function readOpenOffer(env, userId) {
       designNome: row.design_nome,
       immagineKey: row.immagine_key,
       finitura: row.finitura,
-      categoriaTarocco: row.categoria_tarocco
+      categoriaTarocco: row.categoria_tarocco ?? "speciali"
     }))
   };
 }

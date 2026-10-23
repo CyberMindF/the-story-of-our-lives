@@ -19,7 +19,7 @@ interface CardSet {
   nome: string;
   descrizione: string | null;
   tipo: 'normale' | 'tarocchi';
-  categoriaTarocco: 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari' | null;
+  categoriaTarocco: 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari' | 'speciali' | null;
   position: number;
 }
 
@@ -56,6 +56,8 @@ export class CarteCatalogo implements OnInit, OnDestroy {
   protected readonly finish = signal<CartaFinitura>('flat');
   protected readonly finishes = CARTA_FINITURE;
   protected readonly finishLabels = CARTA_FINITURA_LABELS;
+  protected readonly creatingTarot = signal(false);
+  protected readonly tarotCategory = signal<CategoriaTarocco>('maggiori');
   protected readonly selectedSet = signal<CardSet | null>(null);
   protected readonly setName = signal('');
   protected readonly setDescription = signal('');
@@ -68,11 +70,13 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     bastoni: 'Bastoni',
     coppe: 'Coppe',
     spade: 'Spade',
-    denari: 'Denari'
+    denari: 'Denari',
+    speciali: 'Presagi'
   };
   private file: File | null = null;
   protected readonly previewUrl = computed(() => this.filePreview() ?? this.imageUrl(this.imageKey()));
-  protected readonly isTarot = computed(() => this.sets().find((set) => set.id === this.setId())?.tipo === 'tarocchi');
+  protected readonly isTarot = computed(() => this.creatingTarot()
+    || this.sets().find((set) => set.id === this.setId())?.tipo === 'tarocchi');
   protected readonly filtered = computed(() => {
     const term = this.search().trim().toLocaleLowerCase('it');
     const setId = this.filterSet();
@@ -120,10 +124,26 @@ export class CarteCatalogo implements OnInit, OnDestroy {
     if (!card && !this.canEdit()) return;
     this.clearFile();
     this.selected.set(card);
+    this.creatingTarot.set(false);
     this.name.set(card?.nome ?? '');
     this.setId.set(card?.setId ?? (preferredSetId || this.filterSet() || this.sets()[0]?.id || ''));
     this.imageKey.set(card?.immagineKey ?? null);
     this.editing.set(card === null);
+    this.finish.set('flat');
+    this.formError.set('');
+    this.details.nativeElement.showModal();
+  }
+
+  protected openTarot(): void {
+    if (!this.canEdit()) return;
+    this.clearFile();
+    this.selected.set(null);
+    this.creatingTarot.set(true);
+    this.tarotCategory.set('maggiori');
+    this.name.set('');
+    this.setId.set('');
+    this.imageKey.set(null);
+    this.editing.set(true);
     this.finish.set('flat');
     this.formError.set('');
     this.details.nativeElement.showModal();
@@ -158,8 +178,8 @@ export class CarteCatalogo implements OnInit, OnDestroy {
   protected async save(): Promise<void> {
     if (!this.canEdit() || this.saving()) return;
     const nome = this.name().trim();
-    if (!nome || !this.setId()) {
-      this.formError.set('Inserisci il nome e scegli un set.');
+    if (!nome || (!this.creatingTarot() && !this.setId())) {
+      this.formError.set(this.creatingTarot() ? 'Inserisci il nome del Tarocco.' : 'Inserisci il nome e scegli un set.');
       return;
     }
     this.saving.set(true);
@@ -172,6 +192,25 @@ export class CarteCatalogo implements OnInit, OnDestroy {
         this.imageKey.set(result.key);
         this.clearFile();
       }
+      if (this.creatingTarot()) {
+        const categoria = this.tarotCategory();
+        let tarotSet = this.sets().find((set) => set.tipo === 'tarocchi' && set.categoriaTarocco === categoria);
+        if (!tarotSet) {
+          tarotSet = await this.request<CardSet>('/api/carte-sets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nome: this.categoryLabels[categoria],
+              tipo: 'tarocchi',
+              categoriaTarocco: categoria
+            })
+          });
+          const createdSet = tarotSet;
+          this.sets.update((items) => [...items, createdSet]
+            .sort((a, b) => a.position - b.position || Number(a.id) - Number(b.id)));
+        }
+        this.setId.set(tarotSet.id);
+      }
       const current = this.selected();
       const saved = await this.request<Design>(current ? `/api/carte-designs/${current.id}` : '/api/carte-designs', {
         method: current ? 'PUT' : 'POST',
@@ -181,6 +220,7 @@ export class CarteCatalogo implements OnInit, OnDestroy {
       this.designs.update((items) => [...items.filter((item) => item.id !== saved.id), saved]
         .sort((a, b) => a.position - b.position || Number(a.id) - Number(b.id)));
       this.selected.set(saved);
+      this.creatingTarot.set(false);
       this.editing.set(false);
       this.notice.set(current ? `“${saved.nome}” aggiornata.` : `“${saved.nome}” aggiunta al gioco.`);
       // Il risultato resta visibile anche se nome o set non corrispondono piu ai filtri.

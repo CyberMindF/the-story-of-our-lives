@@ -2,6 +2,8 @@
 .catalog-heading, .detail-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .catalog-heading { margin-block: 1.5rem; flex-wrap: wrap; }
 .catalog-heading-actions, .catalog-set-actions, .detail-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+.btn-arcano { border-color: color-mix(in srgb, #d8ad68 65%, var(--border-color)); background: color-mix(in srgb, #6e315f 24%, transparent); }
+.btn-arcano:hover:not(:disabled) { background: color-mix(in srgb, #8b467b 38%, transparent); }
 h1 { margin: .3rem 0 .6rem; }
 .catalog-editor-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; margin-bottom: 2rem; padding: 1.1rem 1.2rem; border: 1px solid var(--border-color); border-radius: 1rem; }
 .catalog-editor-toolbar h2, .catalog-library-heading h2 { margin: .2rem 0; }

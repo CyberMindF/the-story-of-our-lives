@@ -23,7 +23,7 @@ function streakDayBonus(day: number): number {
 type Finitura = CartaFinitura;
 type Tab = 'album' | 'scambi';
 type AlbumTipo = 'normale' | 'tarocchi';
-type CategoriaTarocco = 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari';
+type CategoriaTarocco = 'maggiori' | 'bastoni' | 'coppe' | 'spade' | 'denari' | 'speciali';
 type TradeStato = 'proposto' | 'accettato' | 'rifiutato' | 'controproposto';
 
 interface CartaPescata {

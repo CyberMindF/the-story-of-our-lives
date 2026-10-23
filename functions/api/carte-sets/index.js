@@ -72,13 +72,16 @@ export async function onRequestPost(context) {
 }
 
 export function toSetView(row) {
+  const tipo = row.tipo ?? "normale";
   return {
     id: String(row.id),
     slug: row.slug,
     nome: row.nome,
     descrizione: row.descrizione,
-    tipo: row.tipo ?? "normale",
-    categoriaTarocco: row.categoria_tarocco ?? null,
+    tipo,
+    // Nel database NULL identifica i Presagi quando il set e un Tarocco. In questo
+    // modo la categoria bonus resta compatibile con il vincolo delle migrazioni precedenti.
+    categoriaTarocco: tipo === "tarocchi" ? (row.categoria_tarocco ?? "speciali") : null,
     position: row.position
   };
 }
@@ -86,5 +89,6 @@ export function toSetView(row) {
 export function normalizeCategoriaTarocco(value, tipo) {
   if (tipo !== "tarocchi") return null;
   const allowed = new Set(["maggiori", "bastoni", "coppe", "spade", "denari"]);
+  if (value === "speciali" || value === null) return null;
   return typeof value === "string" && allowed.has(value) ? value : undefined;
 }

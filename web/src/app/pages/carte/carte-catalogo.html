@@ -16,6 +16,7 @@
     <div class="catalog-heading-actions">
       <button type="button" class="btn" [disabled]="loading() || !!error()" (click)="openSet(null)">+ Nuovo set</button>
       <button type="button" class="btn btn-submit" [disabled]="loading() || !!error() || !sets().length" (click)="open(null)">+ Nuova carta</button>
+      <button type="button" class="btn btn-arcano" [disabled]="loading() || !!error()" (click)="openTarot()">🔮 Nuovo Tarocco</button>
     </div>
   </section>
 
@@ -97,7 +98,7 @@
 
   <dialog #details class="catalog-dialog" (cancel)="cancelDialog($event)" (paste)="onPaste($event)" aria-labelledby="catalog-detail-title">
     <header class="detail-heading">
-      <h2 id="catalog-detail-title">{{ selected() ? (editing() ? 'Modifica carta' : selected()!.nome) : 'Nuova carta' }}</h2>
+      <h2 id="catalog-detail-title">{{ creatingTarot() ? 'Nuovo Tarocco' : (selected() ? (editing() ? 'Modifica carta' : selected()!.nome) : 'Nuova carta') }}</h2>
       <button type="button" class="btn" [disabled]="saving()" (click)="close()" aria-label="Chiudi anteprima">Chiudi</button>
     </header>
     @if (details.open) {
@@ -122,17 +123,31 @@
             <label>Nome della carta
               <input name="nome" required [ngModel]="name()" (ngModelChange)="name.set($event)" />
             </label>
+            @if (creatingTarot()) {
+            <label>Categoria
+              <select name="tarotCategory" [ngModel]="tarotCategory()" (ngModelChange)="tarotCategory.set($event)">
+                <option value="maggiori">Arcani Maggiori</option>
+                <option value="bastoni">Bastoni</option>
+                <option value="coppe">Coppe</option>
+                <option value="spade">Spade</option>
+                <option value="denari">Denari</option>
+                <option value="speciali">Presagi · carte bonus senza numero</option>
+              </select>
+            </label>
+            <p class="catalog-hint">Se la categoria non esiste ancora, verrà creato automaticamente il relativo set.</p>
+            } @else {
             <label>Set
               <select name="set" required [ngModel]="setId()" (ngModelChange)="setId.set($event)">
                 <option value="" disabled>Scegli un set</option>
                 @for (set of sets(); track set.id) { <option [value]="set.id">{{ set.nome }}{{ set.tipo === 'tarocchi' ? ' · Tarocchi' : '' }}</option> }
               </select>
             </label>
+            }
             <label>{{ imageKey() ? 'Sostituisci immagine' : 'Immagine' }}
               <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFile($event)" />
             </label>
             <p class="catalog-hint paste-hint"><span aria-hidden="true">📋</span> JPG, PNG o WebP, fino a 15 MB. Puoi anche copiare un’immagine e premere <kbd>Ctrl</kbd> + <kbd>V</kbd> o <kbd>Cmd</kbd> + <kbd>V</kbd> in questa finestra.</p>
-            <button type="submit" class="btn btn-submit" [disabled]="!name().trim() || !setId()">{{ saving() ? 'Salvataggio…' : 'Salva carta' }}</button>
+            <button type="submit" class="btn btn-submit" [disabled]="!name().trim() || (!creatingTarot() && !setId())">{{ saving() ? 'Salvataggio…' : (creatingTarot() ? 'Crea Tarocco' : 'Salva carta') }}</button>
           </fieldset>
         </form>
         } @else {
@@ -188,6 +203,7 @@
             <option value="coppe">Coppe</option>
             <option value="spade">Spade</option>
             <option value="denari">Denari</option>
+            <option value="speciali">Presagi · carte bonus senza numero</option>
           </select>
         </label>
         }
