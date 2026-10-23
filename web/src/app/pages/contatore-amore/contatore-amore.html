@@ -12,10 +12,13 @@
     }
     @if (state(); as data) {
       <section class="counter-panel panel" aria-label="Registra un episodio" [style.--score-color]="color()">
-        <div class="score-orb">
-          <span aria-hidden="true" class="heart">♡</span>
-          <strong class="score" aria-label="Punteggio attuale" [style.font-size.px]="scoreFontSize()">{{ stats()!.current }}</strong>
-          <span>punti, adesso</span>
+        <div class="score-orb" [style.--liquid-level]="liquidLevel() + '%'">
+          <span class="score-liquid" aria-hidden="true"></span>
+          <span class="score-glass-shine" aria-hidden="true"></span>
+          <div class="score-content">
+            <span aria-hidden="true" class="heart">♡</span>
+            <strong class="score" aria-label="Punteggio attuale" [style.font-size.px]="scoreFontSize()">{{ stats()!.current }}</strong>
+          </div>
         </div>
         <p class="baseline">Partenza: {{ data.settings.initialScore }} · da lì, {{ signed(stats()!.net) }}</p>
         <div class="quick-actions">
@@ -95,6 +98,7 @@
                   <p>{{ episode.reason || 'Nessuna nota' }}</p></div>
               </div>
               <div class="episode-actions">
+                <button class="btn" type="button" (click)="copyEpisode(episode)" aria-label="Copia episodio">{{ copiedEpisodeId() === episode.id ? 'Copiato ✓' : 'Copia' }}</button>
                 <button class="btn" (click)="startEdit(episode)" [disabled]="busy() || !!pendingQuick()">Modifica</button>
                 <button class="btn" (click)="deleting.set(episode)" [disabled]="busy() || !!pendingQuick()">Elimina</button>
               </div>

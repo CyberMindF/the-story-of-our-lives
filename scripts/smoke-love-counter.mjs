@@ -45,6 +45,7 @@ const screenshots = await mkdtemp(join(tmpdir(), 'love-counter-'));
 const browser = await chromium.launch();
 const open = async (user, width) => {
   const context = await browser.newContext({ viewport: { width, height: 900 }, timezoneId: 'Europe/Rome', reducedMotion: 'reduce', hasTouch: true });
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: base });
   await context.addCookies([{ name: 'counter-user', value: String(user), url: base }]);
   await context.addInitScript(id => {
     sessionStorage.setItem('noi-crossword-access-session-v1', String(id));
@@ -64,6 +65,8 @@ try {
     harness.sqlite.exec('DELETE FROM love_counter_episodes; DELETE FROM love_counter_settings;');
     const { page, context } = await open(1, width);
     await score(page, 20);
+    assert.equal(await page.getByText('punti, adesso', { exact: true }).count(), 0, 'La label ridondante non deve comparire');
+    assert.equal(await page.locator('.score-orb').evaluate(element => element.style.getPropertyValue('--liquid-level')), '92%');
     await page.getByRole('button', { name: 'Registra un episodio positivo, più 1', exact: true }).click(); await score(page, 21);
     await page.getByRole('button', { name: 'Registra un episodio negativo, meno 1', exact: true }).click(); await score(page, 20);
     assert.equal(await page.locator('.episode').count(), 2);
@@ -72,13 +75,20 @@ try {
     await page.getByLabel('Punteggio', { exact: true }).selectOption({ label: '−2 · eccezionale' });
     await page.getByLabel('Data e ora locali').fill('2026-07-01T17:00');
     await page.getByRole('button', { name: 'Salva episodio', exact: true }).click(); await score(page, 19);
+    assert.ok(Number.parseFloat(await page.locator('.score-orb').evaluate(element => element.style.getPropertyValue('--liquid-level'))) < 92);
     const stored = harness.sqlite.prepare("SELECT * FROM love_counter_episodes WHERE reason <> ''").get();
     assert.equal(stored.occurred_at, '2026-07-01T15:00:00.000Z');
     await page.reload(); await score(page, 19);
     await page.getByText('Una nota privata 💗', { exact: true }).waitFor();
+    const copiedEpisode = page.locator('.episode').filter({ hasText: 'Una nota privata 💗' });
+    const copyButton = copiedEpisode.getByRole('button', { name: 'Copia episodio', exact: true });
+    await copyButton.click();
+    assert.equal(await page.evaluate(() => navigator.clipboard.readText()), 'Data e ora: 01/07/2026 · 17:00:00\nPunteggio: −2\nMotivazione: Una nota privata 💗');
+    assert.equal((await copyButton.textContent())?.trim(), 'Copiato ✓');
     await page.locator('summary').filter({ hasText: 'Punteggio iniziale' }).click();
     await page.getByLabel('Da quanti punti parti').fill('0');
     await page.getByRole('button', { name: 'Salva partenza', exact: true }).click(); await score(page, -1);
+    assert.equal(await page.locator('.score-orb').evaluate(element => element.style.getPropertyValue('--liquid-level')), '0%');
     await page.locator('.plot g').first().tap();
     await page.waitForFunction(() => document.querySelector('.point-detail')?.textContent.includes('Punteggio iniziale: 0'));
     await page.getByRole('button', { name: 'Punto successivo', exact: true }).click();

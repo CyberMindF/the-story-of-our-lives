@@ -118,7 +118,13 @@
                               @case ('photo') {
                                 <figure class="memory-photo">
                                   <button (click)="openLightbox(rowPhotos(row), rowPhotos(row).indexOf(block))">
-                                    <img [src]="mediaUrl(block.thumbKey ?? block.key)" [alt]="block.caption || 'Foto della Bacheca'" loading="lazy" decoding="async" />
+                                    <img
+                                      [src]="mediaUrl(block.thumbKey ?? block.key)"
+                                      [appViewportFullImage]="mediaUrl(block.key)"
+                                      [alt]="block.caption || 'Foto della Bacheca'"
+                                      loading="lazy"
+                                      decoding="async"
+                                    />
                                   </button>
                                   @if (block.caption) {
                                     <figcaption>{{ block.caption }}</figcaption>

@@ -10,6 +10,7 @@ import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 import { BachecaDayEditor } from './bacheca-day-editor/bacheca-day-editor';
 import { DayContent, DayRow, PeriodRow, PhotoBlock } from './bacheca.types';
+import { ViewportFullImage } from './viewport-full-image.directive';
 
 interface Day { id: string; title?: string; slug: string; rows: DayContent['rows']; memoryDate: string | null }
 interface Period { id: string; title: string; days: Day[] }
@@ -42,7 +43,7 @@ function emptyDayDraft(periodId: string): DayDraft {
 @Component({
   selector: 'app-bacheca-preview',
   standalone: true,
-  imports: [AppShell, RouterLink, AudioPlayer, ContentMessage, EditorialText, FormsModule, ConfirmationDialog, BachecaDayEditor],
+  imports: [AppShell, RouterLink, AudioPlayer, ContentMessage, EditorialText, FormsModule, ConfirmationDialog, BachecaDayEditor, ViewportFullImage],
   styleUrls: ['../../../styles/pages/bacheca-preview.css'],
   templateUrl: './bacheca-preview.html'
 })

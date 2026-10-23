@@ -1,4 +1,4 @@
-import { Component, ElementRef, computed, effect, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, computed, effect, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
@@ -9,7 +9,7 @@ import { EXTRA_RULES, PHRASES, RULES } from './counter-copy';
   selector: 'app-contatore-amore', standalone: true, imports: [AppShell, FormsModule, DatePipe],
   templateUrl: './contatore-amore.html', styleUrl: './contatore-amore.css',
 })
-export class ContatoreAmore {
+export class ContatoreAmore implements OnDestroy {
   readonly state = signal<CounterState | null>(null);
   readonly loading = signal(true);
   readonly busy = signal(false);
@@ -20,6 +20,12 @@ export class ContatoreAmore {
   readonly extraRules = EXTRA_RULES;
   readonly stats = computed(() => this.state() ? statistics(this.state()!) : null);
   readonly color = computed(() => scoreColor(this.stats()?.current ?? 20, this.state()?.settings.initialScore ?? 20));
+  readonly liquidLevel = computed(() => {
+    const current = this.stats()?.current ?? 0;
+    const initial = this.state()?.settings.initialScore ?? 20;
+    const reference = initial > 0 ? initial : 20;
+    return Math.max(0, Math.min(92, current / reference * 92));
+  });
   readonly scoreFontSize = computed(() => Math.min(88, 180 / (String(this.stats()?.current ?? 20).length * .65)));
   readonly points = computed(() => this.state() ? timeline(this.state()!) : []);
   readonly selectedId = signal('initial');
@@ -28,6 +34,7 @@ export class ContatoreAmore {
   readonly history = computed(() => [...(this.state()?.episodes ?? [])].reverse().slice(0, this.visibleCount()));
   readonly editing = signal<Episode | null>(null);
   readonly deleting = signal<Episode | null>(null);
+  readonly copiedEpisodeId = signal<string | null>(null);
   readonly pendingQuick = signal<{ id: string; delta: number } | null>(null);
   reason = '';
   editDate = '';
@@ -35,6 +42,7 @@ export class ContatoreAmore {
   initialScore = 20;
   private readonly plot = viewChild<ElementRef<HTMLElement>>('plot');
   private readonly plotWidth = signal(640);
+  private copyResetTimer: ReturnType<typeof setTimeout> | null = null;
   readonly chart = computed(() => {
     const points = this.points(), width = this.plotWidth(), height = 260;
     const totals = points.map(p => p.total);
@@ -63,6 +71,10 @@ export class ContatoreAmore {
   }
 
   signed(value: number): string { return value > 0 ? `+${value}` : String(value).replace('-', '−'); }
+
+  ngOnDestroy(): void {
+    if (this.copyResetTimer) clearTimeout(this.copyResetTimer);
+  }
 
   async load(): Promise<void> {
     if (this.busy()) return;
@@ -115,6 +127,24 @@ export class ContatoreAmore {
     if (await this.mutate('DELETE', { id: episode.id, revision: episode.revision })) {
       this.deleting.set(null);
       if (this.editing()?.id === episode.id) this.editing.set(null);
+    }
+  }
+
+  async copyEpisode(episode: Episode): Promise<void> {
+    const [date, time] = localDateTime(episode.occurredAt).split('T');
+    const [year, month, day] = date.split('-');
+    const text = [
+      `Data e ora: ${day}/${month}/${year} · ${time}`,
+      `Punteggio: ${this.signed(episode.delta)}`,
+      `Motivazione: ${episode.reason.trim() || 'Nessuna motivazione'}`,
+    ].join('\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      this.copiedEpisodeId.set(episode.id);
+      if (this.copyResetTimer) clearTimeout(this.copyResetTimer);
+      this.copyResetTimer = setTimeout(() => this.copiedEpisodeId.set(null), 1800);
+    } catch {
+      this.error.set('Non sono riuscito a copiare questo episodio. Riprova.');
     }
   }
 

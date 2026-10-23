@@ -18,7 +18,7 @@ const days = Array.from({ length: 19 }, (_, dayIndex) => ({
   memoryDate: null,
   content: {
     rows: [
-      ...Array.from({ length: 4 }, (_, rowIndex) => ({
+      ...Array.from({ length: 10 }, (_, rowIndex) => ({
         columns: Array.from({ length: 3 }, (_, columnIndex) => {
           const photoIndex = rowIndex * 3 + columnIndex + 1;
           return {
@@ -94,7 +94,18 @@ try {
   assert.ok(mountedPhotos < 228, `Sono state montate troppe foto all'apertura: ${mountedPhotos}/228`);
   assert.equal(await page.locator('#periodo-giorno-1 video').getAttribute('preload'), 'none');
   assert.equal(mediaRequests.some(path => path.endsWith('.mp4')), false, 'I video non devono partire prima del play');
-  assert.equal(await page.locator('#periodo-giorno-1 .memory-photo img').first().getAttribute('src'), '/api/media/bacheca/giorno-1/thumb/1.jpg');
+  await page.waitForTimeout(250);
+  const earlyOriginals = new Set(mediaRequests.filter(path => path.includes('/original/')));
+  assert.ok(earlyOriginals.size > 0, 'Le foto vicine al viewport devono iniziare a caricarsi in alta qualità');
+  assert.ok(earlyOriginals.size < mountedPhotos, `Sono partiti troppi originali: ${earlyOriginals.size}/${mountedPhotos}`);
+  const farPhoto = page.locator('#periodo-giorno-1 .memory-photo img').last();
+  assert.equal(await farPhoto.getAttribute('src'), '/api/media/bacheca/giorno-1/thumb/30.jpg');
+  assert.equal(earlyOriginals.has('/api/media/bacheca/giorno-1/original/30.jpg'), false, 'Una foto lontana non deve caricare l’originale');
+
+  await farPhoto.scrollIntoViewIfNeeded();
+  const farPhotoHandle = await farPhoto.elementHandle();
+  await page.waitForFunction((image) => image?.getAttribute('src')?.includes('/original/'), farPhotoHandle);
+  assert.equal(await farPhoto.getAttribute('src'), '/api/media/bacheca/giorno-1/original/30.jpg');
 
   await page.locator('#periodo-giorno-1 .memory-photo button').first().click();
   assert.equal(await page.locator('.memory-lightbox img').getAttribute('src'), '/api/media/bacheca/giorno-1/original/1.jpg');
@@ -115,14 +126,15 @@ try {
 
   await page.getByRole('link', { name: 'Giorno 19', exact: true }).click();
   await page.locator('#periodo-giorno-19 .memory-photo img').first().waitFor();
-  assert.equal(await page.locator('#periodo-giorno-19 .memory-photo img').first().getAttribute('src'), '/api/media/bacheca/giorno-19/thumb/1.jpg');
+  await page.waitForFunction(() => document.querySelector('#periodo-giorno-19 .memory-photo img')?.getAttribute('src')?.includes('/original/'));
+  assert.equal(await page.locator('#periodo-giorno-19 .memory-photo img').first().getAttribute('src'), '/api/media/bacheca/giorno-19/original/1.jpg');
 
   await page.goto(base + '/bacheca?giorno=19&blocco=0-0-0');
   const linkedBlock = page.locator('#bacheca-blocco-19-0-0-0');
   await linkedBlock.waitFor();
   assert.equal(await linkedBlock.evaluate(element => element.classList.contains('memory-block-highlight')), true);
   assert.deepEqual(errors, []);
-  console.log(`PASS: apertura progressiva (${mountedPhotos}/228 foto montate), miniature in pagina, originali nel lightbox, video fermi e deep-link funzionante.`);
+  console.log(`PASS: apertura progressiva (${mountedPhotos}/228 foto montate), originali solo vicino al viewport, lightbox nitido, video fermi e deep-link funzionante.`);
 } finally {
   await browser.close();
   await new Promise(resolve => server.close(resolve));
