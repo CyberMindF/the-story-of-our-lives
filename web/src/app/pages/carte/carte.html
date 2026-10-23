@@ -27,8 +27,8 @@
       <span class="carte-tab-badge">{{ tradesInSospeso() }}</span>
       }
     </button>
-    @if (isAdmin()) {
-    <a class="carte-tab" routerLink="/tavolo-da-gioco/carte/catalogo">Catalogo</a>
+    @if (canEdit()) {
+    <a class="carte-tab" routerLink="/tavolo-da-gioco/carte/catalogo">Gestione carte</a>
     }
   </nav>
 

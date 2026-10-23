@@ -1,22 +1,33 @@
 <app-shell homeHref="/tavolo-da-gioco/carte" homeAria="Torna alle Carte" homeLabel="Le Carte">
   <header class="catalog-heading">
     <div>
-      <p class="eyebrow">Catalogo admin</p>
-      <h1>Tutte le carte del gioco</h1>
-      <p>Esplora le immagini di tutte le carte, anche quelle che non avete ancora trovato.</p>
+      <p class="eyebrow">Solo amministrazione</p>
+      <h1>Gestione delle carte</h1>
+      <p>Qui puoi creare il materiale del gioco e controllare visivamente quello già caricato.</p>
     </div>
-    @if (canEdit()) {
+  </header>
+
+  <section class="catalog-editor-toolbar glass-surface" aria-labelledby="catalog-editor-title">
+    <div>
+      <p class="eyebrow">Editor</p>
+      <h2 id="catalog-editor-title">Crea e organizza</h2>
+      <p>Crea prima un set oppure aggiungi una carta a uno dei set esistenti.</p>
+    </div>
     <div class="catalog-heading-actions">
       <button type="button" class="btn" [disabled]="loading() || !!error()" (click)="openSet(null)">+ Nuovo set</button>
       <button type="button" class="btn btn-submit" [disabled]="loading() || !!error() || !sets().length" (click)="open(null)">+ Nuova carta</button>
     </div>
-    }
-  </header>
+  </section>
 
-  @if (!canEdit()) {
-  <p class="catalog-hint">Puoi vedere tutte le anteprime. Per aggiungere o modificare carte, attiva la Modalità admin in alto.</p>
-  }
   @if (notice()) { <p role="status" class="catalog-hint">{{ notice() }}</p> }
+
+  <header class="catalog-library-heading">
+    <div>
+      <p class="eyebrow">Catalogo</p>
+      <h2>Carte caricate</h2>
+    </div>
+    <p>{{ designs().length }} carte in {{ sets().length }} set</p>
+  </header>
 
   <div class="catalog-filters glass-surface">
     <label>Cerca una carta

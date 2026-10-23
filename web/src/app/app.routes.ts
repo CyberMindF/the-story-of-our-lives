@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth.guard';
 import { adminGuard } from './core/admin.guard';
+import { adminModeGuard } from './core/admin-mode.guard';
 import { Portone } from './portone/portone';
 
 // Struttura route: '/login' è il Portone (pagina di accesso). Le pagine protette stanno sotto
@@ -262,7 +263,7 @@ export const routes: Routes = [
       },
       {
         path: 'tavolo-da-gioco/carte/catalogo',
-        canActivate: [adminGuard],
+        canActivate: [adminGuard, adminModeGuard],
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/carte/carte-catalogo').then((m) => m.CarteCatalogo),
       },

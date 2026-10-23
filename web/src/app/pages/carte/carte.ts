@@ -115,7 +115,6 @@ export class Carte implements OnInit, OnDestroy {
   protected readonly otherLabel = computed(() => IDENTITY_LABELS[this.otherIdentity()]);
   protected readonly partnerNickname = signal<string | null>(null);
   protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
-  protected readonly isAdmin = this.authService.isAdmin;
 
   protected readonly tab = signal<Tab>('album');
   protected readonly albumTipo = signal<AlbumTipo>('normale');
