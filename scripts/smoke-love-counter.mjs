@@ -68,7 +68,7 @@ try {
     assert.equal(await page.getByText('punti, adesso', { exact: true }).count(), 0, 'La label ridondante non deve comparire');
     assert.equal(await page.locator('.score-orb').evaluate(element => element.style.getPropertyValue('--liquid-level')), '100%');
     if (width === 1280) {
-      assert.match(await page.locator('.score-liquid').evaluate(element => getComputedStyle(element, '::before').animationName), /love-liquid-wave-front$/);
+      assert.equal(await page.locator('.score-liquid').evaluate(element => getComputedStyle(element, '::before').animationName), 'none');
     }
     await page.getByRole('button', { name: 'Registra un episodio positivo, più 1', exact: true }).click(); await score(page, 21);
     await page.getByRole('button', { name: 'Registra un episodio negativo, meno 1', exact: true }).click(); await score(page, 20);
