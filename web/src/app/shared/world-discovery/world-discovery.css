@@ -1,10 +1,27 @@
 :host { position: relative; z-index: 1100; }
-.discovery-backdrop { position: fixed; inset: 0; z-index: 1100; display: grid; place-items: center; padding: 1rem; background: rgb(12 5 9 / .62); backdrop-filter: blur(8px); }
-.discovery-modal, .daily-reward { --glass-filter: blur(24px) saturate(140%); box-sizing: border-box; width: min(46rem, 100%); max-height: min(86dvh, 48rem); padding: clamp(1.1rem, 4vw, 1.8rem); overflow: auto; border: 1px solid var(--panel-border-color); border-radius: 1.6rem; color: var(--text-color); box-shadow: 0 1.5rem 5rem rgb(0 0 0 / .36); }
+.discovery-backdrop { position: fixed; inset: 0; z-index: 1100; display: grid; place-items: center; padding: 1rem; background: var(--modal-overlay-bg); backdrop-filter: blur(8px); }
+.discovery-modal, .daily-reward {
+  /* Una superficie quasi trasparente rendeva il testo scuro di White World illeggibile
+     sopra il backdrop. Il pannello ora prende davvero i colori del tema ed è opaco. */
+  --glass-background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent-color) 9%, transparent), transparent 34%),
+    color-mix(in srgb, var(--bg-color) 94%, var(--text-color) 6%);
+  --glass-filter: none;
+  box-sizing: border-box;
+  width: min(46rem, 100%);
+  max-height: min(86dvh, 48rem);
+  padding: clamp(1.1rem, 4vw, 1.8rem);
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--border-color) 82%, var(--text-color) 18%);
+  border-radius: 1.6rem;
+  color: var(--text-color);
+  box-shadow: 0 1.5rem 5rem rgb(0 0 0 / .36), inset 0 1px rgb(255 255 255 / .12);
+}
 .discovery-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
 .discovery-heading h2, .daily-reward h2 { margin: .25rem 0 0; font-size: clamp(1.65rem, 5vw, 2.35rem); }
 .discovery-kicker, .world-promo-label { color: var(--muted-color); font-size: .72rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
-.discovery-close, .world-promo-close { display: grid; width: 2.4rem; height: 2.4rem; min-height: 0; padding: 0; place-items: center; border: 1px solid var(--panel-border-color); border-radius: 50%; background: transparent; color: inherit; font: 1.5rem/1 system-ui; cursor: pointer; }
+.discovery-close, .world-promo-close { display: grid; width: 2.4rem; height: 2.4rem; min-height: 0; padding: 0; place-items: center; border: 1px solid var(--border-color); border-radius: 50%; background: color-mix(in srgb, var(--button-bg) 74%, transparent); color: inherit; font: 1.5rem/1 system-ui; cursor: pointer; }
+.discovery-close:hover, .world-promo-close:hover { background: var(--button-hover-bg); }
 .discovery-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin: 1.4rem 0 1rem; padding: .35rem; border-radius: 1rem; background: color-mix(in srgb, var(--text-color) 6%, transparent); }
 .discovery-tabs button { min-height: 2.8rem; border: 0; border-radius: .75rem; background: transparent; color: var(--muted-color); font: inherit; cursor: pointer; }
 .discovery-tabs button.is-active { background: var(--button-bg); color: var(--text-color); box-shadow: 0 .3rem 1rem rgb(0 0 0 / .12); }
@@ -20,22 +37,75 @@
 .daily-reward p { color: var(--muted-color); line-height: 1.55; }
 .daily-reward-actions { justify-content: center; }
 
-.world-promo { position: fixed; z-index: 1080; box-sizing: border-box; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .85rem; width: min(30rem, calc(100% - 2rem)); padding: 1rem 3rem 1rem 1rem; border: 1px solid var(--panel-border-color); border-radius: 1.15rem; background: color-mix(in srgb, var(--bg-color) 90%, transparent); color: var(--text-color); box-shadow: 0 1rem 3rem rgb(0 0 0 / .28); backdrop-filter: blur(18px) saturate(140%); animation: promo-in .42s cubic-bezier(.2,.8,.25,1) both; }
-.world-promo--automatico, .world-promo--lato { right: 1rem; top: 50%; transform: translateY(-50%); }
+.world-promo {
+  --promo-surface: color-mix(in srgb, var(--bg-color) 94%, var(--text-color) 6%);
+  position: fixed;
+  z-index: 1080;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .85rem;
+  width: min(30rem, calc(100% - 2rem));
+  padding: 1rem 3rem 1rem 1.15rem;
+  border: 1px solid color-mix(in srgb, var(--border-color) 80%, var(--text-color) 20%);
+  border-radius: 1.45rem;
+  background:
+    radial-gradient(circle at 5% 0%, color-mix(in srgb, var(--accent-color) 13%, transparent), transparent 42%),
+    var(--promo-surface);
+  color: var(--text-color);
+  box-shadow: 0 1.25rem 3.5rem rgb(0 0 0 / .24), inset 0 1px rgb(255 255 255 / .12);
+  animation: promo-in .42s cubic-bezier(.2,.8,.25,1) both;
+}
+.world-promo--automatico, .world-promo--lato {
+  right: 1.35rem;
+  top: 50%;
+  grid-template-columns: auto minmax(0, 1fr);
+  width: min(23rem, calc(100% - 2.7rem));
+  padding: 2.35rem 1.2rem 1.2rem;
+  border-radius: 1.9rem .75rem .75rem 1.9rem;
+  transform: translateY(-50%);
+}
+.world-promo--automatico::after, .world-promo--lato::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -.48rem;
+  width: .85rem;
+  height: .85rem;
+  border-top: 1px solid color-mix(in srgb, var(--border-color) 80%, var(--text-color) 20%);
+  border-right: 1px solid color-mix(in srgb, var(--border-color) 80%, var(--text-color) 20%);
+  background: var(--promo-surface);
+  transform: translateY(-50%) rotate(45deg);
+}
+.world-promo--automatico .world-promo-emoji, .world-promo--lato .world-promo-emoji { align-self: start; }
+.world-promo--automatico .world-promo-copy, .world-promo--lato .world-promo-copy { padding-right: .25rem; }
+.world-promo--automatico .btn, .world-promo--lato .btn { grid-column: 2; margin-top: .15rem; }
 .world-promo--alto { top: max(1rem, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); }
 .world-promo--basso { bottom: max(1rem, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); }
-.world-promo-label { position: absolute; top: .48rem; left: 1rem; }
+.world-promo-label { position: absolute; top: .72rem; left: 1.15rem; color: var(--accent-color); }
 .world-promo-emoji { margin-top: .7rem; font-size: 2rem; }
 .world-promo-copy { margin-top: .7rem; }
 .world-promo-copy strong { display: block; }
 .world-promo-copy p { margin: .25rem 0 0; color: var(--muted-color); font-size: .82rem; line-height: 1.45; }
 .world-promo .btn { align-self: end; margin-top: .7rem; white-space: nowrap; }
-.world-promo-close { position: absolute; top: .45rem; right: .45rem; width: 1.75rem; height: 1.75rem; border: 0; font-size: 1.1rem; }
+.world-promo-close { position: absolute; top: .55rem; right: .55rem; width: 1.8rem; height: 1.8rem; border-color: transparent; font-size: 1.1rem; }
 @keyframes promo-in { from { opacity: 0; translate: 1.2rem 0; } }
 
 @media (max-width: 680px) {
   .discovery-update { grid-template-columns: auto minmax(0, 1fr); }
   .discovery-update .btn { grid-column: 1 / -1; }
-  .world-promo, .world-promo--automatico, .world-promo--lato { right: 1rem; bottom: max(1rem, env(safe-area-inset-bottom)); top: auto; transform: none; }
+  .world-promo, .world-promo--automatico, .world-promo--lato {
+    right: 1rem;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    top: auto;
+    grid-template-columns: auto minmax(0, 1fr);
+    width: calc(100% - 2rem);
+    padding: 2.2rem 1rem 1rem;
+    border-radius: 1.45rem;
+    transform: none;
+  }
+  .world-promo--automatico::after, .world-promo--lato::after { display: none; }
+  .world-promo .btn { grid-column: 1 / -1; }
 }
 @media (prefers-reduced-motion: reduce) { .world-promo { animation: none; } }
