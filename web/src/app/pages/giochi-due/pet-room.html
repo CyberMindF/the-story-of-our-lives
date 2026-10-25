@@ -54,7 +54,7 @@
 } @else if (tab() === 'memory') {
   <section class="panel memory-panel"><h2>🃏 Trova le coppie</h2><p>Gira due carte alla volta. Potete giocare da soli o darvi una mano dalla stessa stanza, ognuno dal proprio telefono.</p>
     @if (state().memory; as game) {
-      <p>Per {{ memoryPet() }} · {{ game.turns }} tentativi · {{ game.matched.length / 2 }} coppie su 6</p>
+      <p>Per {{ memoryPet() }} · {{ game.turns }} tentativi · {{ game.matched.length / 2 }} coppie su {{ game.board.length / 2 }}</p>
       <div class="memory-board">@for (card of game.board; track $index) { <button type="button" [class.matched]="game.matched.includes($index)" [class.revealed]="!!card" [disabled]="busy() || flipLocked() || !!card || game.done" [attr.aria-label]="'Carta ' + ($index + 1) + ': ' + (card ?? 'coperta')" (click)="flip($index)">{{ card ?? '🐾' }}</button> }</div>
       @if (game.done) { <p role="status" class="prize">🎉 Tutte trovate! +{{ game.reward }} monetine e +3 XP.</p> }
       @if (!game.done) { <p class="hint">La partita resta qui se uscite. Nessun premio finché non sono trovate tutte le coppie.</p> }

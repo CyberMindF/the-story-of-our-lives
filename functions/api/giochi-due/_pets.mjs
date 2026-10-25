@@ -6,7 +6,11 @@ export const SPECIES = [
   { id: 'fox', name: 'Volpe', baby: 'Volpacchiotto', emoji: '🦊' },
   { id: 'rabbit', name: 'Coniglio', baby: 'Coniglietto', emoji: '🐰' },
   { id: 'duck', name: 'Papera', baby: 'Paperella', emoji: '🦆' },
-  { id: 'porcupine', name: 'Istrice', baby: 'Piccolo istrice', emoji: '🦔' }
+  { id: 'porcupine', name: 'Istrice', baby: 'Piccolo istrice', emoji: '🦔' },
+  { id: 'fire', name: 'Fuochetto', baby: 'Fiammella', emoji: '🔥', hatchText: 'Crac! Dall’uovo è saltato fuori un fuochetto!' },
+  { id: 'mushroom', name: 'Funghetto', baby: 'Funghetto', emoji: '🍄', hatchText: 'Crac! Dall’uovo è spuntato un funghetto!' },
+  { id: 'rock', name: 'Roccia', baby: 'Sassolino', emoji: '🪨', hatchText: 'Crac! Nell’uovo c’era una piccola roccia!' },
+  { id: 'water', name: 'Goccia d’acqua', baby: 'Goccina', emoji: '💧', hatchText: 'Crac! Dall’uovo è scivolata fuori una goccia d’acqua!' }
 ];
 export const SHOP = [
   { id: 'box', name: 'Scatola', emoji: '📦', price: 12, type: 'toy', description: 'Un nascondiglio con tanto di agguato.' },
@@ -99,7 +103,7 @@ export function applyPets(original, action, user, now) {
   } else if (action.type === 'memory-flip') {
     const run = state.memory;
     check(run && run.id === action.runId && !run.done, 'Questa partita è già finita.', 409);
-    check(Number.isInteger(action.cell) && action.cell >= 0 && action.cell < 12 && !run.matched.includes(action.cell), 'Scegli una carta ancora coperta.');
+    check(Number.isInteger(action.cell) && action.cell >= 0 && action.cell < run.board.length && !run.matched.includes(action.cell), 'Scegli una carta ancora coperta.');
     check(now - run.lastFlip >= 200, 'Un attimo, la carta si sta girando.', 429);
     if (run.open.length === 2) { check(now - run.lastFlip >= 900, 'Guarda le due carte prima di continuare.', 429); run.open = []; }
     check(!run.open.includes(action.cell), 'Questa carta è già scoperta.');
@@ -107,8 +111,9 @@ export function applyPets(original, action, user, now) {
     if (run.open.length === 2) {
       run.turns++;
       if (run.board[run.open[0]] === run.board[run.open[1]]) { run.matched.push(...run.open); run.open = []; }
-      if (run.matched.length === 12) {
-        run.done = true; run.reward = Math.max(4, 16 - Math.max(0, run.turns - 6));
+      if (run.matched.length === run.board.length) {
+        const pairCount = run.board.length / 2;
+        run.done = true; run.reward = Math.max(4, 16 - Math.max(0, run.turns - pairCount));
         state.coins += run.reward;
         pet = state.pets.find(p => p.id === run.petId); pet.xp += 3;
         event(state, user, pet, 'memory-win', `Tutte le coppie! +${run.reward} monetine e +3 XP per ${pet.name}.`, now, 'gioca');
@@ -121,7 +126,8 @@ export function applyPets(original, action, user, now) {
       check(!pet.incubation.includes(action.care), 'Questo l’avete già fatto. Prova un’altra cosa.');
       pet.incubation.push(action.care);
       if (pet.incubation.length === 3) pet.egg = false;
-      event(state, user, pet, pet.egg ? 'incubate' : 'hatch', pet.egg ? ({ warm: 'Al calduccio. Si è mosso!', turn: 'Piano piano… si sente un tic.', listen: 'Toc toc. Qualcuno risponde!' })[action.care] : `Crac! È nato un ${SPECIES.find(s => s.id === pet.species).name.toLowerCase()}!`, now);
+      const species = SPECIES.find(s => s.id === pet.species);
+      event(state, user, pet, pet.egg ? 'incubate' : 'hatch', pet.egg ? ({ warm: 'Al calduccio. Si è mosso!', turn: 'Piano piano… si sente un tic.', listen: 'Toc toc. Qualcuno risponde!' })[action.care] : species.hatchText ?? `Crac! È nato un ${species.name.toLowerCase()}!`, now);
     } else {
       check(!pet.egg, 'Prima deve uscire dall’uovo!');
       if (action.type === 'propose-name') {
@@ -146,10 +152,10 @@ export function applyPets(original, action, user, now) {
         } else if (action.type === 'use-item') {
           check(item?.type === 'toy' && Object.values(state.placed).includes(item.id), 'Sistema prima il gioco nella stanza.');
           reaction = item.id;
-          if (item.id === 'bath') text = pet.species === 'duck' ? 'Splash! Questa è ufficialmente la sua piscina.' : pet.species === 'cat' ? 'Una zampa dentro. Una zampa fuori. Meglio fuori.' : 'Zampe a mollo. Acqua dappertutto.';
-          else if (item.id === 'box') text = pet.species === 'porcupine' ? 'Nella scatola spuntano un sacco di aculei.' : 'Sparito nella scatola. Ah no, si vedono le orecchie.';
-          else if (item.id === 'tunnel') text = pet.species === 'rabbit' ? 'Dentro, fuori, di nuovo dentro. Nuovo record!' : 'È entrato nel tunnel. Uscirà? Eccolo!';
-          else text = pet.species === 'fox' ? 'Pallina rubata. La sta nascondendo.' : 'Pallina lanciata. Inseguimento iniziato!';
+          if (item.id === 'bath') text = ({ duck: 'Splash! Questa è ufficialmente la sua piscina.', cat: 'Una zampa dentro. Una zampa fuori. Meglio fuori.', fire: 'Psssh! Una nuvoletta di vapore e il fuochetto torna subito acceso.', water: 'Splash! Adesso è una goccia un po’ più grande.', rock: 'Bagnetto lucidante. Brilla quasi.' })[pet.species] ?? 'Zampe a mollo. Acqua dappertutto.';
+          else if (item.id === 'box') text = ({ porcupine: 'Nella scatola spuntano un sacco di aculei.', mushroom: 'Dal cartone spunta soltanto il cappello.', rock: 'Mimetizzazione perfetta. Sembra una scatola con un sasso.' })[pet.species] ?? 'Sparito nella scatola. Ah no, si vede qualcosa.';
+          else if (item.id === 'tunnel') text = ({ rabbit: 'Dentro, fuori, di nuovo dentro. Nuovo record!', fire: 'Una lucina corre nel tunnel e sbuca dall’altra parte.', water: 'È scivolata nel tunnel come su uno scivolo.' })[pet.species] ?? 'È entrato nel tunnel. Uscirà? Eccolo!';
+          else text = ({ fox: 'Pallina rubata. La sta nascondendo.', rock: 'Ha fissato la pallina. La pallina ha perso.', mushroom: 'Un saltello sul posto. Vale come inseguimento.' })[pet.species] ?? 'Pallina lanciata. Inseguimento iniziato!';
           text += xp(state, pet, user, item.id, now);
           if (!pet.discoveries.includes(item.id)) { pet.discoveries.push(item.id); text += item.id === pet.favoriteToy ? ' Hai trovato il suo gioco preferito!' : ' Nuova reazione scoperta.'; }
         } else if (action.type === 'feed') {

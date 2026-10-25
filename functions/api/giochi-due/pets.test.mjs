@@ -22,7 +22,7 @@ function game(original = initialState('nuvola')) {
     }
   };
 }
-test('animali: sei specie, primo uovo gratis, sorpresa nascosta e tre azioni per la schiusa', () => {
+test('animali: tutte le specie, primo uovo gratis, sorpresa nascosta e tre azioni per la schiusa', () => {
   for (const species of [...SPECIES.map(s => s.id), 'surprise']) {
     const g = game(); g.act('adopt', { species });
     assert.equal(g.state.coins, 30);
@@ -117,7 +117,7 @@ test('animali: memory salvato, carte segrete, coppie validate e premio singolo c
   const g = game().hatch();
   g.act('memory-start');
   const id = g.state.memory.id;
-  assert.deepEqual(g.view().memory.board, Array(12).fill(null));
+  assert.deepEqual(g.view().memory.board, Array(SPECIES.length * 2).fill(null));
   assert.throws(() => g.act('memory-start'));
   assert.throws(() => g.act('memory-flip', { runId: 'fake', cell: 0 }));
   assert.throws(() => g.act('memory-flip', { runId: id, cell: 99 }));
@@ -134,7 +134,7 @@ test('animali: memory salvato, carte segrete, coppie validate e premio singolo c
     g.act('memory-flip', { runId: id, cell: b, reward: 999999, done: true }, desy);
   }
   assert.equal(g.state.memory.done, true);
-  assert.equal(g.state.memory.turns, 7);
+  assert.equal(g.state.memory.turns, SPECIES.length + 1);
   assert.equal(g.state.memory.reward, 15);
   assert.equal(g.state.coins, 45);
   assert.equal(g.state.pets[0].xp, 3);

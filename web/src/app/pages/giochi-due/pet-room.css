@@ -64,7 +64,7 @@ input,select{box-sizing:border-box;width:100%;padding:.8rem;border:1px solid var
 .shop-grid h3{margin:.8rem 0 .2rem}
 .shop-grid p{flex:1;font-size:.85rem}
 .memory-panel,.adoption,.welcome{max-width:650px;margin-inline:auto;text-align:center}
-.memory-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem;max-width:430px;margin:1.5rem auto}
+.memory-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.7rem;max-width:520px;margin:1.5rem auto}
 .memory-board button{aspect-ratio:1;font-size:2.1rem;border:1px solid var(--border-color);border-radius:1rem;background:var(--input-bg);cursor:pointer;color:var(--text-color);transition:transform .2s}
 .memory-board button.revealed{background:color-mix(in srgb,var(--accent-color) 15%,var(--bg-color));transform:rotate(-2deg)}
 .memory-board button.matched{opacity:.5;transform:none}
@@ -106,6 +106,7 @@ button:disabled:not(.room-object):not(.pet-touch){cursor:default;opacity:.55}
 .wallet strong{font-size:1.2rem}
 .memory-board{gap:.5rem}
 .memory-board button{font-size:1.7rem}
+.memory-board{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}
 }
