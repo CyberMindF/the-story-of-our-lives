@@ -6,6 +6,7 @@
 .pet-tabs,.pet-list{display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0}
 .pet-tabs button,.pet-list button{font:inherit;padding:.75rem 1rem;border:1px solid var(--border-color);border-radius:1rem;background:transparent;color:var(--text-color);cursor:pointer;min-height:44px}
 .pet-tabs button.active,.pet-list button.active{background:var(--input-bg);border-color:var(--accent-color)}
+.pet-tabs .admin-lab-tab{border-style:dashed}
 .pet-list button{font-size:.85rem}
 .room-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:1.2rem;align-items:start}
 .panel{min-width:0;padding:clamp(1rem,3vw,2rem);border:1px solid var(--border-color);border-radius:1.5rem;background:color-mix(in srgb,var(--bg-color) 94%,var(--text-color) 3%)}
@@ -64,6 +65,24 @@ input,select{box-sizing:border-box;width:100%;padding:.8rem;border:1px solid var
 .shop-grid h3{margin:.8rem 0 .2rem}
 .shop-grid p{flex:1;font-size:.85rem}
 .memory-panel,.adoption,.welcome{max-width:650px;margin-inline:auto;text-align:center}
+.pet-lab{padding:clamp(1rem,3vw,1.6rem)}
+.pet-lab-heading{max-width:760px;margin-bottom:1.2rem}
+.pet-lab-heading span{color:var(--accent-color);font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.pet-lab-heading h2{margin:.35rem 0}
+.pet-lab-heading p{margin:.3rem 0;color:var(--muted-color)}
+.pet-lab-layout{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(340px,1.15fr);gap:1.2rem;align-items:start}
+.pet-lab-catalog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;max-height:620px;overflow:auto;padding:.1rem .4rem .1rem .1rem}
+.pet-lab-catalog button{display:grid;grid-template-columns:74px minmax(0,1fr);align-items:center;gap:.45rem;min-width:0;padding:.45rem .65rem;border:1px solid var(--border-color);border-radius:1rem;background:var(--input-bg);color:var(--text-color);font:inherit;text-align:left;cursor:pointer}
+.pet-lab-catalog button.active{border-color:var(--accent-color);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent-color) 18%,transparent)}
+.pet-lab-catalog strong{overflow-wrap:anywhere;font-size:.82rem}
+.pet-lab-thumb{display:block;width:70px;height:64px;overflow:hidden}
+.pet-lab-thumb app-pet-sprite{transform:scale(.72);transform-origin:center bottom}
+.pet-lab-preview{min-width:0;padding:1rem;border:1px solid var(--border-color);border-radius:1.25rem;background:var(--input-bg)}
+.lab-scene{height:320px}
+.lab-pet{cursor:default}
+.lab-controls{display:flex;justify-content:center;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+.lab-controls .btn{font-size:.78rem;padding:.65rem .85rem}
+.lab-controls .btn.active{border-color:var(--accent-color);background:color-mix(in srgb,var(--accent-color) 14%,var(--input-bg))}
 .memory-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.7rem;max-width:520px;margin:1.5rem auto}
 .memory-board button{aspect-ratio:1;font-size:2.1rem;border:1px solid var(--border-color);border-radius:1rem;background:var(--input-bg);cursor:pointer;color:var(--text-color);transition:transform .2s}
 .memory-board button.revealed{background:color-mix(in srgb,var(--accent-color) 15%,var(--bg-color));transform:rotate(-2deg)}
@@ -98,6 +117,8 @@ button:disabled:not(.room-object):not(.pet-touch){cursor:default;opacity:.55}
 @keyframes roll{50%{transform:translateX(12px) rotate(12deg)}
 }
 @media(max-width:760px){.room-layout{grid-template-columns:1fr}
+.pet-lab-layout{grid-template-columns:1fr}
+.pet-lab-catalog{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none}
 .scene{height:310px}
 .pet-tabs button{flex:1 1 40%;padding:.65rem}
 .pet-walk{width:210px;left:calc(50% - 105px)}
@@ -108,5 +129,6 @@ button:disabled:not(.room-object):not(.pet-touch){cursor:default;opacity:.55}
 .memory-board button{font-size:1.7rem}
 .memory-board{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
+@media(max-width:430px){.pet-lab-catalog{grid-template-columns:1fr}.pet-lab-catalog button{grid-template-columns:64px minmax(0,1fr)}.pet-lab-thumb{width:60px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}
 }

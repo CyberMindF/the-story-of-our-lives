@@ -4,6 +4,7 @@
   <button type="button" [class.active]="tab() === 'memory'" (click)="tab.set('memory')">🃏 Memory</button>
   <button type="button" [class.active]="tab() === 'shop'" (click)="tab.set('shop')">🛍️ Shop</button>
   <button type="button" [class.active]="tab() === 'adopt'" (click)="tab.set('adopt')">🥚 Adotta</button>
+  @if (adminPreview()) { <button type="button" class="admin-lab-tab" [class.active]="tab() === 'lab'" (click)="tab.set('lab')">🧪 Laboratorio pet</button> }
 </nav>
 @if (state().pets?.length) {
   <div class="pet-list" role="group" aria-label="I vostri animali">@for (animal of state().pets; track animal.id) {
@@ -60,6 +61,40 @@
       @if (!game.done) { <p class="hint">La partita resta qui se uscite. Nessun premio finché non sono trovate tutte le coppie.</p> }
     }
     @if (!state().memory || state().memory?.done) { <button type="button" class="btn primary" [disabled]="busy() || !pet() || pet()?.egg" (click)="send('memory-start')">{{ state().memory ? 'Un’altra partita' : 'Giochiamo!' }}</button><p class="hint">Premio: da 4 a 16 monetine secondo i tentativi, più 3 XP per l’animale selezionato. Prima fai schiudere l’uovo.</p> }
+  </section>
+} @else if (tab() === 'lab' && adminPreview()) {
+  <section class="panel pet-lab">
+    <header class="pet-lab-heading"><div><span>🧪 Solo Modalità admin</span><h2>Laboratorio pet</h2><p>Guarda tutte le creature e prova forme e reazioni. Qui non adotti niente e la casa condivisa non viene modificata.</p></div></header>
+    <div class="pet-lab-layout">
+      <div class="pet-lab-catalog" role="list" aria-label="Catalogo dei pet">
+        @for (species of state().species; track species.id) {
+          <button type="button" role="listitem" [class.active]="labSpecies() === species.id" [attr.aria-pressed]="labSpecies() === species.id" (click)="selectLabSpecies(species.id)">
+            <span class="pet-lab-thumb"><app-pet-sprite [species]="species.id" [label]="species.name" /></span><strong>{{ species.name }}</strong>
+          </button>
+        }
+      </div>
+      @if (labSpeciesInfo(); as species) {
+        <div class="pet-lab-preview">
+          <div class="title-row"><h2>{{ species.emoji }} {{ species.name }}</h2><span>Anteprima locale</span></div>
+          <div class="scene lab-scene" [attr.data-reaction]="labReaction()" [attr.data-species]="species.id">
+            <div class="window" aria-hidden="true"><span class="cloud"></span></div><div class="rug" aria-hidden="true"></div>
+            <div class="pet-walk"><div class="pet-touch lab-pet" [style.--growth]="labScale()"><app-pet-sprite [species]="species.id" [egg]="labStage() === 'egg'" [cracks]="labStage() === 'egg' ? 2 : 0" [label]="species.name" /></div></div>
+            <span class="reaction-emoji" aria-hidden="true">{{ labReaction() === 'coccola' ? '💕' : labReaction() === 'snack' ? '😋' : labReaction() === 'bath' ? '💦' : '🐾' }}</span>
+          </div>
+          <div class="lab-controls" role="group" aria-label="Fase del pet">
+            <button type="button" class="btn" [class.active]="labStage() === 'egg'" (click)="labStage.set('egg'); labReaction.set('')">🥚 Uovo</button>
+            <button type="button" class="btn" [class.active]="labStage() === 'baby'" (click)="labStage.set('baby')">🐣 Piccolo</button>
+            <button type="button" class="btn" [class.active]="labStage() === 'adult'" (click)="labStage.set('adult')">🐾 Adulto</button>
+          </div>
+          <div class="lab-controls" role="group" aria-label="Reazioni del pet">
+            <button type="button" class="btn" [disabled]="labStage() === 'egg' || !!labReaction()" (click)="playLab('coccola')">🥰 Coccola</button>
+            <button type="button" class="btn" [disabled]="labStage() === 'egg' || !!labReaction()" (click)="playLab('gioca')">🖐️ Gioca</button>
+            <button type="button" class="btn" [disabled]="labStage() === 'egg' || !!labReaction()" (click)="playLab('snack')">🥣 Pappa</button>
+            <button type="button" class="btn" [disabled]="labStage() === 'egg' || !!labReaction()" (click)="playLab('bath')">🛁 Bagnetto</button>
+          </div>
+        </div>
+      }
+    </div>
   </section>
 } @else if (tab() === 'adopt') {
   <section class="panel adoption"><div class="big-egg">🥚</div><h2>Un nuovo coinquilino?</h2><p>Scegli chi arriva, oppure scopritelo alla schiusa. Le uova a sorpresa preferiscono specie che non avete ancora.</p><label>Chi vorresti?<select [ngModel]="adoption()" (ngModelChange)="adoption.set($event)"><option value="surprise">🎁 Sorprendimi</option>@for (species of state().species; track species.id) { <option [value]="species.id">{{ species.emoji }} {{ species.name }}</option> }</select></label><p>{{ state().eggPrice ? '🪙 60 monetine · ' + state().totalXp + '/' + state().nextEggXp + ' XP totali' : 'Il primo uovo è gratis!' }}</p><button type="button" class="btn primary" [disabled]="busy() || !canAdopt()" (click)="send('adopt', { species: adoption() })">Adotta l’uovo</button><p class="hint">Un uovo alla volta, fino a 12 animali. Quelli già adottati restano con voi. Dopo l’acquisto trovi l’uovo nella Stanza.</p></section>

@@ -21,13 +21,19 @@ export class PetRoom implements OnDestroy {
   readonly state = input.required<PetView>();
   readonly busy = input(false);
   readonly userId = input(0);
+  readonly adminPreview = input(false);
   readonly command = output<Record<string, unknown> & { type: string }>();
-  protected readonly tab = signal<'room' | 'shop' | 'memory' | 'adopt'>('room');
+  protected readonly tab = signal<'room' | 'shop' | 'memory' | 'adopt' | 'lab'>('room');
   protected readonly selected = signal('');
   protected readonly pet = computed(() => this.state().pets?.find(p => p.id === this.selected()) ?? this.state().pets?.[0]);
   protected readonly name = signal('');
   protected readonly adoption = signal('surprise');
   protected readonly reaction = signal('');
+  protected readonly labSpecies = signal('cat');
+  protected readonly labStage = signal<'egg' | 'baby' | 'adult'>('baby');
+  protected readonly labReaction = signal('');
+  protected readonly labSpeciesInfo = computed(() => this.state().species?.find(species => species.id === this.labSpecies()) ?? this.state().species?.[0]);
+  protected readonly labScale = computed(() => ({ egg: .85, baby: .68, adult: 1 })[this.labStage()]);
   protected readonly flipLocked = signal(false);
   protected readonly scale = computed(() => this.pet()?.egg ? .85 : .65 + .35 * Math.min(1, (this.pet()?.xp ?? 0) / 18));
   protected readonly proposals = computed(() => Object.values(this.pet()?.proposals ?? {}));
@@ -39,11 +45,13 @@ export class PetRoom implements OnDestroy {
   protected readonly careActions = [{ id: 'coccola', emoji: '🥰', label: 'Coccola' }, { id: 'snack', emoji: '🥣', label: 'Pappa' }, { id: 'gioca', emoji: '🖐️', label: 'Gioca' }];
   protected readonly eggActions = [{ id: 'warm', emoji: '🧣', label: 'Tienilo al caldo' }, { id: 'turn', emoji: '🥚', label: 'Giralo piano' }, { id: 'listen', emoji: '👂', label: 'Ascolta' }];
   private timer?: ReturnType<typeof setTimeout>;
+  private labTimer?: ReturnType<typeof setTimeout>;
   private flipTimer?: ReturnType<typeof setTimeout>;
   private lastEvent = '';
   private lastPet = '';
   constructor() {
     effect(() => {
+      if (!this.adminPreview() && this.tab() === 'lab') this.tab.set('room');
       const pet = this.pet();
       if (pet?.id !== this.lastPet) {
         this.lastPet = pet?.id ?? ''; this.name.set(''); this.reaction.set(''); clearTimeout(this.timer);
@@ -61,6 +69,14 @@ export class PetRoom implements OnDestroy {
   protected send(type: string, extra: Record<string, unknown> = {}): void {
     if (!this.busy()) this.command.emit({ type, petId: this.pet()?.id, ...extra });
   }
+  protected selectLabSpecies(id: string): void {
+    this.labSpecies.set(id); this.labReaction.set(''); clearTimeout(this.labTimer);
+  }
+  protected playLab(reaction: string): void {
+    if (this.labStage() === 'egg') return;
+    this.labReaction.set(reaction); clearTimeout(this.labTimer);
+    this.labTimer = setTimeout(() => this.labReaction.set(''), 2200);
+  }
   protected emoji(pet: Pet): string { return pet.egg ? '🥚' : this.state().species?.find(s => s.id === pet.species)?.emoji ?? '🐾'; }
   protected speciesName(id: string | null): string { return this.state().species?.find(s => s.id === id)?.name.toLowerCase() ?? 'animale'; }
   protected itemName(id: string | null): string { return this.state().shop?.find(i => i.id === id)?.name ?? 'Da scoprire'; }
@@ -71,5 +87,5 @@ export class PetRoom implements OnDestroy {
     this.flipLocked.set(true); clearTimeout(this.flipTimer);
     this.flipTimer = setTimeout(() => this.flipLocked.set(false), 1000);
   }
-  ngOnDestroy(): void { clearTimeout(this.timer); clearTimeout(this.flipTimer); }
+  ngOnDestroy(): void { clearTimeout(this.timer); clearTimeout(this.labTimer); clearTimeout(this.flipTimer); }
 }
