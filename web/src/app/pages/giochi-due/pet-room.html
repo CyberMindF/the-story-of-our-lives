@@ -11,7 +11,7 @@
     <button type="button" [class.active]="pet()?.id === animal.id" [attr.aria-pressed]="pet()?.id === animal.id" (click)="selected.set(animal.id)">{{ emoji(animal) }} {{ animal.name }}</button>
   }</div>
 }
-@if (!state().pets?.length && tab() !== 'adopt') {
+@if (!state().pets?.length && tab() !== 'adopt' && tab() !== 'lab') {
   <section class="panel welcome"><span>🥚</span><h2>Chi c’è nell’uovo?</h2><p>Scegli un animale o lascia che sia una sorpresa. Il primo uovo è gratis, e avete già 30 monetine per i primi giochi.</p><button type="button" class="btn primary" (click)="tab.set('adopt')">Scegli il primo uovo</button></section>
 } @else if (tab() === 'room') {
   @if (pet(); as p) {
