@@ -39,9 +39,7 @@ export class Gdr implements OnInit {
       await this.workspace.save({ action: 'createAdventure', id, title: this.title(), source: '' })
     ) {
       this.newAdventureId = crypto.randomUUID();
-      await this.router.navigate(['/tavolo-da-gioco/gdr/gioca', id], {
-        queryParams: { scrivi: '1' },
-      });
+      await this.router.navigate(['/tavolo-da-gioco/gdr/gioca', id]);
     }
   }
 }

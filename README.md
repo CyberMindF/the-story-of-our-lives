@@ -136,6 +136,10 @@ browser. La pagina mantiene il lightbox accessibile con tastiera e swipe.
 
 ## Nuova esperienza GDR
 
+L’inserimento principale avviene direttamente nel racconto: i piccoli «+» prima, fra e dopo i blocchi aprono un editor nel punto scelto; «Inizia a scrivere» avvia un’avventura vuota. Il menu Inserisci usa gli stessi comandi dell’editor completo, con scelta della voce e anteprima. Aggiunte vuote o sintatticamente incomplete non si possono confermare; annullare non cambia il testo. I blocchi circostanti conservano il proprio contenuto. «Modifica testo completo» resta un comando testuale secondario; salvataggio e pubblicazione delle nuove avventure sono disponibili anche senza aprirlo. Le avventure esistenti continuano a modificare soltanto la copia locale.
+
+La pagina dell’avventura parte dal titolo, senza il vecchio riquadro di laboratorio o selettore delle avventure. Per cambiare storia si usa l’hub. «Gestisci PG e PNG», fra i comandi riservati al master, apre un’area dedicata a creazione, schede, immagini, assegnazioni, importazione ed esportazione; si torna all’avventura dopo aver salvato o annullato le modifiche. Il pannello «Scheda» resta dedicato al giocatore: non mostra creazione, assegnazioni o importazioni del master.
+
 L’ingresso `/tavolo-da-gioco/gdr` conserva l’hub introduttivo e la scelta delle avventure. Le schede aprono la nuova esperienza a `/tavolo-da-gioco/gdr/gioca/<id>`, con l’avventura scelta. La versione classica resta disponibile solo tramite indirizzo diretto a `/tavolo-da-gioco/gdr/classico`, insieme agli URL originali delle avventure; non sono presenti collegamenti dalla nuova interfaccia. Il collegamento `/tavolo-da-gioco/gdr/laboratorio` continua a funzionare. Il pulsante «Nuova avventura» e il relativo modulo sono presenti soltanto nell’hub principale per gli admin non di prova; dopo la creazione si apre l’editor. Anche le nuove avventure visibili all’utente compaiono nell’hub. Il backend verifica comunque il permesso di creazione. Restano valide le limitazioni di salvataggio descritte sotto.
 
 La nuova pagina autenticata, raggiungibile dalle schede nell’hub GDR

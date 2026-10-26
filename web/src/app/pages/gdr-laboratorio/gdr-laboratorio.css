@@ -1,32 +1,9 @@
 /* Il laboratorio eredita impaginazione, tipografia e turni da tavolo.css. */
-.lab-notice {
-  max-width: 960px;
-  margin: 1rem auto 2rem;
-  padding: 1rem 1.2rem;
-  border: 1px dashed var(--border-color);
-  border-radius: 12px;
-  color: var(--muted-color);
-  font-size: 0.85rem;
-}
-.lab-notice p {
-  line-height: 1.6;
-  margin: 0.5rem 0 1rem;
-}
-.lab-controls,
 .lab-document-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.7rem;
-}
-.lab-controls select {
-  flex: 1;
-  min-width: 0;
-}
-.lab-controls a {
-  color: var(--accent-color);
-}
-.lab-document-controls {
   margin: 0 0 1.5rem;
 }
 .lab-document-controls span {
@@ -90,16 +67,22 @@ textarea:focus-visible {
   flex-wrap: wrap;
   gap: 0.8rem;
 }
-@media (max-width: 600px) {
-  .lab-controls {
-    align-items: stretch;
-  }
-  .lab-controls label,
-  .lab-controls a {
-    flex-basis: 100%;
-  }
-  .lab-notice {
-    margin-inline: 0.4rem;
-  }
-}
 
+.lab-text-command {
+  border: 0;
+  padding: 0.3rem 0;
+  background: transparent;
+  color: var(--muted-color);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.lab-text-command:hover {
+  color: var(--accent-color);
+}
+.lab-text-command:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

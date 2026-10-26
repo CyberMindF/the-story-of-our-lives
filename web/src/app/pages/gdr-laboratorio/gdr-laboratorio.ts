@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
@@ -99,6 +100,7 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
   standalone: true,
   imports: [
     AppShell,
+    NgTemplateOutlet,
     FormsModule,
     GdrBlocks,
     GdrTurn,
@@ -113,7 +115,6 @@ const dateFormatter = new Intl.DateTimeFormat('it-IT', {
 })
 export class GdrLaboratorio implements OnInit {
   private readonly auth = inject(AuthService);
-  @ViewChild(GdrPanel) private panel?: GdrPanel;
   protected readonly readingEdit = signal(false);
   protected readonly documentEdit = signal(false);
   protected readonly turnEdit = signal(false);
@@ -124,11 +125,22 @@ export class GdrLaboratorio implements OnInit {
     this.readingEdit.set(value);
     if (value) this.documentEditor.set(false);
   }
-  protected manageCharacters(): void {
-    this.panel?.openCharacters();
-  }
   protected readonly workspace = inject(GdrWorkspaceService);
   protected readonly panelTab = signal('personaggio');
+  protected readonly masterCharactersOpen = signal(false);
+  protected readonly masterInventory = signal(false);
+  protected setMasterCharacters(open: boolean): void {
+    if (
+      !this.canPrepare() ||
+      this.workspace.pendingChanges() ||
+      this.workspace.saving() ||
+      this.inlineBusy()
+    )
+      return;
+    this.masterInventory.set(false);
+    this.masterCharactersOpen.set(open);
+  }
+
   protected readonly adventureTitle = signal('');
   protected readonly adventures = computed<Adventure[]>(() => [
     ...ADVENTURES,
@@ -243,13 +255,6 @@ export class GdrLaboratorio implements OnInit {
     await this.select(
       this.adventures().some((a) => a.id === requested) ? requested! : this.selected(),
     );
-    if (
-      this.canPrepare() &&
-      !this.adventure().legacy &&
-      this.route.snapshot.queryParamMap.get('scrivi') === '1'
-    ) {
-      this.documentEditor.set(true);
-    }
   }
   private forDocument(key: GdrDocumentKey | undefined): GdrBlockRow[] {
     return this.blocks()

@@ -86,8 +86,11 @@ const waitSaved=()=>page.getByRole('button',{name:'Gestisci PG e PNG',exact:true
 try {
   await page.goto(`${base}/tavolo-da-gioco/gdr/laboratorio`);
   await waitSaved();
-  await page.getByRole('button',{name:'Scheda',exact:true}).click();
-  const panel=page.getByRole('region',{name:'Scheda di gioco',exact:true});
+  await page.getByRole('button',{name:'Gestisci PG e PNG',exact:true}).click();
+  assert.equal(await page.locator('.lab-notice').count(),0,'Nessun riquadro introduttivo sopra l’avventura');
+  await page.getByRole('heading',{name:'PG e PNG',exact:true}).waitFor();
+  assert.equal(await page.locator('app-gdr-panel').count(),0,'La gestione del master è separata dal pannello del giocatore');
+  let panel=page.locator('app-gdr-characters');
   await panel.getByRole('button',{name:'+ Nuovo PG',exact:true}).click();
   await panel.getByLabel('Nome del nuovo personaggio',{exact:true}).fill('Ada');
   await panel.getByRole('button',{name:'Crea personaggio',exact:true}).click();
@@ -130,6 +133,10 @@ try {
   assert.equal(await panel.getByLabel('Può modificare la scheda',{exact:true}).count(),0);
   await panel.getByLabel('Può modificare lo zaino',{exact:true}).check();
   await panel.getByRole('button',{name:'Salva assegnazione',exact:true}).click();
+  await page.getByRole('button',{name:'Torna all’avventura',exact:true}).click();
+  await page.getByRole('button',{name:'Scheda',exact:true}).click();
+  assert.equal(await page.getByRole('button',{name:'+ Nuovo PNG',exact:true}).count(),0,'Il pannello del giocatore non contiene creazione o assegnazioni, anche per il master');
+  assert.equal(await page.getByText('Assegna il controllo',{exact:true}).count(),0);
   await page.getByRole('button',{name:'Chiudi la scheda',exact:true}).click();
   const source=page.getByLabel('Il tuo turno',{exact:true});
   await source.fill('Una narrazione.');
@@ -146,13 +153,16 @@ try {
   await page.getByRole('button',{name:'Nuova avventura',exact:true}).click();
   await page.getByLabel('Titolo della nuova avventura',{exact:true}).fill('Una storia nuova');
   await page.getByRole('button',{name:'Crea e inizia a scrivere',exact:true}).click();
-  await page.getByLabel('Testo completo dell’avventura',{exact:true}).fill('## Il primo capitolo\n\nUna nuova storia scritta dal sito.');
-  const docEditor=page.locator('app-gdr-source-editor').filter({has:page.locator('#lab-document')});
-  await docEditor.getByRole('button',{name:'Modifica: Il primo capitolo',exact:true}).click();
-  await docEditor.getByLabel('Testo del blocco selezionato',{exact:true}).fill('## Capitolo rivisto');
-  await docEditor.getByRole('button',{name:'Applica al testo',exact:true}).click();
-  await page.waitForFunction(()=>document.querySelector('#lab-document').value.startsWith('## Capitolo rivisto'));
-  assert.equal(await page.getByLabel('Testo completo dell’avventura',{exact:true}).inputValue(),'## Capitolo rivisto\n\nUna nuova storia scritta dal sito.');
+  assert.equal(await page.locator('#lab-document').count(),0,'Il testo completo non si apre alla creazione');
+  await page.getByRole('button',{name:'Inizia a scrivere',exact:true}).click();
+  await page.getByLabel('Testo del nuovo blocco',{exact:true}).fill('## Il primo capitolo\n\nUna nuova storia scritta dal sito.');
+  assert.equal(await page.getByRole('button',{name:'Salva avventura',exact:true}).isDisabled(),true);
+  await page.getByRole('button',{name:'Aggiungi al racconto',exact:true}).click();
+  await page.getByRole('button',{name:'Modifica: Il primo capitolo',exact:true}).click();
+  await page.getByLabel('Testo del blocco selezionato',{exact:true}).fill('## Capitolo rivisto');
+  await page.getByRole('button',{name:'Applica al testo',exact:true}).click();
+  await page.getByRole('button',{name:'Modifica: Capitolo rivisto',exact:true}).waitFor();
+  assert.equal(await page.locator('#lab-document').count(),0,'Si aggiunge e si modifica senza aprire il testo completo');
   await page.getByRole('button',{name:'Salva avventura',exact:true}).click();
   await page.getByText('Avventura salvata nel laboratorio.',{exact:true}).waitFor();
   await page.goto(`${base}/tavolo-da-gioco/gdr`);
@@ -160,6 +170,7 @@ try {
   await page.getByRole('heading',{name:'Il turno',exact:true}).waitFor();
   await page.getByText('Una nuova storia scritta dal sito.',{exact:true}).waitFor();
   // Come giocatore: due PG + PNG, niente creazione o modifica scheda PNG.
+  panel=page.getByRole('region',{name:'Scheda di gioco',exact:true});
   user=2;
   await page.evaluate(()=>sessionStorage.setItem('gdr-test-user','2'));
   await page.reload();
@@ -169,7 +180,7 @@ try {
   assert.equal(await panel.getByRole('button',{name:'Modifica scheda',exact:true}).count(),0);
   assert.equal(await panel.getByRole('button',{name:'+ Nuovo PNG',exact:true}).count(),0);
   assert.equal(await page.getByRole('button',{name:'Nuova avventura',exact:true}).count(),0);
-  assert.equal(await page.getByLabel('Avventura',{exact:true}).getByText('Una storia nuova',{exact:true}).count(),0,'Le bozze del master sono private');
+  assert.equal(await page.getByLabel('Avventura',{exact:true}).count(),0,'Il cambio avventura avviene dall’hub');
   await panel.getByRole('tab',{name:'Zaino',exact:false}).click();
   await panel.getByRole('button',{name:'+ Oggetto',exact:true}).click();
   await panel.getByLabel('Oggetto 1',{exact:true}).fill('Chiave di ferro');
@@ -193,9 +204,11 @@ try {
   // Esportazione completa e reimportazione: foto, avatar e inventario viaggiano nel JSON.
   user=1;await page.evaluate(()=>sessionStorage.setItem('gdr-test-user','1'));await page.goto(`${base}/tavolo-da-gioco/gdr/gioca/il-prezzo-della-verita`);
   await page.getByRole('button',{name:'Gestisci PG e PNG',exact:true}).click();
-  await panel.getByRole('tab',{name:'Personaggi',exact:false}).click();
+  panel=page.locator('app-gdr-characters');
   await panel.getByLabel('Personaggio attivo',{exact:true}).selectOption({label:'Il custode · PNG'});
-  await panel.locator('.gdr-panel-content').evaluate(el=>el.scrollTop=0);
+  await page.getByRole('button',{name:'Inventari',exact:true}).click();
+  assert.equal(await panel.getByLabel('Oggetto 1',{exact:true}).inputValue(),'Chiave di ferro');
+  await page.getByRole('button',{name:'Personaggi',exact:true}).click();
   await panel.screenshot({path:join(screenshots,'gestione-png.png')});
   const downloadPromise=page.waitForEvent('download');await panel.getByRole('button',{name:'Esporta personaggio',exact:true}).click();
   const downloaded=await downloadPromise;const bundle=JSON.parse(await readFile(await downloaded.path(),'utf8'));

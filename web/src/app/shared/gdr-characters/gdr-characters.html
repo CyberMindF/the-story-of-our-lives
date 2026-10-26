@@ -1,7 +1,7 @@
 <div class="characters">
   <fieldset [disabled]="workspace.saving() || mediaBusy()">
     @if (workspace.available()) {
-      @if (workspace.isMaster() && !inventoryOnly()) {
+      @if (canManage() && !inventoryOnly()) {
         <header class="manager-heading">
           <div>
             <h3>Personaggi dell’avventura</h3>
@@ -321,7 +321,7 @@
                 </p>
               }
             }
-            @if (workspace.isMaster()) {
+            @if (canManage()) {
               <section class="permissions">
                 <h4>Assegna il controllo</h4>
                 <p class="hint">
@@ -369,13 +369,13 @@
       } @else {
         <p class="hint">
           {{
-            workspace.isMaster()
+            canManage()
               ? 'Crea un PG, un PNG o importa un personaggio per iniziare.'
               : 'Il master non ti ha ancora assegnato un personaggio.'
           }}
         </p>
       }
-      @if (workspace.isMaster() && !inventoryOnly()) {
+      @if (canManage() && !inventoryOnly()) {
         @if (legacySheet()) {
           <div class="legacy-import">
             <h4>La scheda attuale</h4>

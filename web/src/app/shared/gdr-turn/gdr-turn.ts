@@ -2,6 +2,8 @@ import { Component, ElementRef, ViewChild, computed, input, output, signal } fro
 import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GdrBlocks } from '../gdr-blocks/gdr-blocks';
+import { BLOCK_TYPES, SNIPPET_LABELS } from '../gdr-blocks/gdr-snippets';
+import { NarrativeCharacter, insertNarrativeBlock, narrativeSnippet } from './gdr-writing';
 import { parseNarrative } from './gdr-turn.parser';
 
 @Component({
@@ -9,36 +11,108 @@ import { parseNarrative } from './gdr-turn.parser';
   standalone: true,
   imports: [GdrBlocks, FormsModule, NgTemplateOutlet],
   template: `
-    @for (section of parsed().sections; track section.id; let sectionIndex = $index) {
-      @if (section.kind === 'document' && editable()) {
-        @for (block of section.blocks; track block.id; let i = $index) {
-          @if (isEditing(section.ranges[i])) {
-            <ng-container *ngTemplateOutlet="inlineEditor" />
-          } @else {
-            <app-gdr-blocks
-              [blocks]="[block]"
-              [editable]="true"
-              [continuation]="i > 0 || sectionIndex > 0"
-              (editBlock)="startEditing(section.ranges[i])"
-            />
-          }
-        }
+    @for (section of rendered(); track section.id; let sectionIndex = $index) {
+      @if (editable() && insertable()) {
+        <ng-container
+          *ngTemplateOutlet="
+            insertionPoint;
+            context: {
+              offset: section.start,
+              label: 'Aggiungi prima del blocco ' + (sectionIndex + 1),
+            }
+          "
+        />
+      }
+      @if (isEditing(section)) {
+        <ng-container *ngTemplateOutlet="inlineEditor" />
+      } @else if (section.kind === 'document' && editable()) {
+        <app-gdr-blocks
+          [blocks]="section.blocks"
+          [editable]="true"
+          [continuation]="sectionIndex > 0"
+          (editBlock)="startEditing(section)"
+        />
       } @else {
-        @if (isEditing(section)) {
-          <ng-container *ngTemplateOutlet="inlineEditor" />
-        } @else {
-          <ng-container
-            *ngTemplateOutlet="content; context: { $implicit: section, canEdit: editable() }"
-          />
-        }
+        <ng-container
+          *ngTemplateOutlet="content; context: { $implicit: section, canEdit: editable() }"
+        />
       }
     }
-    <ng-template #inlineEditor>
-      <section class="inline-editor" aria-label="Modifica in questo punto">
-        <div class="inline-header">
-          <strong>Modifica questo punto</strong><span>Solo questa parte del racconto.</span>
+    @if (editable() && insertable()) {
+      <ng-container
+        *ngTemplateOutlet="
+          insertionPoint;
+          context: {
+            offset: source().length,
+            label: rendered().length ? 'Aggiungi alla fine' : 'Inizia a scrivere',
+            empty: !rendered().length,
+          }
+        "
+      />
+    }
+    <ng-template #insertionPoint let-offset="offset" let-label="label" let-empty="empty">
+      @if (isInserting(offset)) {
+        <ng-container *ngTemplateOutlet="inlineEditor" />
+      } @else {
+        <div class="insertion-point" [class.is-empty]="empty">
+          <button
+            type="button"
+            [attr.aria-label]="label"
+            [title]="label"
+            [disabled]="!!editing()"
+            (click)="startInserting(offset)"
+          >
+            <span aria-hidden="true">＋</span>
+            @if (empty) {
+              <span>Inizia a scrivere</span>
+            }
+          </button>
         </div>
-        <label class="sr-only" [for]="fieldId">Testo del blocco selezionato</label>
+      }
+    </ng-template>
+    <ng-template #inlineEditor>
+      <section
+        class="inline-editor"
+        [attr.aria-label]="inserting() ? 'Aggiungi in questo punto' : 'Modifica in questo punto'"
+      >
+        <div class="inline-header">
+          <strong>{{ inserting() ? 'Aggiungi in questo punto' : 'Modifica questo punto' }}</strong
+          ><span>Solo questa parte del racconto.</span>
+        </div>
+        <div class="inline-tools">
+          <label [for]="fieldId + '-type'">Inserisci</label>
+          <select
+            #snippetType
+            [id]="fieldId + '-type'"
+            aria-label="Inserisci contenuto nel blocco"
+            (change)="insertSnippet(snippetType.value); snippetType.value = ''"
+          >
+            <option value="">Scegli un contenuto…</option>
+            @for (type of blockTypes; track type) {
+              <option [value]="type">{{ snippetLabels[type] }}</option>
+            }
+            <option value="dialogo" [disabled]="!characters().length && !allowGeneric()">
+              Dialogo
+            </option>
+            <option value="azione">Azione</option>
+            <option value="nota">Fuori personaggio</option>
+          </select>
+          @if (characters().length) {
+            <label [for]="fieldId + '-voice'">Voce</label>
+            <select
+              [id]="fieldId + '-voice'"
+              [ngModel]="voice()"
+              (ngModelChange)="voice.set(+$event)"
+            >
+              @for (c of characters(); track $index) {
+                <option [ngValue]="$index">{{ c.name }}</option>
+              }
+            </select>
+          }
+        </div>
+        <label class="sr-only" [for]="fieldId">{{
+          inserting() ? 'Testo del nuovo blocco' : 'Testo del blocco selezionato'
+        }}</label>
         <textarea
           #inlineArea
           [id]="fieldId"
@@ -47,12 +121,25 @@ import { parseNarrative } from './gdr-turn.parser';
           (ngModelChange)="draft.set($event)"
           spellcheck="true"
         ></textarea>
+        @if (draftParsed().errors.length) {
+          <ul class="inline-message" role="status">
+            @for (error of draftParsed().errors; track $index) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
         @if (message()) {
           <p class="inline-message" role="status">{{ message() }}</p>
         }
         <div class="inline-actions">
-          <button type="button" (click)="apply()">Applica al testo</button
-          ><button type="button" (click)="cancel()">Annulla modifica rapida</button
+          <button
+            type="button"
+            [disabled]="(inserting() && !draft().trim()) || draftParsed().errors.length > 0"
+            (click)="apply()"
+          >
+            {{ inserting() ? 'Aggiungi al racconto' : 'Applica al testo' }}</button
+          ><button type="button" (click)="cancel()">
+            {{ inserting() ? 'Annulla aggiunta' : 'Annulla modifica rapida' }}</button
           ><button type="button" [attr.aria-pressed]="preview()" (click)="preview.set(!preview())">
             Anteprima di questa parte
           </button>
@@ -177,6 +264,69 @@ import { parseNarrative } from './gdr-turn.parser';
     .edit-start {
       font-size: 0.75rem;
     }
+    .insertion-point {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      height: 1.25rem;
+    }
+    .insertion-point button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0.2rem 0.6rem;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted-color);
+      font: inherit;
+      cursor: pointer;
+    }
+    .insertion-point button:hover,
+    .insertion-point button:focus-visible {
+      background: var(--button-hover-bg);
+      color: var(--accent-color);
+    }
+    .insertion-point button:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    .insertion-point.is-empty {
+      height: auto;
+      justify-content: flex-start;
+      margin-block: 1rem;
+    }
+    .insertion-point.is-empty button {
+      position: static;
+      transform: none;
+      border: 1px dashed var(--border-color);
+      padding-inline: 1rem;
+    }
+    .inline-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.8rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .inline-tools select {
+      min-width: 0;
+      max-width: 100%;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      color: var(--text-color);
+      background: var(--input-bg);
+      font: inherit;
+      padding: 0.4rem;
+    }
     .inline-editor {
       border: 1px solid var(--accent-color);
       border-radius: 8px;
@@ -259,19 +409,82 @@ import { parseNarrative } from './gdr-turn.parser';
 export class GdrTurn {
   readonly source = input.required<string>();
   readonly editable = input(false);
+  readonly insertable = input(false);
+  readonly characters = input<NarrativeCharacter[]>([]);
+  readonly allowGeneric = input(true);
+  protected readonly blockTypes = BLOCK_TYPES;
+  protected readonly snippetLabels = SNIPPET_LABELS;
+  protected readonly voice = signal(0);
   readonly sourceChange = output<string>();
   readonly editingChange = output<boolean>();
   @ViewChild('inlineArea') private area?: ElementRef<HTMLTextAreaElement>;
   protected readonly fieldId = 'inline-' + crypto.randomUUID();
   protected readonly parsed = computed(() => parseNarrative(this.source()));
+  protected readonly rendered = computed(() =>
+    this.editable()
+      ? this.parsed().sections.flatMap((section) =>
+          section.kind === 'document'
+            ? section.blocks.map((block, i) => ({
+                ...section,
+                id: block.id,
+                blocks: [block],
+                ranges: [section.ranges[i]],
+                start: section.ranges[i].start,
+                end: section.ranges[i].end,
+              }))
+            : [section],
+        )
+      : this.parsed().sections,
+  );
+  protected readonly inserting = computed(() => this.editing()?.inserting === true);
   protected readonly draft = signal('');
   protected readonly draftParsed = computed(() => parseNarrative(this.draft()));
   protected readonly preview = signal(false);
   protected readonly message = signal('');
-  private readonly editing = signal<{ start: number; end: number; snapshot: string } | null>(null);
+  protected readonly editing = signal<{
+    start: number;
+    end: number;
+    snapshot: string;
+    inserting?: boolean;
+  } | null>(null);
   protected isEditing(range: { start: number; end: number }): boolean {
     const current = this.editing();
-    return !!current && current.start === range.start && current.end === range.end;
+    return (
+      !!current && !current.inserting && current.start === range.start && current.end === range.end
+    );
+  }
+  protected isInserting(offset: number): boolean {
+    return this.editing()?.inserting === true && this.editing()?.start === offset;
+  }
+  protected startInserting(offset: number): void {
+    if (!this.editable() || !this.insertable() || this.editing()) return;
+    this.editing.set({ start: offset, end: offset, snapshot: this.source(), inserting: true });
+    this.draft.set('');
+    this.preview.set(false);
+    this.message.set('');
+    this.editingChange.emit(true);
+    requestAnimationFrame(() => this.area?.nativeElement.focus({ preventScroll: true }));
+  }
+  protected insertSnippet(type: string): void {
+    const area = this.area?.nativeElement;
+    if (!area || !type || (type === 'dialogo' && !this.characters().length && !this.allowGeneric()))
+      return;
+    const start = area.selectionStart,
+      end = area.selectionEnd;
+    const snippet = narrativeSnippet(
+      type,
+      this.draft().slice(start, end),
+      this.characters()[this.voice()] ?? this.characters()[0],
+    );
+    if (!snippet) return;
+    this.draft.set(
+      insertNarrativeBlock(this.draft().slice(0, start) + this.draft().slice(end), start, snippet),
+    );
+    requestAnimationFrame(() => {
+      area.focus({ preventScroll: true });
+      const position = area.value.indexOf(snippet, start);
+      area.setSelectionRange(position, position + snippet.length);
+    });
   }
   public startEditing(range: { start: number; end: number }): void {
     if (!this.editable() || !range) return;
@@ -288,7 +501,8 @@ export class GdrTurn {
   }
   protected apply(): void {
     const current = this.editing();
-    if (!current) return;
+    if (!current || (current.inserting && !this.draft().trim()) || this.draftParsed().errors.length)
+      return;
     if (current.snapshot !== this.source()) {
       this.message.set(
         'Il documento è cambiato. Copia la modifica, annulla e riapri questo punto.',
@@ -296,7 +510,11 @@ export class GdrTurn {
       return;
     }
     this.sourceChange.emit(
-      current.snapshot.slice(0, current.start) + this.draft() + current.snapshot.slice(current.end),
+      current.inserting
+        ? insertNarrativeBlock(current.snapshot, current.start, this.draft())
+        : current.snapshot.slice(0, current.start) +
+            this.draft() +
+            current.snapshot.slice(current.end),
     );
     this.cancel();
   }

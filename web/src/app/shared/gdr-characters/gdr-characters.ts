@@ -25,6 +25,8 @@ import { GdrTurn } from '../gdr-turn/gdr-turn';
 export class GdrCharacters {
   protected readonly workspace = inject(GdrWorkspaceService);
   readonly inventoryOnly = input(false);
+  readonly managementMode = input(false);
+  protected readonly canManage = computed(() => this.managementMode() && this.workspace.isMaster());
   readonly legacySheet = input('');
   readonly legacyName = input('Il mio personaggio');
   readonly legacyPortrait = input('');

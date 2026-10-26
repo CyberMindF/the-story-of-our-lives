@@ -2,14 +2,10 @@ import { Component, computed, effect, input, output, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { GdrTurn } from '../gdr-turn/gdr-turn';
 import { parseNarrative, safeNarrativeImage } from '../gdr-turn/gdr-turn.parser';
-import { BLOCK_TYPES, SNIPPETS, SNIPPET_LABELS } from '../gdr-blocks/gdr-snippets';
+import { BLOCK_TYPES, SNIPPET_LABELS } from '../gdr-blocks/gdr-snippets';
 
-export interface NarrativeCharacter {
-  id?: string;
-  name: string;
-  portrait: string;
-  kind?: 'pg' | 'png';
-}
+import { NarrativeCharacter, narrativeSnippet } from '../gdr-turn/gdr-writing';
+export type { NarrativeCharacter } from '../gdr-turn/gdr-writing';
 @Component({
   selector: 'app-gdr-source-editor',
   standalone: true,
@@ -88,14 +84,7 @@ export class GdrSourceEditor {
     const selected = text.slice(start, end);
     const character = this.characters()[this.characterIndex()] ?? this.characters()[0];
     if (type === 'dialogo' && !character && !this.allowGeneric()) return;
-    const safeName = (character?.name || 'Il mio personaggio').replace(/[|\r\n]/g, ' ').trim();
-    const portrait = safeNarrativeImage(character?.portrait ?? '');
-    let snippet: string;
-    if (type === 'dialogo')
-      snippet = `::: dialogo ${safeName}${portrait ? ' | ' + portrait : ''}\n${selected || 'Scrivi qui le sue parole.'}\n:::`;
-    else if (type === 'azione' || type === 'nota')
-      snippet = `::: ${type}\n${selected || (type === 'azione' ? 'Descrivi cosa fa il personaggio.' : 'Scrivi la nota fuori personaggio.')}\n:::`;
-    else snippet = SNIPPETS[type as keyof typeof SNIPPETS];
+    const snippet = narrativeSnippet(type, selected, character);
     if (!snippet) return;
     const prefix =
       start && !text.slice(0, start).endsWith('\n\n')

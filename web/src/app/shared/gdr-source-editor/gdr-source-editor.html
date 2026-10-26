@@ -108,6 +108,8 @@
           <app-gdr-turn
             [source]="source()"
             [editable]="true"
+            [characters]="characters()"
+            [allowGeneric]="allowGeneric()"
             (sourceChange)="sourceChange.emit($event)"
             (editingChange)="inlineEditing.set($event); editingChange.emit($event)"
           />

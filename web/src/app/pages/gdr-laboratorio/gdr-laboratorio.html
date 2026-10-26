@@ -3,122 +3,166 @@
   homeLabel="Gioco di Ruolo"
   homeAria="Torna alle avventure GDR"
 >
-  <aside class="lab-notice" aria-label="Informazioni sulla nuova esperienza GDR">
-    <strong>Gioco di Ruolo</strong>
-    <p>
-      I contenuti e i turni qui sotto sono letti dall’ambiente che stai usando. Le avventure attuali
-      restano in sola lettura. Nuove avventure, personaggi, assegnazioni e zaini sono salvati
-      nell’area laboratorio. Le bozze e i turni di prova restano in questo browser.
-    </p>
-    <div class="lab-controls">
-      <label for="lab-adventure">Avventura</label
-      ><select
-        id="lab-adventure"
-        [disabled]="workspace.saving() || workspace.pendingChanges() || inlineBusy()"
-        [ngModel]="selected()"
-        (ngModelChange)="select($event)"
-      >
-        @for (a of adventures(); track a.id) {
-          <option [value]="a.id">{{ a.title }}</option>
-        }
-      </select>
-      @if (canPrepare()) {
+  <ng-template #characterView let-management="management" let-inventoryOnly="inventoryOnly">
+    <app-gdr-characters
+      [inventoryOnly]="inventoryOnly"
+      [managementMode]="management"
+      [legacySheet]="legacySheet()"
+      [legacyName]="legacyName()"
+      [legacyPortrait]="legacyPortrait()"
+      [legacyNpcs]="legacyNpcs()"
+    />
+  </ng-template>
+  @if (masterCharactersOpen() && canPrepare()) {
+    <section class="avventura-hero" aria-labelledby="master-characters-title">
+      <p class="tavolo-eyebrow">{{ adventure().title }} · strumenti del master</p>
+      <h1 id="master-characters-title">PG e PNG</h1>
+    </section>
+    <div class="avventura-body">
+      <div class="lab-document-controls">
         <button
           class="btn"
-          [disabled]="loading() || !workspace.available() || workspace.pendingChanges()"
-          (click)="manageCharacters()"
+          [disabled]="workspace.pendingChanges() || workspace.saving()"
+          (click)="setMasterCharacters(false)"
         >
-          Gestisci PG e PNG
+          Torna all’avventura
         </button>
-      }
+        <button
+          class="btn"
+          [attr.aria-pressed]="!masterInventory()"
+          [disabled]="workspace.pendingChanges() || workspace.saving()"
+          (click)="masterInventory.set(false)"
+        >
+          Personaggi
+        </button>
+        <button
+          class="btn"
+          [attr.aria-pressed]="masterInventory()"
+          [disabled]="workspace.pendingChanges() || workspace.saving()"
+          (click)="masterInventory.set(true)"
+        >
+          Inventari
+        </button>
+        @if (workspace.pendingChanges()) {
+          <span>Salva o annulla le modifiche prima di cambiare sezione.</span>
+        }
+      </div>
+      <ng-container
+        [ngTemplateOutlet]="characterView"
+        [ngTemplateOutletContext]="{ management: true, inventoryOnly: masterInventory() }"
+      />
     </div>
+  } @else {
+    <section class="avventura-hero" aria-labelledby="adventure-title">
+      <p class="tavolo-eyebrow">{{ adventure().title }}</p>
+      <h1 id="adventure-title">
+        <span aria-hidden="true">{{ adventure().icon }}</span> L'Avventura
+      </h1>
+    </section>
+
     @if (workspace.error()) {
       <p class="lab-error" role="alert">{{ workspace.error() }}</p>
     }
-    <p role="status">{{ workspace.message() }}</p>
-  </aside>
+    @if (workspace.message()) {
+      <p class="lab-status" role="status">{{ workspace.message() }}</p>
+    }
 
-  <section class="avventura-hero" aria-labelledby="adventure-title">
-    <p class="tavolo-eyebrow">{{ adventure().title }}</p>
-    <h1 id="adventure-title">
-      <span aria-hidden="true">{{ adventure().icon }}</span> L'Avventura
-    </h1>
-  </section>
-
-  @if (loading()) {
-    <p class="lab-status" role="status">Caricamento dei contenuti e dei turni esistenti…</p>
-  } @else {
-    <div class="avventura-body">
-      @if (contentError()) {
-        <p class="lab-error" role="alert">{{ contentError() }}</p>
-        <button class="btn" (click)="select(selected())">Riprova il caricamento</button>
-      } @else {
-        @if (canPrepare()) {
-          <div class="lab-document-controls">
-            <button
-              class="btn"
-              [disabled]="readingEdit() || documentEdit()"
-              [attr.aria-expanded]="documentEditor()"
-              (click)="documentEditor.set(!documentEditor())"
-            >
-              {{ documentEditor() ? 'Chiudi editor avventura' : 'Prova a modificare l’avventura' }}
-            </button>
-            @if (adventure().legacy && local().documentDraft !== null) {
-              <button class="btn" (click)="showOriginal.set(!showOriginal())">
-                {{
+    @if (loading()) {
+      <p class="lab-status" role="status">Caricamento dei contenuti e dei turni esistenti…</p>
+    } @else {
+      <div class="avventura-body">
+        @if (contentError()) {
+          <p class="lab-error" role="alert">{{ contentError() }}</p>
+          <button class="btn" (click)="select(selected())">Riprova il caricamento</button>
+        } @else {
+          @if (canPrepare()) {
+            <div class="lab-document-controls">
+              <button
+                class="btn"
+                [disabled]="
+                  !workspace.available() ||
+                  workspace.pendingChanges() ||
+                  workspace.saving() ||
+                  inlineBusy()
+                "
+                (click)="setMasterCharacters(true)"
+              >
+                Gestisci PG e PNG
+              </button>
+              <button
+                class="lab-text-command"
+                [disabled]="readingEdit() || documentEdit() || workspace.saving()"
+                [attr.aria-expanded]="documentEditor()"
+                aria-controls="complete-adventure-editor"
+                (click)="documentEditor.set(!documentEditor())"
+              >
+                {{ documentEditor() ? 'Chiudi testo completo' : 'Modifica testo completo' }}
+              </button>
+              @if (adventure().legacy && local().documentDraft !== null) {
+                <button class="btn" (click)="showOriginal.set(!showOriginal())">
+                  {{
+                    showOriginal()
+                      ? 'Mostra la mia versione di prova'
+                      : 'Confronta con il contenuto originale'
+                  }}</button
+                ><span>{{
                   showOriginal()
-                    ? 'Mostra la mia versione di prova'
-                    : 'Confronta con il contenuto originale'
-                }}</button
-              ><span>{{
-                showOriginal()
-                  ? 'Stai leggendo l’originale'
-                  : 'Stai leggendo la tua versione locale'
-              }}</span>
-            }
-          </div>
-          @if (documentEditor()) {
-            <section class="lab-document-editor" aria-labelledby="document-editor-title">
-              <h2 id="document-editor-title">
-                {{
-                  adventure().legacy
-                    ? 'Modifica l’avventura · copia di prova'
-                    : 'Scrivi la nuova avventura'
-                }}
-              </h2>
-              <p class="lab-help">
-                Il testo è quello dell’avventura scelta, con titoli, immagini, PNG e tabelle già
-                presenti. Modificalo in un unico campo e osserva l’anteprima.
-                {{
-                  adventure().legacy
-                    ? 'Nessun salvataggio sulla partita originale.'
-                    : 'Usa Salva avventura per conservare il testo nel laboratorio.'
-                }}
-              </p>
-              @if (!adventure().legacy) {
-                <label for="adventure-title-input">Titolo dell’avventura</label
-                ><input
-                  id="adventure-title-input"
-                  [ngModel]="adventureTitle()"
-                  (ngModelChange)="adventureTitle.set($event)"
-                  maxlength="160"
-                />
+                    ? 'Stai leggendo l’originale'
+                    : 'Stai leggendo la tua versione locale'
+                }}</span>
               }
-              <app-gdr-source-editor
-                #documentComposer
-                editorId="lab-document"
-                (editingChange)="documentEdit.set($event)"
-                label="Testo completo dell’avventura"
-                [document]="true"
-                [source]="documentSource()"
-                (sourceChange)="updateDocument($event)"
-                [characters]="characters()"
-                [allowGeneric]="!workspace.available()"
-              />
+            </div>
+            @if (documentEditor()) {
+              <section
+                id="complete-adventure-editor"
+                class="lab-document-editor"
+                aria-labelledby="document-editor-title"
+              >
+                <h2 id="document-editor-title">
+                  {{
+                    adventure().legacy
+                      ? 'Modifica l’avventura · copia di prova'
+                      : 'Scrivi la nuova avventura'
+                  }}
+                </h2>
+                <p class="lab-help">
+                  Il testo è quello dell’avventura scelta, con titoli, immagini, PNG e tabelle già
+                  presenti. Modificalo in un unico campo e osserva l’anteprima.
+                  {{
+                    adventure().legacy
+                      ? 'Nessun salvataggio sulla partita originale.'
+                      : 'Usa Salva avventura per conservare il testo nel laboratorio.'
+                  }}
+                </p>
+                @if (!adventure().legacy) {
+                  <label for="adventure-title-input">Titolo dell’avventura</label
+                  ><input
+                    id="adventure-title-input"
+                    [ngModel]="adventureTitle()"
+                    (ngModelChange)="adventureTitle.set($event)"
+                    maxlength="160"
+                  />
+                }
+                <app-gdr-source-editor
+                  #documentComposer
+                  editorId="lab-document"
+                  (editingChange)="documentEdit.set($event)"
+                  label="Testo completo dell’avventura"
+                  [document]="true"
+                  [source]="documentSource()"
+                  (sourceChange)="updateDocument($event)"
+                  [characters]="characters()"
+                  [allowGeneric]="!workspace.available()"
+                />
+              </section>
+            }
+          }
+          @if (canPrepare() && !adventure().legacy) {
+            <div class="lab-document-controls">
               @if (!adventure().legacy) {
                 <button
                   class="btn"
-                  [disabled]="workspace.saving() || documentEdit()"
+                  [disabled]="workspace.saving() || inlineBusy()"
                   (click)="saveAdventure()"
                 >
                   Salva avventura
@@ -134,7 +178,9 @@
                     </p>
                     <button
                       class="btn"
-                      [disabled]="workspace.saving() || local().documentDraft !== null"
+                      [disabled]="
+                        workspace.saving() || inlineBusy() || local().documentDraft !== null
+                      "
                       (click)="publishAdventure()"
                     >
                       {{ a.published ? 'Torna a bozza riservata' : 'Rendi visibile ai giocatori' }}
@@ -142,159 +188,168 @@
                   }
                 }
               }
-            </section>
+            </div>
           }
-        }
-        @if (local().documentDraft !== null && !showOriginal()) {
-          <app-gdr-turn
-            [source]="local().documentDraft!"
-            [editable]="canPrepare()"
-            (sourceChange)="updateDocument($event)"
-            (editingChange)="inlineDocumentEditing($event)"
-          />
-        } @else {
-          @if (canPrepare() && !showOriginal()) {
+          @if (local().documentDraft !== null && !showOriginal()) {
             <app-gdr-turn
-              [source]="documentSource()"
-              [editable]="true"
+              [source]="local().documentDraft!"
+              [editable]="canPrepare() && !documentEditor() && !workspace.saving()"
+              [insertable]="true"
+              [characters]="characters()"
+              [allowGeneric]="!workspace.available()"
               (sourceChange)="updateDocument($event)"
               (editingChange)="inlineDocumentEditing($event)"
             />
           } @else {
-            @if (adventure().legacy) {
-              <app-gdr-blocks [blocks]="narrativeBlocks()" />
+            @if (canPrepare() && !showOriginal()) {
+              <app-gdr-turn
+                [source]="documentSource()"
+                [editable]="!documentEditor() && !workspace.saving()"
+                [insertable]="true"
+                [characters]="characters()"
+                [allowGeneric]="!workspace.available()"
+                (sourceChange)="updateDocument($event)"
+                (editingChange)="inlineDocumentEditing($event)"
+              />
             } @else {
-              <app-gdr-turn [source]="documentSource()" />
+              @if (adventure().legacy) {
+                <app-gdr-blocks [blocks]="narrativeBlocks()" />
+              } @else {
+                <app-gdr-turn [source]="documentSource()" />
+              }
             }
           }
+          @if (adventure().legacy && !narrativeBlocks().length) {
+            <p class="lab-help">
+              Nessun contenuto dell’avventura trovato in questo ambiente. In locale il database può
+              essere diverso da quello online.
+            </p>
+          }
         }
-        @if (adventure().legacy && !narrativeBlocks().length) {
-          <p class="lab-help">
-            Nessun contenuto dell’avventura trovato in questo ambiente. In locale il database può
-            essere diverso da quello online.
-          </p>
-        }
-      }
 
-      <section class="gdr-turn-section" aria-labelledby="turno-title">
-        <h2 id="turno-title">Il turno</h2>
-        @if (turnsError()) {
-          <p class="lab-error" role="alert">{{ turnsError() }}</p>
-          <button class="btn" (click)="select(selected())">Riprova la cronologia</button>
-        }
-        <div class="gdr-thread">
-          @for (turn of turns(); track $index) {
-            <article class="gdr-turn" [class.is-mine]="turn.isMine">
-              <div class="gdr-turn-meta">
-                <span class="gdr-turn-author">{{ turn.isMine ? 'Tu' : turn.author }}</span
-                ><span class="gdr-turn-date">{{ formatDate(turn.createdAt) }}</span>
-              </div>
-              <p class="gdr-turn-body">{{ turn.body }}</p>
-            </article>
+        <section class="gdr-turn-section" aria-labelledby="turno-title">
+          <h2 id="turno-title">Il turno</h2>
+          @if (turnsError()) {
+            <p class="lab-error" role="alert">{{ turnsError() }}</p>
+            <button class="btn" (click)="select(selected())">Riprova la cronologia</button>
           }
-          @if (!turns().length && !turnsError()) {
-            <p class="gdr-thread-message">Nessun turno esistente in questo ambiente.</p>
-          }
-          @for (turn of local().turns; track turn.id) {
-            <article class="gdr-turn is-mine lab-local-turn">
-              <div class="gdr-turn-meta">
-                <span class="gdr-turn-author">{{ turn.author }} · prova locale</span
-                ><span class="gdr-turn-date">{{ formatDate(turn.createdAt) }}</span>
-              </div>
-              <app-gdr-turn [source]="turn.source" /><button class="btn" (click)="editTurn(turn)">
-                Riprendi questo turno di prova
-              </button>
-            </article>
+          <div class="gdr-thread">
+            @for (turn of turns(); track $index) {
+              <article class="gdr-turn" [class.is-mine]="turn.isMine">
+                <div class="gdr-turn-meta">
+                  <span class="gdr-turn-author">{{ turn.isMine ? 'Tu' : turn.author }}</span
+                  ><span class="gdr-turn-date">{{ formatDate(turn.createdAt) }}</span>
+                </div>
+                <p class="gdr-turn-body">{{ turn.body }}</p>
+              </article>
+            }
+            @if (!turns().length && !turnsError()) {
+              <p class="gdr-thread-message">Nessun turno esistente in questo ambiente.</p>
+            }
+            @for (turn of local().turns; track turn.id) {
+              <article class="gdr-turn is-mine lab-local-turn">
+                <div class="gdr-turn-meta">
+                  <span class="gdr-turn-author">{{ turn.author }} · prova locale</span
+                  ><span class="gdr-turn-date">{{ formatDate(turn.createdAt) }}</span>
+                </div>
+                <app-gdr-turn [source]="turn.source" /><button class="btn" (click)="editTurn(turn)">
+                  Riprendi questo turno di prova
+                </button>
+              </article>
+            }
+          </div>
+          <section class="lab-composer" aria-labelledby="write-title">
+            <h3 id="write-title">Scrivi il tuo turno</h3>
+            <p class="lab-help">
+              Un unico testo, un unico invio. Narrazione, gesti e voci dei personaggi restano
+              insieme.
+            </p>
+            <app-gdr-source-editor
+              [source]="local().draft"
+              (sourceChange)="updateDraft($event)"
+              [characters]="characters()"
+              [allowGeneric]="!workspace.available()"
+              editorId="lab-turn"
+              (editingChange)="turnEdit.set($event)"
+              label="Il tuo turno"
+            />
+            <div class="gdr-turn-submit-row">
+              <button
+                class="btn btn-submit"
+                [disabled]="invalidTurn() || turnEdit()"
+                (click)="publish()"
+              >
+                Invia turno di prova</button
+              ><span class="lab-help">Visibile solo in questo browser.</span>
+            </div>
+          </section>
+        </section>
+        <p class="appunti-status" role="status" aria-live="polite">{{ status() }}</p>
+      </div>
+    }
+    @if (!loading()) {
+      <app-gdr-panel
+        [adventure]="adventure().id"
+        [rulesDocumentKey]="adventure().rules || 'maga-regole'"
+        [fieldsDocumentKey]="adventure().character"
+        [personaggioLabel]="
+          adventure().id === 'il-prezzo-della-verita' ? 'La Tua Maga' : 'Personaggio'
+        "
+        [personaggioIcon]="adventure().id === 'il-prezzo-della-verita' ? '✨' : '🧍'"
+        [readOnly]="true"
+        [workspaceMode]="workspace.available()"
+        [pendingChanges]="workspace.pendingChanges()"
+        (tabChange)="panelTab.set($event)"
+      >
+        <div gdrCharacters>
+          <ng-container
+            [ngTemplateOutlet]="characterView"
+            [ngTemplateOutletContext]="{
+              management: false,
+              inventoryOnly: panelTab() === 'inventario',
+            }"
+          />
+          @if (!workspace.active() && adventure().legacy && panelTab() !== 'inventario') {
+            <details>
+              <summary>Scheda attuale · originale in sola lettura</summary>
+              <app-gdr-blocks [blocks]="characterBlocks()" />
+              @for (field of fields(); track field.key) {
+                <p>{{ field.label }}: {{ values()[field.key] ?? '—' }}</p>
+              }
+            </details>
           }
         </div>
-        <section class="lab-composer" aria-labelledby="write-title">
-          <h3 id="write-title">Scrivi il tuo turno</h3>
-          <p class="lab-help">
-            Un unico testo, un unico invio. Narrazione, gesti e voci dei personaggi restano insieme.
-          </p>
-          <app-gdr-source-editor
-            [source]="local().draft"
-            (sourceChange)="updateDraft($event)"
-            [characters]="characters()"
-            [allowGeneric]="!workspace.available()"
-            editorId="lab-turn"
-            (editingChange)="turnEdit.set($event)"
-            label="Il tuo turno"
-          />
-          <div class="gdr-turn-submit-row">
-            <button
-              class="btn btn-submit"
-              [disabled]="invalidTurn() || turnEdit()"
-              (click)="publish()"
-            >
-              Invia turno di prova</button
-            ><span class="lab-help">Visibile solo in questo browser.</span>
-          </div>
-        </section>
-      </section>
-      <p class="appunti-status" role="status" aria-live="polite">{{ status() }}</p>
-    </div>
-  }
-  @if (!loading()) {
-    <app-gdr-panel
-      [adventure]="adventure().id"
-      [rulesDocumentKey]="adventure().rules || 'maga-regole'"
-      [fieldsDocumentKey]="adventure().character"
-      [personaggioLabel]="
-        adventure().id === 'il-prezzo-della-verita' ? 'La Tua Maga' : 'Personaggio'
-      "
-      [personaggioIcon]="adventure().id === 'il-prezzo-della-verita' ? '✨' : '🧍'"
-      [readOnly]="true"
-      [workspaceMode]="workspace.available()"
-      [pendingChanges]="workspace.pendingChanges()"
-      (tabChange)="panelTab.set($event)"
-    >
-      <div gdrCharacters>
-        <app-gdr-characters
-          [inventoryOnly]="panelTab() === 'inventario'"
-          [legacySheet]="legacySheet()"
-          [legacyName]="legacyName()"
-          [legacyPortrait]="legacyPortrait()"
-          [legacyNpcs]="legacyNpcs()"
-        />
-        @if (!workspace.active() && adventure().legacy && panelTab() !== 'inventario') {
-          <details>
-            <summary>Scheda attuale · originale in sola lettura</summary>
-            <app-gdr-blocks [blocks]="characterBlocks()" />
-            @for (field of fields(); track field.key) {
-              <p>{{ field.label }}: {{ values()[field.key] ?? '—' }}</p>
-            }
-          </details>
-        }
-      </div>
-      <div gdrRules>
-        <label for="rules-search">Cerca nelle regole</label
-        ><input
-          type="search"
-          id="rules-search"
-          [ngModel]="rulesSearch()"
-          (ngModelChange)="rulesSearch.set($event)"
-          placeholder="Una parola o una regola…"
-        /><app-gdr-blocks [blocks]="filteredRules()" />
-        @if (rulesSearch() && !filteredRules().length) {
-          <p class="lab-help">Nessuna regola corrispondente.</p>
-        }
-        @if (!rulesBlocks().length) {
-          <p class="lab-help">Le regole possono essere incluse nel testo della nuova avventura.</p>
-        }
-      </div>
-      <div gdrNotes>
-        @if (adventure().legacy) {
-          <app-gdr-notes-editor [adventure]="adventure().id" [readOnly]="true" />
-        }
-        <label for="workspace-notes">Taccuino di prova · solo in questo browser</label
-        ><textarea
-          id="workspace-notes"
-          rows="8"
-          [ngModel]="local().notes"
-          (ngModelChange)="updateNotes($event)"
-        ></textarea>
-      </div>
-    </app-gdr-panel>
+        <div gdrRules>
+          <label for="rules-search">Cerca nelle regole</label
+          ><input
+            type="search"
+            id="rules-search"
+            [ngModel]="rulesSearch()"
+            (ngModelChange)="rulesSearch.set($event)"
+            placeholder="Una parola o una regola…"
+          /><app-gdr-blocks [blocks]="filteredRules()" />
+          @if (rulesSearch() && !filteredRules().length) {
+            <p class="lab-help">Nessuna regola corrispondente.</p>
+          }
+          @if (!rulesBlocks().length) {
+            <p class="lab-help">
+              Le regole possono essere incluse nel testo della nuova avventura.
+            </p>
+          }
+        </div>
+        <div gdrNotes>
+          @if (adventure().legacy) {
+            <app-gdr-notes-editor [adventure]="adventure().id" [readOnly]="true" />
+          }
+          <label for="workspace-notes">Taccuino di prova · solo in questo browser</label
+          ><textarea
+            id="workspace-notes"
+            rows="8"
+            [ngModel]="local().notes"
+            (ngModelChange)="updateNotes($event)"
+          ></textarea>
+        </div>
+      </app-gdr-panel>
+    }
   }
 </app-shell>

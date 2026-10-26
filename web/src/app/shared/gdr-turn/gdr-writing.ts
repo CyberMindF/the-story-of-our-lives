@@ -1,0 +1,35 @@
+import { SNIPPETS } from '../gdr-blocks/gdr-snippets';
+import { safeNarrativeImage } from './gdr-turn.parser';
+
+export interface NarrativeCharacter {
+  id?: string;
+  name: string;
+  portrait: string;
+  kind?: 'pg' | 'png';
+}
+
+export function narrativeSnippet(
+  type: string,
+  selected: string,
+  character?: NarrativeCharacter,
+): string {
+  const name = (character?.name || 'Il mio personaggio').replace(/[|\r\n]/g, ' ').trim();
+  const portrait = safeNarrativeImage(character?.portrait ?? '');
+  if (type === 'dialogo')
+    return `::: dialogo ${name}${portrait ? ' | ' + portrait : ''}\n${selected || 'Scrivi qui le sue parole.'}\n:::`;
+  if (type === 'azione' || type === 'nota')
+    return `::: ${type}\n${selected || (type === 'azione' ? 'Descrivi cosa fa il personaggio.' : 'Scrivi la nota fuori personaggio.')}\n:::`;
+  return SNIPPETS[type as keyof typeof SNIPPETS] ?? '';
+}
+
+/** Aggiunge solo i separatori necessari, conservando intatto il testo già presente. */
+export function insertNarrativeBlock(source: string, offset: number, content: string): string {
+  const newline = source.includes('\r\n') ? '\r\n' : '\n';
+  const join = (left: string, right: string): string => {
+    if (!left || !right) return left + right;
+    const ending = left.replace(/\r\n?/g, '\n').match(/\n*$/)![0].length;
+    const starting = right.replace(/\r\n?/g, '\n').match(/^\n*/)![0].length;
+    return left + newline.repeat(Math.max(0, 2 - ending - starting)) + right;
+  };
+  return join(join(source.slice(0, offset), content), source.slice(offset));
+}
