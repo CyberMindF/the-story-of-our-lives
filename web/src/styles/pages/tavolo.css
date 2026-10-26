@@ -24,6 +24,9 @@
 .tavolo-games-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .tavolo-games-grid-compact { grid-template-columns: repeat(auto-fill, minmax(16rem, 20rem)); }
 .tavolo-game-card { display: grid; grid-template-columns: auto 1fr; gap: .3rem .8rem; align-items: center; min-height: 8rem; padding: 1.15rem; color: var(--text-color); text-decoration: none; }
+button.tavolo-game-card { font: inherit; text-align: start; cursor: pointer; }
+button.tavolo-game-card:disabled { cursor: default; opacity: .6; }
+.tavolo-game-card.is-creating { grid-template-columns: minmax(0, 1fr); gap: .75rem; align-content: start; }
 .tavolo-game-emoji { grid-row: 1 / span 2; font-size: 1.8rem; }
 .tavolo-game-card strong { align-self: end; line-height: 1.2; }
 .tavolo-game-card small { align-self: start; color: var(--muted-color); }

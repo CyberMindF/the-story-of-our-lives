@@ -1,3 +1,4 @@
+@if (!readOnly) {
 <div class="gdr-notes-toolbar" role="toolbar" aria-label="Formattazione">
   <button type="button" class="gdr-notes-tool gdr-notes-tool-bold" (mousedown)="preserveSelection($event)" (click)="applyBold()" aria-label="Grassetto">B</button>
   <button type="button" class="gdr-notes-tool gdr-notes-tool-underline" (mousedown)="preserveSelection($event)" (click)="applyUnderline()" aria-label="Sottolineato">S</button>
@@ -14,10 +15,11 @@
   }
 </div>
 
+}
 <div
   #editorEl
   class="gdr-notes-textarea"
-  [attr.contenteditable]="!disabled()"
+  [attr.contenteditable]="!disabled() && !readOnly"
   [attr.aria-label]="'I tuoi appunti'"
   (input)="onInput()"
 ></div>

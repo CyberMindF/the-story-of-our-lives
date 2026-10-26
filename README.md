@@ -134,6 +134,104 @@ visuale per righe, colonne e blocchi. Foto, video e audio vengono caricati diret
 bucket R2 privato tramite uno stream autenticato; le miniature fotografiche sono generate nel
 browser. La pagina mantiene il lightbox accessibile con tastiera e swipe.
 
+## Nuova esperienza GDR
+
+L’ingresso `/tavolo-da-gioco/gdr` conserva l’hub introduttivo e la scelta delle avventure. Le schede aprono la nuova esperienza a `/tavolo-da-gioco/gdr/gioca/<id>`, con l’avventura scelta. La versione classica resta disponibile solo tramite indirizzo diretto a `/tavolo-da-gioco/gdr/classico`, insieme agli URL originali delle avventure; non sono presenti collegamenti dalla nuova interfaccia. Il collegamento `/tavolo-da-gioco/gdr/laboratorio` continua a funzionare. Il pulsante «Nuova avventura» e il relativo modulo sono presenti soltanto nell’hub principale per gli admin non di prova; dopo la creazione si apre l’editor. Anche le nuove avventure visibili all’utente compaiono nell’hub. Il backend verifica comunque il permesso di creazione. Restano valide le limitazioni di salvataggio descritte sotto.
+
+La nuova pagina autenticata, raggiungibile dalle schede nell’hub GDR
+(oppure dal collegamento precedente `/tavolo-da-gioco/gdr/laboratorio`), mostra entrambe le avventure con impaginazione e turni storici invariati. Le API storiche
+vengono chiamate esclusivamente tramite GET. In locale si vede il database locale.
+Le bozze v2 e i turni di prova restano nel browser, separati per account e avventura
+(`gdr-laboratorio-v2-<id>-<avventura>`); le precedenti prove v1 non sono cancellate.
+
+L’editor testuale unico con anteprima inserisce comandi al cursore o attorno alla selezione.
+Riusa parser, snippet e renderer dei documenti e aggiunge `::: dialogo Nome | /assets/ritratto.webp`,
+`::: azione` e `::: nota`, chiusi da `:::`. La voce si sceglie per ciascun inserimento;
+“Cambia voce nel dialogo” modifica soltanto l’intestazione del dialogo che contiene il cursore.
+I titoli e l’inizio dei blocchi nell’anteprima sono cliccabili: il blocco selezionato
+si trasforma in un editor **nella stessa posizione**, con Applica, Annulla e anteprima locale.
+Non apre l’editor completo né sposta il focus alla fine del documento. Gli intervalli derivano
+dal parser, non da ricerche del testo: paragrafi identici, emoji e CRLF restano distinguibili.
+Il resto del documento viene conservato byte per byte nell’applicazione della modifica.
+La barra di scrittura è parte della cornice dell’editor. L’editor completo resta disponibile.
+
+I turni di prova non sono ancora pubblicati né sincronizzati: i permessi di interpretazione
+filtrano le voci disponibili, ma la futura pubblicazione dovrà verificare anche gli ID dei
+personaggi sul server prima di salvare un turno condiviso.
+
+### Nuove avventure e personaggi
+
+La migrazione **0133_add_gdr_workspace.sql** aggiunge soltanto tabelle `gdr_workspace_*`;
+**0134_add_gdr_character_profiles.sql** aggiunge profili descrittivi e foto agli stessi personaggi.
+Non aggiorna né cancella schede, appunti, blocchi o turni esistenti. Va applicata prima di
+abilitare le nuove funzionalità su un ambiente; senza migrazione il laboratorio segnala
+l’indisponibilità e continua a mostrare le avventure storiche. Nessuna migrazione remota
+viene applicata automaticamente dalla build o dal frontend.
+
+`GET /api/gdr-workspace?adventure=<id>` legge lo stato e `POST /api/gdr-workspace/mutate`
+esegue le scritture del laboratorio. Il master corrisponde agli amministratori con permesso
+`content.create`, esclusi gli account test. Può creare nuove avventure, scriverne e salvarne
+il testo dal sito, conservarle come bozze riservate e renderle visibili agli altri account
+nel laboratorio. Le avventure storiche non sono riscrivibili da questi endpoint.
+
+Il master crea PG e PNG e assegna a uno o più utenti permessi distinti di interpretazione,
+modifica della scheda (solo PG) e modifica dello zaino. Non esiste un limite client deciso dal
+giocatore al numero di PG assegnati; un giocatore non può crearli o assegnarsi permessi.
+I PNG restano modificabili nella scheda solo dal master, anche se un giocatore può interpretarli
+o gestirne lo zaino. Ogni personaggio ha inventario separato (oggetto, quantità, note).
+La scheda storica si può copiare esplicitamente in un nuovo PG, senza modificare l’originale.
+“Gestisci PG e PNG” apre il pannello sulla gestione, con elenco ricercabile e filtri, creazione
+visibile di PG e PNG, modifica della scheda, assegnazioni e zaino. I PNG già presenti nei blocchi
+narrativi possono essere copiati nella gestione; i blocchi originali non vengono riscritti.
+Il profilo condiviso comprende nome, cognome, aspetto, carattere, storia, obiettivo e abilità,
+oltre agli altri dettagli liberi della scheda. I campi descrittivi sono guidati da una definizione
+comune per PG e PNG.
+
+Foto e avatar sono distinti. “Carica foto” prepara un WebP con inquadratura completa (lato massimo
+1600px); se manca un avatar, ne prepara uno quadrato da 256px con ritaglio centrale. È possibile
+caricare un avatar autonomo o rigenerarlo dalla foto. `POST /api/gdr-workspace/media` verifica
+l’autenticazione e i permessi di modifica della scheda prima di ricevere e salvare il WebP in R2
+privato (`gdr-workspace/<personaggio>/<photo|avatar>/<uuid>.webp`, massimo 2 MiB per upload).
+Il percorso viene registrato nella scheda solo quando si salva. I precedenti file non vengono
+cancellati perché possono essere ancora referenziati nei turni. Gli upload annullati possono
+lasciare file non referenziati: un’eventuale pulizia dovrà prima verificare tutti i riferimenti.
+
+Import/export JSON `mondobianco.character`, versione 1, include profilo, scheda, inventario e
+immagini incorporate. L’import ha anteprima e conferma, crea una nuova copia nell’avventura
+corrente e non importa ID, assegnazioni, account o permessi. Foto e avatar vengono ricaricati nei
+media privati; gli oggetti ricevono nuovi ID. File e campi sono validati prima di creare il
+personaggio, e le immagini vengono decodificate/normalizzate nel browser. Se un caricamento
+immagine fallisce dopo la creazione, il personaggio e i dati testuali restano disponibili e
+l’interfaccia segnala che le immagini vanno completate.
+
+L’archiviazione conserva i personaggi e disabilita il controllo da parte dei giocatori.
+
+Permessi e revisioni sono verificati sul server, compresa la revoca durante una modifica.
+Un conflitto restituisce 409 e lascia la bozza aperta. L’aggiornamento dei permessi invalida
+le revisioni degli editor aperti tramite trigger. I retry di creazione usano ID stabili.
+Le letture usano una sessione D1 `first-primary`. Gli account test non possono scrivere.
+
+Scheda, regole, appunti, dadi e zaino restano nel pannello laterale condiviso. In modalità
+laboratorio il pannello offre larghezza regolabile, “Tieni aperto”, memoria della scheda
+selezionata per avventura e posizione di scorrimento per sezione. Scheda e zaino non salvati
+bloccano il cambio di personaggio/sezione finché si salva o si annulla. Le regole sono
+ricercabili. Gli appunti storici sono in sola lettura, affiancati da un taccuino locale.
+Le pagine attuali mantengono il normale pannello, senza queste opzioni di laboratorio.
+
+Verifiche senza dati remoti:
+
+```bash
+node --test functions/api/gdr-workspace/workspace.test.mjs
+npm run build
+node scripts/smoke-gdr-laboratorio.mjs
+node scripts/smoke-gdr-workspace.mjs
+node scripts/smoke-gdr-layout.mjs
+```
+
+Gli smoke test usano API simulate o i veri handler su SQLite temporaneo: nessuna scrittura
+sulle partite o sul database remoto. Tiri collegati ai turni,
+notifiche in tempo reale e modalità Alice is Missing rimangono da implementare.
+
 ## Database
 
 Le migrazioni sono in `migrations/`:

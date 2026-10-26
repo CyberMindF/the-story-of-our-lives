@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { renderInlineLinks } from '../inline-text';
 import {
@@ -9,7 +9,7 @@ import {
   GdrListData,
   GdrNpcGridData,
   GdrParagraphData,
-  GdrTableData
+  GdrTableData,
 } from './gdr-block.types';
 
 // Rendering pubblico dei documenti del GDR "Il Prezzo della Verità" (Avventura, La Tua Maga —
@@ -24,10 +24,13 @@ import {
   standalone: true,
   styleUrls: ['./gdr-blocks.css'],
   host: { style: 'display: contents' },
-  templateUrl: './gdr-blocks.html'
+  templateUrl: './gdr-blocks.html',
 })
 export class GdrBlocks {
   @Input() blocks: GdrBlockRow[] = [];
+  @Input() editable = false;
+  @Input() continuation = false;
+  @Output() editBlock = new EventEmitter<number>();
 
   private readonly sanitizer = inject(DomSanitizer);
 

@@ -1,0 +1,417 @@
+<div class="characters">
+  <fieldset [disabled]="workspace.saving() || mediaBusy()">
+    @if (workspace.available()) {
+      @if (workspace.isMaster() && !inventoryOnly()) {
+        <header class="manager-heading">
+          <div>
+            <h3>Personaggi dell’avventura</h3>
+            <p class="hint">PG e PNG, schede, immagini e assegnazioni.</p>
+          </div>
+        </header>
+        <div class="manager-actions">
+          <button
+            class="btn"
+            [disabled]="dirty()"
+            (click)="newKind.set('png'); createOpen.set(true)"
+          >
+            + Nuovo PNG</button
+          ><button
+            class="btn"
+            [disabled]="dirty()"
+            (click)="newKind.set('pg'); createOpen.set(true)"
+          >
+            + Nuovo PG</button
+          ><label class="file-button" [class.is-disabled]="dirty()"
+            >Importa personaggio<input
+              type="file"
+              accept=".json,application/json"
+              [disabled]="dirty()"
+              (change)="inspectImport($event)"
+              aria-label="Importa personaggio JSON"
+          /></label>
+        </div>
+        @if (createOpen()) {
+          <div class="creation">
+            <h4>{{ newKind() === 'png' ? 'Nuovo PNG' : 'Nuovo PG' }}</h4>
+            <label for="new-character-name">Nome del nuovo personaggio</label
+            ><input
+              id="new-character-name"
+              maxlength="160"
+              [ngModel]="newName()"
+              (ngModelChange)="newName.set($event)"
+            /><label for="new-character-kind">Tipo</label
+            ><select
+              id="new-character-kind"
+              [ngModel]="newKind()"
+              (ngModelChange)="newKind.set($event)"
+            >
+              <option value="pg">PG · personaggio giocante</option>
+              <option value="png">PNG · personaggio non giocante</option>
+            </select>
+            <div class="actions">
+              <button class="btn" [disabled]="!newName().trim() || dirty()" (click)="create()">
+                Crea personaggio</button
+              ><button class="btn" (click)="createOpen.set(false)">Annulla creazione</button>
+            </div>
+          </div>
+        }
+        @if (importPreview(); as bundle) {
+          <section class="creation">
+            <h4>Importa {{ bundle.name }}</h4>
+            <p class="hint">
+              {{ bundle.kind === 'png' ? 'PNG' : 'PG' }} · {{ bundle.inventory.length }} oggetti.
+              Crea una nuova copia in questa avventura, senza assegnazioni o permessi importati.
+            </p>
+            <button class="btn" (click)="importCharacter()">Conferma importazione</button
+            ><button class="btn" (click)="importPreview.set(null)">Annulla importazione</button>
+          </section>
+        }
+        <div class="roster-filters">
+          <label for="character-search">Cerca personaggi</label
+          ><input
+            type="search"
+            id="character-search"
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+            placeholder="Nome o cognome…"
+          /><label class="sr-only" for="character-filter">Tipo di personaggio</label
+          ><select id="character-filter" [ngModel]="filter()" (ngModelChange)="filter.set($event)">
+            <option value="all">Tutti</option>
+            <option value="pg">Solo PG</option>
+            <option value="png">Solo PNG</option>
+          </select>
+        </div>
+        <div class="roster" aria-label="Elenco PG e PNG">
+          @for (character of roster(); track character.id) {
+            <button
+              class="roster-entry"
+              [class.is-active]="workspace.active()?.id === character.id"
+              [disabled]="dirty()"
+              (click)="choose(character.id)"
+            >
+              @if (character.portrait) {
+                <img [src]="character.portrait" alt="" />
+              } @else {
+                <span class="avatar-initial" aria-hidden="true">{{
+                  character.name.slice(0, 1)
+                }}</span>
+              }
+              <span
+                ><strong>{{ character.name }} {{ character.profile?.surname }}</strong
+                ><small
+                  >{{ character.kind === 'pg' ? 'PG' : 'PNG'
+                  }}{{ character.archived ? ' · archiviato' : '' }}</small
+                ></span
+              >
+            </button>
+          } @empty {
+            <p class="hint">Nessun personaggio corrispondente.</p>
+          }
+        </div>
+      }
+      @if (workspace.characters().length) {
+        <label for="workspace-character">{{
+          inventoryOnly() ? 'Zaino del personaggio' : 'Personaggio attivo'
+        }}</label
+        ><select
+          id="workspace-character"
+          [ngModel]="workspace.active()?.id"
+          (ngModelChange)="choose($event)"
+        >
+          @for (c of workspace.characters(); track c.id) {
+            <option [value]="c.id">
+              {{ c.name + (c.profile?.surname ? ' ' + c.profile.surname : '') }} ·
+              {{ c.kind === 'pg' ? 'PG' : 'PNG' }}{{ c.archived ? ' · archiviato' : '' }}
+            </option>
+          }
+        </select>
+        @if (workspace.active(); as c) {
+          <header class="identity">
+            @if (c.portrait) {
+              <img [src]="c.portrait" alt="" />
+            } @else {
+              <span class="avatar-initial">{{ c.name.slice(0, 1) }}</span>
+            }
+            <div>
+              <h3>{{ c.name }} {{ c.profile?.surname }}</h3>
+              <small
+                >{{ c.kind === 'pg' ? 'Personaggio giocante' : 'Personaggio non giocante'
+                }}{{ c.archived ? ' · archiviato' : '' }}</small
+              >
+            </div>
+          </header>
+          @if (inventoryOnly()) {
+            @if (!c.canInventory) {
+              <p class="hint">
+                Puoi consultare lo zaino. Le modifiche devono essere abilitate dal master.
+              </p>
+            }
+            @for (item of items(); track item.id; let i = $index) {
+              <div class="item">
+                <label [for]="'item-name-' + item.id">Oggetto {{ i + 1 }}</label
+                ><input
+                  [id]="'item-name-' + item.id"
+                  [readOnly]="!c.canInventory"
+                  [ngModel]="item.name"
+                  (ngModelChange)="changeItem(item.id, 'name', $event)"
+                  maxlength="160"
+                /><label [for]="'item-qty-' + item.id">Quantità</label
+                ><input
+                  type="number"
+                  [id]="'item-qty-' + item.id"
+                  min="0"
+                  max="99999"
+                  [readOnly]="!c.canInventory"
+                  [ngModel]="item.quantity"
+                  (ngModelChange)="changeItem(item.id, 'quantity', $event)"
+                /><label [for]="'item-notes-' + item.id">Note dell’oggetto</label
+                ><textarea
+                  [id]="'item-notes-' + item.id"
+                  rows="2"
+                  [readOnly]="!c.canInventory"
+                  [ngModel]="item.notes"
+                  (ngModelChange)="changeItem(item.id, 'notes', $event)"
+                ></textarea>
+                @if (c.canInventory) {
+                  <button class="btn" (click)="removeItem(item.id)">Rimuovi dallo zaino</button>
+                }
+              </div>
+            } @empty {
+              <p class="hint">Lo zaino è vuoto.</p>
+            }
+            @if (c.canInventory) {
+              <div class="actions">
+                <button class="btn" (click)="addItem()">+ Oggetto</button
+                ><button class="btn" [disabled]="!dirty()" (click)="saveInventory()">
+                  Salva zaino
+                </button>
+                @if (dirty()) {
+                  <button class="btn" (click)="discard()">Annulla modifiche</button>
+                }
+              </div>
+            }
+          } @else {
+            @if (editing() && c.canEditSheet) {
+              <div class="profile-form">
+                <h4>Identità e descrizione</h4>
+                <label for="character-name">Nome</label
+                ><input
+                  id="character-name"
+                  maxlength="160"
+                  [ngModel]="name()"
+                  (ngModelChange)="name.set($event); dirty.set(true)"
+                />
+                <h4>Foto e avatar</h4>
+                <p class="hint">
+                  La foto conserva l’inquadratura completa. Alla prima foto viene creato anche un
+                  avatar quadrato, con ritaglio centrale. Puoi caricare un avatar diverso.
+                </p>
+                <div class="image-tools">
+                  <figure>
+                    @if (photo()) {
+                      <img class="photo" [src]="photo()" alt="Foto del personaggio" />
+                    } @else {
+                      <span class="photo-empty">Nessuna foto</span>
+                    }
+                    <figcaption>
+                      <label class="file-button"
+                        >Carica foto<input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp"
+                          (change)="upload($event, 'photo')"
+                          aria-label="Carica foto del personaggio"
+                      /></label>
+                    </figcaption>
+                  </figure>
+                  <figure>
+                    @if (portrait()) {
+                      <img class="avatar-preview" [src]="portrait()" alt="Avatar del personaggio" />
+                    } @else {
+                      <span class="avatar-initial">{{ name().slice(0, 1) }}</span>
+                    }
+                    <figcaption>
+                      <label class="file-button"
+                        >Carica avatar<input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp"
+                          (change)="upload($event, 'avatar')"
+                          aria-label="Carica avatar del personaggio"
+                      /></label>
+                    </figcaption>
+                  </figure>
+                </div>
+                @if (photo()) {
+                  <button class="btn" (click)="avatarFromPhoto()">Usa la foto per l’avatar</button>
+                }
+                <details>
+                  <summary>Usa immagini già presenti nel sito</summary>
+                  <label for="character-photo">Percorso della foto</label
+                  ><input
+                    id="character-photo"
+                    [ngModel]="photo()"
+                    (ngModelChange)="photo.set($event); dirty.set(true)"
+                  /><label for="character-portrait">Percorso dell’avatar</label
+                  ><input
+                    id="character-portrait"
+                    [ngModel]="portrait()"
+                    (ngModelChange)="portrait.set($event); dirty.set(true)"
+                  />
+                </details>
+                @for (field of profileFields; track field.key) {
+                  <label [for]="'profile-' + field.key">{{ field.label }}</label>
+                  @if (field.rows === 1) {
+                    <input
+                      [id]="'profile-' + field.key"
+                      maxlength="160"
+                      [ngModel]="profile()[field.key]"
+                      (ngModelChange)="changeProfile(field.key, $event)"
+                    />
+                  } @else {
+                    <textarea
+                      [id]="'profile-' + field.key"
+                      [rows]="field.rows"
+                      maxlength="6000"
+                      [ngModel]="profile()[field.key]"
+                      (ngModelChange)="changeProfile(field.key, $event)"
+                    ></textarea>
+                  }
+                }
+                <details [open]="!!sheet()">
+                  <summary>Altri dettagli della scheda</summary>
+                  <label for="character-sheet">Scheda del personaggio</label
+                  ><textarea
+                    id="character-sheet"
+                    rows="8"
+                    maxlength="20000"
+                    [ngModel]="sheet()"
+                    (ngModelChange)="sheet.set($event); dirty.set(true)"
+                  ></textarea>
+                </details>
+                <div class="actions save-profile">
+                  <button class="btn" (click)="saveSheet()">Salva scheda</button
+                  ><button class="btn" (click)="discard()">Annulla modifiche</button>
+                </div>
+              </div>
+            } @else {
+              @if (c.photo) {
+                <img class="character-photo" [src]="c.photo" [alt]="'Foto di ' + c.name" />
+              }
+              <dl class="profile-details">
+                @for (field of profileFields; track field.key) {
+                  @if (c.profile?.[field.key]) {
+                    <div>
+                      <dt>{{ field.label }}</dt>
+                      <dd>{{ c.profile[field.key] }}</dd>
+                    </div>
+                  }
+                }
+              </dl>
+              <app-gdr-turn [source]="c.sheet" />
+              <div class="character-actions">
+                @if (c.canEditSheet) {
+                  <button class="btn" (click)="editing.set(true)">Modifica scheda</button>
+                }
+                <button class="btn" [disabled]="dirty()" (click)="export()">
+                  Esporta personaggio
+                </button>
+              </div>
+              @if (!c.canEditSheet) {
+                <p class="hint">
+                  Scheda in sola lettura. Interpretazione e zaino hanno permessi separati.
+                </p>
+              }
+            }
+            @if (workspace.isMaster()) {
+              <section class="permissions">
+                <h4>Assegna il controllo</h4>
+                <p class="hint">
+                  Interpretazione e inventario hanno permessi distinti. Per i PNG la scheda resta
+                  sempre al master.
+                </p>
+                <label for="grant-player">Giocatore</label
+                ><select id="grant-player" [ngModel]="userId()" (ngModelChange)="setUser(+$event)">
+                  <option [ngValue]="0">Scegli una persona</option>
+                  @for (user of workspace.users(); track user.id) {
+                    <option [ngValue]="user.id">{{ user.nickname }}</option>
+                  }</select
+                ><label class="check"
+                  ><input type="checkbox" [ngModel]="speak()" (ngModelChange)="speak.set($event)" />
+                  Può interpretarlo</label
+                >
+                @if (c.kind === 'pg') {
+                  <label class="check"
+                    ><input
+                      type="checkbox"
+                      [ngModel]="editSheet()"
+                      (ngModelChange)="editSheet.set($event)"
+                    />
+                    Può modificare la scheda</label
+                  >
+                }
+                <label class="check"
+                  ><input
+                    type="checkbox"
+                    [ngModel]="editInventory()"
+                    (ngModelChange)="editInventory.set($event)"
+                  />
+                  Può modificare lo zaino</label
+                ><button class="btn" [disabled]="!userId() || dirty()" (click)="grant()">
+                  Salva assegnazione
+                </button>
+                <p class="hint">Per revocare le azioni, disattiva i relativi permessi e salva.</p>
+              </section>
+              <button class="btn" [disabled]="dirty()" (click)="archive()">
+                {{ c.archived ? 'Riattiva personaggio' : 'Archivia personaggio' }}
+              </button>
+            }
+          }
+        }
+      } @else {
+        <p class="hint">
+          {{
+            workspace.isMaster()
+              ? 'Crea un PG, un PNG o importa un personaggio per iniziare.'
+              : 'Il master non ti ha ancora assegnato un personaggio.'
+          }}
+        </p>
+      }
+      @if (workspace.isMaster() && !inventoryOnly()) {
+        @if (legacySheet()) {
+          <div class="legacy-import">
+            <h4>La scheda attuale</h4>
+            <button class="btn" [disabled]="dirty()" (click)="create(true)">
+              Crea un PG dalla scheda attuale
+            </button>
+            <p class="hint">L’originale resta invariato.</p>
+          </div>
+        }
+        @if (legacyNpcs().length) {
+          <section class="legacy-import">
+            <h4>PNG già presenti nel racconto</h4>
+            <p class="hint">Aggiungili alla gestione per avere scheda, zaino e assegnazioni.</p>
+            @for (npc of legacyNpcs(); track npc.name) {
+              <div class="legacy-npc">
+                <img [src]="npc.portrait" alt="" /><span>{{ npc.name }}</span
+                ><button class="btn" [disabled]="dirty()" (click)="copyNpc(npc)">
+                  Aggiungi alla gestione
+                </button>
+              </div>
+            }
+          </section>
+        }
+      }
+    }
+    @if (localError()) {
+      <p class="error" role="alert">{{ localError() }}</p>
+    }
+    @if (workspace.error()) {
+      <p class="error" role="alert">{{ workspace.error() }}</p>
+      <button class="btn" [disabled]="dirty()" (click)="workspace.load(workspace.selectedId())">
+        Ricarica personaggi
+      </button>
+    }
+  </fieldset>
+  <p class="hint" role="status" aria-live="polite">
+    {{ mediaBusy() ? 'Preparazione delle immagini…' : workspace.message() }}
+  </p>
+</div>

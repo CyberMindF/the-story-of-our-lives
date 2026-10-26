@@ -1,19 +1,67 @@
-@for (block of blocks; track block.id) {
+@for (block of blocks; track block.id; let blockIndex = $index) {
+  @if (editable && block.type !== 'heading') {
+    <button class="gdr-edit-start" type="button" (click)="editBlock.emit(blockIndex)">
+      ✎ Modifica
+      {{
+        block.type === 'paragraph'
+          ? 'paragrafo'
+          : block.type === 'image'
+            ? 'immagine'
+            : block.type === 'npc_grid'
+              ? 'gruppo di PNG'
+              : block.type === 'list'
+                ? 'elenco'
+                : block.type === 'table'
+                  ? 'tabella'
+                  : 'riquadro'
+      }}
+    </button>
+  }
   @switch (block.type) {
     @case ('heading') {
       @if (asHeading(block.data).level === 2) {
-        <h2>{{ asHeading(block.data).text }}</h2>
+        <h2 [class.has-preceding-content]="continuation">
+          @if (editable) {
+            <button
+              type="button"
+              class="gdr-edit-heading"
+              (click)="editBlock.emit(blockIndex)"
+              [attr.aria-label]="'Modifica: ' + asHeading(block.data).text"
+            >
+              {{ asHeading(block.data).text }}<span aria-hidden="true"> ✎</span>
+            </button>
+          } @else {
+            {{ asHeading(block.data).text }}
+          }
+        </h2>
       } @else {
-        <h3>{{ asHeading(block.data).text }}</h3>
+        <h3 [class.has-preceding-content]="continuation">
+          @if (editable) {
+            <button
+              type="button"
+              class="gdr-edit-heading"
+              (click)="editBlock.emit(blockIndex)"
+              [attr.aria-label]="'Modifica: ' + asHeading(block.data).text"
+            >
+              {{ asHeading(block.data).text }}<span aria-hidden="true"> ✎</span>
+            </button>
+          } @else {
+            {{ asHeading(block.data).text }}
+          }
+        </h3>
       }
     }
     @case ('paragraph') {
-      <p [class.is-emphasis]="asParagraph(block.data).emphasis" [innerHTML]="renderInline(asParagraph(block.data).text)"></p>
+      <p
+        [class.is-emphasis]="asParagraph(block.data).emphasis"
+        [innerHTML]="renderInline(asParagraph(block.data).text)"
+      ></p>
     }
     @case ('callout') {
       <p class="avventura-callout">
         @if (asCallout(block.data).lead) {
-          <strong>{{ asCallout(block.data).lead }}</strong>&nbsp;
+          <strong>{{ asCallout(block.data).lead }}</strong
+          >&nbsp;
         }
         <span [innerHTML]="renderInline(asCallout(block.data).text)"></span>
       </p>

@@ -1,0 +1,155 @@
+<div class="editor">
+  <div class="toolbar" role="group" aria-label="Inserisci nel testo">
+    <label [for]="editorId() + '-voice'">Voce</label>
+    @if (characters()[characterIndex()]?.portrait) {
+      <img
+        class="voice-avatar"
+        [src]="characters()[characterIndex()].portrait"
+        alt="Avatar della voce selezionata"
+      />
+    }
+    <select
+      [id]="editorId() + '-voice'"
+      [ngModel]="characterIndex()"
+      (ngModelChange)="characterIndex.set(+$event)"
+    >
+      @for (character of characters(); track $index) {
+        <option [ngValue]="$index">
+          {{ character.name
+          }}{{ character.kind ? (character.kind === 'pg' ? ' · PG' : ' · PNG') : '' }}
+        </option>
+      }
+      @if (!characters().length) {
+        <option [ngValue]="0">
+          {{ allowGeneric() ? 'Il mio personaggio' : 'Nessun personaggio disponibile' }}
+        </option>
+      }
+    </select>
+    <button
+      class="btn"
+      type="button"
+      [disabled]="!characters().length && !allowGeneric()"
+      (click)="insert('dialogo', sourceArea)"
+    >
+      Parla il personaggio
+    </button>
+    <button
+      class="btn"
+      type="button"
+      [disabled]="!characters().length"
+      (click)="changeVoice(sourceArea)"
+    >
+      Cambia voce nel dialogo
+    </button>
+    <button class="btn" type="button" (click)="insert('azione', sourceArea)">Azione</button>
+    <button class="btn" type="button" (click)="insert('nota', sourceArea)">
+      Fuori personaggio
+    </button>
+    @if (document()) {
+      @for (type of blockTypes; track type) {
+        <button class="btn" type="button" (click)="insert(type, sourceArea)">
+          {{ snippetLabels[type] }}
+        </button>
+      }
+    } @else {
+      <button class="btn" type="button" (click)="insert('image', sourceArea)">Immagine</button>
+    }
+  </div>
+  <div class="view-tools" role="group" aria-label="Visualizzazione editor">
+    <button
+      class="btn"
+      type="button"
+      [attr.aria-pressed]="mode() === 'source'"
+      [disabled]="inlineEditing()"
+      (click)="mode.set('source')"
+    >
+      Solo testo
+    </button>
+    <button
+      class="btn"
+      type="button"
+      [attr.aria-pressed]="mode() === 'split'"
+      [disabled]="inlineEditing()"
+      (click)="mode.set('split')"
+    >
+      Testo e anteprima
+    </button>
+    <button
+      class="btn"
+      type="button"
+      [attr.aria-pressed]="mode() === 'preview'"
+      [disabled]="inlineEditing()"
+      (click)="mode.set('preview')"
+    >
+      Solo anteprima
+    </button>
+  </div>
+  @if (voiceMessage()) {
+    <p class="hint editor-status" role="status">{{ voiceMessage() }}</p>
+  }
+  <div class="panes" [class.split]="mode() === 'split'">
+    <div [hidden]="mode() === 'preview'" class="source-pane">
+      <label [for]="editorId()">{{ label() }}</label>
+      <textarea
+        #sourceArea
+        [readOnly]="inlineEditing()"
+        [id]="editorId()"
+        rows="18"
+        [ngModel]="source()"
+        (ngModelChange)="sourceChange.emit($event)"
+        spellcheck="true"
+        placeholder="Scrivi qui…"
+      ></textarea>
+    </div>
+    @if (mode() !== 'source') {
+      <section class="preview-pane avventura-body" [attr.aria-label]="'Anteprima: ' + label()">
+        <p class="preview-label">Anteprima</p>
+        @if (source().trim()) {
+          <app-gdr-turn
+            [source]="source()"
+            [editable]="true"
+            (sourceChange)="sourceChange.emit($event)"
+            (editingChange)="inlineEditing.set($event); editingChange.emit($event)"
+          />
+        } @else {
+          <p class="hint">La tua scrittura prenderà forma qui.</p>
+        }
+      </section>
+    }
+  </div>
+  @if (errors().length) {
+    <ul class="errors" role="status">
+      @for (error of errors(); track $index) {
+        <li>{{ error.message }}</li>
+      }
+    </ul>
+  }
+  <footer class="editor-footer">
+    <p class="hint">
+      {{ recognized() }} parti riconosciute automaticamente. Clicca un titolo o ✎: quel punto
+      diventa modificabile direttamente nell’anteprima.
+    </p>
+    <details>
+      <summary>Come funziona la scrittura</summary>
+      <p>
+        Il testo normale è narrazione. Usa <code>## Titolo</code> per un titolo,
+        <code>*testo*</code> per un paragrafo in corsivo,
+        <code>![descrizione](/assets/immagine.webp)</code> per un’immagine.
+      </p>
+      <pre>
+Il racconto prosegue qui.
+
+::: dialogo Nome personaggio
+Le sue parole, anche su più righe.
+:::
+
+::: azione
+Si avvicina alla porta.
+:::</pre>
+      <p>
+        Il ritratto è facoltativo: aggiungi <code> | /assets/percorso.webp</code> dopo il nome. Ogni
+        comando aperto con <code>:::</code> si chiude con una riga <code>:::</code>.
+      </p>
+    </details>
+  </footer>
+</div>

@@ -283,3 +283,15 @@
   gap: .8rem;
   margin-top: .7rem;
 }
+
+/* Opzioni del laboratorio: lo stesso pannello, con più spazio quando serve. */
+.gdr-panel-sheet.is-wide { width: min(92vw, 36rem); }
+.gdr-panel-utilities { display:flex; flex-wrap:wrap; align-items:center; gap:.8rem; padding:.7rem 1.1rem 0; }
+.gdr-panel-utilities .gdr-panel-link-btn { margin:0; min-height:32px; }
+.gdr-panel-tabs button:disabled { opacity:.5; cursor:default; }
+@media(max-width:640px) { .gdr-panel-sheet.is-wide { width:auto; } }
+
+/* Con cinque strumenti, rendi visibile anche Zaino senza uno scorrimento nascosto. */
+.gdr-panel-tabs.is-workspace { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); overflow:visible; }
+.gdr-panel-tabs.is-workspace button { min-width:0; white-space:normal; }
+@media(min-width:641px) { .is-wide .gdr-panel-tabs.is-workspace { grid-template-columns:repeat(5,minmax(0,1fr)); } }

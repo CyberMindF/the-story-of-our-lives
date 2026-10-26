@@ -7,7 +7,7 @@ import {
   GdrNpcEntry,
   GdrNpcGridData,
   GdrParagraphData,
-  GdrTableData
+  GdrTableData,
 } from './gdr-block.types';
 
 export interface GdrParseError {
@@ -18,6 +18,18 @@ export interface GdrParseError {
 export interface GdrParsedBlock {
   type: GdrBlockType;
   data: unknown;
+}
+
+export interface GdrSourceRange {
+  start: number;
+  end: number;
+  startLine: number;
+  endLine: number;
+}
+export function gdrLineOffsets(source: string): number[] {
+  const result = [0];
+  for (const match of source.matchAll(/\r\n|\r|\n/g)) result.push(match.index! + match[0].length);
+  return result;
 }
 
 export interface GdrParseResult {
@@ -33,9 +45,17 @@ const TABLE_SEP_RE = /^\|?\s*:?-{2,}:?\s*\|\s*:?-{2,}:?\s*\|?$/;
 // leggero per i tipi semplici (heading/paragraph/list/table/image), blocchi delimitati `::: tipo`
 // per quelli strutturati (callout, npc). Best-effort: un costrutto malformato produce un errore
 // in `errors` ma non interrompe il parsing del resto del documento.
-export function parseGdrMarkdown(source: string): GdrParseResult {
-  const lines = source.replace(/\r\n/g, '\n').split('\n');
+export function parseGdrMarkdown(source: string, ranges?: GdrSourceRange[]): GdrParseResult {
+  const lines = source.replace(/\r\n?/g, '\n').split('\n');
   const blocks: GdrParsedBlock[] = [];
+  const offsets = gdrLineOffsets(source);
+  const range = (startLine: number, endLine: number) =>
+    ranges?.push({
+      start: offsets[startLine],
+      end: offsets[endLine] + lines[endLine].length,
+      startLine,
+      endLine,
+    });
   const errors: GdrParseError[] = [];
 
   let i = 0;
@@ -55,8 +75,12 @@ export function parseGdrMarkdown(source: string): GdrParseResult {
       if (hashes.length === 2 || hashes.length === 3) {
         const data: GdrHeadingData = { level: hashes.length as 2 | 3, text };
         blocks.push({ type: 'heading', data });
+        range(i, i);
       } else {
-        errors.push({ line: lineNo, message: `Livello di titolo non supportato a riga ${lineNo} (solo ## o ###).` });
+        errors.push({
+          line: lineNo,
+          message: `Livello di titolo non supportato a riga ${lineNo} (solo ## o ###).`,
+        });
       }
       i++;
       continue;
@@ -66,12 +90,16 @@ export function parseGdrMarkdown(source: string): GdrParseResult {
       const lead = line.trim().slice('::: callout'.length).trim() || null;
       const { content, endIndex, closed } = readFencedBlock(lines, i + 1);
       if (!closed) {
-        errors.push({ line: lineNo, message: `Blocco callout aperto a riga ${lineNo} non è mai chiuso.` });
+        errors.push({
+          line: lineNo,
+          message: `Blocco callout aperto a riga ${lineNo} non è mai chiuso.`,
+        });
         i = endIndex;
         continue;
       }
       const data: GdrCalloutData = { lead, text: content.join('\n').trim() };
       blocks.push({ type: 'callout', data });
+      range(i, endIndex);
       i = endIndex + 1;
       continue;
     }
@@ -79,7 +107,10 @@ export function parseGdrMarkdown(source: string): GdrParseResult {
     if (line.trim() === '::: npc') {
       const { content, endIndex, closed } = readFencedBlock(lines, i + 1);
       if (!closed) {
-        errors.push({ line: lineNo, message: `Blocco npc aperto a riga ${lineNo} non è mai chiuso.` });
+        errors.push({
+          line: lineNo,
+          message: `Blocco npc aperto a riga ${lineNo} non è mai chiuso.`,
+        });
         i = endIndex;
         continue;
       }
@@ -88,6 +119,7 @@ export function parseGdrMarkdown(source: string): GdrParseResult {
       if (parsed.entries.length > 0) {
         const data: GdrNpcGridData = { entries: parsed.entries };
         blocks.push({ type: 'npc_grid', data });
+        range(i, endIndex);
       }
       i = endIndex + 1;
       continue;
@@ -99,8 +131,13 @@ export function parseGdrMarkdown(source: string): GdrParseResult {
       if (!src.trim()) {
         errors.push({ line: lineNo, message: `Immagine a riga ${lineNo} senza URL.` });
       } else {
-        const data: GdrImageData = { src: src.trim(), alt: alt.trim(), caption: caption ? caption.trim() : null };
+        const data: GdrImageData = {
+          src: src.trim(),
+          alt: alt.trim(),
+          caption: caption ? caption.trim() : null,
+        };
         blocks.push({ type: 'image', data });
+        range(i, i);
       }
       i++;
       continue;
@@ -115,6 +152,7 @@ export function parseGdrMarkdown(source: string): GdrParseResult {
       }
       const data: GdrListData = { items };
       blocks.push({ type: 'list', data });
+      range(i, j - 1);
       i = j;
       continue;
     }
@@ -130,6 +168,7 @@ export function parseGdrMarkdown(source: string): GdrParseResult {
       errors.push(...parsed.errors);
       if (parsed.data) {
         blocks.push({ type: 'table', data: parsed.data });
+        range(i, j - 1);
       }
       i = j;
       continue;
@@ -157,13 +196,17 @@ export function parseGdrMarkdown(source: string): GdrParseResult {
       ? { text: emphasisMatch[1].trim(), emphasis: true }
       : { text: rawText };
     blocks.push({ type: 'paragraph', data });
+    range(i, j - 1);
     i = j;
   }
 
   return { blocks, errors };
 }
 
-function readFencedBlock(lines: string[], start: number): { content: string[]; endIndex: number; closed: boolean } {
+function readFencedBlock(
+  lines: string[],
+  start: number,
+): { content: string[]; endIndex: number; closed: boolean } {
   const content: string[] = [];
   let i = start;
   while (i < lines.length && lines[i].trim() !== ':::') {
@@ -176,7 +219,10 @@ function readFencedBlock(lines: string[], start: number): { content: string[]; e
   return { content, endIndex: i, closed: true };
 }
 
-function parseNpcEntries(lines: string[], firstLineNo: number): { entries: GdrNpcEntry[]; errors: GdrParseError[] } {
+function parseNpcEntries(
+  lines: string[],
+  firstLineNo: number,
+): { entries: GdrNpcEntry[]; errors: GdrParseError[] } {
   const entries: GdrNpcEntry[] = [];
   const errors: GdrParseError[] = [];
   let current: Partial<GdrNpcEntry> | null = null;
@@ -184,9 +230,14 @@ function parseNpcEntries(lines: string[], firstLineNo: number): { entries: GdrNp
 
   const flush = (lineNo: number) => {
     if (!current) return;
-    const missing = (['image', 'alt', 'name', 'description'] as const).filter((key) => !current![key]);
+    const missing = (['image', 'alt', 'name', 'description'] as const).filter(
+      (key) => !current![key],
+    );
     if (missing.length > 0) {
-      errors.push({ line: currentLine, message: `NPC alla riga ${currentLine}: manca il campo '${missing[0]}'.` });
+      errors.push({
+        line: currentLine,
+        message: `NPC alla riga ${currentLine}: manca il campo '${missing[0]}'.`,
+      });
     } else {
       entries.push(current as GdrNpcEntry);
     }
@@ -219,11 +270,20 @@ function parseNpcEntries(lines: string[], firstLineNo: number): { entries: GdrNp
   return { entries, errors };
 }
 
-function parseTable(rows: { text: string; lineNo: number }[]): { data: GdrTableData | null; errors: GdrParseError[] } {
+function parseTable(rows: { text: string; lineNo: number }[]): {
+  data: GdrTableData | null;
+  errors: GdrParseError[];
+} {
   const errors: GdrParseError[] = [];
   const cellRows = rows
     .filter((row) => !TABLE_SEP_RE.test(row.text))
-    .map((row) => ({ cells: row.text.slice(1, -1).split('|').map((c) => c.trim()), lineNo: row.lineNo }));
+    .map((row) => ({
+      cells: row.text
+        .slice(1, -1)
+        .split('|')
+        .map((c) => c.trim()),
+      lineNo: row.lineNo,
+    }));
 
   if (cellRows.length === 0) {
     return { data: null, errors };
@@ -231,7 +291,10 @@ function parseTable(rows: { text: string; lineNo: number }[]): { data: GdrTableD
 
   for (const row of cellRows) {
     if (row.cells.length !== 2) {
-      errors.push({ line: row.lineNo, message: `Riga ${row.lineNo} della tabella ha ${row.cells.length} colonne, devono essere 2.` });
+      errors.push({
+        line: row.lineNo,
+        message: `Riga ${row.lineNo} della tabella ha ${row.cells.length} colonne, devono essere 2.`,
+      });
     }
   }
   if (errors.length > 0) {
@@ -241,7 +304,7 @@ function parseTable(rows: { text: string; lineNo: number }[]): { data: GdrTableD
   const [headerRow, ...bodyRows] = cellRows;
   const data: GdrTableData = {
     header: [headerRow.cells[0], headerRow.cells[1]],
-    rows: bodyRows.map((r) => [r.cells[0], r.cells[1]])
+    rows: bodyRows.map((r) => [r.cells[0], r.cells[1]]),
   };
   return { data, errors };
 }

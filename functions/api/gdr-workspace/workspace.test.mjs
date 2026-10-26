@@ -1,0 +1,100 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { fixture, mutate, apiHarness } from '../../../scripts/gdr-workspace-test-harness.mjs';
+import { characterView } from '../../../scripts/gdr-workspace-test-harness.mjs';
+const master={id:1,role:'admin',isTest:false};
+const member={id:2,role:'member',isTest:false};
+const other={id:3,role:'member',isTest:false};
+const adventureId='il-prezzo-della-verita';
+async function character(db,id='pg-one',kind='pg') {await mutate(db,master,{action:'createCharacter',id,adventureId,kind,name:id,sheet:'Scheda iniziale'});}
+const revision=(sqlite,id)=>sqlite.prepare('SELECT revision FROM gdr_workspace_characters WHERE id=?').get(id).revision;
+const grant=(db,sqlite,id,rights={})=>mutate(db,master,{action:'grant',characterId:id,revision:revision(sqlite,id),userId:2,canSpeak:true,canEditSheet:false,canInventory:false,...rights});
+const denied=fn=>assert.rejects(fn,e=>e.status===403);
+
+test('solo il master crea avventure e PG, anche più PG assegnati allo stesso giocatore',async()=>{
+  const {db,sqlite}=fixture();
+  await denied(()=>mutate(db,member,{action:'createAdventure',id:'new',title:'Nuova'}));
+  await denied(()=>mutate(db,member,{action:'createCharacter',id:'unowned',adventureId,kind:'pg',name:'PG'}));
+  await character(db);await character(db,'pg-two');await grant(db,sqlite,'pg-one');await grant(db,sqlite,'pg-two');
+  assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM gdr_workspace_grants WHERE user_id=2').get().n,2);
+  sqlite.close();
+});
+test('PNG assegnato: interpretazione e zaino non consentono la modifica della scheda',async()=>{
+  const {db,sqlite}=fixture();await character(db,'npc','png');await grant(db,sqlite,'npc',{canInventory:true});
+  const rev=revision(sqlite,'npc');
+  await denied(()=>mutate(db,member,{action:'saveCharacter',characterId:'npc',revision:rev,name:'Intruso',portrait:'',sheet:'Alterata'}));
+  await mutate(db,member,{action:'inventory',characterId:'npc',revision:rev,items:[{id:'key',name:'Chiave',quantity:1,notes:'Di ferro'}]});
+  assert.equal(sqlite.prepare('SELECT sheet FROM gdr_workspace_characters WHERE id=\'npc\'').get().sheet,'Scheda iniziale');
+  assert.equal(JSON.parse(sqlite.prepare('SELECT inventory_json FROM gdr_workspace_characters WHERE id=\'npc\'').get().inventory_json)[0].name,'Chiave');
+  await assert.rejects(()=>grant(db,sqlite,'npc',{canEditSheet:true}),e=>e.status===400);sqlite.close();
+});
+test('scheda PG modificabile soltanto con permesso esplicito, nessuna escalation da payload',async()=>{
+  const {db,sqlite}=fixture();await character(db);await grant(db,sqlite,'pg-one');
+  const save=()=>mutate(db,member,{action:'saveCharacter',characterId:'pg-one',revision:revision(sqlite,'pg-one'),name:'Ada',portrait:'',sheet:'Nuova scheda',canEditSheet:true});
+  await denied(save);await grant(db,sqlite,'pg-one',{canEditSheet:true});await save();
+  await denied(()=>mutate(db,other,{action:'inventory',characterId:'pg-one',revision:revision(sqlite,'pg-one'),items:[]}));sqlite.close();
+});
+test('revoca e archiviazione bloccano anche editor già aperti; conflitti non sovrascrivono',async()=>{
+  const {db,sqlite}=fixture();await character(db);await grant(db,sqlite,'pg-one',{canInventory:true});
+  const oldRevision=revision(sqlite,'pg-one');await grant(db,sqlite,'pg-one',{canInventory:false});
+  await denied(()=>mutate(db,member,{action:'inventory',characterId:'pg-one',revision:oldRevision,items:[]}));
+  await grant(db,sqlite,'pg-one',{canInventory:true});const rev=revision(sqlite,'pg-one');
+  await mutate(db,member,{action:'inventory',characterId:'pg-one',revision:rev,items:[]});
+  await assert.rejects(()=>mutate(db,member,{action:'inventory',characterId:'pg-one',revision:rev,items:[]}),e=>e.status===409);
+  await mutate(db,master,{action:'archive',characterId:'pg-one',revision:revision(sqlite,'pg-one'),archived:true});
+  await denied(()=>mutate(db,member,{action:'inventory',characterId:'pg-one',revision:revision(sqlite,'pg-one'),items:[]}));sqlite.close();
+});
+test('nuova avventura salvata e retry idempotente; avventure e turni storici intatti',async()=>{
+  const {db,sqlite}=fixture();
+  const payload={action:'createAdventure',id:'new',title:'Una nuova storia'};await mutate(db,master,payload);await mutate(db,master,payload);
+  await mutate(db,master,{action:'saveAdventure',id:'new',revision:1,title:'Una nuova storia',source:'## Capitolo uno\n\nTesto scritto dal sito.'});
+  assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM gdr_workspace_adventures WHERE id=\'new\'').get().n,1);
+  assert.match(sqlite.prepare('SELECT source FROM gdr_workspace_adventures WHERE id=\'new\'').get().source,/Capitolo uno/);
+  await denied(()=>mutate(db,master,{action:'saveAdventure',id:adventureId,revision:1,title:'Modificata',source:'Sovrascritta'}));
+  assert.equal(sqlite.prepare('SELECT body FROM gdr_turns').get().body,'Turno originale');sqlite.close();
+});
+test('validazione quantità, ritratto, revisione e account di prova',async()=>{
+  const {db,sqlite}=fixture();await character(db);
+  await denied(()=>mutate(db,{...master,isTest:true},{action:'createAdventure',id:'test',title:'No'}));
+  for(const quantity of [-1,1.5,100000])await assert.rejects(()=>mutate(db,master,{action:'inventory',characterId:'pg-one',revision:1,items:[{id:'bad',name:'Errato',quantity}]}),e=>e.status===400);
+  await assert.rejects(()=>mutate(db,master,{action:'saveCharacter',characterId:'pg-one',revision:1,name:'Nome',portrait:'https://example.com/track.jpg',sheet:''}),e=>e.status===400);
+  const row=sqlite.prepare('SELECT * FROM gdr_workspace_characters').get();assert.equal(characterView({...row,can_speak:1,can_inventory:0},member).canSpeak,true);assert.equal(characterView({...row,kind:'png',can_edit_sheet:1},member).canEditSheet,false);sqlite.close();
+});
+
+test('API: autenticazione, bozze riservate e visibilità dei soli personaggi assegnati',async()=>{
+  const h=apiHarness();
+  assert.equal((await h.call(0)).status,401);
+  await mutate(h.db,master,{action:'createAdventure',id:'private',title:'Segreto del master',source:'Finale segreto'});
+  assert.equal((await h.call(2,'GET',undefined,'private')).status,404);
+  assert.equal((await (await h.call(2)).json()).adventures.some(a=>a.id==='private'),false);
+  await character(h.db,'first');await character(h.db,'hidden');await grant(h.db,h.sqlite,'first');
+  const view=await (await h.call(2)).json();assert.deepEqual(view.characters.map(c=>c.id),['first']);assert.deepEqual(view.users,[]);assert.deepEqual(view.grants,[]);
+  await mutate(h.db,master,{action:'publishAdventure',id:'private',revision:1,published:true});
+  assert.equal((await h.call(2,'GET',undefined,'private')).status,200);
+  const forbidden=await h.call(2,'POST',{action:'createAdventure',id:'no',title:'No'});assert.equal(forbidden.status,403);
+  assert.equal((await h.call(1,'POST',{action:'createAdventure',id:'test-account',title:'No'},adventureId,{'x-test':'1'})).status,403);
+  h.sqlite.close();
+});
+
+test('profilo strutturato e inventario importato: campi validati, scheda PNG protetta',async()=>{
+  const h=apiHarness();
+  await mutate(h.db,master,{action:'createCharacter',id:'profile-npc',adventureId,kind:'png',name:'Ada',profile:{surname:'Neri',appearance:'Alta',personality:'Riservata',history:'Una lunga storia',goal:'Ritrovare un amico',abilities:'Osservazione'},items:[{id:'item-a',name:'Chiave',quantity:2,notes:''}]});
+  let data=await (await h.call(1)).json();const c=data.characters.find(c=>c.id==='profile-npc');assert.equal(c.profile.surname,'Neri');assert.equal(c.inventory[0].quantity,2);
+  await grant(h.db,h.sqlite,'profile-npc',{canInventory:true});
+  await denied(()=>mutate(h.db,member,{action:'saveCharacter',characterId:c.id,revision:revision(h.sqlite,c.id),name:'Ada',sheet:'',portrait:'',profile:{history:'Spoof'}}));
+  await assert.rejects(()=>mutate(h.db,master,{action:'saveCharacter',characterId:c.id,revision:revision(h.sqlite,c.id),name:'Ada',sheet:'',portrait:'',profile:{history:'x'.repeat(6001)}}),e=>e.status===400);
+  h.sqlite.close();
+});
+test('upload immagini: autenticazione, permessi PG/PNG, formato e dimensione prima della scrittura R2',async()=>{
+  const h=apiHarness();await character(h.db,'avatar-pg');await character(h.db,'avatar-npc','png');
+  await grant(h.db,h.sqlite,'avatar-pg',{canEditSheet:true});await grant(h.db,h.sqlite,'avatar-npc',{canInventory:true});
+  const image=new TextEncoder().encode('RIFF0000WEBPVP8 00000000');
+  assert.equal((await h.upload(0,'avatar-pg','avatar',image)).status,401);
+  assert.equal((await h.upload(2,'avatar-npc','avatar',image)).status,403);
+  assert.equal((await h.upload(3,'avatar-pg','avatar',image)).status,403);
+  assert.equal((await h.upload(2,'avatar-pg','avatar',image,{'Content-Type':'image/svg+xml'})).status,415);
+  assert.equal((await h.upload(2,'avatar-pg','avatar',new Uint8Array(2*1024*1024+1))).status,413);
+  assert.equal(h.media.size,0);
+  const response=await h.upload(2,'avatar-pg','avatar',image);assert.equal(response.status,201);assert.match((await response.json()).path,/^\/api\/media\/gdr-workspace\/avatar-pg\/avatar\//);assert.equal(h.media.size,1);
+  h.sqlite.close();
+});

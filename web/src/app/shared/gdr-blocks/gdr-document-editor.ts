@@ -7,27 +7,7 @@ import { GdrBlockRow, GdrBlockType, GdrDocumentKey } from './gdr-block.types';
 import { GdrParseError, parseGdrMarkdown } from './gdr-markdown.parser';
 import { serializeGdrBlocks } from './gdr-markdown.serializer';
 
-const SNIPPETS: Record<GdrBlockType, string> = {
-  heading: '## Titolo',
-  paragraph: 'Testo del paragrafo.',
-  callout: '::: callout Lead\nTesto del callout.\n:::',
-  image: '![Testo alternativo](/percorso/immagine.jpg "Didascalia opzionale")',
-  npc_grid: '::: npc\n- image: /percorso/immagine.jpg\n  alt: Ritratto di Nome\n  name: Nome\n  description: Descrizione.\n:::',
-  list: '- Primo elemento\n- Secondo elemento',
-  table: '| Intestazione 1 | Intestazione 2 |\n| --- | --- |\n| Cella A1 | Cella B1 |'
-};
-
-const SNIPPET_LABELS: Record<GdrBlockType, string> = {
-  heading: 'Titolo',
-  paragraph: 'Paragrafo',
-  callout: 'Callout',
-  image: 'Immagine',
-  npc_grid: 'Griglia PNG',
-  list: 'Elenco',
-  table: 'Tabella'
-};
-
-const BLOCK_TYPES: GdrBlockType[] = ['heading', 'paragraph', 'callout', 'image', 'npc_grid', 'list', 'table'];
+import { SNIPPETS, SNIPPET_LABELS, BLOCK_TYPES } from './gdr-snippets';
 
 // Editor amministrativo condiviso dei documenti del GDR, stile Homebrewery: un unico campo di
 // testo con sintassi leggera (gdr-markdown.parser.ts) invece di un blocco = un form JSON, con

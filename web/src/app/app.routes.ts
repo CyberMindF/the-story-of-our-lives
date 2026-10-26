@@ -224,6 +224,21 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/giochi-due/giochi-due').then((m) => m.GiochiDue),
       },
       {
+        path: 'tavolo-da-gioco/gdr/laboratorio',
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () => import('./pages/gdr-laboratorio/gdr-laboratorio').then((m) => m.GdrLaboratorio),
+      },
+      {
+        path: 'tavolo-da-gioco/gdr/classico',
+        data: { bodyClasses: ['tavolo-page'], classic: true },
+        loadComponent: () => import('./pages/gdr/gdr').then((m) => m.Gdr),
+      },
+      {
+        path: 'tavolo-da-gioco/gdr/gioca/:adventureId',
+        data: { bodyClasses: ['tavolo-page'] },
+        loadComponent: () => import('./pages/gdr-laboratorio/gdr-laboratorio').then((m) => m.GdrLaboratorio),
+      },
+      {
         path: 'tavolo-da-gioco/gdr',
         data: { bodyClasses: ['tavolo-page'] },
         loadComponent: () => import('./pages/gdr/gdr').then((m) => m.Gdr),

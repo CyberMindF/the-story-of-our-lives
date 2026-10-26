@@ -1,7 +1,13 @@
-<app-shell homeHref="/tavolo-da-gioco" homeAria="Torna al Tavolo da Gioco" homeLabel="Il Tavolo da Gioco">
+<app-shell
+  homeHref="/tavolo-da-gioco"
+  homeAria="Torna al Tavolo da Gioco"
+  homeLabel="Il Tavolo da Gioco"
+>
   <section class="tavolo-hero tavolo-hero-text-only" aria-labelledby="gdr-title">
     <p class="tavolo-eyebrow">Il tavolo · giochi di ruolo</p>
-    <h1 id="gdr-title"><span aria-hidden="true">🐉</span> Gioco di Ruolo</h1>
+    <h1 id="gdr-title">
+      <span aria-hidden="true">🐉</span> Gioco di Ruolo{{ classic ? ' · versione classica' : '' }}
+    </h1>
   </section>
 
   <div class="tavolo-intro">
@@ -13,10 +19,90 @@
       <p class="tavolo-eyebrow">Le storie</p>
       <h2 id="adventures-title">Le avventure</h2>
     </div>
+    @if (!classic && workspace.error()) {
+      <p role="alert">{{ workspace.error() }}</p>
+    }
     <div class="tavolo-games-grid tavolo-games-grid-compact">
-      <a class="tavolo-game-card card glass-surface is-available" routerLink="/tavolo-da-gioco/gdr/il-prezzo-della-verita/avventura"><span class="tavolo-game-emoji">🪄</span><strong>Il Prezzo della Verità</strong><small>Entra</small></a>
-      <a class="tavolo-game-card card glass-surface is-available" routerLink="/tavolo-da-gioco/gdr/la-casa-che-trattiene-il-respiro"><span class="tavolo-game-emoji">📜</span><strong>La casa che trattiene il respiro</strong><small>Entra</small></a>
+      <a
+        class="tavolo-game-card card glass-surface is-available"
+        [routerLink]="
+          classic
+            ? '/tavolo-da-gioco/gdr/il-prezzo-della-verita/avventura'
+            : '/tavolo-da-gioco/gdr/gioca/il-prezzo-della-verita'
+        "
+        ><span class="tavolo-game-emoji">🪄</span><strong>Il Prezzo della Verità</strong
+        ><small>Entra</small></a
+      >
+      <a
+        class="tavolo-game-card card glass-surface is-available"
+        [routerLink]="
+          classic
+            ? '/tavolo-da-gioco/gdr/la-casa-che-trattiene-il-respiro'
+            : '/tavolo-da-gioco/gdr/gioca/la-casa-che-trattiene-il-respiro'
+        "
+        ><span class="tavolo-game-emoji">📜</span><strong>La casa che trattiene il respiro</strong
+        ><small>Entra</small></a
+      >
+      @if (!classic) {
+        @for (a of customAdventures(); track a.id) {
+          <a
+            class="tavolo-game-card card glass-surface is-available"
+            [routerLink]="['/tavolo-da-gioco/gdr/gioca', a.id]"
+            ><span class="tavolo-game-emoji">📖</span><strong>{{ a.title }}</strong
+            ><small>{{ a.published ? 'Entra' : 'Bozza · solo admin' }}</small></a
+          >
+        }
+        @if (canCreate()) {
+          @if (createOpen()) {
+            <form
+              class="tavolo-game-card card glass-surface is-creating"
+              (ngSubmit)="createAdventure()"
+              aria-label="Nuova avventura"
+            >
+              <strong>Nuova avventura</strong>
+              <label class="form-field" for="new-adventure-title">
+                <span>Titolo della nuova avventura</span>
+                <input
+                  id="new-adventure-title"
+                  name="title"
+                  maxlength="160"
+                  [ngModel]="title()"
+                  (ngModelChange)="title.set($event)"
+                  [disabled]="workspace.saving()"
+                />
+              </label>
+              <button class="btn" type="submit" [disabled]="workspace.saving() || !title().trim()">
+                Crea e inizia a scrivere
+              </button>
+              <button
+                class="btn"
+                type="button"
+                [disabled]="workspace.saving()"
+                (click)="createOpen.set(false)"
+              >
+                Annulla
+              </button>
+            </form>
+          } @else {
+            <button
+              type="button"
+              class="tavolo-game-card card glass-surface is-available"
+              aria-label="Nuova avventura"
+              [disabled]="!workspace.available() || workspace.saving()"
+              (click)="createOpen.set(true)"
+            >
+              <span class="tavolo-game-emoji" aria-hidden="true">➕</span
+              ><strong>Nuova avventura</strong><small>Crea una nuova storia</small>
+            </button>
+          }
+        }
+      }
     </div>
   </section>
 
+  @if (classic) {
+    <p class="tavolo-intro">
+      <a routerLink="/tavolo-da-gioco/gdr">Torna alle avventure · nuova esperienza</a>
+    </p>
+  }
 </app-shell>

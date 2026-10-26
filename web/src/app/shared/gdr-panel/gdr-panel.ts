@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { GdrBlocks } from '../gdr-blocks/gdr-blocks';
 import { GdrDocumentEditor } from '../gdr-blocks/gdr-document-editor';
@@ -18,7 +18,7 @@ export interface GdrCharacterField {
   default?: string | number;
 }
 
-type GdrPanelTab = 'personaggio' | 'regole' | 'appunti' | 'dadi';
+type GdrPanelTab = 'personaggio' | 'regole' | 'appunti' | 'dadi' | 'inventario';
 
 // Pannello di gioco condiviso tra le avventure GDR: prima erano pagine separate ("La Tua
 // Maga", regole, "I Tuoi Appunti"), qui diventano tab di un bottom sheet consultabile senza
@@ -44,10 +44,20 @@ export class GdrPanel implements OnInit {
   // nome per il personaggio (es. "La Tua Maga" ne "Il Prezzo della Verità").
   @Input() personaggioLabel = 'Personaggio';
   @Input() personaggioIcon = '🧍';
+  // Il laboratorio consulta i dati reali senza offrire scritture sulle partite.
+  @Input() readOnly = false;
+  @Input() workspaceMode = false;
+  @Input() pendingChanges = false;
+  @Output() tabChange = new EventEmitter<GdrPanelTab>();
+  protected readonly wide = signal(false);
+  protected readonly pinned = signal(false);
+  protected readonly scrollPositions: Partial<Record<GdrPanelTab, number>> = {};
+  protected rememberScroll(event: Event): void { this.scrollPositions[this.activeTab()] = (event.target as HTMLElement).scrollTop; }
+  @HostListener('document:keydown.escape') protected escape(): void { this.closePanel(); }
 
   private readonly api = inject(ApiService);
   protected readonly authService = inject(AuthService);
-  protected readonly canEditSchema = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
+  protected readonly canEditSchema = computed(() => !this.readOnly && this.authService.isAdmin() && this.authService.adminModeEnabled());
 
   protected readonly open = signal(false);
   protected readonly activeTab = signal<GdrPanelTab>('personaggio');
@@ -76,9 +86,14 @@ export class GdrPanel implements OnInit {
   );
 
   async ngOnInit(): Promise<void> {
+    if (this.workspaceMode) {
+      try { const tab=sessionStorage.getItem('gdr-panel-tab-'+this.adventure); if (tab && ['personaggio','regole','appunti','dadi','inventario'].includes(tab)) {this.activeTab.set(tab as GdrPanelTab);queueMicrotask(()=>this.tabChange.emit(tab as GdrPanelTab));} } catch { /* Preferenze facoltative. */ }
+      return;
+    }
     await Promise.all([this.loadSchemaAndValues(), this.loadBlocks()]);
   }
 
+  public openCharacters():void {if(this.pendingChanges)return;this.open.set(true);this.wide.set(true);this.setTab('personaggio');}
   protected togglePanel(): void {
     this.open.update((value) => !value);
   }
@@ -88,7 +103,10 @@ export class GdrPanel implements OnInit {
   }
 
   protected setTab(tab: GdrPanelTab): void {
+    if(this.pendingChanges)return;
     this.activeTab.set(tab);
+    this.tabChange.emit(tab);
+    if(this.workspaceMode)try{sessionStorage.setItem('gdr-panel-tab-'+this.adventure,tab);}catch{/* Preferenze facoltative. */}
   }
 
   private async loadSchemaAndValues(): Promise<void> {
@@ -122,6 +140,7 @@ export class GdrPanel implements OnInit {
   }
 
   protected async setField(key: string, value: string): Promise<void> {
+    if (this.readOnly) return;
     this.fieldValues.update((values) => ({ ...values, [key]: value }));
     this.fieldsStatus.set('Sto salvando...');
     try {
@@ -153,6 +172,7 @@ export class GdrPanel implements OnInit {
   }
 
   protected async saveSchema(): Promise<void> {
+    if (this.readOnly) return;
     let fields: unknown;
     try {
       fields = JSON.parse(this.schemaDraft());

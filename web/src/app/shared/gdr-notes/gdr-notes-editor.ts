@@ -28,6 +28,7 @@ export const NOTE_TEXT_COLORS = [
 })
 export class GdrNotesEditor implements AfterViewInit, OnDestroy {
   @Input({ required: true }) adventure!: string;
+  @Input() readOnly = false;
   @ViewChild('editorEl') private readonly editorEl!: ElementRef<HTMLDivElement>;
 
   protected readonly disabled = signal(true);
@@ -70,6 +71,7 @@ export class GdrNotesEditor implements AfterViewInit, OnDestroy {
   }
 
   protected onInput(): void {
+    if (this.readOnly) return;
     this.statusMessage.set('Sto salvando...');
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
@@ -104,6 +106,7 @@ export class GdrNotesEditor implements AfterViewInit, OnDestroy {
   }
 
   private async saveNotes(): Promise<void> {
+    if (this.readOnly) return;
     try {
       const formData = new FormData();
       formData.set('adventure', this.adventure);
