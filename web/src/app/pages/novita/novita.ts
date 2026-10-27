@@ -31,6 +31,7 @@ export class Novita {
   protected readonly canEdit = computed(() => this.auth.isAdmin() && this.auth.adminModeEnabled() && !this.auth.currentUser()?.isTest);
   protected readonly updates = signal<WorldUpdate[]>([]);
   protected readonly campaigns = signal<WorldPromo[]>([]);
+  protected readonly promosEnabled = signal(true);
   protected readonly tab = signal<UpdateKind>('contenuto');
   protected readonly filteredUpdates = computed(() => this.updates().filter((update) => update.kind === this.tab() && update.active));
   protected readonly loading = signal(true);
@@ -77,8 +78,9 @@ export class Novita {
       const updateData = await updatesResponse.json() as { updates?: WorldUpdate[] };
       this.updates.set(updateData.updates ?? []);
       if (promosResponse.ok) {
-        const promoData = await promosResponse.json() as { campaigns?: WorldPromo[] };
+        const promoData = await promosResponse.json() as { campaigns?: WorldPromo[]; promosEnabled?: boolean };
         this.campaigns.set(promoData.campaigns ?? []);
+        if (typeof promoData.promosEnabled === 'boolean') this.promosEnabled.set(promoData.promosEnabled);
       }
       const unseenIds = this.updates().filter((update) => !update.seen && update.active).map((update) => update.id);
       if (unseenIds.length > 0) {
@@ -145,6 +147,25 @@ export class Novita {
       route: this.promoRoute, ctaLabel: this.promoCta, placement: this.promoPlacement,
       targetIdentity: this.promoTarget, cooldownDays: Number(this.promoCooldownDays), active: this.promoActive
     }, async () => { this.editPromo(null); await this.load(); });
+  }
+
+  protected async setPromosEnabled(enabled: boolean): Promise<void> {
+    if (!this.canEdit() || this.saving()) return;
+    const previous = this.promosEnabled();
+    this.promosEnabled.set(enabled);
+    this.saving.set(true); this.error.set(''); this.notice.set('');
+    try {
+      const response = await fetch('/api/world-promos', {
+        method: 'PUT', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Salvataggio non riuscito.');
+      this.notice.set(enabled ? 'Pubblicità attivate.' : 'Pubblicità disattivate.');
+    } catch (error) {
+      this.promosEnabled.set(previous);
+      this.error.set(error instanceof Error ? error.message : 'Salvataggio non riuscito.');
+    } finally { this.saving.set(false); }
   }
 
   protected async deleteUpdate(update: WorldUpdate): Promise<void> {

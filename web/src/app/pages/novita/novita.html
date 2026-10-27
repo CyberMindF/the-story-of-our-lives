@@ -51,6 +51,16 @@
       <section class="admin-studio card glass-surface" aria-labelledby="promo-editor-title">
         <header><div><p class="eyebrow">Campagne</p><h2 id="promo-editor-title">Pubblicità del Mondo Bianco</h2></div><button type="button" class="btn" (click)="editPromo(null)">+ Nuova pubblicità</button></header>
         <p class="admin-intro">Può pubblicizzare una sezione oppure essere semplicemente un messaggio dedicato. Senza collegamento, verrà mostrato solo il testo.</p>
+        <div class="promo-master-control" [class.is-off]="!promosEnabled()">
+          <div>
+            <strong>Pubblicità nel sito</strong>
+            <span>{{ promosEnabled() ? 'Le campagne attive possono comparire normalmente.' : 'Tutte le pubblicità sono sospese, senza modificare le campagne.' }}</span>
+          </div>
+          <label class="promo-master-toggle">
+            <input type="checkbox" [checked]="promosEnabled()" [disabled]="saving()" (change)="setPromosEnabled($any($event.target).checked)" />
+            <span>{{ promosEnabled() ? 'Attive' : 'Disattivate' }}</span>
+          </label>
+        </div>
         <form id="promo-editor" class="editor-form" (ngSubmit)="savePromo()">
           <label>Dicitura<select name="promoLabel" [(ngModel)]="promoLabel"><option value="commerciale">Messaggio commerciale</option><option value="consiglia">Il Mondo Bianco consiglia</option><option value="sponsor">Lo sponsor di oggi</option><option value="promozionale">Spazio promozionale</option></select></label>
           <label>Emoji<input name="promoEmoji" maxlength="24" [(ngModel)]="promoEmoji" /></label>
