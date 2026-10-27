@@ -12,7 +12,7 @@ type PromoTarget = 'tutti' | 'lui' | 'lei';
 
 interface WorldUpdate {
   id: string; kind: UpdateKind; emoji: string; title: string; body: string; route: string | null;
-  ctaLabel: string | null; publishedAt: string; active: boolean; seen: boolean;
+  ctaLabel: string | null; publishedAt: string; active: boolean; announce: boolean; seen: boolean;
 }
 interface WorldPromo {
   id: string; label: PromoLabel; emoji: string; title: string; body: string; route: string | null;
@@ -48,6 +48,7 @@ export class Novita {
   updateCta = '';
   updateDate = '';
   updateActive = true;
+  updateAnnounce = true;
 
   protected readonly editingPromoId = signal<string | null>(null);
   promoLabel: PromoLabel = 'consiglia';
@@ -105,6 +106,7 @@ export class Novita {
     this.updateCta = update?.ctaLabel ?? '';
     this.updateDate = this.localDateTime(update?.publishedAt ?? new Date().toISOString());
     this.updateActive = update?.active ?? true;
+    this.updateAnnounce = update?.announce ?? true;
     document.getElementById('update-editor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -117,7 +119,8 @@ export class Novita {
     const id = this.editingUpdateId();
     await this.save(`/api/world-updates${id ? `/${id}` : ''}`, id ? 'PUT' : 'POST', {
       kind: this.updateKind, emoji: this.updateEmoji, title: this.updateTitle, body: this.updateBody,
-      route: this.updateRoute, ctaLabel: this.updateCta, publishedAt: publishedAt.toISOString(), active: this.updateActive
+      route: this.updateRoute, ctaLabel: this.updateCta, publishedAt: publishedAt.toISOString(),
+      active: this.updateActive, announce: this.updateAnnounce
     }, async () => { this.editUpdate(null); await this.load(); });
   }
 

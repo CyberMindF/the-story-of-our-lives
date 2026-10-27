@@ -2,6 +2,7 @@ import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { isValidDate, normalizeBody, normalizeLabel } from "./_shared.js";
+import { addWorldUpdate } from "../_shared/world-updates.js";
 
 // Editor dedicato del Calendario (documentazione/cms/planning-editor-contenuti.md, Fase 7): primo di una serie di
 // raccolte strutturate, ognuna con la propria tabella invece di forzarle dentro
@@ -66,6 +67,15 @@ export async function onRequestPost(context) {
       section: "calendario",
       eventType: "content_created",
       metadata: { eventId: date }
+    }));
+    context.waitUntil(addWorldUpdate(env, {
+      emoji: "📅",
+      title: `Una data nel Calendario: ${label}`,
+      body: "Una nuova data è stata aggiunta al Calendario.",
+      route: "/calendario",
+      ctaLabel: "Apri il Calendario",
+      createdBy: session.user.id,
+      publishedAt: now
     }));
 
     return json({ id: date, date, label, body, updatedAt: now }, 201);

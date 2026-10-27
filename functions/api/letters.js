@@ -2,6 +2,7 @@ import { getAuthenticatedSession, json } from "./auth/_shared.js";
 import { recordEvent } from "./_shared/events.js";
 import { normalizeRequiredText } from "./_shared/text.js";
 import { notifyRealtime } from "./_shared/realtime.js";
+import { addWorldUpdate } from "./_shared/world-updates.js";
 
 const MAX_BODY_LENGTH = 20000;
 
@@ -70,6 +71,15 @@ export async function onRequestPost(context) {
       action: "created",
       actorUserId: session.user.id,
       letterId: result.meta.last_row_id
+    }));
+    context.waitUntil(addWorldUpdate(context.env, {
+      emoji: "📫",
+      title: `Una lettera da ${session.user.nickname}`,
+      body: "Una lettera è stata lasciata nella Cassetta.",
+      route: "/lettere",
+      ctaLabel: "Apri le Lettere",
+      createdBy: session.user.id,
+      publishedAt: createdAt
     }));
 
     return json(

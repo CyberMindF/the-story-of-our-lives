@@ -2,6 +2,7 @@ import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { isValidDate, normalizeBody, normalizeOptionalText, normalizeTitle } from "./_shared.js";
+import { addWorldUpdate } from "../_shared/world-updates.js";
 
 // Editor dedicato delle Storie (documentazione/cms/planning-editor-contenuti.md, Fase 7). Stesso pattern del
 // Ricettario: 'position' esplicito, riordino su un endpoint separato (move.js).
@@ -71,6 +72,15 @@ export async function onRequestPost(context) {
       section: "storie",
       eventType: "content_created",
       metadata: { storyId: id }
+    }));
+    context.waitUntil(addWorldUpdate(env, {
+      emoji: "📖",
+      title: `Una nuova storia: ${title}`,
+      body: "Una storia si è aggiunta alla raccolta.",
+      route: "/storie",
+      ctaLabel: "Leggi la storia",
+      createdBy: session.user.id,
+      publishedAt: now
     }));
 
     const created = await env.DB.prepare("SELECT * FROM stories WHERE id = ?").bind(id).first();

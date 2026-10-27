@@ -2,6 +2,7 @@ import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { normalizeLines, normalizeTitle } from "./_shared.js";
+import { addWorldUpdate } from "../_shared/world-updates.js";
 
 // Editor dedicato del Mappamondo (documentazione/cms/planning-editor-contenuti.md, Fase 7, decisione #3
 // dell'inventario). Stesso pattern CRUD + move.js delle altre raccolte.
@@ -67,6 +68,15 @@ export async function onRequestPost(context) {
       section: "mappamondo",
       eventType: "content_created",
       metadata: { sceneId: id }
+    }));
+    context.waitUntil(addWorldUpdate(env, {
+      emoji: "🌍",
+      title: `Una nuova scena: ${title}`,
+      body: "Una scena si è aggiunta al Mappamondo.",
+      route: "/mappamondo",
+      ctaLabel: "Apri il Mappamondo",
+      createdBy: session.user.id,
+      publishedAt: now
     }));
 
     const created = await env.DB.prepare("SELECT * FROM mappamondo_scenes WHERE id = ?").bind(id).first();

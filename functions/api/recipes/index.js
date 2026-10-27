@@ -2,6 +2,7 @@ import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { isValidKind, normalizeList, normalizeNote, normalizeSource, normalizeTitle } from "./_shared.js";
+import { addWorldUpdate } from "../_shared/world-updates.js";
 
 // Editor dedicato del Ricettario (documentazione/cms/planning-editor-contenuti.md, Fase 7). A differenza del
 // Calendario, qui l'ordine (position) è significativo e va gestito esplicitamente.
@@ -86,6 +87,17 @@ export async function onRequestPost(context) {
       eventType: "content_created",
       metadata: { recipeId: id }
     }));
+    if (!placeholder) {
+      context.waitUntil(addWorldUpdate(env, {
+        emoji: "🍳",
+        title: `Una nuova ricetta: ${title}`,
+        body: "Una ricetta si è aggiunta al Ricettario.",
+        route: "/ricettario",
+        ctaLabel: "Apri la ricetta",
+        createdBy: session.user.id,
+        publishedAt: now
+      }));
+    }
 
     const created = await env.DB.prepare("SELECT * FROM recipes WHERE id = ?").bind(id).first();
     return json(toRecipeView(created), 201);

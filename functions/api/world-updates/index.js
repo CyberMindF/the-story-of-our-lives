@@ -23,6 +23,7 @@ function updateView(row) {
     ctaLabel: row.cta_label,
     publishedAt: row.published_at,
     active: row.active === 1,
+    announce: row.announce === 1,
     seen: row.seen === 1
   };
 }
@@ -33,7 +34,7 @@ export async function onRequestGet({ request, env }) {
   try {
     const includeInactive = session.adminModeEnabled && hasPermission(session.user.role, "content.edit");
     const { results } = await env.DB.prepare(
-      `SELECT wu.*, CASE WHEN wur.user_id IS NULL THEN 0 ELSE 1 END AS seen
+      `SELECT wu.*, CASE WHEN wu.announce = 0 OR wur.user_id IS NOT NULL THEN 1 ELSE 0 END AS seen
        FROM world_updates wu
        LEFT JOIN world_update_reads wur ON wur.update_id = wu.id AND wur.user_id = ?
        WHERE (? = 1 OR (wu.active = 1 AND datetime(wu.published_at) <= datetime('now')))
@@ -59,14 +60,16 @@ export async function onRequestPost({ request, env }) {
     const ctaLabel = route && typeof body?.ctaLabel === "string" ? body.ctaLabel.trim().slice(0, 60) || "Apri" : null;
     const publishedAt = typeof body?.publishedAt === "string" && Number.isFinite(Date.parse(body.publishedAt))
       ? new Date(body.publishedAt).toISOString() : new Date().toISOString();
+    const announce = body?.announce === false ? 0 : 1;
     if (!kind || !title || title.length > 120 || text.length > 1000 || route === undefined) {
       return json({ error: "Controlla categoria, titolo, testo e collegamento." }, 400);
     }
     const now = new Date().toISOString();
     const row = await env.DB.prepare(
-      `INSERT INTO world_updates (kind, emoji, title, body, route, cta_label, published_at, active, created_by, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *, 0 AS seen`
-    ).bind(kind, emoji, title, text, route, ctaLabel, publishedAt, body?.active === false ? 0 : 1, session.user.id, now, now).first();
+      `INSERT INTO world_updates (kind, emoji, title, body, route, cta_label, published_at, active, announce, created_by, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *, 0 AS seen`
+    ).bind(kind, emoji, title, text, route, ctaLabel, publishedAt, body?.active === false ? 0 : 1,
+      announce, session.user.id, now, now).first();
     return json(updateView(row), 201);
   } catch {
     return json({ error: "Non è stato possibile creare la novità." }, 500);

@@ -22,13 +22,15 @@ export async function onRequestPut({ request, env, params }) {
     const ctaLabel = route && typeof body?.ctaLabel === "string" ? body.ctaLabel.trim().slice(0, 60) || "Apri" : null;
     const publishedAt = typeof body?.publishedAt === "string" && Number.isFinite(Date.parse(body.publishedAt))
       ? new Date(body.publishedAt).toISOString() : null;
+    const announce = body?.announce === false ? 0 : 1;
     if (!kind || !title || title.length > 120 || text.length > 1000 || route === undefined || !publishedAt) {
       return json({ error: "Controlla i dati della novità." }, 400);
     }
     const row = await env.DB.prepare(
       `UPDATE world_updates SET kind = ?, emoji = ?, title = ?, body = ?, route = ?, cta_label = ?,
-       published_at = ?, active = ?, updated_at = ? WHERE id = ? RETURNING *, 0 AS seen`
-    ).bind(kind, emoji, title, text, route, ctaLabel, publishedAt, body?.active === false ? 0 : 1, new Date().toISOString(), id).first();
+       published_at = ?, active = ?, announce = ?, updated_at = ? WHERE id = ? RETURNING *, 0 AS seen`
+    ).bind(kind, emoji, title, text, route, ctaLabel, publishedAt, body?.active === false ? 0 : 1,
+      announce, new Date().toISOString(), id).first();
     return row ? json(updateView(row)) : json({ error: "Novità non trovata." }, 404);
   } catch {
     return json({ error: "Non è stato possibile aggiornare la novità." }, 500);

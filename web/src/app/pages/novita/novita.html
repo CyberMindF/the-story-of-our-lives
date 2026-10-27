@@ -20,7 +20,7 @@
         <article class="update-card card glass-surface">
           <span class="update-emoji" aria-hidden="true">{{ update.emoji }}</span>
           <div class="update-copy">
-            <time [attr.datetime]="update.publishedAt">{{ update.publishedAt | date:'dd MMMM yyyy' }}</time>
+            <time [attr.datetime]="update.publishedAt">{{ update.publishedAt | date:'dd MMMM yyyy' }}@if (canEdit() && !update.announce) { <span> · solo archivio</span> }</time>
             <h2>{{ update.title }}</h2>
             @if (update.body) { <p>{{ update.body }}</p> }
             @if (update.route) { <a class="btn" [routerLink]="update.route">{{ update.ctaLabel || 'Apri' }}</a> }
@@ -44,6 +44,7 @@
           <label>Testo pulsante<input name="updateCta" maxlength="60" placeholder="Apri" [(ngModel)]="updateCta" /></label>
           <label>Data e ora<input type="datetime-local" name="updateDate" required [(ngModel)]="updateDate" /></label>
           <label class="check"><input type="checkbox" name="updateActive" [(ngModel)]="updateActive" /> Pubblicata</label>
+          <label class="check wide"><input type="checkbox" name="updateAnnounce" [(ngModel)]="updateAnnounce" /> Mostra anche nel popup “Cosa ti sei persa?”</label>
           <div class="wide form-actions"><button class="btn btn-submit" type="submit" [disabled]="saving()">{{ editingUpdateId() ? 'Salva modifiche' : 'Pubblica novità' }}</button></div>
         </form>
       </section>

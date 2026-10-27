@@ -2,6 +2,7 @@ import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { normalizeMediaKey, normalizeText, normalizeTitle } from "./_shared.js";
+import { addWorldUpdate } from "../_shared/world-updates.js";
 
 // Editor dedicato delle canzoni delle Cuffiette (documentazione/cms/planning-editor-contenuti.md, Fase 7). Stesso
 // pattern di Ricettario/Storie: 'position' esplicito, riordino su move.js.
@@ -67,6 +68,15 @@ export async function onRequestPost(context) {
       section: "cuffiette",
       eventType: "content_created",
       metadata: { songId: id }
+    }));
+    context.waitUntil(addWorldUpdate(env, {
+      emoji: "🎧",
+      title: `Una nuova canzone: ${title}`,
+      body: "Una canzone si è aggiunta alle Cuffiette.",
+      route: "/cuffiette",
+      ctaLabel: "Ascolta",
+      createdBy: session.user.id,
+      publishedAt: now
     }));
 
     const created = await env.DB.prepare("SELECT * FROM cuffiette_songs WHERE id = ?").bind(id).first();

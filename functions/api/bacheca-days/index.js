@@ -2,6 +2,7 @@ import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { daySlugExists, normalizeMemoryDate, normalizeSlug, normalizeTitle, periodExists, validateContent } from "./_shared.js";
+import { addWorldUpdate } from "../_shared/world-updates.js";
 
 // Editor "ibrido" della Bacheca (opzione D concordata il 12/08/2026): un giorno = un record
 // con l'intero layout (righe/colonne/blocchi) come JSON validato rigorosamente, non 5 livelli
@@ -72,6 +73,15 @@ export async function onRequestPost(context) {
       section: "bacheca",
       eventType: "content_created",
       metadata: { dayId: id, periodId }
+    }));
+    context.waitUntil(addWorldUpdate(env, {
+      emoji: "📸",
+      title: `Un ricordo in Bacheca: ${title || slug}`,
+      body: "Un nuovo giorno è stato aggiunto alla Bacheca dei Ricordi.",
+      route: "/bacheca",
+      ctaLabel: "Guarda il ricordo",
+      createdBy: session.user.id,
+      publishedAt: now
     }));
 
     const created = await env.DB.prepare("SELECT * FROM bacheca_days WHERE id = ?").bind(id).first();

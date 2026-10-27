@@ -2,6 +2,7 @@ import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { hasPermission } from "../_shared/permissions.js";
 import { recordEvent } from "../_shared/events.js";
 import { normalizeCoordinate, normalizeImages, normalizeName, normalizeParagraphs } from "./_shared.js";
+import { addWorldUpdate } from "../_shared/world-updates.js";
 
 // Editor dedicato della Mappa (documentazione/cms/planning-editor-contenuti.md, Fase 7). Stesso pattern CRUD +
 // move.js di Ricettario/Storie/Cuffiette.
@@ -71,6 +72,17 @@ export async function onRequestPost(context) {
       eventType: "content_created",
       metadata: { destinationId: id }
     }));
+    if (isOpen) {
+      context.waitUntil(addWorldUpdate(env, {
+        emoji: "🗺️",
+        title: `Un nuovo posto sulla Mappa: ${name}`,
+        body: "Un posto si è aggiunto alla Mappa.",
+        route: "/mappa",
+        ctaLabel: "Guarda la Mappa",
+        createdBy: session.user.id,
+        publishedAt: now
+      }));
+    }
 
     const created = await env.DB.prepare("SELECT * FROM map_destinations WHERE id = ?").bind(id).first();
     return json(toDestinationView(created), 201);
