@@ -266,32 +266,36 @@ import { parseNarrative } from './gdr-turn.parser';
     }
     .insertion-point {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       position: relative;
       height: 1.25rem;
     }
     .insertion-point button {
       position: absolute;
+      left: 0.15rem;
       top: 50%;
       transform: translateY(-50%);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      min-width: 44px;
-      min-height: 44px;
-      padding: 0.2rem 0.6rem;
+      width: 1.8rem;
+      height: 1.8rem;
+      padding: 0;
       border: 0;
       border-radius: 999px;
       background: transparent;
       color: var(--muted-color);
       font: inherit;
+      font-size: 0.78rem;
+      opacity: 0.62;
       cursor: pointer;
     }
     .insertion-point button:hover,
     .insertion-point button:focus-visible {
       background: var(--button-hover-bg);
       color: var(--accent-color);
+      opacity: 1;
     }
     .insertion-point button:disabled {
       opacity: 0.35;
@@ -305,8 +309,11 @@ import { parseNarrative } from './gdr-turn.parser';
     .insertion-point.is-empty button {
       position: static;
       transform: none;
+      width: auto;
+      height: auto;
       border: 1px dashed var(--border-color);
-      padding-inline: 1rem;
+      padding: 0.55rem 1rem;
+      opacity: 1;
     }
     .inline-tools {
       display: flex;
