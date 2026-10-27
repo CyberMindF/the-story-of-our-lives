@@ -21,7 +21,7 @@ export async function onRequestPost(context) {
     const force = body?.force === true;
 
     const result = await notifyOtherIdentity(context.env, session.user.id, {
-      subject: `${session.user.nickname} ti ha lasciato una novità sul Mondo Bianco`,
+      subject: "Qualcosa è cambiato nel Mondo Bianco",
       html: `<p>${escapeHtml(message)}</p><p><a href="https://il-mondo-bianco.com">Vai al Mondo Bianco</a></p>`,
       force
     });

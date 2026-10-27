@@ -9,7 +9,7 @@ export async function onRequestGet(context) {
   }
 
   const html = renderEmailTemplate({
-    subject: "Rory ti ha lasciato una novità sul Mondo Bianco",
+    subject: "Qualcosa è cambiato nel Mondo Bianco",
     content: `
       <p>Ci sono nuove cose da scoprire nel nostro piccolo mondo.</p>
       <p>Questa è un’anteprima: non è stata inviata alcuna email.</p>
