@@ -27,6 +27,8 @@ interface ActivityLoggingUser {
   identity: 'lui' | 'lei';
   is_test: number;
   activity_logging_enabled: number;
+  admin_email_updates: number;
+  notify_email_updates: number;
 }
 
 // Cambio nickname/password (backlog #2). Due form indipendenti (azioni separate lato
@@ -73,6 +75,7 @@ export class Profilo {
   protected readonly testAction = signal<'reset' | 'delete' | null>(null);
   protected readonly activityLoggingUsers = signal<ActivityLoggingUser[]>([]);
   protected readonly activityLoggingMessage = signal('');
+  protected readonly automaticEmailMessage = signal('');
   private testAccountsLoaded = false;
   private activityLoggingLoaded = false;
 
@@ -252,6 +255,29 @@ export class Profilo {
     } catch {
       input.checked = !enabled;
       this.activityLoggingMessage.set('Non è stato possibile aggiornare il logging.');
+    } finally {
+      input.disabled = false;
+    }
+  }
+
+  protected async setAutomaticEmails(user: ActivityLoggingUser, input: HTMLInputElement): Promise<void> {
+    const enabled = input.checked;
+    input.disabled = true;
+    this.automaticEmailMessage.set('');
+    try {
+      const response = await fetch('/api/auth/automatic-emails', {
+        method: 'PUT', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, enabled })
+      });
+      if (!response.ok) throw new Error('Aggiornamento non riuscito');
+      this.activityLoggingUsers.update((users) => users.map((item) => item.id === user.id
+        ? { ...item, admin_email_updates: enabled ? 1 : 0 } : item));
+      this.automaticEmailMessage.set(enabled
+        ? `Invii automatici abilitati per ${user.nickname}.`
+        : `Abilitazione admin rimossa per ${user.nickname}: vale la preferenza personale.`);
+    } catch {
+      input.checked = !enabled;
+      this.automaticEmailMessage.set('Non è stato possibile aggiornare gli invii automatici.');
     } finally {
       input.disabled = false;
     }

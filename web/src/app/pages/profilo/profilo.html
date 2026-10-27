@@ -72,10 +72,34 @@
           @if (activityLoggingMessage()) { <p class="profilo-test-message" role="status">{{ activityLoggingMessage() }}</p> }
         </div>
 
+        <div class="profilo-activity-logging">
+          <div>
+            <h3>Invii automatici via email</h3>
+            <p class="profilo-admin-note">Abilita gli avvisi automatici per un account anche con la preferenza personale disattivata. Il flag del profilo resta invariato. Disattivando questa opzione torna a valere la preferenza personale.</p>
+          </div>
+          <div class="profilo-logging-list">
+            @for (user of activityLoggingUsers(); track user.id) {
+              @if (!user.is_test) {
+                <label class="settings-toggle profilo-logging-user">
+                  <span class="settings-toggle-info">
+                    <span class="settings-toggle-title">{{ user.nickname }}</span>
+                    <span class="settings-toggle-description">{{ user.email }} · Preferenza personale: {{ user.notify_email_updates === 1 ? 'attiva' : 'disattivata' }}</span>
+                  </span>
+                  <input class="settings-toggle-input" type="checkbox"
+                    [checked]="user.admin_email_updates === 1"
+                    (change)="setAutomaticEmails(user, $any($event.target))" />
+                  <span class="settings-toggle-switch" aria-hidden="true"></span>
+                </label>
+              }
+            }
+          </div>
+          @if (automaticEmailMessage()) { <p class="profilo-test-message" role="status">{{ automaticEmailMessage() }}</p> }
+        </div>
+
         <form class="profilo-admin-notify" aria-label="Avvisa via email" (ngSubmit)="submitNotify()">
           <div>
             <h3>Avvisa via email</h3>
-            <p class="profilo-admin-note">Manda un’email per far sapere che c’è qualcosa di nuovo. Arriva solo se l’altra persona ha attivato le notifiche email.</p>
+            <p class="profilo-admin-note">Manda un’email per far sapere che c’è qualcosa di nuovo. Rispetta la preferenza personale e l’abilitazione admin degli invii, salvo invio forzato.</p>
           </div>
           <label class="form-field">
             <span>Messaggio (facoltativo)</span>
