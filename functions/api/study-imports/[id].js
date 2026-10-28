@@ -77,8 +77,9 @@ export async function onRequestDelete(context) {
 
     const topics = Number(results[0]?.meta?.changes || 0);
     const quizzes = Number(results[1]?.meta?.changes || 0);
+    const cards = Number(results[3]?.meta?.changes || 0);
     const foldersRemoved = results
-      .slice(2, 2 + folders.length)
+      .slice(4, 4 + folders.length)
       .reduce((total, result) => total + Number(result.meta?.changes || 0), 0);
 
     context.waitUntil(
@@ -91,7 +92,7 @@ export async function onRequestDelete(context) {
         {
           section: "aula-studio",
           eventType: "bulk_import_reverted",
-          metadata: { importId, topics, quizzes, folders: foldersRemoved },
+          metadata: { importId, topics, cards, quizzes, folders: foldersRemoved },
         },
       ),
     );
@@ -101,7 +102,7 @@ export async function onRequestDelete(context) {
       reverted: true,
       alreadyReverted: false,
       revertedAt: now,
-      removed: { topics, quizzes, folders: foldersRemoved },
+      removed: { topics, cards, quizzes, folders: foldersRemoved },
     });
   } catch (error) {
     console.error(

@@ -1,6 +1,6 @@
 import { normalizeLookupText } from "./_shared.mjs";
 
-export function buildStudyBulkPlan(parsed, existingFolders) {
+export function buildStudyBulkPlan(parsed, existingFolders, existingTopics = []) {
   const existingByParentAndName = new Map();
   for (const folder of existingFolders) {
     const key = folderKey(existingRef(folder.parent_id), folder.name);
@@ -13,6 +13,15 @@ export function buildStudyBulkPlan(parsed, existingFolders) {
   const foldersToCreate = [];
   const topics = [];
   const quizzes = [];
+  const existingTopicsByFolderAndTitle = new Map();
+  for (const topic of existingTopics) {
+    const key = folderKey(existingRef(topic.folder_id), topic.title);
+    // Gli eventuali duplicati storici restano separati: si usa il più vecchio.
+    if (!existingTopicsByFolderAndTitle.has(key)) {
+      existingTopicsByFolderAndTitle.set(key, topic);
+    }
+  }
+  const resolvedTopics = new Map();
 
   for (const path of parsed.paths) {
     let parentRef = rootRef();
@@ -39,12 +48,22 @@ export function buildStudyBulkPlan(parsed, existingFolders) {
     }
 
     for (const topic of path.topics) {
-      topics.push({
+      const key = folderKey(parentRef, topic.title);
+      const resolved = resolvedTopics.get(key);
+      if (resolved) {
+        resolved.cards.push(...topic.cards);
+        continue;
+      }
+      const existing = existingTopicsByFolderAndTitle.get(key);
+      const plannedTopic = {
         title: topic.title,
-        cards: topic.cards,
+        cards: [...topic.cards],
         folderRef: parentRef,
         position: topics.length,
-      });
+        existingId: existing?.id ?? null,
+      };
+      topics.push(plannedTopic);
+      resolvedTopics.set(key, plannedTopic);
     }
     for (const quiz of path.quizzes) {
       quizzes.push({ ...quiz, folderRef: parentRef, position: quizzes.length });
@@ -69,6 +88,9 @@ export function buildStudyBulkPlan(parsed, existingFolders) {
           kind: "flashcard",
           title: topic.title,
           cardCount: topic.cards.length,
+          append: resolvedTopics.get(
+            folderKey(resolvePathRef(path, resolvedFolders), topic.title),
+          )?.existingId != null,
         }))
         .concat(
           path.quizzes.map((quiz) => ({
@@ -156,6 +178,7 @@ export function buildImportStatements({
            json_extract(topic.value, '$.title'), ?, ?, ?,
            json_extract(topic.value, '$.position')
          FROM json_each(?) AS topic
+         WHERE json_extract(topic.value, '$.existingId') IS NULL
          ORDER BY json_extract(topic.value, '$.position')`,
         userId,
         importId,
@@ -168,20 +191,40 @@ export function buildImportStatements({
 
     statements.push(
       statement(
-        `INSERT INTO study_cards (topic_id, question, answer, position, created_at)
-         SELECT imported_topic.id,
+        `WITH resolved_topics AS MATERIALIZED (
+           SELECT COALESCE(json_extract(topic.value, '$.existingId'), imported_topic.id) AS id,
+                  json_extract(topic.value, '$.cards') AS cards,
+                  json_extract(topic.value, '$.position') AS import_position
+           FROM json_each(?) AS topic
+           LEFT JOIN study_topics AS imported_topic
+             ON imported_topic.source_import_id = ?
+            AND imported_topic.source_import_position = json_extract(topic.value, '$.position')
+         ), card_offsets AS MATERIALIZED (
+           SELECT resolved_topics.*,
+                  COALESCE((SELECT MAX(position) + 1 FROM study_cards
+                            WHERE topic_id = resolved_topics.id), 0) AS next_position
+           FROM resolved_topics
+         )
+         INSERT INTO study_cards (topic_id, question, answer, position, created_at, source_import_id)
+         SELECT card_offsets.id,
            json_extract(card.value, '$.question'),
            json_extract(card.value, '$.answer'),
-           CAST(card.key AS INTEGER), ?
-         FROM json_each(?) AS topic
-         JOIN json_each(json_extract(topic.value, '$.cards')) AS card
-         JOIN study_topics AS imported_topic
-           ON imported_topic.source_import_id = ?
-          AND imported_topic.source_import_position = json_extract(topic.value, '$.position')
-         ORDER BY json_extract(topic.value, '$.position'), CAST(card.key AS INTEGER)`,
-        now,
+           card_offsets.next_position + CAST(card.key AS INTEGER), ?, ?
+         FROM card_offsets
+         JOIN json_each(card_offsets.cards) AS card
+         ORDER BY card_offsets.import_position, CAST(card.key AS INTEGER)`,
         JSON.stringify(plan.topics.map(topicCardsPayload)),
         importId,
+        now,
+        importId,
+      ),
+      statement(
+        `UPDATE study_topics SET updated_at = ?
+         WHERE id IN (
+           SELECT json_extract(value, '$.existingId') FROM json_each(?)
+         ) AND deleted_at IS NULL`,
+        now,
+        JSON.stringify(plan.topics.map(topicPayload)),
       ),
     );
   }
@@ -269,6 +312,14 @@ function folderKey(parentRef, name) {
   return `${refKey(parentRef)}\u0000${normalizeLookupText(name)}`;
 }
 
+function resolvePathRef(path, resolvedFolders) {
+  let ref = rootRef();
+  for (const segment of path.segments) {
+    ref = resolvedFolders.get(folderKey(ref, segment));
+  }
+  return ref;
+}
+
 function refPayload(ref, prefix) {
   if (ref.kind === "root") return { [`${prefix}Kind`]: "root" };
   if (ref.kind === "existing") {
@@ -290,11 +341,12 @@ function topicPayload(topic) {
     ...refPayload(topic.folderRef, "folder"),
     title: topic.title,
     position: topic.position,
+    existingId: topic.existingId,
   };
 }
 
 function topicCardsPayload(topic) {
-  return { position: topic.position, cards: topic.cards };
+  return { position: topic.position, existingId: topic.existingId, cards: topic.cards };
 }
 
 function quizPayload(quiz) {

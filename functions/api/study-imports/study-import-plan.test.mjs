@@ -38,7 +38,7 @@ test("distingue cartelle omonime in rami differenti", () => {
   assert.equal(plan.topics[1].folderRef.id, 4);
 });
 
-test("crea un nuovo argomento anche quando esiste già lo stesso nome", () => {
+test("aggiunge 10 flashcard alle 23 esistenti senza duplicare il gruppo", () => {
   const db = createDatabase();
   db.prepare(
     "INSERT INTO study_folders (id, user_id, name, created_at, updated_at) VALUES (1, 1, 'Chimica', ?, ?)",
@@ -46,10 +46,17 @@ test("crea un nuovo argomento anche quando esiste già lo stesso nome", () => {
   db.prepare(
     "INSERT INTO study_topics (id, user_id, folder_id, title, created_at, updated_at) VALUES (1, 1, 1, 'Atomo', ?, ?)",
   ).run(NOW, NOW);
+  for (let position = 0; position < 23; position++) {
+    db.prepare(
+      "INSERT INTO study_cards (topic_id, question, answer, position, created_at) VALUES (1, ?, ?, ?, ?)",
+    ).run(`Domanda ${position}`, `Risposta ${position}`, position, NOW);
+  }
 
   const plan = planForDatabase(
     db,
-    "# Chimica\n## Atomo\nNuova domanda\nNuova risposta",
+    "# Chimica\n## ATOMO\n" + Array.from(
+      { length: 10 }, (_, index) => `Nuova domanda ${index}\nNuova risposta ${index}`,
+    ).join("\n"),
   );
   applyAtomically(
     db,
@@ -58,8 +65,85 @@ test("crea un nuovo argomento anche quando esiste già lo stesso nome", () => {
 
   assert.equal(
     value(db, "SELECT COUNT(*) FROM study_topics WHERE title = 'Atomo'"),
-    2,
+    1,
   );
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_cards WHERE topic_id = 1"), 33);
+  const cards = db.prepare("SELECT * FROM study_cards ORDER BY position").all();
+  assert.equal(cards[22].question, "Domanda 22");
+  assert.equal(cards[22].source_import_id, null);
+  assert.equal(cards[23].question, "Nuova domanda 0");
+  assert.equal(cards[32].position, 32);
+  assert.equal(cards[32].source_import_id, "import-duplicate");
+  assert.equal(plan.preview[0].topics[0].append, true);
+});
+
+test("unisce sezioni omonime nello stesso import mantenendo l'ordine", () => {
+  const db = createDatabase();
+  const plan = planForDatabase(db,
+    "# Chimica\n## Atomo\nD1\nR1\n# chimica\n## atomo\nD2\nR2",
+  );
+  applyAtomically(db, importOperations(plan, "merge-sections", "merge-sections-key"));
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_topics"), 1);
+  assert.deepEqual(db.prepare("SELECT question, position FROM study_cards ORDER BY position").all()
+    .map((row) => [row.question, row.position]), [["D1", 0], ["D2", 1]]);
+});
+
+test("non unisce gruppi omonimi in cartelle diverse e ignora i gruppi eliminati", () => {
+  const db = createDatabase();
+  applyAtomically(db, importOperations(planForDatabase(db,
+    "# Chimica\n## Ripasso\nD1\nR1\n# Biologia\n## Ripasso\nD2\nR2",
+  ), "different-folders", "different-folders-key"));
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_topics"), 2);
+  db.prepare("UPDATE study_topics SET deleted_at = ? WHERE id = 1").run(NOW);
+  const plan = planForDatabase(db, "# Chimica\n## Ripasso\nD3\nR3");
+  assert.equal(plan.preview[0].topics[0].append, false);
+  applyAtomically(db, importOperations(plan, "deleted-topic", "deleted-topic-key"));
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_topics"), 3);
+});
+
+test("tra duplicati storici riutilizza solo il primo gruppo", () => {
+  const db = createDatabase();
+  applyAtomically(db, importOperations(planForDatabase(db,
+    "# Chimica\n## Atomo\nD1\nR1",
+  ), "original", "original-key"));
+  db.prepare(`INSERT INTO study_topics
+    (user_id, folder_id, title, created_at, updated_at)
+    VALUES (1, 1, 'Atomo', ?, ?)`).run(NOW, NOW);
+  applyAtomically(db, importOperations(planForDatabase(db,
+    "# Chimica\n## Atomo\nD2\nR2",
+  ), "append", "append-key"));
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_topics"), 2);
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_cards WHERE topic_id = 1"), 2);
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_cards WHERE topic_id = 2"), 0);
+});
+
+test("calcola la posizione in coda al momento della scrittura anche con piani precedenti", () => {
+  const db = createDatabase();
+  applyAtomically(db, importOperations(planForDatabase(db,
+    "# Chimica\n## Atomo\nD0\nR0",
+  ), "initial", "initial-key"));
+  const first = planForDatabase(db, "# Chimica\n## Atomo\nD1\nR1\nD2\nR2");
+  const second = planForDatabase(db, "# Chimica\n## Atomo\nD3\nR3\nD4\nR4");
+  applyAtomically(db, importOperations(first, "first-append", "first-append-key"));
+  applyAtomically(db, importOperations(second, "second-append", "second-append-key"));
+  assert.deepEqual(db.prepare("SELECT question, position FROM study_cards ORDER BY position").all()
+    .map((row) => [row.question, row.position]),
+    [["D0", 0], ["D1", 1], ["D2", 2], ["D3", 3], ["D4", 4]]);
+});
+
+test("un errore dopo l'aggiunta ripristina le carte preesistenti", () => {
+  const db = createDatabase();
+  applyAtomically(db, importOperations(planForDatabase(db,
+    "# Chimica\n## Atomo\nD0\nR0",
+  ), "initial", "initial-key"));
+  const operations = importOperations(planForDatabase(db,
+    "# Chimica\n## Atomo\nD1\nR1",
+  ), "failed", "failed-key");
+  operations.push({ sql: "INSERT INTO tabella_inesistente VALUES (1)", params: [] });
+  assert.throws(() => applyAtomically(db, operations));
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_topics"), 1);
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_cards"), 1);
+  assert.equal(value(db, "SELECT COUNT(*) FROM study_imports"), 1);
 });
 
 test("annulla ogni scrittura se una operazione del batch fallisce", () => {
@@ -155,6 +239,10 @@ test("ricostruisce il percorso per le importazioni già esistenti", () => {
   const db = createDatabase();
   const plan = planForDatabase(db, "# Biologia > Unità 1\n## Ripasso\nD\nR");
   applyAtomically(db, importOperations(plan, "import-legacy", "key-legacy"));
+  applyAtomically(db, importOperations(
+    planForDatabase(db, "# Biologia > Unità 1\n## Ripasso\nNuova\nRisposta"),
+    "import-later", "key-later",
+  ));
 
   const details = db
     .prepare(LEGACY_IMPORT_DETAILS_SQL)
@@ -170,6 +258,23 @@ test("ricostruisce il percorso per le importazioni già esistenti", () => {
       path: "Biologia › Unità 1",
     },
   ]);
+});
+
+test("la migrazione assegna la provenienza alle carte già importate", () => {
+  const db = createDatabase();
+  db.exec("DROP INDEX idx_study_cards_import; ALTER TABLE study_cards DROP COLUMN source_import_id");
+  db.prepare(`INSERT INTO study_topics
+    (id, user_id, title, created_at, updated_at, source_import_id)
+    VALUES (1, 1, 'Importato', ?, ?, 'legacy'), (2, 1, 'Manuale', ?, ?, NULL)`
+  ).run(NOW, NOW, NOW, NOW);
+  db.prepare(`INSERT INTO study_cards (topic_id, question, answer, position, created_at)
+    VALUES (1, 'D1', 'R1', 0, ?), (2, 'D2', 'R2', 0, ?)`
+  ).run(NOW, NOW);
+  db.exec(fs.readFileSync(new URL(
+    "../../../migrations/0142_add_study_card_import_source.sql", import.meta.url,
+  ), "utf8"));
+  assert.deepEqual(db.prepare("SELECT source_import_id FROM study_cards ORDER BY id").all()
+    .map((row) => row.source_import_id), ["legacy", null]);
 });
 
 function validParse(source) {
@@ -194,6 +299,7 @@ function createDatabase() {
     "migrations/0118_add_study_quizzes.sql",
     "migrations/0120_add_study_quiz_question_difficulty.sql",
     "migrations/0121_add_study_mixed_quiz_attempts.sql",
+    "migrations/0142_add_study_card_import_source.sql",
   ]) {
     db.exec(
       fs.readFileSync(
@@ -211,7 +317,10 @@ function planForDatabase(db, source) {
       "SELECT id, parent_id, name FROM study_folders WHERE deleted_at IS NULL",
     )
     .all();
-  return buildStudyBulkPlan(validParse(source), folders);
+  const topics = db.prepare(
+    "SELECT id, folder_id, title FROM study_topics WHERE deleted_at IS NULL ORDER BY id",
+  ).all();
+  return buildStudyBulkPlan(validParse(source), folders, topics);
 }
 
 function importOperations(plan, importId, idempotencyKey) {

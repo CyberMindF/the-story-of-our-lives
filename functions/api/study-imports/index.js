@@ -8,6 +8,7 @@ import {
 import { parseStudyBulkSource } from "./_shared.mjs";
 import {
   loadStudyFolders,
+  loadStudyTopics,
   parseSummary,
   prepareD1Statements,
   requireStudyBulkAdmin,
@@ -90,7 +91,11 @@ export async function onRequestPost(context) {
     const existing = await findImport(env, userId, idempotencyKey);
     if (existing) return duplicateResponse(existing, sourceHash);
 
-    const plan = buildStudyBulkPlan(parsed, await loadStudyFolders(env));
+    const [folders, topics] = await Promise.all([
+      loadStudyFolders(env),
+      loadStudyTopics(env),
+    ]);
+    const plan = buildStudyBulkPlan(parsed, folders, topics);
     const importId = crypto.randomUUID();
     const createdAt = new Date().toISOString();
     const operations = buildImportStatements({

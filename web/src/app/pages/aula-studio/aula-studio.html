@@ -186,6 +186,8 @@
               <p class="study-bulk-help">
                 Usa <code># Cartella &gt; Sottocartella</code>, poi pacchetti distinti come
                 <code>## Flashcard: Titolo</code> o <code>## Quiz: Titolo</code>.
+                Le flashcard con lo stesso titolo nella stessa cartella vengono aggiunte
+                in coda al gruppo esistente.
               </p>
               <details class="study-bulk-guide">
                 <summary>Vedi il formato per quiz e flashcard</summary>
@@ -282,6 +284,9 @@ Risposta: Risposta di riferimento facoltativa.</pre>
                               ? topic.questionCount + ' domande'
                               : topic.cardCount + ' carte'
                           }}
+                          @if (topic.kind === 'flashcard') {
+                            · {{ topic.append ? 'aggiunta al gruppo esistente' : 'nuovo gruppo' }}
+                          }
                         </li>
                       }
                     </ul>

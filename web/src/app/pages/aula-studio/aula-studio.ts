@@ -112,6 +112,7 @@ interface BulkPreviewPath {
     kind: 'flashcard' | 'quiz';
     title: string;
     cardCount?: number;
+    append?: boolean;
     questionCount?: number;
   }>;
 }
@@ -634,9 +635,9 @@ export class AulaStudio implements OnDestroy {
     if (!item) return '';
     const warning =
       item.modifiedItems > 0
-        ? ` Attenzione: ${item.modifiedItems} ${item.modifiedItems === 1 ? 'elemento risulta modificato' : 'elementi risultano modificati'} dopo l’importazione e ${item.modifiedItems === 1 ? 'sarà comunque rimosso' : 'saranno comunque rimossi'}.`
+        ? ` Attenzione: ${item.modifiedItems} ${item.modifiedItems === 1 ? 'elemento risulta modificato' : 'elementi risultano modificati'} dopo l’importazione. Controlla i contenuti prima di annullare.`
         : '';
-    return `Verranno rimossi dall’Aula studio ${this.bulkImportSummary(item)}. Le cartelle saranno rimosse solo se vuote; lo storico dei tentativi dei quiz verrà conservato.${warning}`;
+    return `Verranno rimossi i contenuti di questa importazione (${this.bulkImportSummary(item)}). Nei gruppi di flashcard condivisi con altre importazioni saranno rimosse solo le carte di questa importazione. Le cartelle saranno rimosse solo se vuote; lo storico dei tentativi dei quiz verrà conservato.${warning}`;
   }
 
   protected async saveFolder(): Promise<void> {

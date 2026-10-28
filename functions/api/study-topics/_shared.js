@@ -40,10 +40,10 @@ export function cardsForInsert(env, topicId, cards, now) {
   return cards.map((card, position) =>
     env.DB.prepare(
       `
-      INSERT INTO study_cards (topic_id, question, answer, position, created_at)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO study_cards (topic_id, question, answer, position, created_at, source_import_id)
+      VALUES (?, ?, ?, ?, ?, ?)
     `,
-    ).bind(topicId, card.question, card.answer, position, now),
+    ).bind(topicId, card.question, card.answer, position, now, card.sourceImportId ?? null),
   );
 }
 

@@ -17,7 +17,8 @@ export const LEGACY_IMPORT_DETAILS_SQL = `WITH RECURSIVE
     SELECT topics.source_import_id, topics.source_import_position AS position,
            'flashcard' AS kind, topics.title, topics.folder_id,
            (SELECT COUNT(*) FROM study_cards AS cards
-            WHERE cards.topic_id = topics.id) AS item_count
+            WHERE cards.topic_id = topics.id
+              AND cards.source_import_id = topics.source_import_id) AS item_count
     FROM study_topics AS topics
     JOIN selected_imports ON selected_imports.id = topics.source_import_id
     UNION ALL

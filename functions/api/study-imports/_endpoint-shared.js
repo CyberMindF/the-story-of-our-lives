@@ -27,6 +27,13 @@ export async function loadStudyFolders(env) {
   return results;
 }
 
+export async function loadStudyTopics(env) {
+  const { results } = await env.DB.prepare(
+    "SELECT id, folder_id, title FROM study_topics WHERE deleted_at IS NULL ORDER BY id",
+  ).all();
+  return results;
+}
+
 export function prepareD1Statements(env, operations) {
   return operations.map((operation) =>
     env.DB.prepare(operation.sql).bind(...operation.params),

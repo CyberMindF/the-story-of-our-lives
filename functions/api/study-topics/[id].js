@@ -1,5 +1,6 @@
 import { getAuthenticatedSession, json, readJson } from "../auth/_shared.js";
 import { recordEvent } from "../_shared/events.js";
+import { preserveCardImportSources } from "./_card-provenance.mjs";
 import {
   TOPIC_WITH_CARDS_SELECT,
   cardsForInsert,
@@ -69,6 +70,10 @@ export async function onRequestPut(context) {
     }
 
     const now = new Date().toISOString();
+    const { results: existingCards } = await env.DB.prepare(
+      "SELECT question, answer, source_import_id FROM study_cards WHERE topic_id = ? ORDER BY position",
+    ).bind(topicId).all();
+    const cardsWithSources = preserveCardImportSources(cards, existingCards);
     await env.DB.batch([
       env.DB.prepare(
         "UPDATE study_topics SET title = ?, folder_id = ?, updated_at = ? WHERE id = ?",
@@ -76,7 +81,7 @@ export async function onRequestPut(context) {
       env.DB.prepare("DELETE FROM study_cards WHERE topic_id = ?").bind(
         topicId,
       ),
-      ...cardsForInsert(env, topicId, cards, now),
+      ...cardsForInsert(env, topicId, cardsWithSources, now),
     ]);
 
     context.waitUntil(

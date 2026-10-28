@@ -3,9 +3,19 @@ export function buildImportRevertOperations({ importId, now, folders }) {
     statement(
       `UPDATE study_topics
        SET deleted_at = ?, updated_at = ?
-       WHERE source_import_id = ? AND deleted_at IS NULL`,
+       WHERE deleted_at IS NULL
+         AND (source_import_id = ? OR (
+           source_import_id IN (SELECT id FROM study_imports WHERE reverted_at IS NOT NULL)
+           AND id IN (SELECT topic_id FROM study_cards WHERE source_import_id = ?)
+         ))
+         AND NOT EXISTS (
+           SELECT 1 FROM study_cards
+           WHERE topic_id = study_topics.id AND source_import_id IS NOT ?
+         )`,
       now,
       now,
+      importId,
+      importId,
       importId,
     ),
     statement(
@@ -14,6 +24,25 @@ export function buildImportRevertOperations({ importId, now, folders }) {
        WHERE source_import_id = ? AND deleted_at IS NULL`,
       now,
       now,
+      importId,
+    ),
+    statement(
+      `UPDATE study_topics SET updated_at = ?
+       WHERE deleted_at IS NULL AND id IN (
+         SELECT topic_id FROM study_cards WHERE source_import_id = ?
+       )`,
+      now,
+      importId,
+    ),
+    statement(
+      // I gruppi creati da questo import e rimossi conservano le carte per il recupero.
+      // Nei gruppi riutilizzati si rimuovono soltanto le carte di questo import.
+      `DELETE FROM study_cards
+       WHERE source_import_id = ? AND topic_id IN (
+         SELECT id FROM study_topics
+         WHERE deleted_at IS NULL OR source_import_id IS NOT ?
+       )`,
+      importId,
       importId,
     ),
   ];

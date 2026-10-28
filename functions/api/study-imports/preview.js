@@ -1,7 +1,7 @@
 import { json, readJson } from "../auth/_shared.js";
 import { buildStudyBulkPlan } from "./_plan.mjs";
 import { parseStudyBulkSource } from "./_shared.mjs";
-import { loadStudyFolders, requireStudyBulkAdmin } from "./_endpoint-shared.js";
+import { loadStudyFolders, loadStudyTopics, requireStudyBulkAdmin } from "./_endpoint-shared.js";
 
 export async function onRequestPost({ request, env }) {
   try {
@@ -13,7 +13,11 @@ export async function onRequestPost({ request, env }) {
       return json({ errors: parsed.errors }, 400);
     }
 
-    const plan = buildStudyBulkPlan(parsed, await loadStudyFolders(env));
+    const [folders, topics] = await Promise.all([
+      loadStudyFolders(env),
+      loadStudyTopics(env),
+    ]);
+    const plan = buildStudyBulkPlan(parsed, folders, topics);
     return json({ paths: plan.preview, summary: plan.summary });
   } catch (error) {
     console.error(
