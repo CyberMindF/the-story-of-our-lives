@@ -72,8 +72,9 @@ dati personali e oggetti R2 della chat, conservando account e credenziali; `DELE
 /api/auth/test-account/:id` esegue la stessa pulizia e poi elimina definitivamente l'account.
 Entrambe le operazioni sono disponibili in **Amministrazione → Account di collaudo** con
 Modalità admin attiva. La pagina `/amministrazione` si apre dall’icona a scudo nella barra
-utente ed è riservata agli amministratori: raccoglie anche i controlli per registrazione
-attività, abilitazione email, avvisi manuali, contenuti e Log. Il Profilo conserva soltanto
+utente, visibile soltanto con Modalità admin attiva, ed è riservata agli amministratori:
+raccoglie anche i controlli per registrazione attività, abilitazione email, avvisi manuali,
+contenuti e Log. Il Profilo conserva soltanto
 le impostazioni personali; l’interruttore della Modalità admin resta nella barra condivisa.
 
 ### Pagine protette e ritorno dopo l'accesso

@@ -5,9 +5,11 @@
     <span class="user-greeting"></span>
   }
   @if (authService.isAdmin()) {
-    <a routerLink="/amministrazione" class="admin-shortcut-link" aria-label="Amministrazione" title="Amministrazione">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 3v6c0 4-4 7-8 9-4-2-8-5-8-9V6l8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5" /></svg>
-    </a>
+    @if (authService.adminModeEnabled()) {
+      <a routerLink="/amministrazione" class="admin-shortcut-link" aria-label="Amministrazione" title="Amministrazione">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 3v6c0 4-4 7-8 9-4-2-8-5-8-9V6l8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5" /></svg>
+      </a>
+    }
     <label class="userbar-admin-toggle" [class.is-active]="authService.adminModeEnabled()" title="Modalità admin">
       <span>Admin</span>
       <input
