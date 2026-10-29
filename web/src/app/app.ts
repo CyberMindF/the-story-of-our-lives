@@ -51,6 +51,8 @@ const ROUTE_BODY_CLASSES = [
   'ponti-page',
   'stories-page',
   'suggerimenti-page',
+  'profilo-page',
+  'amministrazione-page',
   'impostazioni-mondo-page',
   'novita-page',
   'sky-view-page',

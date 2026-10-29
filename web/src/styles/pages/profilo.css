@@ -12,33 +12,3 @@
 .profilo-form { width: min(100%, 34rem); margin: 0 auto clamp(1.5rem, 4vw, 2.5rem); display: grid; gap: 1.15rem; padding: clamp(1.4rem, 4vw, 2rem); }
 .profilo-form h2 { margin: 0; font-size: 1.3rem; }
 .profilo-form:last-of-type { margin-bottom: clamp(3rem, 7vw, 5rem); }
-
-.profilo-admin-note { margin: 0; color: var(--muted-color); font-size: .88rem; line-height: 1.5; }
-.profilo-form .settings-toggle { padding: 0; }
-.profilo-admin-links { display: flex; flex-wrap: wrap; gap: .6rem; }
-.profilo-activity-logging { display: grid; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--panel-border-color); }
-.profilo-activity-logging h3 { margin: 0 0 .35rem; font-size: 1rem; }
-.profilo-logging-list { display: grid; gap: .65rem; }
-.profilo-logging-user { padding: .75rem !important; border: 1px solid var(--panel-border-color); border-radius: .85rem; background: var(--button-bg); }
-.profilo-logging-user .settings-toggle-title { font-size: .9rem; }
-.profilo-logging-user .settings-toggle-description { overflow-wrap: anywhere; }
-.profilo-admin-notify { display: grid; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--panel-border-color); }
-.profilo-admin-notify h3 { margin: 0 0 .35rem; font-size: 1rem; }
-.profilo-admin-notify .profilo-notify-force { padding: .75rem; border: 1px solid var(--panel-border-color); border-radius: .85rem; background: var(--button-bg); }
-.profilo-notify-force .settings-toggle-title { font-size: .9rem; }
-.profilo-test-accounts { display: grid; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--panel-border-color); }
-.profilo-test-accounts h3 { margin: 0 0 .35rem; font-size: 1rem; }
-.profilo-test-create { display: grid; gap: .8rem; }
-.profilo-test-list { display: grid; gap: .65rem; }
-.profilo-test-account { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem; border: 1px solid var(--panel-border-color); border-radius: .85rem; background: var(--button-bg); }
-.profilo-test-account > div:first-child { min-width: 0; display: grid; gap: .2rem; }
-.profilo-test-account small { color: var(--muted-color); overflow-wrap: anywhere; }
-.profilo-test-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; }
-.profilo-test-actions .btn { padding: .5rem .65rem; font-size: .75rem; }
-.profilo-test-message { margin: 0; color: var(--text-color); font-size: .85rem; }
-
-@media (max-width: 560px) {
-  .profilo-test-account { align-items: stretch; flex-direction: column; }
-  .profilo-test-actions { justify-content: stretch; }
-  .profilo-test-actions .btn { flex: 1; }
-}

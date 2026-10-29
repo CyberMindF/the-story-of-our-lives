@@ -70,7 +70,11 @@ cruciverba, suggerimenti e bustine. Scambi, contenuti editoriali e impostazioni 
 bloccati. `POST /api/auth/test-account/:id/reset` elimina sessioni, telemetria, ricevute di lettura,
 dati personali e oggetti R2 della chat, conservando account e credenziali; `DELETE
 /api/auth/test-account/:id` esegue la stessa pulizia e poi elimina definitivamente l'account.
-Entrambe le operazioni sono disponibili nel Profilo con Modalità admin attiva.
+Entrambe le operazioni sono disponibili in **Amministrazione → Account di collaudo** con
+Modalità admin attiva. La pagina `/amministrazione` si apre dall’icona a scudo nella barra
+utente ed è riservata agli amministratori: raccoglie anche i controlli per registrazione
+attività, abilitazione email, avvisi manuali, contenuti e Log. Il Profilo conserva soltanto
+le impostazioni personali; l’interruttore della Modalità admin resta nella barra condivisa.
 
 ### Pagine protette e ritorno dopo l'accesso
 
@@ -78,7 +82,7 @@ Le route protette sono raccolte sotto `authGuard` in `web/src/app/app.routes.ts`
 
 ## Contatore dell’Amore (privato)
 
-La pagina `/contatore-amore` si apre dal **Profilo → Strumenti riservati**, solo per gli
+La pagina `/contatore-amore` si apre da **Amministrazione**, solo per gli
 amministratori, anche senza Modalità admin attiva. Ogni amministratore vede esclusivamente
 i propri dati: la API verifica ruolo e proprietario su ogni lettura e scrittura. Nessun
 contenuto viene inviato alla telemetria, alle notifiche o alla chat; la presenza condivisa

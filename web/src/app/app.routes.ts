@@ -64,6 +64,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/profilo/profilo').then((m) => m.Profilo),
       },
       {
+        path: 'amministrazione',
+        canActivate: [adminGuard],
+        data: { bodyClasses: ['amministrazione-page'] },
+        loadComponent: () => import('./pages/amministrazione/amministrazione').then((m) => m.Amministrazione),
+      },
+      {
         path: 'contatore-amore',
         canActivate: [adminGuard],
         loadComponent: () => import('./pages/contatore-amore/contatore-amore').then((m) => m.ContatoreAmore),

@@ -133,6 +133,7 @@ app-world-user-bar {
 
 .place-userbar .logout-button,
 .place-userbar .suggest-link,
+.place-userbar .admin-shortcut-link,
 .place-userbar .home-shortcut-link {
   display: inline-grid;
   width: 1.9rem;
@@ -150,11 +151,13 @@ app-world-user-bar {
 
 .place-userbar .logout-button:hover,
 .place-userbar .suggest-link:hover,
+.place-userbar .admin-shortcut-link:hover,
 .place-userbar .home-shortcut-link:hover {
   background: var(--button-hover-bg);
 }
 
 .place-userbar .suggest-link svg,
+.place-userbar .admin-shortcut-link svg,
 .place-userbar .home-shortcut-link svg {
   width: 1rem;
   height: 1rem;
@@ -167,6 +170,7 @@ app-world-user-bar {
 .place-userbar .user-greeting:focus-visible,
 .place-userbar .logout-button:focus-visible,
 .place-userbar .suggest-link:focus-visible,
+.place-userbar .admin-shortcut-link:focus-visible,
 .place-userbar .home-shortcut-link:focus-visible {
   outline: 3px solid var(--focus-color);
   outline-offset: 4px;

@@ -1,0 +1,35 @@
+:host { display: block; min-height: 100dvh; color: var(--text-color); }
+
+.admin-hero { max-width: 46rem; margin: 0 auto 2rem; text-align: center; }
+.admin-eyebrow { margin: 0 0 .65rem; color: var(--muted-color); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.admin-hero h1 { margin: 0; font-size: clamp(2rem, 6vw, var(--hero-size-md)); line-height: 1.1; letter-spacing: -.04em; overflow-wrap: anywhere; }
+.admin-intro { margin: 1.25rem auto 0; color: var(--muted-color); line-height: 1.7; }
+.admin-tools { display: flex; flex-wrap: wrap; justify-content: center; gap: .65rem; margin-bottom: 2rem; }
+.admin-sections { display: grid; gap: 1.5rem; max-width: 48rem; margin: 0 auto 2rem; }
+.admin-section { display: grid; gap: 1.15rem; padding: clamp(1.2rem, 4vw, 2rem); min-width: 0; }
+.admin-section h2 { margin: 0 0 .5rem; font-size: 1.3rem; }
+.admin-note { margin: 0; color: var(--muted-color); font-size: .9rem; line-height: 1.6; overflow-wrap: anywhere; }
+.admin-user-list, .admin-test-list { display: grid; gap: 1rem; }
+.admin-user { padding: 1rem; border: 1px solid var(--panel-border-color); border-radius: 1rem; }
+.admin-user h3 { margin: 0 0 .25rem; font-size: 1.05rem; }
+.admin-user .settings-toggle { margin-top: 1rem; padding: 1rem 0 0; border-top: 1px solid var(--panel-border-color); }
+.admin-section .settings-toggle-title { font-size: .92rem; }
+.admin-section .settings-toggle-description { overflow-wrap: anywhere; }
+.admin-notify, .admin-test-content, .admin-test-create { display: grid; gap: 1rem; min-width: 0; }
+.admin-preview { justify-self: start; }
+.admin-test-section { display: block; }
+.admin-test-section > summary { cursor: pointer; font-size: 1.3rem; font-weight: 700; }
+.admin-test-content { margin-top: 1.25rem; }
+.admin-test-account { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .85rem; border: 1px solid var(--panel-border-color); border-radius: .85rem; }
+.admin-test-account > div:first-child { min-width: 0; display: grid; gap: .2rem; }
+.admin-test-account small { color: var(--muted-color); overflow-wrap: anywhere; }
+.admin-test-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; }
+.admin-test-actions .btn { padding: .5rem .65rem; font-size: .8rem; }
+.admin-test-message, .admin-message { margin: 0; color: var(--text-color); font-size: .9rem; line-height: 1.5; }
+.admin-inactive { max-width: 40rem; margin: 0 auto 2rem; }
+
+@media (max-width: 560px) {
+  .admin-test-account { align-items: stretch; flex-direction: column; }
+  .admin-test-actions { justify-content: stretch; }
+  .admin-test-actions .btn { flex: 1; }
+}

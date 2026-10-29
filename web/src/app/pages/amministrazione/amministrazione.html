@@ -1,0 +1,161 @@
+<app-shell [showSuggestLink]="false">
+  <section class="admin-hero" aria-labelledby="admin-title">
+    <p class="admin-eyebrow">Il Mondo Bianco</p>
+    <h1 id="admin-title">Amministrazione</h1>
+    <p class="admin-intro">Account, comunicazioni e strumenti di gestione del mondo.</p>
+  </section>
+
+  <nav class="admin-tools" aria-label="Strumenti amministrativi">
+    <a class="btn" routerLink="/contatore-amore">💗 Contatore dell’Amore</a>
+    @if (authService.adminModeEnabled()) {
+      <a class="btn" routerLink="/contenuti">📚 Indice dei contenuti</a>
+      <a class="btn" routerLink="/log">🗂️ Log degli eventi</a>
+    }
+  </nav>
+
+  @if (authService.adminModeEnabled()) {
+    <div class="admin-sections">
+      <section class="admin-section card glass-surface" aria-labelledby="admin-users-title">
+        <div>
+          <h2 id="admin-users-title">Account e attività</h2>
+          <p class="admin-note">Gestisci la registrazione delle attività e gli invii automatici per ciascun account.</p>
+        </div>
+        @if (activityLoggingLoading()) {
+          <p class="admin-note" role="status">Caricamento degli account…</p>
+        } @else if (activityLoggingError()) {
+          <p class="admin-note" role="alert">{{ activityLoggingError() }}</p>
+          <button type="button" class="btn" (click)="loadActivityLoggingUsers()">Riprova</button>
+        } @else {
+          <div class="admin-user-list">
+            @for (user of activityLoggingUsers(); track user.id) {
+              <article class="admin-user" [attr.aria-label]="user.nickname">
+                <header>
+                  <h3>{{ user.nickname }}</h3>
+                  <p class="admin-note">{{ user.email }}{{ user.is_test ? ' · account di collaudo' : '' }}</p>
+                </header>
+                <label class="settings-toggle">
+                  <span class="settings-toggle-info">
+                    <span class="settings-toggle-title">Registrazione attività</span>
+                    <span class="settings-toggle-description">Registra le attività nel Log e abilita i relativi avvisi via email.</span>
+                  </span>
+                  <input class="settings-toggle-input" type="checkbox"
+                    [attr.aria-label]="'Registra le attività di ' + user.nickname"
+                    [checked]="user.activity_logging_enabled === 1"
+                    (change)="setActivityLogging(user, $any($event.target))" />
+                  <span class="settings-toggle-switch" aria-hidden="true"></span>
+                </label>
+                @if (!user.is_test) {
+                  <label class="settings-toggle">
+                    <span class="settings-toggle-info">
+                      <span class="settings-toggle-title">Invii automatici via email</span>
+                      <span class="settings-toggle-description">Abilita gli avvisi anche con la preferenza personale disattivata. Disattivando questa opzione torna a valere la preferenza personale, attualmente {{ user.notify_email_updates === 1 ? 'attiva' : 'disattivata' }}.</span>
+                    </span>
+                    <input class="settings-toggle-input" type="checkbox"
+                      [attr.aria-label]="'Abilita gli invii automatici per ' + user.nickname"
+                      [checked]="user.admin_email_updates === 1"
+                      (change)="setAutomaticEmails(user, $any($event.target))" />
+                    <span class="settings-toggle-switch" aria-hidden="true"></span>
+                  </label>
+                }
+              </article>
+            } @empty {
+              <p class="admin-note">Nessun account disponibile.</p>
+            }
+          </div>
+        }
+        @if (activityLoggingMessage()) { <p class="admin-message" role="status">{{ activityLoggingMessage() }}</p> }
+        @if (automaticEmailMessage()) { <p class="admin-message" role="status">{{ automaticEmailMessage() }}</p> }
+      </section>
+
+      <section class="admin-section card glass-surface" aria-labelledby="admin-email-title">
+        <div>
+          <h2 id="admin-email-title">Email</h2>
+          <p class="admin-note">Invia un avviso per segnalare una novità sul Mondo Bianco.</p>
+        </div>
+        <a class="btn admin-preview" href="/api/auth/email-preview" target="_blank" rel="noopener">✉️ Anteprima email</a>
+        <form class="admin-notify" aria-label="Avvisa via email" (ngSubmit)="submitNotify()">
+          <p class="admin-note">L’avviso rispetta la preferenza personale e l’abilitazione admin degli invii, salvo invio forzato.</p>
+          <label class="form-field">
+            <span>Messaggio (facoltativo)</span>
+            <textarea name="notifyMessage" rows="3" maxlength="500" [(ngModel)]="notifyMessage" placeholder="Ci sono novità sul Mondo Bianco."></textarea>
+          </label>
+          <label class="settings-toggle">
+            <span class="settings-toggle-info">
+              <span class="settings-toggle-title">Forza invio</span>
+              <span class="settings-toggle-description">Invia questa email anche se il destinatario non ha attivato le notifiche.</span>
+            </span>
+            <input class="settings-toggle-input" type="checkbox" name="notifyForce" [(ngModel)]="notifyForce" />
+            <span class="settings-toggle-switch" aria-hidden="true"></span>
+          </label>
+          <div class="form-submit-row">
+            <button type="submit" class="btn btn-submit" [disabled]="notifyLoading()">Manda avviso</button>
+          </div>
+          <app-form-status [message]="notifyResultMessage()" [status]="notifyStatus()" />
+        </form>
+      </section>
+
+      <details class="admin-section admin-test-section card glass-surface">
+        <summary>Account di collaudo</summary>
+        <div class="admin-test-content">
+          <p class="admin-note">Crea gli account di prova e ripuliscine i dati tra un collaudo e l’altro.</p>
+          <form class="admin-test-create" (ngSubmit)="createTestAccount()">
+            <label class="form-field">
+              <span>Persona simulata</span>
+              <select name="testIdentity" [ngModel]="testIdentity" (ngModelChange)="onTestIdentityChange($event)">
+                <option value="lui">Rory</option>
+                <option value="lei">Desy</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Nome</span>
+              <input name="testNickname" maxlength="40" required [(ngModel)]="testNickname" />
+            </label>
+            <label class="form-field">
+              <span>Email di test</span>
+              <input type="email" name="testEmail" autocomplete="off" required [(ngModel)]="testEmail" />
+            </label>
+            <label class="form-field">
+              <span>Password</span>
+              <app-password-field name="testPassword" autocomplete="new-password" [value]="testPassword" (valueChange)="testPassword = $event" />
+            </label>
+            <div class="form-submit-row">
+              <button type="submit" class="btn btn-submit" [disabled]="testPassword.length < 8">Crea account test</button>
+            </div>
+          </form>
+
+          <div class="admin-test-list">
+            @if (testAccountsLoading()) { <p class="admin-note">Caricamento account…</p> }
+            @for (account of testAccounts(); track account.id) {
+              <article class="admin-test-account">
+                <div>
+                  <strong>{{ account.nickname }}</strong>
+                  <small>{{ account.identity === 'lui' ? 'Rory' : 'Desy' }} · {{ account.email }}</small>
+                </div>
+                <div class="admin-test-actions">
+                  <button type="button" class="btn" (click)="requestTestAction(account, 'reset')">Ripulisci dati</button>
+                  <button type="button" class="btn" (click)="requestTestAction(account, 'delete')">Elimina account</button>
+                </div>
+              </article>
+            }
+          </div>
+          @if (testAccountMessage()) { <p class="admin-test-message" role="status">{{ testAccountMessage() }}</p> }
+
+        </div>
+      </details>
+    </div>
+  } @else {
+    <section class="admin-section admin-inactive card glass-surface" aria-labelledby="admin-inactive-title">
+      <h2 id="admin-inactive-title">Modalità admin disattivata</h2>
+      <p class="admin-note">Attiva l’interruttore Admin nella barra superiore per gestire account, email e collaudo.</p>
+    </section>
+  }
+
+  <app-confirmation-dialog dialogId="test-account-action"
+    [title]="testAction() === 'reset' ? 'Ripulire i dati di questo account?' : 'Eliminare definitivamente questo account?'"
+    [description]="testAction() === 'reset'
+      ? 'Messaggi, allegati, progressi, sessioni e telemetria verranno rimossi. Account e credenziali resteranno disponibili.'
+      : 'Verranno eliminati sia tutti i dati di prova sia l’account e le sue credenziali.'"
+    [confirmLabel]="testAction() === 'reset' ? 'Ripulisci dati' : 'Elimina account'" cancelLabel="Annulla"
+    [open]="authService.adminModeEnabled() && testActionTarget() !== null" (confirm)="confirmTestAction()" (cancel)="cancelTestAction()" />
+
+</app-shell>
