@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
+import { WORLD_PLACES } from '../../core/world-places';
 
-// Porting di templates/pages/tavolo-da-gioco.content.html — interamente statico.
+// Lo stesso elenco alimenta Tavolo, sidebar e Atlante.
 @Component({
   selector: 'app-tavolo-da-gioco',
   standalone: true,
@@ -11,4 +12,6 @@ import { EditorialText } from '../../shared/editorial-text/editorial-text';
   styleUrls: ['../../../styles/pages/tavolo.css'],
   templateUrl: './tavolo-da-gioco.html'
 })
-export class TavoloDaGioco {}
+export class TavoloDaGioco {
+  protected readonly games = WORLD_PLACES.filter((place) => place.parentId === 'tavolo-da-gioco');
+}

@@ -54,7 +54,7 @@
               </div>
             }
             @for (place of group.secondaryPlaces; track place.id) {
-              <a class="is-secondary is-unparented" [routerLink]="place.route" [class.is-current]="isCurrent(place.route)" [attr.aria-current]="isCurrent(place.route) ? 'page' : null">
+              <a class="is-unparented" [routerLink]="place.route" [class.is-current]="isCurrent(place.route)" [attr.aria-current]="isCurrent(place.route) ? 'page' : null">
                 <span aria-hidden="true">{{ place.emoji }}</span>
                 <span>{{ place.fallbackName }}</span>
               </a>

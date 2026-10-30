@@ -41,6 +41,22 @@ try {
     await page.getByRole('button', { name: 'Apri il pannello con tutti i luoghi', exact: true }).click();
     const sheet = page.locator('.world-navigation-sheet');
     await sheet.waitFor();
+    const games = sheet.locator('.world-navigation-entry').filter({ has: page.locator('a[href="/tavolo-da-gioco"]') });
+    assert.equal(await games.locator('a.is-secondary').count(), 8, 'Tutti gli otto giochi devono comparire sotto il Tavolo');
+    for (const game of ['trappole', 'frequenze', 'animali']) {
+      assert.equal(await games.locator(`a[href="/tavolo-da-gioco/${game}"]`).count(), 1);
+    }
+    const gameRoutes = await games.locator('a.is-secondary').evaluateAll(links => links.map(link => link.getAttribute('href')).sort());
+    assert.equal(await games.locator('a[href="/linguaggio-segreto"]').count(), 0);
+    const bridges = sheet.locator('.world-navigation-entry').filter({ has: page.locator('a[href="/ponti"]') });
+    assert.equal(await bridges.locator('a[href="/linguaggio-segreto"]').count(), 1, 'Il Linguaggio appartiene ai Ponti');
+    const observatory = sheet.locator('.world-navigation-group').filter({ has: page.getByRole('heading', { name: /Osservatorio/ }) });
+    const suggestions = observatory.locator('a[href="/suggerimenti"]');
+    assert.equal(await suggestions.count(), 1, 'I Suggerimenti appartengono all’Osservatorio');
+    assert.equal(await suggestions.evaluate(link => link.classList.contains('is-secondary')), false);
+    for (const route of ['/capsula-del-tempo', '/aula-studio', '/novita']) {
+      assert.equal(await sheet.locator(`a[href="${route}"]`).count(), 1, `${route} deve essere raggiungibile dalla sidebar`);
+    }
     const initial = await sheet.evaluate(element => ({
       gutter: element.offsetWidth - element.clientWidth,
       scrollable: element.scrollHeight > element.clientHeight,
@@ -77,7 +93,13 @@ try {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     assert.deepEqual(errors, []);
     await page.screenshot({ path: join(screenshots, `menu-${width}.png`), fullPage: true });
+    await page.goto(base + '/tavolo-da-gioco');
+    await page.getByRole('heading', { name: 'Il Tavolo da Gioco' }).waitFor();
+    const hubRoutes = await page.locator('.tavolo-games-grid a').evaluateAll(links => links.map(link => link.getAttribute('href')).sort());
+    assert.deepEqual(hubRoutes, gameRoutes, 'Tavolo e sidebar devono mostrare gli stessi giochi');
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    assert.deepEqual(errors, []);
     await page.close();
   }
-  console.log(`PASS: menu scorrevole con barra sottile, ultimo luogo raggiungibile e nessun overflow a 390/820/1280px. Screenshot: ${screenshots}`);
+  console.log(`PASS: sidebar aggiornata, otto giochi coerenti con il Tavolo, Linguaggio nei Ponti, Suggerimenti nell’Osservatorio, menu scorrevole e nessun overflow a 390/820/1280px. Screenshot: ${screenshots}`);
 } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }
