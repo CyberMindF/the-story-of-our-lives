@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { SafeModeService } from '../../core/safe-mode.service';
 import { AuthService } from '../../core/auth.service';
 import { GdrWorkspaceService } from '../../core/gdr-workspace.service';
 import { AppShell } from '../../shell/app-shell';
@@ -15,12 +16,13 @@ import { EditorialText } from '../../shared/editorial-text/editorial-text';
   templateUrl: './gdr.html',
 })
 export class Gdr implements OnInit {
+  protected readonly safe = inject(SafeModeService);
   protected readonly classic = inject(ActivatedRoute).snapshot.data['classic'] === true;
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   protected readonly workspace = inject(GdrWorkspaceService);
   protected readonly canCreate = computed(
-    () => this.auth.isAdmin() && !this.auth.currentUser()?.isTest,
+    () => !this.safe.enabled() && this.auth.isAdmin() && !this.auth.currentUser()?.isTest,
   );
   protected readonly customAdventures = computed(() =>
     this.workspace.adventures().filter((a) => !a.legacy),

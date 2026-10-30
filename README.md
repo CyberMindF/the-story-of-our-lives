@@ -529,9 +529,9 @@ I testi puliti delle pagine vengono salvati e versionati in `sources/notion-orig
 
 ### Safe mode
 
-Preferenza personale persistita in `users.safe_mode`, modificabile all’ingresso e dalla barra utente. La schermata di accesso resta neutra e permette di usare la preferenza dell’account oppure di cambiarla prima di entrare. La modalità non modifica tema o effetti condivisi.
+Preferenza personale persistita in `users.safe_mode`, modificabile all’ingresso e dalla barra utente. La schermata di accesso resta neutra e permette di usare la preferenza dell’account oppure di cambiarla prima di entrare. La modalità non modifica tema o effetti condivisi. Attivarla spegne la modalità admin per tutte le sessioni dello stesso utente; disattivarla non riaccende l’admin.
 
-La lista delle destinazioni consentite vive in `web/src/app/core/safe-mode.service.ts`: home, profilo, novità, Aula studio e quiz, Tavolo da Gioco, Trappole e Frequenze. Le altre pagine, incluse le avventure GDR non ancora classificate, vengono nascoste e i collegamenti diretti riportano alla home. Chat, promozioni, ricompense delle carte e contenuti sentimentali della home non compaiono.
+La lista delle destinazioni consentite vive in `web/src/app/core/safe-mode.service.ts`: home, profilo, novità, Aula studio e quiz, Tavolo da Gioco, Trappole, Frequenze, Casa degli animali e GDR con tutte le sue sottopagine. Le altre pagine vengono nascoste e i collegamenti diretti riportano alla home. Chat, promozioni, ricompense delle carte e contenuti sentimentali della home non compaiono.
 
 Ogni novità ha il tag Safe nell’editor admin. Le voci esistenti e quelle create automaticamente sono non safe per impostazione predefinita; `addWorldUpdate` accetta `safe: true` per contenuti verificati. Il filtro viene applicato anche dal server e dal popup. Le novità nascoste non vengono segnate come lette.
 

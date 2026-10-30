@@ -3,6 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { SafeModeService } from '../../core/safe-mode.service';
 import { AuthService } from '../../core/auth.service';
 import { GdrBlocks } from '../../shared/gdr-blocks/gdr-blocks';
 import {
@@ -166,8 +167,9 @@ export class GdrLaboratorio implements OnInit {
   protected readonly values = signal<Record<string, string>>({});
   protected readonly toolsError = signal('');
   protected readonly toolsLoading = signal(false);
+  private readonly safe = inject(SafeModeService);
   protected readonly canPrepare = computed(
-    () => this.auth.isAdmin() && !this.auth.currentUser()?.isTest,
+    () => !this.safe.enabled() && this.auth.isAdmin() && !this.auth.currentUser()?.isTest,
   );
   protected readonly narrativeBlocks = computed(() => this.forDocument(this.adventure().document));
   protected readonly rulesSearch = signal('');

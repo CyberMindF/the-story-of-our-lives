@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CoopRoom } from './coop-room';
 import { CoopState } from './coop-models';
+import { SafeModeService } from '../../core/safe-mode.service';
 import { AuthService } from '../../core/auth.service';
 import { AppShell } from '../../shell/app-shell';
 import { PetRoom, PetView } from './pet-room';
@@ -25,6 +26,7 @@ interface GameView extends PetView, CoopState {
 })
 export class GiochiDue implements OnDestroy {
   private readonly auth = inject(AuthService);
+  private readonly safe = inject(SafeModeService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly userId = computed(() => this.auth.currentUser()?.id ?? 0);
@@ -51,7 +53,7 @@ export class GiochiDue implements OnDestroy {
   protected readonly challenge = computed(() => this.challenges().find(c => c.id === this.selectedId())
     ?? this.challenges().find(c => c.status === 'open' && c.creator.id !== this.userId()) ?? this.challenges()[0]);
   protected readonly ownPending = computed(() => this.challenges().some(c => c.creator.id === this.userId() && c.status === 'open'));
-  protected readonly isAdmin = this.auth.isAdmin;
+  protected readonly isAdmin = computed(() => this.auth.isAdmin() && !this.safe.enabled());
   protected readonly adminModeEnabled = this.auth.adminModeEnabled;
   private generation = 0;
   private reading = false;

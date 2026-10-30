@@ -11,18 +11,25 @@ const news = [
   { id:'2', kind:'mondo', title:'Una lettera romantica', body:'NON SAFE', safe:false, active:true, announce:true, seen:true, publishedAt:'2026-10-30T00:00:00Z' }
 ];
 let failSave = false;
+const adminModes = new Map([[1,false],[2,false]]);
 const server = createServer(async (req, res) => {
   try {
     const path = new URL(req.url, 'http://test').pathname;
     if (path.startsWith('/api/')) {
       const id = Number(/user=(\d+)/.exec(req.headers.cookie || '')?.[1] || 1);
-      const user = {id, nickname:'Test', email:'test@example.com', identity:id === 1 ? 'lui' : 'lei', role:'member', isTest:false, safeMode:preferences.get(id)};
+      const user = {id, nickname:'Test', email:'test@example.com', identity:id === 1 ? 'lui' : 'lei', role:'admin', isTest:false, safeMode:preferences.get(id)};
       let body = {};
       if (path === '/api/auth/safe-mode') {
         let data=''; for await (const chunk of req) data+=chunk;
         if (failSave) { res.writeHead(500, {'Content-Type':'application/json'}); res.end('{}'); return; }
-        preferences.set(id, JSON.parse(data).enabled); body={ safeMode:preferences.get(id) };
-      } else if (path === '/api/auth/session') body={authenticated:true,user};
+        preferences.set(id, JSON.parse(data).enabled); if (preferences.get(id)) adminModes.set(id,false); body={ safeMode:preferences.get(id) };
+      } else if (path === '/api/auth/session') body={authenticated:true,user,adminModeEnabled:adminModes.get(id)};
+      else if (path === '/api/auth/admin-mode') {
+        let data=''; for await (const chunk of req) data+=chunk;
+        adminModes.set(id,JSON.parse(data).enabled); body={adminModeEnabled:adminModes.get(id)};
+      }
+      else if (path === '/api/gdr-workspace') body={adventures:[],characters:[],grants:[],users:[],isMaster:false};
+      else if (path === '/api/giochi-due/nuvola') body={version:0,pets:[],coins:0,events:[]};
       else if (path === '/api/world-settings') body={settings:{hearts:true}, values:{theme:'love'}};
       else if (path === '/api/realtime') body={enabled:false};
       else if (path === '/api/world-updates') body={updates:news.filter(n => !preferences.get(id) || n.safe)};
@@ -59,7 +66,17 @@ try {
   await page.waitForURL(base+'/');
   await page.goto(base+'/tavolo-da-gioco');
   await page.locator('.tavolo-games-grid').waitFor();
-  assert.equal(await page.locator('.tavolo-game-card').count(),2);
+  assert.equal(await page.locator('.tavolo-game-card').count(),4);
+  await page.locator('.tavolo-game-card[href="/tavolo-da-gioco/gdr"]').click();
+  await page.getByRole('heading',{name:'Gioco di Ruolo',exact:true}).waitFor();
+  assert.equal(await page.getByText('Avventure, personaggi e storie da giocare.',{exact:true}).count(),1);
+  assert.equal(await page.locator('app-editorial-text[contentKey="gdr.introduzione"]').count(),0);
+  await page.locator('.tavolo-game-card[href="/tavolo-da-gioco/gdr/gioca/il-prezzo-della-verita"]').click();
+  await page.waitForURL(base+'/tavolo-da-gioco/gdr/gioca/il-prezzo-della-verita');
+  await page.locator('app-gdr-laboratorio').waitFor();
+  await page.goto(base+'/tavolo-da-gioco/animali');
+  await page.getByRole('heading',{name:'🐾 La casa degli animali',exact:true}).waitFor();
+  await page.locator('app-pet-room').waitFor();
   await page.goto(base+'/novita');
   await page.getByRole('heading',{name:'Novità studio'}).waitFor();
   assert.equal(await page.getByRole('tab',{name:'Novità del Mondo',exact:true}).getAttribute('aria-selected'),'true');
@@ -74,6 +91,16 @@ try {
   await page.waitForFunction(()=>!document.body.classList.contains('safe-mode'));
   assert.equal(preferences.get(1),false); assert.equal(preferences.get(2),false);
   await page.goto(base+'/'); await page.locator('.world-music').waitFor();
+  await page.locator('.userbar-admin-toggle').click();
+  await page.waitForFunction(() => document.querySelector('a[aria-label="Amministrazione"]'));
+  assert.equal(adminModes.get(1),true);
+  await page.getByRole('switch',{name:'Safe mode',exact:true}).click();
+  await page.locator('.world-music').waitFor({state:'detached'});
+  assert.equal(adminModes.get(1),false);
+  assert.equal(await page.getByRole('checkbox',{name:'Modalità admin',exact:true}).count(),0);
+  await page.getByRole('switch',{name:'Safe mode',exact:true}).click();
+  await page.getByRole('checkbox',{name:'Modalità admin',exact:true}).waitFor();
+  assert.equal(await page.getByRole('checkbox',{name:'Modalità admin',exact:true}).isChecked(),false);
   await page.getByRole('switch',{name:'Safe mode',exact:true}).click();
   await page.locator('.world-music').waitFor({state:'detached'});
   await page.reload(); await page.getByRole('switch',{name:'Safe mode',exact:true}).waitFor();

@@ -7,8 +7,15 @@ export async function onRequestPost({ request, env }) {
     if (!session) return json({ error: 'Accesso richiesto.' }, 401);
     const body = await readJson(request);
     if (typeof body?.enabled !== 'boolean') return json({ error: 'Scelta non valida.' }, 400);
-    await env.DB.prepare('UPDATE users SET safe_mode = ? WHERE id = ?')
-      .bind(body.enabled ? 1 : 0, session.user.id).run();
+    const statements = [env.DB.prepare('UPDATE users SET safe_mode = ? WHERE id = ?')
+      .bind(body.enabled ? 1 : 0, session.user.id)];
+    // Anche le altre sessioni dello stesso utente devono uscire dalla modalità admin.
+    // La seconda condizione gestisce chi era già in safe mode con il vecchio codice.
+    if (body.enabled || session.user.safeMode) {
+      statements.push(env.DB.prepare('UPDATE sessions SET admin_mode_enabled = 0 WHERE user_id = ?')
+        .bind(session.user.id));
+    }
+    await env.DB.batch(statements);
     return json({ safeMode: body.enabled });
   } catch {
     return json({ error: 'Non è stato possibile salvare la safe mode.' }, 500);

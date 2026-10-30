@@ -152,7 +152,7 @@ export async function getAuthenticatedSession(request, env, options = {}) {
       safeMode: session.safe_mode === 1
     },
     sessionId: session.session_id,
-    adminModeEnabled: session.admin_mode_enabled === 1,
+    adminModeEnabled: session.admin_mode_enabled === 1 && session.safe_mode !== 1,
     cookie,
     expiresAt
   };

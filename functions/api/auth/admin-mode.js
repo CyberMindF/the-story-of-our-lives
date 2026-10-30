@@ -17,6 +17,9 @@ export async function onRequestPost(context) {
 
     const body = await readJson(request);
     const enabled = body?.enabled === true;
+    if (enabled && session.user.safeMode) {
+      return json({ error: 'Disattiva la safe mode prima di attivare la modalità admin.' }, 409);
+    }
 
     await env.DB
       .prepare("UPDATE sessions SET admin_mode_enabled = ? WHERE id = ?")

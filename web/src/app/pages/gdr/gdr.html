@@ -11,7 +11,11 @@
   </section>
 
   <div class="tavolo-intro">
-    <app-editorial-text contentKey="gdr.introduzione" />
+    @if (safe.enabled()) {
+      <p>Avventure, personaggi e storie da giocare.</p>
+    } @else {
+      <app-editorial-text contentKey="gdr.introduzione" />
+    }
   </div>
 
   <section class="tavolo-games" aria-labelledby="adventures-title">

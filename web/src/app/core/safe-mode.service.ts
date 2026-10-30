@@ -1,17 +1,21 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from './auth.service';
 
 // Deny by default: nuove pagine e avventure vanno prima verificate.
 export function isSafeRoute(url: string): boolean {
   const path = url.split(/[?#]/)[0].replace(/\/$/, '') || '/';
   return ['/', '/login', '/profilo', '/novita', '/aula-studio', '/tavolo-da-gioco',
-    '/tavolo-da-gioco/trappole', '/tavolo-da-gioco/frequenze'].includes(path)
+    '/tavolo-da-gioco/trappole', '/tavolo-da-gioco/frequenze', '/tavolo-da-gioco/animali',
+    '/tavolo-da-gioco/gdr'].includes(path)
+    || path.startsWith('/tavolo-da-gioco/gdr/')
     || /^\/aula-studio\/(quiz|quiz-misto)\/[^/]+$/.test(path);
 }
 
 @Injectable({ providedIn: 'root' })
 export class SafeModeService {
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
   // Fuori dall'account la presentazione è sempre neutra.
   readonly enabled = signal(true);
   readonly saving = signal(false);
@@ -19,6 +23,7 @@ export class SafeModeService {
   readonly entryChoice = signal<boolean | null>(null);
 
   apply(enabled: boolean): void {
+    if (enabled) this.auth.adminModeEnabled.set(false);
     this.enabled.set(enabled);
     document.body.classList.toggle('safe-mode', enabled);
     const style = getComputedStyle(document.body);
