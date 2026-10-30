@@ -53,3 +53,15 @@ test('novità automatiche richiedono una classificazione safe esplicita', async(
   assert.deepEqual(h.sql.prepare('SELECT title,safe FROM world_updates ORDER BY id').all().map(r=>[r.title,r.safe]),[['Contenuto personale',0],['Nuovo quiz',1]]);
  } finally {h.sql.close();}
 });
+
+test('la classificazione storica riconosce soltanto i testi verificati',()=>{
+ const h=setup();try {
+  const add=h.sql.prepare(`INSERT INTO world_updates(kind,title,body,route,published_at,created_at,updated_at)
+    VALUES('mondo',?,?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)`);
+  add.run('I quiz diventano misti','Si possono estrarre domande da più unità e bilanciarle per difficoltà.','/aula-studio');
+  add.run('I quiz diventano misti','Un testo personale aggiunto in seguito.','/aula-studio');
+  add.run('Lettere e capsule del tempo: qualche ritocco','Contenuti personali.','/novita');
+  h.sql.exec(source('migrations/0140_classify_existing_safe_updates.sql'));
+  assert.deepEqual(h.sql.prepare('SELECT safe FROM world_updates ORDER BY id').all().map(r=>r.safe),[1,0,0]);
+ } finally {h.sql.close();}
+});

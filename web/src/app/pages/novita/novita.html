@@ -7,8 +7,8 @@
     </header>
 
     <div class="updates-tabs" role="tablist">
-      <button type="button" role="tab" [class.is-active]="tab() === 'contenuto'" (click)="tab.set('contenuto')">Da scoprire</button>
-      <button type="button" role="tab" [class.is-active]="tab() === 'mondo'" (click)="tab.set('mondo')">Novità del Mondo</button>
+      <button type="button" role="tab" [class.is-active]="tab() === 'contenuto'" [attr.aria-selected]="tab() === 'contenuto'" [disabled]="!hasUpdates('contenuto')" (click)="tab.set('contenuto')">Da scoprire</button>
+      <button type="button" role="tab" [class.is-active]="tab() === 'mondo'" [attr.aria-selected]="tab() === 'mondo'" [disabled]="!hasUpdates('mondo')" (click)="tab.set('mondo')">Novità del Mondo</button>
     </div>
 
     @if (loading()) { <p class="status">Cerco le ultime novità…</p> }

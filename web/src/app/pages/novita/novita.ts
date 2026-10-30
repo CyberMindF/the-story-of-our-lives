@@ -35,7 +35,8 @@ export class Novita {
   protected readonly campaigns = signal<WorldPromo[]>([]);
   protected readonly promosEnabled = signal(true);
   protected readonly tab = signal<UpdateKind>('contenuto');
-  protected readonly filteredUpdates = computed(() => this.updates().filter((update) => update.kind === this.tab() && update.active && (!this.safe.enabled() || update.safe)));
+  protected readonly visibleUpdates = computed(() => this.updates().filter(update => update.active && (!this.safe.enabled() || update.safe)));
+  protected readonly filteredUpdates = computed(() => this.visibleUpdates().filter(update => update.kind === this.tab()));
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
   protected readonly error = signal('');
@@ -73,6 +74,10 @@ export class Novita {
 
   protected readonly isAllowed = isSafeRoute;
 
+  protected hasUpdates(kind: UpdateKind): boolean {
+    return this.visibleUpdates().some(update => update.kind === kind);
+  }
+
   protected async load(): Promise<void> {
     this.loading.set(true); this.error.set('');
     try {
@@ -84,6 +89,9 @@ export class Novita {
       if (!updatesResponse.ok) throw new Error('Non è stato possibile caricare le novità.');
       const updateData = await updatesResponse.json() as { updates?: WorldUpdate[] };
       this.updates.set(updateData.updates ?? []);
+      if (!this.hasUpdates(this.tab())) {
+        this.tab.set(this.hasUpdates('contenuto') ? 'contenuto' : 'mondo');
+      }
       if (promosResponse.ok) {
         const promoData = await promosResponse.json() as { campaigns?: WorldPromo[]; promosEnabled?: boolean };
         this.campaigns.set(promoData.campaigns ?? []);

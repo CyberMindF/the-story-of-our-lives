@@ -61,8 +61,9 @@ try {
   await page.locator('.tavolo-games-grid').waitFor();
   assert.equal(await page.locator('.tavolo-game-card').count(),2);
   await page.goto(base+'/novita');
-  await page.getByRole('tab',{name:'Novità del Mondo',exact:true}).click();
   await page.getByRole('heading',{name:'Novità studio'}).waitFor();
+  assert.equal(await page.getByRole('tab',{name:'Novità del Mondo',exact:true}).getAttribute('aria-selected'),'true');
+  assert.equal(await page.getByRole('tab',{name:'Da scoprire',exact:true}).isDisabled(),true);
   assert.equal(await page.getByText('Una lettera romantica',{exact:true}).count(),0);
   failSave=true;
   await page.getByRole('switch',{name:'Safe mode',exact:true}).click();
