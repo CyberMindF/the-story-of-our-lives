@@ -30,7 +30,7 @@ const base = `http://127.0.0.1:${server.address().port}`;
 const screenshots = await mkdtemp(join(tmpdir(), 'navigation-scrollbar-'));
 const browser = await chromium.launch();
 try {
-  for (const [width, height] of [[390, 700], [820, 900], [1280, 800]]) {
+  for (const [width, height] of [[320, 700], [390, 700], [820, 900], [1280, 800]]) {
     const page = await browser.newPage({ viewport: { width, height }, reducedMotion: 'reduce' });
     const errors = []; page.on('pageerror', error => errors.push(error.message));
     await page.addInitScript(() => {
@@ -38,7 +38,17 @@ try {
       sessionStorage.setItem('noi-crossword-access-session-touched-at-v1', String(Date.now()));
     });
     await page.goto(base + '/ponti');
-    await page.getByRole('button', { name: 'Apri il pannello con tutti i luoghi', exact: true }).click();
+    const opener = page.getByRole('button', { name: 'Apri il pannello con tutti i luoghi', exact: true });
+    if (width <= 680) {
+      assert.equal(await page.locator('.world-navigation-rail').isVisible(), false);
+      const before = await opener.boundingBox();
+      await page.evaluate(() => window.scrollBy(0, 200));
+      const after = await opener.boundingBox();
+      assert.ok(after.y < before.y - 100, 'Il pulsante mobile deve scorrere con la pagina');
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.screenshot({ path: join(screenshots, `closed-${width}.png`) });
+    }
+    await opener.click();
     const sheet = page.locator('.world-navigation-sheet');
     await page.locator('.world-navigation-sheet:not([aria-hidden])').waitFor();
     const games = sheet.locator('.world-navigation-entry').filter({ has: page.locator('a[href="/tavolo-da-gioco"]') });
@@ -101,5 +111,5 @@ try {
     assert.deepEqual(errors, []);
     await page.close();
   }
-  console.log(`PASS: sidebar aggiornata, otto giochi coerenti con il Tavolo, Linguaggio nei Ponti, Suggerimenti nell’Osservatorio, menu scorrevole e nessun overflow a 390/820/1280px. Screenshot: ${screenshots}`);
+  console.log(`PASS: sidebar aggiornata, otto giochi coerenti con il Tavolo, Linguaggio nei Ponti, Suggerimenti nell’Osservatorio, menu scorrevole e nessun overflow a 320/390/820/1280px. Screenshot: ${screenshots}`);
 } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }

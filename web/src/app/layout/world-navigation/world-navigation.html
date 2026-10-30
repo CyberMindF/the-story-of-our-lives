@@ -1,8 +1,15 @@
+<button type="button" class="world-navigation-mobile-trigger"
+  aria-label="Apri il pannello con tutti i luoghi" aria-controls="world-navigation-panel"
+  [attr.aria-expanded]="navigationOpen()" (click)="open()">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+  <span>Menu</span>
+</button>
+
 <button type="button" class="world-navigation-backdrop" [class.is-visible]="navigationOpen()"
   [attr.aria-hidden]="navigationOpen() ? null : true" [attr.tabindex]="navigationOpen() ? 0 : -1"
   aria-label="Chiudi il pannello dei luoghi" (click)="close()"></button>
 
-<aside class="world-navigation-drawer" [class.is-open]="navigationOpen()" aria-labelledby="world-navigation-title">
+<aside id="world-navigation-panel" class="world-navigation-drawer" [class.is-open]="navigationOpen()" aria-labelledby="world-navigation-title">
   <nav class="world-navigation-rail glass-surface" aria-label="Navigazione rapida">
     <button class="world-navigation-action" type="button" aria-label="Vai all'inizio della pagina" title="Inizio pagina" (click)="scrollToTop()">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 15 7-7 7 7" /></svg>
