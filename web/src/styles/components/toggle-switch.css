@@ -29,8 +29,8 @@
 .settings-toggle-switch {
   flex: 0 0 auto;
   position: relative;
-  width: 3.1rem;
-  height: 1.7rem;
+  width: var(--toggle-width, 3.1rem);
+  height: var(--toggle-height, 1.7rem);
   border-radius: 999px;
   background: var(--button-bg);
   border: 1px solid var(--border-color);
@@ -42,20 +42,23 @@
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 1.3rem;
-  height: 1.3rem;
+  width: var(--toggle-knob-size, 1.3rem);
+  height: var(--toggle-knob-size, 1.3rem);
   border-radius: 50%;
   background: var(--text-color);
   transition: transform .18s ease;
 }
 
-.settings-toggle-input:checked + .settings-toggle-switch {
+.settings-toggle-input:checked + .settings-toggle-switch,
+.settings-toggle-button[aria-checked="true"] .settings-toggle-switch {
   background: var(--accent-color);
   border-color: var(--accent-color);
 }
 
-.settings-toggle-input:checked + .settings-toggle-switch::before {
-  transform: translateX(1.4rem);
+.settings-toggle-input:checked + .settings-toggle-switch::before,
+.settings-toggle-button[aria-checked="true"] .settings-toggle-switch::before {
+  transform: translateX(var(--toggle-travel, 1.4rem));
+  background: var(--toggle-active-knob, var(--text-color));
 }
 
 .settings-toggle-input:focus-visible + .settings-toggle-switch {

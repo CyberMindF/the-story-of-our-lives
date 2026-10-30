@@ -11,8 +11,14 @@ import { SafeModeService } from '../core/safe-mode.service';
         </select>
       </label>
     } @else {
-      <label class="safe-mode-control"><input type="checkbox" [checked]="safe.enabled()"
-        [disabled]="safe.saving()" (change)="change($event)" /> Safe mode</label>
+      <button type="button" class="safe-mode-control safe-mode-button settings-toggle-button"
+        role="switch" aria-label="Safe mode" [attr.aria-checked]="safe.enabled()"
+        [attr.aria-busy]="safe.saving()" [disabled]="safe.saving()"
+        [class.is-active]="safe.enabled()" (click)="toggle()">
+        <svg class="safe-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 3v6c0 4-4 7-8 9-4-2-8-5-8-9V6l8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+        <span>Safe mode</span>
+        <span class="settings-toggle-switch" aria-hidden="true"></span>
+      </button>
     }
     @if (safe.error()) { <span class="safe-mode-error" role="alert">{{ safe.error() }}</span> }`
 })
@@ -24,9 +30,7 @@ export class SafeModeToggle {
     const value = (event.target as HTMLSelectElement).value;
     this.safe.entryChoice.set(value === 'saved' ? null : value === 'true');
   }
-  protected change(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (this.outside) this.safe.chooseEntry(input.checked);
-    else void this.safe.save(input.checked).then(() => input.checked = this.safe.enabled());
+  protected toggle(): void {
+    void this.safe.save(!this.safe.enabled());
   }
 }
