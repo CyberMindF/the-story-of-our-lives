@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 // Deny by default: nuove pagine e avventure vanno prima verificate.
 export function isSafeRoute(url: string): boolean {
   const path = url.split(/[?#]/)[0].replace(/\/$/, '') || '/';
-  return ['/', '/login', '/profilo', '/novita', '/aula-studio', '/tavolo-da-gioco',
+  return ['/', '/login', '/profilo', '/novita', '/ponti-chat', '/aula-studio', '/tavolo-da-gioco',
     '/tavolo-da-gioco/trappole', '/tavolo-da-gioco/frequenze', '/tavolo-da-gioco/animali',
     '/tavolo-da-gioco/gdr'].includes(path)
     || path.startsWith('/tavolo-da-gioco/gdr/')

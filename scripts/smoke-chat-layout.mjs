@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 import assert from 'node:assert/strict';
 
 const root = resolve('web/dist/web/browser'), pending = [];
+const safeMode = process.env.SAFE_MODE === 'true';
 const message = i => ({id:String(i),senderUserId:i%2?1:2,senderIdentity:i%2?'lui':'lei',body:`Messaggio di prova ${i}`,mediaKey:null,mediaType:null,readAt:null,createdAt:'2026-10-22T12:00:00Z'});
 const messages = Array.from({length:30},(_,i)=>message(i));
 const server = createServer(async (req,res) => {
@@ -16,7 +17,7 @@ const server = createServer(async (req,res) => {
     if(path.startsWith('/api/')) {
       res.setHeader('Content-Type','application/json');
       if(path==='/api/ponti-chat' && req.method==='GET') { pending.push(res); return; }
-      const body = path==='/api/auth/session' ? {authenticated:true,user:{id:1,nickname:'Rory',identity:'lui',role:'admin',isTest:false},adminModeEnabled:false}
+      const body = path==='/api/auth/session' ? {authenticated:true,user:{id:1,nickname:'Rory',identity:'lui',role:'admin',isTest:false,safeMode},adminModeEnabled:false}
         : path==='/api/world-settings' ? {settings:{},values:{theme:'white-world'}}
         : path==='/api/realtime' ? {enabled:true}
         : path==='/api/ponti-chat' ? {...message(31),body:'Invio di prova'} : {};
@@ -84,6 +85,10 @@ try {
     await page.getByRole('textbox',{name:'Messaggio',exact:true}).fill('Invio di prova');
     await page.getByRole('button',{name:'Invia messaggio',exact:true}).click();
     await page.getByText('Invio di prova',{exact:true}).waitFor();await atBottom();
+    if (safeMode) {
+      socket.send(JSON.stringify({type:'presence:changed',occurredAt:new Date().toISOString(),identity:'lei',isTest:false,online:true,path:'/bacheca',lastSeen:new Date().toISOString()}));
+      await page.waitForFunction(()=>document.querySelector('.global-chat-presence-status')?.textContent.trim()==='Online');
+    }
     assert.deepEqual(errors,[]);
     await page.screenshot({path:join(screenshots,`chat-${width}.png`),fullPage:true});
     await page.close();

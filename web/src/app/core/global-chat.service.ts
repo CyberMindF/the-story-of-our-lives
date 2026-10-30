@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService, UserIdentity } from './auth.service';
 import { ApiService } from './api.service';
 import { RealtimeService } from './realtime.service';
+import { SafeModeService, isSafeRoute } from './safe-mode.service';
 import { WORLD_PLACES } from './world-places';
 
 export interface ChatMessage {
@@ -25,6 +26,7 @@ export interface ContactPresence {
 @Injectable({ providedIn: 'root' })
 export class GlobalChatService {
   private readonly auth = inject(AuthService);
+  private readonly safe = inject(SafeModeService);
   private readonly api = inject(ApiService);
   private readonly realtime = inject(RealtimeService);
   private readonly destroyRef = inject(DestroyRef);
@@ -121,6 +123,8 @@ export class GlobalChatService {
 
   contactPageLabel(): string {
     const path = this.contactPresence().path;
+    if (this.safe.enabled() && path && !isSafeRoute(path)) return 'Online';
+    if (this.safe.enabled() && path === '/ponti-chat') return 'Chat';
     if (!path || path === '/') return 'Il Mondo Bianco';
     if (path === '/ponti-chat' || path === '/stranger-chat') return 'I Ponti';
     const place = [...WORLD_PLACES]

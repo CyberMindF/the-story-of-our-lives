@@ -64,5 +64,6 @@ export const WORLD_PLACES: readonly WorldPlace[] = [
   { id: 'il-cielo', emoji: '🌌', route: '/il-cielo', fallbackName: 'Il Cielo', fallbackDescription: 'Uno spazio vuoto e calmo per goderti il cielo del mondo bianco', group: 'mondo', primary: true, homeArea: 'osservatorio' },
   { id: 'novita', emoji: '✨', route: '/novita', fallbackName: 'Le Novità', fallbackDescription: 'Quello che è comparso nel Mondo Bianco mentre non guardavi', group: 'mondo', primary: true, homeArea: 'osservatorio' },
   { id: 'suggerimenti', emoji: '💭', route: '/suggerimenti', fallbackName: 'I Suggerimenti', fallbackDescription: 'Questo mondo è tanto mio quanto tuo, se vuoi creare qualcosa proponilo qui', group: 'mondo', homeArea: 'osservatorio' },
+  { id: 'chat', emoji: '💬', route: '/ponti-chat', fallbackName: 'Chat', fallbackDescription: 'Uno spazio per scriverci, anche con foto e video.', group: 'mondo', homeArea: 'osservatorio' },
   { id: 'profilo', emoji: '👤', route: '/profilo', fallbackName: 'Il Profilo', fallbackDescription: 'Se vuoi cambiare password o il tuo nome', group: 'mondo' }
 ];

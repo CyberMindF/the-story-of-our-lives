@@ -61,11 +61,16 @@ try {
   await page.getByRole('heading',{name:'Il Mondo Bianco',exact:true}).waitFor();
   assert.equal(await page.locator('.world-music').count(),0);
   assert.equal(await page.locator('app-world-hearts').count(),0);
-  assert.equal(await page.locator('app-global-chat-widget').count(),0);
+  assert.equal(await page.locator('app-global-chat-widget').count(),1);
   assert.equal(await page.locator('a[href="/bacheca"]').count(),0);
   assert.equal(await page.locator('a[href="/aula-studio"]').count()>0,true);
   assert.equal(await page.evaluate(()=>getComputedStyle(document.body).backgroundColor),'rgb(245, 246, 248)');
   await page.screenshot({path:`/tmp/safe-mode-${width}.png`});
+  await page.getByRole('button',{name:'Apri la chat globale',exact:true}).click();
+  await page.getByRole('link',{name:'Apri la chat a pagina intera',exact:true}).click();
+  await page.waitForURL(base+'/ponti-chat');
+  await page.getByRole('heading',{name:'Chat',exact:true}).waitFor();
+  assert.equal(await page.locator('app-global-chat-widget').count(),0);
   await page.goto(base+'/bacheca');
   await page.waitForURL(base+'/');
   await page.goto(base+'/tavolo-da-gioco');

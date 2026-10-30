@@ -88,7 +88,7 @@ export class App {
   private bustinePresenceTimer: number | null = null;
   private bustinePresenceUserId: number | null = null;
   protected readonly updateAvailable = signal(false);
-  protected readonly showGlobalChat = signal(this.router.url.split('?')[0] !== '/ponti-chat');
+  protected readonly showGlobalChat = signal(!['/ponti-chat', '/login'].includes(this.router.url.split('?')[0]));
 
   constructor() {
     this.safe.apply(true);
@@ -102,7 +102,7 @@ export class App {
       .subscribe((event) => {
         this.applyRouteBodyClasses();
         this.restartBustinePresenceTimer();
-        const showChat = event.urlAfterRedirects.split('?')[0] !== '/ponti-chat';
+        const showChat = !['/ponti-chat', '/login'].includes(event.urlAfterRedirects.split('?')[0]);
         this.showGlobalChat.set(showChat);
         if (!showChat) this.globalChat.panelOpen.set(false);
       });
@@ -161,8 +161,7 @@ export class App {
       }
       this.restartBustinePresenceTimer();
       this.realtimeService.connect();
-      if (!this.safe.enabled()) void this.globalChat.startForCurrentUser();
-      else this.globalChat.clear();
+      void this.globalChat.startForCurrentUser();
       if (!this.safe.enabled()) void this.carteBustineService.load(userId).catch((error) => {
         console.warn('Impossibile aggiornare la streak di accesso:', error);
       });

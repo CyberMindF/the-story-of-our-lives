@@ -26,6 +26,6 @@
 @if (authService.currentUser()) {
   <app-world-discovery />
 }
-@if (authService.currentUser() && showGlobalChat() && !safe.enabled()) {
+@if (authService.currentUser() && showGlobalChat()) {
   <app-global-chat-widget />
 }
