@@ -15,7 +15,7 @@ import { SafeModeService } from '../core/safe-mode.service';
         role="switch" aria-label="Safe mode" [attr.aria-checked]="safe.enabled()"
         [attr.aria-busy]="safe.saving()" [disabled]="safe.saving()"
         [class.is-active]="safe.enabled()" (click)="toggle()">
-        <svg class="safe-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 3v6c0 4-4 7-8 9-4-2-8-5-8-9V6l8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+        <svg class="safe-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V5.5C12 2 7 2 6.5 5 3 4.5 1.5 8.5 4 10c-3 2-2 6 1.5 6.5C4.5 21 12 23 12 18Z"/><path d="M12 5.5C12 2 17 2 17.5 5 21 4.5 22.5 8.5 20 10c3 2 2 6-1.5 6.5C19.5 21 12 23 12 18M8 8c0 2 2 3 4 3m4-3c0 2-2 3-4 3M7 14c2 0 3 1 3 3m7-3c-2 0-3 1-3 3"/></svg>
         <span>Safe mode</span>
         <span class="settings-toggle-switch" aria-hidden="true"></span>
       </button>
