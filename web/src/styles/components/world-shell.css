@@ -219,3 +219,8 @@ app-back-link {
     margin-left: auto;
   }
 }
+
+/* Il controllo personale resta raggiungibile anche con tutti i comandi della barra. */
+.place-header { flex-wrap: wrap; gap: .65rem; }
+.place-header app-world-user-bar { margin-left: auto; }
+.place-userbar { flex-wrap: wrap; justify-content: flex-end; }

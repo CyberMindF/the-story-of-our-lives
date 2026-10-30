@@ -1,30 +1,9 @@
 <main id="access-gate" class="access-gate portone-gate" aria-labelledby="portone-title">
   <div class="portone-layout">
-    <section class="portone-story" aria-labelledby="portone-title">
-      <div class="portone-heading">
-        <p class="portone-kicker">L'ingresso al nostro mondo</p>
-        <h1 id="portone-title"><span class="place-emoji" aria-hidden="true">🌹</span><span>Il Portone</span></h1>
-        <p class="portone-intro">
-          Se sei qui, dovresti avere già la chiave per aprire il portone, quindi puoi provarci se vuoi.
-          Solo una persona può averla e, se sei tu, sai di esserlo.
-        </p>
-      </div>
-
-      <figure class="portone-figure">
-        <img class="portone-image" src="assets/images/portone/portone.webp"
-          alt="Un portone in legno circondato da rose, margherite e tulipani" />
-      </figure>
-
-      <details class="portone-hint">
-        <summary>Se proprio non la stai trovando, c'è un indizio</summary>
-        <p>Cos'hanno in comune tutte queste parole?</p>
-        <p class="portone-hint-words">Tatuaggio · bracciale · simbolo · disegno · infinito · noi · emoji</p>
-      </details>
-    </section>
-
     <form id="access-form" class="access-card portone-card glass-surface"
       (ngSubmit)="recoveryMode() === 'none' ? submit() : submitPasswordRecovery()">
-      <img class="portone-seal" src="favicon.svg" alt="" />
+      <p>Il Mondo Bianco</p>
+      <app-safe-mode-toggle [outside]="true" />
       <h1 id="access-title">{{ title() }}</h1>
       <p id="access-text">{{ text() }}</p>
 

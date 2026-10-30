@@ -16,7 +16,7 @@
           <article class="discovery-update">
             <span class="discovery-emoji" aria-hidden="true">{{ update.emoji }}</span>
             <div><h3>{{ update.title }}</h3>@if (update.body) { <p>{{ update.body }}</p> }</div>
-            @if (update.route) {
+            @if (update.route && (!safe.enabled() || isAllowed(update.route))) {
               <a class="btn" [routerLink]="update.route" (click)="closeUpdates()">{{ update.ctaLabel || 'Apri' }}</a>
             }
           </article>

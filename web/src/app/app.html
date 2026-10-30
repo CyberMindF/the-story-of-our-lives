@@ -1,4 +1,4 @@
-@if (!studyFocus.active()) {
+@if (!studyFocus.active() && !safe.enabled()) {
   <app-world-silk />
   <app-world-stars />
   <app-world-shooting-stars />
@@ -26,6 +26,6 @@
 @if (authService.currentUser()) {
   <app-world-discovery />
 }
-@if (authService.currentUser() && showGlobalChat()) {
+@if (authService.currentUser() && showGlobalChat() && !safe.enabled()) {
   <app-global-chat-widget />
 }

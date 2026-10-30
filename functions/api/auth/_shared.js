@@ -112,7 +112,7 @@ export async function getAuthenticatedSession(request, env, options = {}) {
   const session = await env.DB
     .prepare(`
       SELECT
-        users.id, users.email, users.nickname, users.identity, users.role, users.is_test,
+        users.id, users.email, users.nickname, users.identity, users.role, users.is_test, users.safe_mode,
         sessions.id AS session_id, sessions.expires_at, sessions.admin_mode_enabled
       FROM sessions
       INNER JOIN users ON users.id = sessions.user_id
@@ -148,7 +148,8 @@ export async function getAuthenticatedSession(request, env, options = {}) {
       nickname: session.nickname,
       identity: session.identity,
       role: session.role,
-      isTest: session.is_test === 1
+      isTest: session.is_test === 1,
+      safeMode: session.safe_mode === 1
     },
     sessionId: session.session_id,
     adminModeEnabled: session.admin_mode_enabled === 1,

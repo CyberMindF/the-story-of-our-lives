@@ -195,7 +195,7 @@ body[data-theme="the-white-world"] {
   --shadow: 0 24px 52px rgba(0, 0, 0, 0.4);
 }
 
-body[data-theme="white-world"] {
+body[data-theme="white-world"], body.safe-mode[data-theme], body.safe-mode {
   --bg-color: #f1ede5;
   --panel-color: rgba(255, 255, 255, 0.05);
   --panel-border-color: rgba(113, 101, 91, 0.18);
@@ -282,3 +282,12 @@ body {
    components/world-atmosphere.css: quella regola (body.world-atmosphere) ha la stessa
    specificità di queste ma carica dopo, quindi vinceva sempre — i gradienti per tema qui
    sotto non si sono mai visti. Spostati là invece di lasciarli morti qui duplicati. */
+
+/* Safe mode: accenti locali indipendenti dal tema condiviso. */
+body.safe-mode[data-theme], body.safe-mode {
+  --bg-color: #f5f6f8;
+  --text-color: #243041;
+  --muted-color: #596779;
+  --accent-color: #34628c;
+  --focus-color: #34628c;
+}

@@ -22,8 +22,9 @@
           <div class="update-copy">
             <time [attr.datetime]="update.publishedAt">{{ update.publishedAt | date:'dd MMMM yyyy' }}@if (canEdit() && !update.announce) { <span> · solo archivio</span> }</time>
             <h2>{{ update.title }}</h2>
+            @if (canEdit()) { <small>{{ update.safe ? "Safe" : "Non safe" }}</small> }
             @if (update.body) { <p>{{ update.body }}</p> }
-            @if (update.route) { <a class="btn" [routerLink]="update.route">{{ update.ctaLabel || 'Apri' }}</a> }
+            @if (update.route && (!safe.enabled() || isAllowed(update.route))) { <a class="btn" [routerLink]="update.route">{{ update.ctaLabel || 'Apri' }}</a> }
           </div>
           @if (canEdit()) {
             <div class="editor-actions"><button class="btn" type="button" (click)="editUpdate(update)">Modifica</button><button class="btn danger" type="button" (click)="deleteUpdate(update)">Elimina</button></div>
@@ -44,6 +45,7 @@
           <label>Testo pulsante<input name="updateCta" maxlength="60" placeholder="Apri" [(ngModel)]="updateCta" /></label>
           <label>Data e ora<input type="datetime-local" name="updateDate" required [(ngModel)]="updateDate" /></label>
           <label class="check"><input type="checkbox" name="updateActive" [(ngModel)]="updateActive" /> Pubblicata</label>
+          <label class="check wide"><input type="checkbox" name="updateSafe" [(ngModel)]="updateSafe" /> Safe: visibile anche in safe mode</label>
           <label class="check wide"><input type="checkbox" name="updateAnnounce" [(ngModel)]="updateAnnounce" /> Mostra anche nel popup “Cosa ti sei persa?”</label>
           <div class="wide form-actions"><button class="btn btn-submit" type="submit" [disabled]="saving()">{{ editingUpdateId() ? 'Salva modifiche' : 'Pubblica novità' }}</button></div>
         </form>

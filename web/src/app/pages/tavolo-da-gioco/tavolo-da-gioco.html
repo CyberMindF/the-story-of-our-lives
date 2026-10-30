@@ -8,7 +8,7 @@
   </section>
 
   <div class="tavolo-intro">
-    <app-editorial-text contentKey="tavolo.introduzione" />
+    @if (!safe.enabled()) { <app-editorial-text contentKey="tavolo.introduzione" /> }
   </div>
 
   <section class="tavolo-games" aria-labelledby="games-title">
@@ -17,7 +17,7 @@
       <h2 id="games-title">I giochi</h2>
     </div>
     <div class="tavolo-games-grid">
-      @for (game of games; track game.id) {
+      @for (game of games(); track game.id) {
         <a class="tavolo-game-card card glass-surface is-available" [routerLink]="game.route">
           <span class="tavolo-game-emoji" aria-hidden="true">{{ game.emoji }}</span>
           <strong>{{ game.fallbackName }}</strong>

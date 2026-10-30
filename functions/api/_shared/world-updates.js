@@ -10,6 +10,7 @@ export async function addWorldUpdate(env, {
   ctaLabel = null,
   createdBy = null,
   publishedAt = new Date().toISOString(),
+  safe = false,
   announce = true
 }) {
   try {
@@ -19,8 +20,8 @@ export async function addWorldUpdate(env, {
     const now = new Date().toISOString();
     const created = await env.DB.prepare(
       `INSERT INTO world_updates
-       (kind, emoji, title, body, route, cta_label, published_at, active, announce, created_by, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?) RETURNING id`
+       (kind, emoji, title, body, route, cta_label, published_at, active, announce, safe, created_by, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?) RETURNING id`
     ).bind(
       kind === "mondo" ? "mondo" : "contenuto",
       String(emoji || "✨").trim().slice(0, 24) || "✨",
@@ -30,6 +31,7 @@ export async function addWorldUpdate(env, {
       route ? ctaLabel : null,
       publishedAt,
       announce ? 1 : 0,
+      safe ? 1 : 0,
       createdBy,
       now,
       now

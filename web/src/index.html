@@ -15,7 +15,7 @@
     // (lampo di tema sbagliato segnalato il 09/08/2026 — vedi prossimi sviluppi.md #12).
     (function () {
       try {
-        document.body.classList.add('world-atmosphere');
+        document.body.classList.add('world-atmosphere', 'safe-mode');
         var theme = localStorage.getItem('noi-crossword-theme-v15');
         if (theme) document.body.dataset.theme = theme;
         var bodyStyle = getComputedStyle(document.body);

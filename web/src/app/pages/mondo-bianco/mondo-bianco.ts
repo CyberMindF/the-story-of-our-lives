@@ -1,9 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
 import { AudioPlayer } from '../../shared/audio-player/audio-player';
 import { EditorialText } from '../../shared/editorial-text/editorial-text';
+import { SafeModeService, isSafeRoute } from '../../core/safe-mode.service';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 import { HOME_AREAS, HomeAreaId, WORLD_PLACES } from '../../core/world-places';
@@ -102,16 +103,17 @@ function excerptOf(text: string, maxLength = 140): string {
   templateUrl: './mondo-bianco.html'
 })
 export class MondoBianco {
+  protected readonly safe = inject(SafeModeService);
   private readonly api = inject(ApiService);
   protected readonly authService = inject(AuthService);
 
   protected readonly songUrl = '/api/media/cuffiette/canzoni/il-cerchio.mp3';
-  protected readonly canEdit = computed(() => this.authService.isAdmin() && this.authService.adminModeEnabled());
+  protected readonly canEdit = computed(() => !this.safe.enabled() && this.authService.isAdmin() && this.authService.adminModeEnabled());
 
   private readonly overrides = signal<Map<string, CardOverride>>(new Map());
   protected readonly places = computed<PlaceView[]>(() =>
-    WORLD_PLACES.filter((place): place is typeof place & { route: string } => Boolean(place.primary && place.route)).map((place) => {
-      const override = this.overrides().get(place.id);
+    WORLD_PLACES.filter((place): place is typeof place & { route: string } => Boolean(place.primary && place.route && (!this.safe.enabled() || isSafeRoute(place.route)))).map((place) => {
+      const override = this.safe.enabled() ? undefined : this.overrides().get(place.id);
       return { ...place, name: override?.name ?? place.fallbackName, description: override?.description ?? null };
     })
   );
@@ -120,7 +122,7 @@ export class MondoBianco {
   // sotto 4 macro-luoghi esplorabili (HOME_AREAS) invece di una griglia piatta.
   protected readonly areas = computed<AreaView[]>(() => {
     const places = this.places();
-    return HOME_AREAS.map((area) => ({ ...area, places: places.filter((place) => place.homeArea === area.id) }));
+    return (this.safe.enabled() ? HOME_AREAS.filter(a => ['prato', 'osservatorio'].includes(a.id)).map(a => ({ ...a, label: a.id === 'prato' ? 'Studio e giochi' : 'Il mondo', description: '' })) : HOME_AREAS).map((area) => ({ ...area, places: places.filter((place) => place.homeArea === area.id) }));
   });
 
   private readonly expandedAreas = signal<Set<HomeAreaId>>(new Set());
@@ -227,7 +229,10 @@ export class MondoBianco {
 
   constructor() {
     void this.load();
-    void this.loadTodayMemories();
+    let loadedMemories = false;
+    effect(() => {
+      if (!this.safe.enabled() && !loadedMemories) { loadedMemories = true; void this.loadTodayMemories(); }
+    });
   }
 
   private async load(): Promise<void> {

@@ -2,6 +2,7 @@ import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
+import { SafeModeService } from './core/safe-mode.service';
 import { AuthService } from './core/auth.service';
 import { CarteBustineService } from './core/carte-bustine.service';
 import { RealtimeService } from './core/realtime.service';
@@ -73,6 +74,7 @@ export class App {
   private readonly destroyRef = inject(DestroyRef);
   private readonly themeService = inject(ThemeService);
   private readonly worldSettingsService = inject(WorldSettingsService);
+  protected readonly safe = inject(SafeModeService);
   protected readonly authService = inject(AuthService);
   private readonly carteBustineService = inject(CarteBustineService);
   private readonly realtimeService = inject(RealtimeService);
@@ -89,6 +91,7 @@ export class App {
   protected readonly showGlobalChat = signal(this.router.url.split('?')[0] !== '/ponti-chat');
 
   constructor() {
+    this.safe.apply(true);
     document.body.classList.add('world-atmosphere');
     this.themeService.applySavedTheme();
     this.router.events
@@ -158,8 +161,9 @@ export class App {
       }
       this.restartBustinePresenceTimer();
       this.realtimeService.connect();
-      void this.globalChat.startForCurrentUser();
-      void this.carteBustineService.load(userId).catch((error) => {
+      if (!this.safe.enabled()) void this.globalChat.startForCurrentUser();
+      else this.globalChat.clear();
+      if (!this.safe.enabled()) void this.carteBustineService.load(userId).catch((error) => {
         console.warn('Impossibile aggiornare la streak di accesso:', error);
       });
       if (this.worldSettingsLoadedForUserId !== userId) {
@@ -174,7 +178,7 @@ export class App {
   // server, cosi due schede aperte non raddoppiano le bustine.
   private restartBustinePresenceTimer(): void {
     const userId = this.authService.currentUser()?.id;
-    if (userId === undefined || document.visibilityState !== 'visible' || this.router.url.split('?')[0] === '/login') {
+    if (this.safe.enabled() || userId === undefined || document.visibilityState !== 'visible' || this.router.url.split('?')[0] === '/login') {
       this.stopBustinePresenceTimer();
       return;
     }

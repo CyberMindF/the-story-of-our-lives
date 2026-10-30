@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { SafeModeService } from './safe-mode.service';
 import { AuthService } from './auth.service';
 import { NavigationService } from './navigation.service';
 
@@ -13,18 +14,21 @@ import { NavigationService } from './navigation.service';
 // la destinazione richiesta — stesso meccanismo di assets/js/shared/navigation.js
 // (rememberCurrentDestination + ?returnTo=), qui passato al Router invece che a un reload.
 export const authGuard: CanActivateFn = async (_route, state) => {
+  const safeMode = inject(SafeModeService);
   const authService = inject(AuthService);
   const navigationService = inject(NavigationService);
   const router = inject(Router);
 
   const session = await authService.loadAuthSession();
   if (session.authenticated && session.user && authService.isAccessUnlocked(session.user.id)) {
+    safeMode.apply(session.user.safeMode === true);
     authService.currentUser.set(session.user);
     authService.adminModeEnabled.set(session.adminModeEnabled === true);
     authService.touchAccessUnlock(session.user.id);
     return true;
   }
 
+  safeMode.apply(true);
   navigationService.rememberCurrentDestination();
   return router.createUrlTree(['/login'], { queryParams: { returnTo: state.url } });
 };

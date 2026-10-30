@@ -28,9 +28,9 @@ export async function onRequestPut({ request, env, params }) {
     }
     const row = await env.DB.prepare(
       `UPDATE world_updates SET kind = ?, emoji = ?, title = ?, body = ?, route = ?, cta_label = ?,
-       published_at = ?, active = ?, announce = ?, updated_at = ? WHERE id = ? RETURNING *, 0 AS seen`
+       published_at = ?, active = ?, announce = ?, safe = ?, updated_at = ? WHERE id = ? RETURNING *, 0 AS seen`
     ).bind(kind, emoji, title, text, route, ctaLabel, publishedAt, body?.active === false ? 0 : 1,
-      announce, new Date().toISOString(), id).first();
+      announce, body?.safe === true ? 1 : 0, new Date().toISOString(), id).first();
     return row ? json(updateView(row)) : json({ error: "Novità non trovata." }, 404);
   } catch {
     return json({ error: "Non è stato possibile aggiornare la novità." }, 500);

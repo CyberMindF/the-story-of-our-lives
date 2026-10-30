@@ -29,7 +29,8 @@
     "generate:bacheca-thumbnails": "node scripts/generate-bacheca-thumbnails.mjs",
     "upload:bacheca-thumbnails:local": "node scripts/upload-bacheca-media.mjs --thumbnails --local",
     "upload:bacheca-thumbnails:prod": "node scripts/upload-bacheca-media.mjs --thumbnails --remote",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:safe-mode": "node --test scripts/safe-mode-api.test.mjs && node scripts/smoke-safe-mode.mjs"
   },
   "repository": {
     "type": "git",

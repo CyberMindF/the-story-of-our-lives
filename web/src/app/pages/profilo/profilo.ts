@@ -1,3 +1,4 @@
+import { SafeModeService } from '../../core/safe-mode.service';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppShell } from '../../shell/app-shell';
@@ -15,6 +16,7 @@ import { PasswordField } from '../../shared/password-field/password-field';
   templateUrl: './profilo.html'
 })
 export class Profilo {
+  protected readonly safe = inject(SafeModeService);
   protected readonly authService = inject(AuthService);
 
   protected nickname = this.authService.currentUser()?.nickname ?? '';

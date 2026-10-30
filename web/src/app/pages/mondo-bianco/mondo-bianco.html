@@ -10,6 +10,7 @@
   [showBackLink]="false"
   [showHomeShortcut]="false"
 >
+  @if (!safe.enabled()) {
   <!-- Canzone e citazione aprono il viaggio come nella pagina originale. -->
   <section class="world-opening" aria-labelledby="world-title">
     <p class="world-eyebrow">La nostra casa</p>
@@ -69,6 +70,9 @@
     </section>
   }
 
+  } @else {
+    <section class="world-opening"><h1>Il Mondo Bianco</h1><p>Studio, giochi e novità.</p></section>
+  }
   <section class="world-places" aria-labelledby="places-title">
     <div class="world-section-heading">
       <p class="world-eyebrow">La mappa</p>
@@ -119,7 +123,7 @@
       }
     </div>
 
-    @if (editingId() !== null) {
+    @if (editingId() !== null && !safe.enabled()) {
       <form class="world-place-form card glass-surface" (ngSubmit)="submitEdit()">
         <h3>Modifica "{{ editingId() }}"</h3>
         <label class="form-field">

@@ -1,12 +1,14 @@
+import { SafeModeToggle } from '../../shared/safe-mode-toggle';
 import { Component, Input, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { SafeModeService } from '../../core/safe-mode.service';
 import { NavigationService } from '../../core/navigation.service';
 
 @Component({
   selector: 'app-world-user-bar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [SafeModeToggle, RouterLink],
   templateUrl: './world-user-bar.html'
 })
 export class WorldUserBar {
@@ -18,6 +20,7 @@ export class WorldUserBar {
   private readonly navigationService = inject(NavigationService);
   private readonly router = inject(Router);
 
+  protected readonly safe = inject(SafeModeService);
   protected readonly loggingOut = signal(false);
   protected readonly changingAdminMode = signal(false);
 

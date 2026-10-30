@@ -1,3 +1,4 @@
+import { SafeModeToggle } from '../shared/safe-mode-toggle';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -5,6 +6,7 @@ import { AccessMode, AuthService, AuthUser } from '../core/auth.service';
 import { NavigationService } from '../core/navigation.service';
 import { ContentMessage } from '../shared/content-message/content-message';
 import { PasswordField } from '../shared/password-field/password-field';
+import { SafeModeService } from '../core/safe-mode.service';
 import { VisitsService } from '../core/visits.service';
 
 // Porting di assets/js/shared/access-gate.js (createAccessGate) + assets/js/portone/main.js.
@@ -14,7 +16,7 @@ import { VisitsService } from '../core/visits.service';
 @Component({
   selector: 'app-portone',
   standalone: true,
-  imports: [FormsModule, PasswordField, ContentMessage],
+  imports: [SafeModeToggle, FormsModule, PasswordField, ContentMessage],
   styleUrls: [
     '../../styles/components/access-gate.css',
     '../../styles/pages/portone.css'
@@ -22,6 +24,7 @@ import { VisitsService } from '../core/visits.service';
   templateUrl: './portone.html'
 })
 export class Portone implements OnInit {
+  protected readonly safe = inject(SafeModeService);
   private readonly authService = inject(AuthService);
   private readonly navigationService = inject(NavigationService);
   private readonly visitsService = inject(VisitsService);
@@ -58,7 +61,7 @@ export class Portone implements OnInit {
       case 'key':
         return 'Ti ricordi della chiave?';
       case 'login':
-        return 'Rieccoci nel nostro mondo';
+        return 'Accedi al Mondo Bianco';
       default:
         return 'È la prima volta che sei qui?';
     }
@@ -73,11 +76,11 @@ export class Portone implements OnInit {
     }
     switch (this.mode()) {
       case 'key':
-        return 'Come la prima volta inseriscila nella serratura e il mondo si aprirà.';
+        return 'Inserisci la chiave per completare l’accesso.';
       case 'login':
-        return 'Accedi per tornare a sederti su quel divano.';
+        return 'Inserisci le credenziali per entrare.';
       default:
-        return 'Crea il tuo account per entrare nel nostro mondo e accedere a tutte le funzionalità.';
+        return 'Crea il tuo account per entrare nel Mondo Bianco.';
     }
   });
 
@@ -101,6 +104,7 @@ export class Portone implements OnInit {
   });
 
   ngOnInit(): void {
+    this.safe.apply(true);
     const token = this.route.snapshot.queryParamMap.get('resetToken');
     if (token) {
       this.resetToken = token;
@@ -128,7 +132,7 @@ export class Portone implements OnInit {
       return;
     }
 
-    await this.completeAccess(session.user);
+    this.mode.set('key');
   }
 
   protected setMode(mode: AccessMode): void {
@@ -232,7 +236,15 @@ export class Portone implements OnInit {
   // deviazione intenzionale dall'originale (che qui faceva window.location.replace/reload):
   // qui usiamo il Router, coerente con l'obiettivo dell'intera migrazione.
   private async completeAccess(user: AuthUser): Promise<void> {
-    this.authService.currentUser.set(user);
+    const session = await this.authService.loadAuthSession();
+    if (!session.authenticated || !session.user) throw new Error('Sessione non valida.');
+    const choice = this.safe.entryChoice();
+    if (choice !== null) {
+      if (!await this.safe.save(choice)) throw new Error(this.safe.error());
+      this.safe.entryChoice.set(null);
+    }
+    if (choice === null) this.safe.apply(session.user.safeMode === true);
+    this.authService.currentUser.set(session.user);
     // Login/registrazione producono sempre una sessione nuova, quindi la Modalità admin
     // riparte spenta (vive sulla sessione, non sull'utente — vedi setAdminMode).
     this.authService.adminModeEnabled.set(false);

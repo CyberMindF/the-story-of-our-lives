@@ -1,8 +1,9 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AppShell } from '../../shell/app-shell';
+import { SafeModeService, isSafeRoute } from '../../core/safe-mode.service';
 import { AuthService } from '../../core/auth.service';
 
 type UpdateKind = 'contenuto' | 'mondo';
@@ -12,7 +13,7 @@ type PromoTarget = 'tutti' | 'lui' | 'lei';
 
 interface WorldUpdate {
   id: string; kind: UpdateKind; emoji: string; title: string; body: string; route: string | null;
-  ctaLabel: string | null; publishedAt: string; active: boolean; announce: boolean; seen: boolean;
+  ctaLabel: string | null; publishedAt: string; active: boolean; announce: boolean; safe: boolean; seen: boolean;
 }
 interface WorldPromo {
   id: string; label: PromoLabel; emoji: string; title: string; body: string; route: string | null;
@@ -27,13 +28,14 @@ interface WorldPromo {
   styleUrl: './novita.css'
 })
 export class Novita {
+  protected readonly safe = inject(SafeModeService);
   private readonly auth = inject(AuthService);
-  protected readonly canEdit = computed(() => this.auth.isAdmin() && this.auth.adminModeEnabled() && !this.auth.currentUser()?.isTest);
+  protected readonly canEdit = computed(() => !this.safe.enabled() && this.auth.isAdmin() && this.auth.adminModeEnabled() && !this.auth.currentUser()?.isTest);
   protected readonly updates = signal<WorldUpdate[]>([]);
   protected readonly campaigns = signal<WorldPromo[]>([]);
   protected readonly promosEnabled = signal(true);
   protected readonly tab = signal<UpdateKind>('contenuto');
-  protected readonly filteredUpdates = computed(() => this.updates().filter((update) => update.kind === this.tab() && update.active));
+  protected readonly filteredUpdates = computed(() => this.updates().filter((update) => update.kind === this.tab() && update.active && (!this.safe.enabled() || update.safe)));
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
   protected readonly error = signal('');
@@ -49,6 +51,7 @@ export class Novita {
   updateDate = '';
   updateActive = true;
   updateAnnounce = true;
+  updateSafe = false;
 
   protected readonly editingPromoId = signal<string | null>(null);
   promoLabel: PromoLabel = 'consiglia';
@@ -65,15 +68,18 @@ export class Novita {
   constructor() {
     this.editUpdate(null);
     this.editPromo(null);
-    void this.load();
+    effect(() => { this.safe.enabled(); void this.load(); });
   }
+
+  protected readonly isAllowed = isSafeRoute;
 
   protected async load(): Promise<void> {
     this.loading.set(true); this.error.set('');
     try {
       const [updatesResponse, promosResponse] = await Promise.all([
         fetch('/api/world-updates', { credentials: 'same-origin', headers: { Accept: 'application/json' } }),
-        fetch('/api/world-promos?path=/novita', { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+        this.safe.enabled() ? Promise.resolve(Response.json({}))
+          : fetch('/api/world-promos?path=/novita', { credentials: 'same-origin', headers: { Accept: 'application/json' } })
       ]);
       if (!updatesResponse.ok) throw new Error('Non è stato possibile caricare le novità.');
       const updateData = await updatesResponse.json() as { updates?: WorldUpdate[] };
@@ -83,7 +89,7 @@ export class Novita {
         this.campaigns.set(promoData.campaigns ?? []);
         if (typeof promoData.promosEnabled === 'boolean') this.promosEnabled.set(promoData.promosEnabled);
       }
-      const unseenIds = this.updates().filter((update) => !update.seen && update.active).map((update) => update.id);
+      const unseenIds = this.updates().filter((update) => !update.seen && update.active && (!this.safe.enabled() || update.safe)).map((update) => update.id);
       if (unseenIds.length > 0) {
         void fetch('/api/world-updates/seen', {
           method: 'POST', credentials: 'same-origin', keepalive: true,
@@ -107,6 +113,7 @@ export class Novita {
     this.updateDate = this.localDateTime(update?.publishedAt ?? new Date().toISOString());
     this.updateActive = update?.active ?? true;
     this.updateAnnounce = update?.announce ?? true;
+    this.updateSafe = update?.safe ?? false;
     document.getElementById('update-editor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -120,7 +127,7 @@ export class Novita {
     await this.save(`/api/world-updates${id ? `/${id}` : ''}`, id ? 'PUT' : 'POST', {
       kind: this.updateKind, emoji: this.updateEmoji, title: this.updateTitle, body: this.updateBody,
       route: this.updateRoute, ctaLabel: this.updateCta, publishedAt: publishedAt.toISOString(),
-      active: this.updateActive, announce: this.updateAnnounce
+      active: this.updateActive, announce: this.updateAnnounce, safe: this.updateSafe
     }, async () => { this.editUpdate(null); await this.load(); });
   }
 

@@ -11,6 +11,7 @@ export interface AuthUser {
   identity: UserIdentity;
   role: UserRole;
   isTest: boolean;
+  safeMode?: boolean;
 }
 
 export interface AuthSessionResponse {

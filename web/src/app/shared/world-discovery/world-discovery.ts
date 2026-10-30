@@ -1,5 +1,6 @@
 import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { SafeModeService, isSafeRoute } from '../../core/safe-mode.service';
 import { AuthService } from '../../core/auth.service';
 import { CarteBustineService, CarteBustineState } from '../../core/carte-bustine.service';
 import { CartaPack } from '../carta-pack/carta-pack';
@@ -17,6 +18,7 @@ interface WorldUpdate {
   ctaLabel: string | null;
   publishedAt: string;
   seen: boolean;
+  safe: boolean;
 }
 
 interface WorldPromo {
@@ -38,13 +40,15 @@ interface WorldPromo {
   styleUrl: './world-discovery.css'
 })
 export class WorldDiscovery {
+  protected readonly safe = inject(SafeModeService);
+  protected readonly isAllowed = isSafeRoute;
   private readonly auth = inject(AuthService);
   private readonly cards = inject(CarteBustineService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly updates = signal<WorldUpdate[]>([]);
-  protected readonly unseen = computed(() => this.updates().filter((update) => !update.seen));
+  protected readonly unseen = computed(() => this.updates().filter((update) => !update.seen && (!this.safe.enabled() || update.safe)));
   protected readonly updateTab = signal<UpdateKind>('contenuto');
   protected readonly visibleUpdates = computed(() => this.unseen().filter((update) => update.kind === this.updateTab()));
   protected readonly updateModalOpen = signal(false);
@@ -52,6 +56,7 @@ export class WorldDiscovery {
   protected readonly reward = signal<CarteBustineState | null>(null);
   protected readonly promo = signal<WorldPromo | null>(null);
   protected readonly promoVisible = signal(false);
+  private activeSafeMode: boolean | null = null;
   private activeUserId: number | null = null;
   private run = 0;
   private promoTimer: number | null = null;
@@ -69,7 +74,9 @@ export class WorldDiscovery {
   constructor() {
     effect(() => {
       const userId = this.auth.currentUser()?.id ?? null;
-      if (userId === this.activeUserId) return;
+      const safeMode = this.safe.enabled();
+      if (userId === this.activeUserId && safeMode === this.activeSafeMode) return;
+      this.activeSafeMode = safeMode;
       this.activeUserId = userId;
       this.reset();
       if (userId !== null) void this.initialize(userId, ++this.run);
@@ -116,8 +123,9 @@ export class WorldDiscovery {
       const path = this.router.url.split(/[?#]/, 1)[0] || '/';
       const [updatesResponse, promoResponse, reward] = await Promise.all([
         fetch('/api/world-updates', { credentials: 'same-origin', headers: { Accept: 'application/json' } }),
-        fetch(`/api/world-promos?path=${encodeURIComponent(path)}`, { credentials: 'same-origin', headers: { Accept: 'application/json' } }),
-        this.cards.load(userId)
+        this.safe.enabled() ? Promise.resolve(Response.json({}))
+          : fetch(`/api/world-promos?path=${encodeURIComponent(path)}`, { credentials: 'same-origin', headers: { Accept: 'application/json' } }),
+        this.safe.enabled() ? Promise.resolve(null) : this.cards.load(userId)
       ]);
       if (run !== this.run || this.activeUserId !== userId) return;
       if (updatesResponse.ok) {
@@ -143,6 +151,7 @@ export class WorldDiscovery {
   }
 
   private openRewardOrSchedulePromo(): void {
+    if (this.safe.enabled()) return;
     const reward = this.reward();
     if (reward?.streakPrimaVisitaOggi) {
       this.rewardModalOpen.set(true);
@@ -152,6 +161,7 @@ export class WorldDiscovery {
   }
 
   private schedulePromo(): void {
+    if (this.safe.enabled()) return;
     const promo = this.promo();
     if (!promo || this.promoVisible()) return;
     this.clearPromoTimer();

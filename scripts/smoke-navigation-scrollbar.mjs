@@ -40,7 +40,7 @@ try {
     await page.goto(base + '/ponti');
     await page.getByRole('button', { name: 'Apri il pannello con tutti i luoghi', exact: true }).click();
     const sheet = page.locator('.world-navigation-sheet');
-    await sheet.waitFor();
+    await page.locator('.world-navigation-sheet:not([aria-hidden])').waitFor();
     const games = sheet.locator('.world-navigation-entry').filter({ has: page.locator('a[href="/tavolo-da-gioco"]') });
     assert.equal(await games.locator('a.is-secondary').count(), 8, 'Tutti gli otto giochi devono comparire sotto il Tavolo');
     for (const game of ['trappole', 'frequenze', 'animali']) {

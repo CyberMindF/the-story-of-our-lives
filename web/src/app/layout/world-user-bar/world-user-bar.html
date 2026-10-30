@@ -1,10 +1,11 @@
 <div class="place-userbar glass-surface" [class]="extraClass">
+  <app-safe-mode-toggle />
   @if (userName()) {
     <a routerLink="/profilo" class="user-greeting" title="Vai al tuo profilo">Ciao, {{ userName() }}</a>
   } @else {
     <span class="user-greeting"></span>
   }
-  @if (authService.isAdmin()) {
+  @if (authService.isAdmin() && !safe.enabled()) {
     @if (authService.adminModeEnabled()) {
       <a routerLink="/amministrazione" class="admin-shortcut-link" aria-label="Amministrazione" title="Amministrazione">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 3v6c0 4-4 7-8 9-4-2-8-5-8-9V6l8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5" /></svg>
@@ -28,7 +29,7 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9" /></svg>
     </a>
   }
-  @if (showSuggestLink) {
+  @if (showSuggestLink && !safe.enabled()) {
     <a routerLink="/suggerimenti" class="suggest-link" aria-label="Manda un suggerimento" title="Suggerisci">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-6 6c0 2.5 1.4 3.8 2.2 4.6.5.5.8 1.1.8 1.4h6c0-.3.3-.9.8-1.4.8-.8 2.2-2.1 2.2-4.6a6 6 0 0 0-6-6Z" /></svg>
     </a>

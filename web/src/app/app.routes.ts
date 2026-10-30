@@ -1,4 +1,7 @@
 import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { SafeModeService, isSafeRoute } from './core/safe-mode.service';
 import { authGuard } from './core/auth.guard';
 import { adminGuard } from './core/admin.guard';
 import { adminModeGuard } from './core/admin-mode.guard';
@@ -25,6 +28,8 @@ export const routes: Routes = [
   {
     path: '',
     canActivate: [authGuard],
+    canActivateChild: [(_route, state) => !inject(SafeModeService).enabled() || isSafeRoute(state.url)
+      ? true : inject(Router).createUrlTree(['/'])],
     children: [
       {
         path: '',

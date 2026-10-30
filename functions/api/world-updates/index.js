@@ -24,6 +24,7 @@ function updateView(row) {
     publishedAt: row.published_at,
     active: row.active === 1,
     announce: row.announce === 1,
+    safe: row.safe === 1,
     seen: row.seen === 1
   };
 }
@@ -38,8 +39,9 @@ export async function onRequestGet({ request, env }) {
        FROM world_updates wu
        LEFT JOIN world_update_reads wur ON wur.update_id = wu.id AND wur.user_id = ?
        WHERE (? = 1 OR (wu.active = 1 AND datetime(wu.published_at) <= datetime('now')))
+       AND (? = 0 OR wu.safe = 1)
        ORDER BY datetime(wu.published_at) DESC, wu.id DESC`
-    ).bind(session.user.id, includeInactive ? 1 : 0).all();
+    ).bind(session.user.id, includeInactive ? 1 : 0, session.user.safeMode ? 1 : 0).all();
     return json({ updates: results.map(updateView) });
   } catch {
     return json({ error: "Non è stato possibile leggere le novità." }, 500);
@@ -66,10 +68,10 @@ export async function onRequestPost({ request, env }) {
     }
     const now = new Date().toISOString();
     const row = await env.DB.prepare(
-      `INSERT INTO world_updates (kind, emoji, title, body, route, cta_label, published_at, active, announce, created_by, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *, 0 AS seen`
+      `INSERT INTO world_updates (kind, emoji, title, body, route, cta_label, published_at, active, announce, safe, created_by, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *, 0 AS seen`
     ).bind(kind, emoji, title, text, route, ctaLabel, publishedAt, body?.active === false ? 0 : 1,
-      announce, session.user.id, now, now).first();
+      announce, body?.safe === true ? 1 : 0, session.user.id, now, now).first();
     return json(updateView(row), 201);
   } catch {
     return json({ error: "Non è stato possibile creare la novità." }, 500);

@@ -247,3 +247,7 @@
     transition-duration: 1ms;
   }
 }
+
+/* Il contenitore chiuso non deve intercettare i controlli della pagina. */
+.world-navigation-drawer { pointer-events: none; }
+.world-navigation-rail, .world-navigation-sheet { pointer-events: auto; }

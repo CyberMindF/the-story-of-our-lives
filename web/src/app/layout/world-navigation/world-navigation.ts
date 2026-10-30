@@ -1,7 +1,8 @@
-import { Component, DestroyRef, HostListener, Input, inject, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, Input, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
+import { SafeModeService, isSafeRoute } from '../../core/safe-mode.service';
 import { HOME_AREAS, HomeAreaId, WORLD_PLACES, WorldPlace, WorldPlaceGroup } from '../../core/world-places';
 
 const FALLBACK_AREA_BY_GROUP: Record<WorldPlaceGroup, HomeAreaId> = {
@@ -27,21 +28,23 @@ export class WorldNavigation {
   private readonly destroyRef = inject(DestroyRef);
   protected readonly navigationOpen = signal(false);
   protected readonly currentPath = signal(this.pathFromUrl(this.router.url));
-  protected readonly groups = HOME_AREAS.map((area) => {
+  protected readonly safe = inject(SafeModeService);
+  protected readonly groups = computed(() => HOME_AREAS.map((area) => {
     const areaPlaces = WORLD_PLACES.filter((place) =>
-      place.id !== 'profilo' && place.route && this.areaFor(place) === area.id
+      place.id !== 'profilo' && place.route && (!this.safe.enabled() || isSafeRoute(place.route)) && this.areaFor(place) === area.id
     );
     const primaryPlaces = areaPlaces.filter((place) => place.primary);
 
     return {
       ...area,
+      label: this.safe.enabled() ? (area.id === 'prato' ? 'Studio e giochi' : 'Il mondo') : area.label,
       entries: primaryPlaces.map((place) => ({
         place,
         children: areaPlaces.filter((candidate) => !candidate.primary && candidate.parentId === place.id)
       })),
       secondaryPlaces: areaPlaces.filter((place) => !place.primary && !place.parentId)
     };
-  });
+  }).filter(group => group.entries.length || group.secondaryPlaces.length));
 
   constructor() {
     this.router.events

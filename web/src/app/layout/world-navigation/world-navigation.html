@@ -35,7 +35,7 @@
     </header>
 
     <div class="world-navigation-groups">
-      @for (group of groups; track group.id) {
+      @for (group of groups(); track group.id) {
         <section class="world-navigation-group">
           <h3><span aria-hidden="true">{{ group.emoji }}</span> {{ group.label }}</h3>
           <div class="world-navigation-links">

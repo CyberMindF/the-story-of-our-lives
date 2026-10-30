@@ -526,3 +526,13 @@ I testi puliti delle pagine vengono salvati e versionati in `sources/notion-orig
 - `migrations/`: schema D1 per utenti, sessioni, IP di accesso e telemetria.
 - `wrangler.toml`: configurazione Cloudflare e binding D1.
 - `final-message.json`: contenuto della schermata finale.
+
+### Safe mode
+
+Preferenza personale persistita in `users.safe_mode`, modificabile all’ingresso e dalla barra utente. La schermata di accesso resta neutra e permette di usare la preferenza dell’account oppure di cambiarla prima di entrare. La modalità non modifica tema o effetti condivisi.
+
+La lista delle destinazioni consentite vive in `web/src/app/core/safe-mode.service.ts`: home, profilo, novità, Aula studio e quiz, Tavolo da Gioco, Trappole e Frequenze. Le altre pagine, incluse le avventure GDR non ancora classificate, vengono nascoste e i collegamenti diretti riportano alla home. Chat, promozioni, ricompense delle carte e contenuti sentimentali della home non compaiono.
+
+Ogni novità ha il tag Safe nell’editor admin. Le voci esistenti e quelle create automaticamente sono non safe per impostazione predefinita; `addWorldUpdate` accetta `safe: true` per contenuti verificati. Il filtro viene applicato anche dal server e dal popup. Le novità nascoste non vengono segnate come lette.
+
+Prima di distribuire il frontend applicare la migrazione `0139_add_safe_mode.sql`, che aggiunge anche `world_updates.safe`. Verifica locale: `npm run build` e `npm run test:safe-mode` (API con SQLite in memoria e browser con risposte simulate; nessun dato remoto).
