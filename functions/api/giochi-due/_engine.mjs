@@ -102,7 +102,7 @@ export function applyAction(kind, original, action, user, now = Date.now()) {
       requireThat(r.owner.id === user.id, 'Solo chi ha aperto la stanza può chiuderla.', 403);
       r.status = 'cancelled'; r.finishedAt = now; return state;
     }
-    requireThat(r.status === 'playing' && [r.owner.id, r.partner?.id].includes(user.id), 'Entrate entrambi nella partita.', 403);
+    requireThat(r.status === 'playing' && [r.owner.id, r.partner?.id].includes(user.id), 'Entriamo entrambi nella partita.', 403);
     const current = r.rounds[r.round];
     if (action.type === 'ready') {
       requireThat(user.id !== operatorId(r), 'Solo la guida può confermare la legenda.', 403);

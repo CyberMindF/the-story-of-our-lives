@@ -16,7 +16,7 @@ const floorName = floor => ['in fondo', 'a metà', 'in cima'][floor];
 export function applyMachine(original, action, seat) {
   seatCheck(seat);
   check(action && typeof action === 'object' && !Array.isArray(action), 'Azione non valida.');
-  check(!original.solved, 'Siete già usciti.', 409);
+  check(!original.solved, 'Siamo già usciti.', 409);
   const modern = original.mechanics === 2;
   const outside = ['machine-crank', ...(modern ? ['machine-belt', 'machine-drawer', 'machine-cog', 'machine-latch'] : [])].includes(action.type);
   check(outside || ['machine-board', 'machine-step', 'machine-climb', 'machine-gear', 'machine-ladder', 'machine-cargo', 'machine-exit'].includes(action.type), 'Azione non valida.');
@@ -112,13 +112,13 @@ export function machineView(p, seat) {
   const modern = p.mechanics === 2;
   const base = { type: 'machine', title: MACHINE_META.title, emoji: MACHINE_META.emoji,
     mechanics: modern ? 2 : 1,
-    difficulty: 'prototype', solved: p.solved, objective: 'Fate uscire Pip dalla scatola.',
+    difficulty: 'prototype', solved: p.solved, objective: 'Facciamo uscire Pip dalla scatola.',
     instructions: seat === 0 ? 'Tu sei fuori. L’altra persona è dentro.' : 'Tu sei dentro. L’altra persona è fuori.',
-    hints: modern ? ['La leva dentro allenta la cinghia e libera il cassetto fuori. Provate insieme, poi rimettetela in posizione per far muovere qualcosa.',
-      'Fuori manca una ruota alla bobina. Cercatela nel cassetto. La cinghia può collegare la manovella a due meccanismi diversi.',
-      'Portate la sfera nella culla in basso, collegate la bobina e caricatela. Poi tornate alla piattaforma per portarla in cima. Il chiavistello della porta è fuori.'] : ['La manovella fuori muove ciò a cui è collegata dentro. Gli ingranaggi sul ripiano centrale cambiano il collegamento.',
+    hints: modern ? ['La leva dentro allenta la cinghia e libera il cassetto fuori. Proviamo insieme, poi rimettiamola in posizione per far muovere qualcosa.',
+      'Fuori manca una ruota alla bobina. Cerchiamola nel cassetto. La cinghia può collegare la manovella a due meccanismi diversi.',
+      'Portiamo la sfera nella culla in basso, colleghiamo la bobina e carichiamola. Poi torniamo alla piattaforma per portarla in cima. Il chiavistello della porta è fuori.'] : ['La manovella fuori muove ciò a cui è collegata dentro. Gli ingranaggi sul ripiano centrale cambiano il collegamento.',
       'La sfera deve passare dalla culla in basso. La scala permette a Pip di muoversi mentre la piattaforma trasporta la sfera.',
-      'Lasciate la sfera nella culla, spostate l’ingranaggio sulla bobina e girate in avanti fino a tre spie. Poi riportate il collegamento sulla piattaforma e consegnate la sfera in cima.'],
+      'Lasciamo la sfera nella culla, spostiamo l’ingranaggio sulla bobina e giriamo in avanti fino a tre spie. Poi riportiamo il collegamento sulla piattaforma e consegniamo la sfera in cima.'],
     role: seat === 0 ? 'outside' : 'inside' };
   // L’esterno non riceve posizione di Pip, carico, scala o disposizione interna.
   return seat === 0 ? { ...base, outside: { drive: p.drive, turns: p.turns,

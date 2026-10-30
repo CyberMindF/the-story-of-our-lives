@@ -2,10 +2,10 @@ import { check } from './_errors.mjs';
 
 // State stays on the server. Views are explicit allowlists, never spreads of state.
 export const PUZZLE_CATALOG = Object.freeze([
-  { id: 'maze', title: 'Mappa a metà', emoji: '🧭', description: 'Metà passaggi a testa. Trovate le chiavi e raggiungete l’uscita.' },
-  { id: 'circuit', title: 'Corto circuito', emoji: '💡', description: 'I vostri interruttori cambiano anche le luci dell’altro pannello.' },
+  { id: 'maze', title: 'Mappa a metà', emoji: '🧭', description: 'Metà passaggi a testa. Troviamo le chiavi e raggiungiamo l’uscita.' },
+  { id: 'circuit', title: 'Corto circuito', emoji: '💡', description: 'I nostri interruttori cambiano anche le luci dell’altro pannello.' },
   { id: 'order', title: 'Tutto in fila', emoji: '📚', description: 'Indizi diversi, un solo ordine possibile.' },
-  { id: 'dossier', title: 'Il caso degli otto', emoji: '🔎', description: 'Incrociate le testimonianze e scegliete lo stesso sospetto.' },
+  { id: 'dossier', title: 'Il caso degli otto', emoji: '🔎', description: 'Incrociamo le testimonianze e scegliamo lo stesso sospetto.' },
   { id: 'mosaic', title: 'Pixel in incognito', emoji: '🎨', description: 'Uno legge le righe, l’altro le colonne. Il disegno si fa in due.' },
   { id: 'balance', title: 'Questione di peso', emoji: '⚖️', description: 'Due pesi a testa, un totale preciso. I numeri dell’altro sono segreti.' }
 ]);
@@ -281,34 +281,34 @@ export function createPuzzle(type, difficulty = 'normal') {
 
 const TEXT = {
   maze: {
-    instructions: 'Muovete la pedina a turno. Tu vedi soltanto una parte dei passaggi: chiedi all’altra persona prima di attraversare una parete.',
-    objective: 'Raccogliete tutte le chiavi, poi raggiungete l’uscita.',
-    hints: ['Un giocatore vede i passaggi orizzontali, l’altro quelli verticali.', 'Si può tornare indietro: alcuni rami servono soltanto a prendere una chiave.', 'Prima di muovervi, concordate la prossima casella. Una parete non fa cambiare turno.']
+    instructions: 'Muoviamo la pedina a turno. Tu vedi soltanto una parte dei passaggi: chiedi all’altra persona prima di attraversare una parete.',
+    objective: 'Raccogliamo tutte le chiavi, poi raggiungiamo l’uscita.',
+    hints: ['Un giocatore vede i passaggi orizzontali, l’altro quelli verticali.', 'Si può tornare indietro: alcuni rami servono soltanto a prendere una chiave.', 'Prima di muoverci, decidiamo la prossima casella. Una parete non fa cambiare turno.']
   },
   circuit: {
     instructions: 'Ogni interruttore inverte tutte le luci collegate. Puoi usare solo i tuoi; alcune luci sono visibili soltanto all’altra persona.',
-    objective: 'Portate tutte le luci allo stato richiesto. Ripremere un interruttore annulla il suo effetto.',
-    hints: ['Comunicate i numeri delle luci ancora diverse dall’obiettivo.', 'Due interruttori collegati alla stessa luce annullano a vicenda il loro effetto su quella luce.', 'Annotate quali interruttori avete cambiato: l’ordine non conta, conta se ciascuno è acceso oppure spento.']
+    objective: 'Portiamo tutte le luci allo stato richiesto. Ripremere un interruttore annulla il suo effetto.',
+    hints: ['Confrontiamo i numeri delle luci ancora diverse dall’obiettivo.', 'Due interruttori collegati alla stessa luce annullano a vicenda il loro effetto su quella luce.', 'Annotiamo quali interruttori abbiamo cambiato: l’ordine non conta, conta se ciascuno è acceso oppure spento.']
   },
   order: {
-    instructions: 'Spostate gli oggetti nella fila e confrontate i vostri indizi. Quando siete d’accordo, confermate entrambi.',
-    objective: 'Trovate l’unico ordine che rispetta tutti gli indizi.',
-    hints: ['Prima non significa necessariamente subito prima: leggete bene l’indizio.', 'Unite gli indizi che parlano dello stesso oggetto.', 'Se due ordini sembrano entrambi possibili, manca un indizio dell’altro giocatore.']
+    instructions: 'Spostiamo gli oggetti nella fila e confrontiamo i nostri indizi. Quando siamo d’accordo, confermiamo entrambi.',
+    objective: 'Troviamo l’unico ordine che rispetta tutti gli indizi.',
+    hints: ['Prima non significa necessariamente subito prima: leggi bene l’indizio.', 'Uniamo gli indizi che parlano dello stesso oggetto.', 'Se due ordini sembrano entrambi possibili, manca un indizio dell’altro giocatore.']
   },
   dossier: {
-    instructions: 'Avete testimonianze diverse sugli stessi otto sospetti. Incrociatele, poi scegliete entrambi la stessa persona.',
-    objective: 'Trovate il solo sospetto compatibile con tutte e due le testimonianze.',
-    hints: ['Eliminate prima chi non rispetta la vostra testimonianza.', 'Una condizione con E richiede entrambe le caratteristiche; con O ne basta una.', 'Confrontate i nomi rimasti, non scegliete soltanto in base al vostro indizio.']
+    instructions: 'Abbiamo testimonianze diverse sugli stessi otto sospetti. Incrociamole, poi scegliamo entrambi la stessa persona.',
+    objective: 'Troviamo il solo sospetto compatibile con tutte e due le testimonianze.',
+    hints: ['Elimina prima chi non rispetta la tua testimonianza.', 'Una condizione con E richiede entrambe le caratteristiche; con O ne basta una.', 'Confrontiamo i nomi rimasti, senza scegliere soltanto in base a un indizio.']
   },
   mosaic: {
     instructions: 'I numeri indicano gruppi consecutivi di caselle piene, separati da almeno una vuota. Tu puoi cambiare solo le caselle evidenziate.',
-    objective: 'Ricostruite il disegno usando gli indizi delle righe e delle colonne, poi confermate entrambi.',
-    hints: ['2, 1 significa due piene, almeno una vuota e poi una piena.', 'Un indizio 0 indica una riga o colonna completamente vuota.', 'Partite dai gruppi più lunghi e confrontate ogni casella con il relativo indizio nell’altro schermo.']
+    objective: 'Ricostruiamo il disegno usando gli indizi delle righe e delle colonne, poi confermiamo entrambi.',
+    hints: ['2, 1 significa due piene, almeno una vuota e poi una piena.', 'Un indizio 0 indica una riga o colonna completamente vuota.', 'Partiamo dai gruppi più lunghi e confrontiamo ogni casella con il relativo indizio nell’altro schermo.']
   },
   balance: {
-    instructions: 'Scegli due dei tuoi pesi. L’altra persona ne sceglie due dai suoi: parlatevi per raggiungere il totale esatto.',
-    objective: 'Due pesi a testa, quattro in tutto. Confermate entrambi quando la somma è quella richiesta.',
-    hints: ['Calcolate le possibili somme di due pesi diversi.', 'Comunica una somma possibile: l’altro può cercare quanto manca al totale.', 'Ogni peso può essere usato una sola volta. I quattro pesi giusti formano una sola combinazione.']
+    instructions: 'Scegli due dei tuoi pesi. L’altra persona ne sceglie due dai suoi: confrontiamoci per raggiungere il totale esatto.',
+    objective: 'Due pesi a testa, quattro in tutto. Confermiamo entrambi quando la somma è quella richiesta.',
+    hints: ['Calcola le possibili somme di due pesi diversi.', 'Comunica una somma possibile: l’altro può cercare quanto manca al totale.', 'Ogni peso può essere usato una sola volta. I quattro pesi giusti formano una sola combinazione.']
   }
 };
 
@@ -373,7 +373,7 @@ export function applyPuzzle(original, action, seat) {
       p.confirmed[seat] = true;
       if (p.confirmed.every(Boolean)) {
         p.solved = equal(p.order, p.solution);
-        if (!p.solved) { p.confirmed = [false, false]; wrong('La fila non rispetta tutti gli indizi. Confrontateli e riprovate.'); }
+        if (!p.solved) { p.confirmed = [false, false]; wrong('La fila non rispetta tutti gli indizi. Confrontiamoli e riproviamo.'); }
       }
     } else check(false, 'Azione non valida.');
   } else if (p.type === 'dossier') {
@@ -381,7 +381,7 @@ export function applyPuzzle(original, action, seat) {
     p.votes[seat] = action.candidate;
     if (p.votes[0] && p.votes[0] === p.votes[1]) {
       p.solved = p.votes[0] === p.solution;
-      if (!p.solved) { p.votes = [null, null]; wrong('Questa persona non corrisponde a tutte le testimonianze. Rileggetele insieme.'); }
+      if (!p.solved) { p.votes = [null, null]; wrong('Questa persona non corrisponde a tutte le testimonianze. Rileggiamole insieme.'); }
     }
   } else if (p.type === 'mosaic') {
     if (action.type === 'mosaic-toggle') {
@@ -392,7 +392,7 @@ export function applyPuzzle(original, action, seat) {
       p.confirmed[seat] = true;
       if (p.confirmed.every(Boolean)) {
         p.solved = equal(p.grid, p.solution);
-        if (!p.solved) { p.confirmed = [false, false]; wrong('Il disegno non torna ancora. Controllate i gruppi nelle righe e nelle colonne.'); }
+        if (!p.solved) { p.confirmed = [false, false]; wrong('Il disegno non torna ancora. Controlliamo i gruppi nelle righe e nelle colonne.'); }
       }
     } else check(false, 'Azione non valida.');
   } else if (p.type === 'balance') {
@@ -407,7 +407,7 @@ export function applyPuzzle(original, action, seat) {
       p.confirmed[seat] = true;
       if (p.confirmed.every(Boolean)) {
         p.solved = p.selections.reduce((sum, indices, owner) => sum + indices.reduce((subtotal, index) => subtotal + p.weights[owner][index], 0), 0) === p.target;
-        if (!p.solved) { p.confirmed = [false, false]; wrong('La somma non è quella richiesta. Confrontate le vostre coppie di pesi.'); }
+        if (!p.solved) { p.confirmed = [false, false]; wrong('La somma non è quella richiesta. Confrontiamo le nostre coppie di pesi.'); }
       }
     } else check(false, 'Azione non valida.');
   } else check(false, 'Gioco non trovato.', 404);

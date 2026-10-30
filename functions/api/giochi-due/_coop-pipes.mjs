@@ -2,7 +2,7 @@ import { check } from './_errors.mjs';
 
 export const PIPES_META = Object.freeze({
   id: 'pipes', title: 'Circuito spezzato', emoji: '🔌',
-  description: 'Ognuno vede metà dei tubi: ricostruite insieme il percorso dell’energia.',
+  description: 'Ognuno vede metà dei tubi: ricostruiamo insieme il percorso dell’energia.',
 });
 
 const SIZES = Object.freeze({ easy: 3, normal: 4, hard: 5 });
@@ -95,12 +95,12 @@ export function pipesView(puzzle, seat) {
   const { lit } = flow(puzzle);
   return {
     type: 'pipes', title: PIPES_META.title, emoji: PIPES_META.emoji,
-    instructions: 'Tocca i tuoi tubi per ruotarli di un quarto di giro. Le caselle con 🔒 le vede e le controlla l’altro giocatore: descrivetevi le aperture usando sopra, destra, sotto e sinistra.',
-    objective: 'Portate l’energia dall’ingresso a sinistra di A1 all’uscita a destra dell’ultima casella, senza interruzioni. I tubi fuori dal percorso possono restare scollegati. Quando siete pronti, confermate entrambi.',
+    instructions: 'Tocca i tuoi tubi per ruotarli di un quarto di giro. Le caselle con 🔒 le vede e le controlla l’altro giocatore: confrontiamo le aperture usando sopra, destra, sotto e sinistra.',
+    objective: 'Portiamo l’energia dall’ingresso a sinistra di A1 all’uscita a destra dell’ultima casella, senza interruzioni. I tubi fuori dal percorso possono restare scollegati. Quando siamo pronti, confermiamo entrambi.',
     hints: [
       'Partite dall’ingresso: la prima casella deve avere un’apertura verso sinistra.',
       'Ogni collegamento richiede due aperture che si guardano: destra con sinistra, oppure sotto con sopra. Le caselle illuminate ricevono già energia.',
-      'Seguite il percorso una casella alla volta insieme. L’ultima deve aprirsi verso destra; tutti gli altri sbocchi del percorso devono restare dentro la griglia.',
+      'Seguiamo il percorso una casella alla volta. L’ultima deve aprirsi verso destra; tutti gli altri sbocchi del percorso devono restare dentro la griglia.',
     ],
     difficulty: puzzle.difficulty, solved: puzzle.solved, size: puzzle.size,
     source: puzzle.source, sink: puzzle.sink, confirmed: [...puzzle.confirmed],
@@ -128,7 +128,7 @@ export function applyPipes(input, action, seat) {
   if (!puzzle.confirmed.every(Boolean)) return { puzzle, solved: false };
   if (!flow(puzzle).complete) {
     puzzle.confirmed = [false, false];
-    return { puzzle, solved: false, error: 'L’energia non arriva ancora all’uscita senza interruzioni. Controllate i collegamenti e poi confermate di nuovo entrambi.' };
+    return { puzzle, solved: false, error: 'L’energia non arriva ancora all’uscita senza interruzioni. Controlliamo i collegamenti e poi confermiamo di nuovo entrambi.' };
   }
   puzzle.solved = true;
   return { puzzle, solved: true };

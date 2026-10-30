@@ -38,8 +38,8 @@ function projectPuzzle(p, seat) {
   return {
     type: 'code', title: 'Il codice', emoji: '🔐', difficulty: 'easy', solved: p.solved,
     instructions: seat === 0 ? 'Descrivi i quattro simboli, nell’ordine. L’altra persona ha i numeri.' : 'Ascolta i simboli e comunica i numeri nello stesso ordine.',
-    objective: 'Traducete la sequenza e aprite il lucchetto.',
-    hints: ['Decidete un nome per ciascun simbolo.', 'La sequenza si legge da sinistra a destra, senza invertirla.', 'Fate una coppia simbolo-numero alla volta e ricontrollate i quattro numeri.'],
+    objective: 'Traduciamo la sequenza e apriamo il lucchetto.',
+    hints: ['Decidiamo un nome per ciascun simbolo.', 'La sequenza si legge da sinistra a destra, senza invertirla.', 'Facciamo una coppia simbolo-numero alla volta e ricontrolliamo i quattro numeri.'],
     role: seat === 0 ? 'explorer' : 'guide', ready: p.ready,
     sequence: seat === 0 ? p.sequence.map(i => SYMBOLS[i]) : [],
     legend: seat === 1 ? SYMBOLS.map((symbol, i) => ({ symbol, number: p.mapping[i] })) : []
@@ -55,7 +55,7 @@ function applyCode(original, action, seat) {
     check(puzzle.ready, 'Aspetta che l’altra persona abbia letto la legenda.');
     check(typeof action.code === 'string' && /^[1-8]{4}$/.test(action.code), 'Inserisci quattro cifre da 1 a 8.');
     puzzle.solved = action.code === puzzle.sequence.map(i => puzzle.mapping[i]).join('');
-    if (!puzzle.solved) return { puzzle, solved: false, error: 'Il codice non torna. Ricontrollate i simboli e riprovate.' };
+    if (!puzzle.solved) return { puzzle, solved: false, error: 'Il codice non torna. Ricontrolliamo i simboli e riproviamo.' };
   }
   return { puzzle, solved: puzzle.solved };
 }
@@ -99,14 +99,14 @@ export function applyCoop(original, action, user, now) {
   }
   if (action.type === 'next') {
     check(r.status === 'between', 'Completate prima questa prova.', 409);
-    check(action.round === r.round, 'Siete già passati alla prova successiva.', 409);
+    check(action.round === r.round, 'Siamo già passati alla prova successiva.', 409);
     r.nextReady[userSeat] = true;
     if (r.nextReady.every(Boolean)) { r.round++; startRound(r, now); }
     return state;
   }
   check(r.status === 'playing' && r.puzzle?.id === action.puzzleId, 'La prova è cambiata. Riprova sulla schermata aggiornata.', 409);
   if (action.type === 'hint') {
-    check(r.roundHints < 3, 'Avete già aperto tutti i suggerimenti.'); r.roundHints++; return state;
+    check(r.roundHints < 3, 'Abbiamo già aperto tutti i suggerimenti.'); r.roundHints++; return state;
   }
   if (action.type === 'restart-puzzle') {
     r.restartReady[userSeat] = true;

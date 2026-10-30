@@ -84,15 +84,15 @@ export function applyPets(original, action, user, now) {
     event(state, user, pet, 'adopt', `${user.nickname} ha portato un uovo. C’è qualcuno lì dentro!`, now);
   } else if (action.type === 'buy') {
     check(item, 'Oggetto non trovato.');
-    check(item.type === 'food' || !state.owned.includes(item.id), 'Questo oggetto è già vostro.');
+    check(item.type === 'food' || !state.owned.includes(item.id), 'Questo oggetto è già nostro.');
     check(state.coins >= item.price, 'Non ci sono abbastanza monetine.');
-    check(item.type !== 'food' || (state.food[item.id] ?? 0) < 50, 'Avete già 50 porzioni.');
+    check(item.type !== 'food' || (state.food[item.id] ?? 0) < 50, 'Abbiamo già 50 porzioni.');
     state.coins -= item.price;
     if (item.type === 'food') state.food[item.id] = (state.food[item.id] ?? 0) + 1;
     else state.owned.push(item.id);
     event(state, user, null, 'buy', `${user.nickname} ha comprato: ${item.name}.`, now);
   } else if (action.type === 'place') {
-    check(item && state.owned.includes(item.id) && item.type !== 'food', 'Prima comprate questo oggetto.');
+    check(item && state.owned.includes(item.id) && item.type !== 'food', 'Prima compra questo oggetto.');
     if (item.type === 'decor') state.decor = item.id;
     else {
       check(['left', 'right'].includes(action.slot), 'Scegli un lato della stanza.');
@@ -123,7 +123,7 @@ export function applyPets(original, action, user, now) {
     check(pet, 'Scegli un animale.');
     if (action.type === 'incubate') {
       check(pet.egg && ['warm', 'turn', 'listen'].includes(action.care), 'Quell’uovo è già schiuso o l’azione non è valida.');
-      check(!pet.incubation.includes(action.care), 'Questo l’avete già fatto. Prova un’altra cosa.');
+      check(!pet.incubation.includes(action.care), 'Questo l’abbiamo già fatto. Prova un’altra cosa.');
       pet.incubation.push(action.care);
       if (pet.incubation.length === 3) pet.egg = false;
       const species = SPECIES.find(s => s.id === pet.species);
@@ -140,7 +140,7 @@ export function applyPets(original, action, user, now) {
         pet.name = proposal.name; pet.proposals = {};
         event(state, user, pet, 'accept-name', `D’accordo: da oggi si chiama ${pet.name}!`, now);
       } else if (action.type === 'memory-start') {
-        check(!state.memory || state.memory.done, 'C’è già un memory in corso. Potete finirlo insieme.');
+        check(!state.memory || state.memory.done, 'C’è già un memory in corso. Possiamo finirlo insieme.');
         state.memory = { id: crypto.randomUUID(), petId: pet.id, board: shuffled([...SPECIES.map(s => s.emoji), ...SPECIES.map(s => s.emoji)]),
           matched: [], open: [], turns: 0, done: false, reward: 0, lastFlip: 0 };
       } else {

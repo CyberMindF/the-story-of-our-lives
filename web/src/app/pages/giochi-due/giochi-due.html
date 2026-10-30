@@ -26,7 +26,7 @@
         </section>
         <section class="play-panel">
           <p class="eyebrow">02 / Accetta la sfida</p>
-          <h2>Il vostro tavolo</h2>
+          <h2>Il nostro tavolo</h2>
           @if (challenges().length) {
             <label>Sfide recenti <select [ngModel]="challenge()?.id" (ngModelChange)="selectedId.set($event); replay.set(-1); moveMode.set('move')">
               @for (c of challenges(); track c.id) { <option [value]="c.id">{{ c.title }} · {{ c.creator.name }} · {{ status(c) }}</option> }
@@ -60,7 +60,7 @@
                 <label>🎬 Rivedi il percorso · passo {{ replay() < 0 ? c.attempt?.steps?.length : replay() }}
                   <input type="range" min="0" [max]="c.attempt?.steps?.length ?? 0" [ngModel]="replay() < 0 ? c.attempt?.steps?.length : replay()" (ngModelChange)="replay.set(+$event)" />
                 </label>
-                <p role="status" class="result">{{ c.status === 'won' ? '🏁 Traguardo raggiunto! Hai vinto la sfida.' : '💣 Energia finita! Vince chi ha preparato la mappa.' }} Ora potete scambiarvi i ruoli.</p>
+                <p role="status" class="result">{{ c.status === 'won' ? '🏁 Traguardo raggiunto! Hai vinto la sfida.' : '💣 Energia finita! Vince chi ha preparato la mappa.' }} Ora possiamo scambiarci i ruoli.</p>
               }
               @if (c.creator.id === userId() && !c.attempt && c.status === 'open') { <button type="button" class="btn" [disabled]="busy()" (click)="act('cancel', { id: c.id })">Ritira questa sfida</button> }
             }
@@ -77,6 +77,8 @@
     @if (kind() === 'nuvola') {
       <app-pet-room [state]="state" [busy]="busy()" [userId]="userId()" [adminPreview]="isAdmin() && adminModeEnabled()" (command)="act($event.type, $event)" />
     }
-    <p class="sync-note">Salvato per entrambi · Si aggiorna automaticamente mentre questa pagina è aperta.</p>
+    @if (kind() !== 'nuvola') {
+      <p class="sync-note">Salvato per entrambi · Si aggiorna automaticamente mentre questa pagina è aperta.</p>
+    }
   }
 </app-shell>
