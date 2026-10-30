@@ -25,3 +25,9 @@ Regola fissata il 09/08/2026: la duplicazione di codice (HTML, CSS, JS) deve ten
   locali del design system.
 
 Vedi `prossimi sviluppi.md` per le cose ancora aperte sul progetto.
+
+## Voce dei testi
+
+Il sito è scritto da Rory per Desy: la voce è sempre **io che parlo a te**, non una terza persona che parla alla coppia. Rivolgersi a lei al singolare ("hai", "puoi", "scegli"); per attività o risorse condivise usare "noi", "abbiamo", "possiamo", "nostro". Non usare "voi", "avete", "potete" o "vostro" per rivolgersi ai due utenti. La regola vale anche per istruzioni, conferme, errori, notifiche e Novità, sia nel frontend sia nei testi generati dal backend o salvati nel CMS.
+
+Valutare il contesto: citazioni, dialoghi, narrazioni GDR, materiali di studio e registri delle azioni con autore esplicito mantengono la propria voce. Le etichette amministrative che identificano destinatari o permessi (per esempio "A entrambi") restano descrittive. Evitare riscritture automatiche che confondano chi ha compiuto un’azione o cambino il significato delle regole di gioco.

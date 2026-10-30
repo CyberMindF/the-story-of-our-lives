@@ -37,7 +37,7 @@ export class CoopRoom {
   protected create(): void { this.send('create', { mode: this.mode(), difficulty: this.mode() === 'code' ? 'easy' : this.difficulty(), length: this.length() }); }
   protected createMachine(insideFirst = false): void { this.send('create', {mode: 'machine', difficulty: 'normal', insideFirst}); }
   protected cancel(): void {
-    if (confirm('Chiudere la partita per entrambi? Le prove già completate resteranno nello storico.')) this.send('cancel');
+    if (confirm('Chiudiamo la partita? Le prove già completate resteranno nello storico.')) this.send('cancel');
   }
   protected digit(n: number, count = 4): void { if (this.code().length < count) this.code.update(c => c + n); }
   protected submitCode(type: string): void { this.send(type, { code: this.code() }); }

@@ -1,7 +1,7 @@
 @if (room(); as r) {
   @if (r.schema === 2) {
     @if (r.status === 'waiting') {
-      <section class="coop-panel waiting"><span class="big-icon">📡</span><h2>Manca il secondo giocatore!</h2><p>{{ r.owner.name }} ha aperto {{ r.mode === 'machine' ? 'Il marchingegno · Stanza sperimentale' : 'una partita: ' + r.total + ' prove · ' + difficultyName(r.difficulty) }}.</p><p>L’altra persona deve aprire questa pagina dal proprio account. Possiamo parlare a voce o usare la chat.</p>
+      <section class="coop-panel waiting"><span class="big-icon">📡</span><h2>Manca il secondo giocatore!</h2><p>{{ r.owner.name }} ha aperto {{ r.mode === 'machine' ? 'Il marchingegno · Stanza sperimentale' : 'una partita: ' + r.total + ' prove · ' + difficultyName(r.difficulty) }}.</p><p>Per giocare dobbiamo aprire questa pagina dai nostri account. Possiamo parlare a voce o usare la chat.</p>
         @if (r.owner.id !== userId()) { <button class="btn primary" [disabled]="busy()" (click)="send('join')">Entra nella partita</button> }
       </section>
     } @else if (r.status === 'playing') {
@@ -14,7 +14,7 @@
             @case ('code') {
               @if (p.role === 'explorer') {
                 <div class="symbol-strip" aria-label="Sequenza da descrivere">@for (symbol of p.sequence; track $index) { <span>{{ symbol }}</span> }</div>
-                <p>{{ p.ready ? 'La legenda è pronta. Tocca i quattro numeri.' : 'Aspetta che l’altra persona confermi la legenda.' }}</p>
+                <p>{{ p.ready ? 'La legenda è pronta. Tocca i quattro numeri.' : 'Manca ancora la conferma della legenda.' }}</p>
                 <output class="code" aria-live="polite" aria-label="Codice composto">{{ code() || '…' }}</output>
                 <div class="keypad">@for (n of numbers; track n) { <button class="btn" [disabled]="busy() || !p.ready || code().length >= 4" (click)="digit(n)">{{ n }}</button> }</div>
                 <div class="button-row"><button class="btn" [disabled]="busy() || !code()" (click)="code.set(code().slice(0,-1))">Cancella cifra</button><button class="btn primary" [disabled]="busy() || !p.ready || code().length !== 4" (click)="submitCode('code-answer')">Apri il lucchetto</button></div>
@@ -42,7 +42,7 @@
             @case ('order') {
               <div class="clues"><h3>📝 I tuoi indizi</h3><ul>@for (clue of p.clues; track $index) { <li>{{ clue }}</li> }</ul></div>
               <ol class="ordered-items">@for (item of ordered(p); track item.id; let i = $index) { <li><span class="position">{{ i + 1 }}</span><strong>{{ item.emoji }} {{ item.name }}</strong><div><button class="btn" [disabled]="busy() || i === 0" [attr.aria-label]="'Sposta prima ' + item.name" (click)="send('order-move',{from:i,to:i-1})">⬆️</button><button class="btn" [disabled]="busy() || i === p.order.length-1" [attr.aria-label]="'Sposta dopo ' + item.name" (click)="send('order-move',{from:i,to:i+1})">⬇️</button></div></li> }</ol>
-              <button class="btn primary" [disabled]="busy() || p.confirmed[r.seat]" (click)="send('order-check')">{{ p.confirmed[r.seat] ? 'Hai confermato questo ordine' : 'Per me l’ordine è giusto' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra persona ha confermato.' : 'La soluzione si controlla quando confermiamo entrambi.' }} Cambiare ordine annulla entrambe le conferme.</p>
+              <button class="btn primary" [disabled]="busy() || p.confirmed[r.seat]" (click)="send('order-check')">{{ p.confirmed[r.seat] ? 'Hai confermato questo ordine' : 'Per me l’ordine è giusto' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra conferma è arrivata.' : 'La soluzione si controlla quando confermiamo entrambi.' }} Cambiare ordine annulla entrambe le conferme.</p>
             }
             @case ('dossier') {
               <div class="clues"><h3>🕵️ I tuoi indizi</h3><ul>@for (clue of p.clues; track $index) { <li>{{ clue }}</li> }</ul></div>
@@ -56,22 +56,22 @@
                 } }
               </div>
               <p class="hint">I numeri indicano gruppi di caselle piene, separati da almeno una vuota. “2 · 1” significa due piene, uno spazio o più, poi una piena. Tocca solo le caselle con il tuo bordo; raccontatevi i numeri mancanti.</p>
-              <button class="btn primary" [disabled]="busy() || p.confirmed[r.seat]" (click)="send('mosaic-check')">{{ p.confirmed[r.seat] ? 'Hai confermato il mosaico' : 'Per me il mosaico è pronto' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra persona ha confermato.' : 'Aspettiamo la conferma di entrambi.' }}</p>
+              <button class="btn primary" [disabled]="busy() || p.confirmed[r.seat]" (click)="send('mosaic-check')">{{ p.confirmed[r.seat] ? 'Hai confermato il mosaico' : 'Per me il mosaico è pronto' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra conferma è arrivata.' : 'Aspettiamo la conferma di entrambi.' }}</p>
             }
             @case ('balance') {
-              <div class="balance-target">⚖️ Obiettivo comune <strong>{{ p.target }}</strong></div><p>Scegli due pesi: gli altri due li mette l’altra persona. Tocca di nuovo un peso selezionato per toglierlo.</p>
+              <div class="balance-target">⚖️ Obiettivo comune <strong>{{ p.target }}</strong></div><p>Scegli due pesi: gli altri due arrivano dall’altro pannello. Tocca di nuovo un peso selezionato per toglierlo.</p>
               <div class="weights">@for (weight of p.weights; track weight.index) { <button class="btn weight" [class.chosen]="weight.selected" [disabled]="busy()" [attr.aria-pressed]="weight.selected" (click)="send('balance-toggle',{index:weight.index})"><span>{{ weight.selected ? '✅' : '📦' }}</span><strong>{{ weight.value }}</strong><small>Peso {{ weight.index + 1 }}</small></button> }</div>
-              <p>Il tuo contributo: <strong>{{ sum(p) }}</strong> · Hai scelto {{ p.selectedCounts[r.seat] }}/2 pesi.<br />L’altra persona ne ha scelti {{ p.selectedCounts[1-r.seat] }}/2. Chiedile quanto pesano!</p>
-              <button class="btn primary" [disabled]="busy() || p.selectedCounts[r.seat] !== 2 || p.confirmed[r.seat]" (click)="send('balance-check')">{{ p.confirmed[r.seat] ? 'Hai confermato i tuoi pesi' : 'Controlliamo il carico' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra persona ha confermato.' : 'Confermiamo entrambi per controllare la somma.' }}</p>
+              <p>Il tuo contributo: <strong>{{ sum(p) }}</strong> · Hai scelto {{ p.selectedCounts[r.seat] }}/2 pesi.<br />Dall’altro pannello: {{ p.selectedCounts[1-r.seat] }}/2 pesi. Confrontiamo le somme!</p>
+              <button class="btn primary" [disabled]="busy() || p.selectedCounts[r.seat] !== 2 || p.confirmed[r.seat]" (click)="send('balance-check')">{{ p.confirmed[r.seat] ? 'Hai confermato i tuoi pesi' : 'Controlliamo il carico' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra conferma è arrivata.' : 'Confermiamo entrambi per controllare la somma.' }}</p>
             }
             @case ('pipes') {
               <div class="pipes-board" [style.--size]="p.size" role="group" aria-label="Circuito da collegare">@for (cell of p.cells; track cell.index) { <button class="pipe-cell" [class.owned]="cell.owned" [class.lit]="cell.lit" [disabled]="busy() || !cell.owned" [attr.aria-label]="coordinate(cell.index,p.size) + ', ' + portNames(cell.ports)" (click)="send('pipes-rotate',{cell:cell.index})"><small>{{ coordinate(cell.index,p.size) }} {{ cell.index === p.source ? 'IN' : cell.index === p.sink ? 'OUT' : '' }}</small>@if (cell.ports) { <svg viewBox="0 0 100 100" aria-hidden="true">@for (port of cell.ports; track port) { <line x1="50" y1="50" [attr.x2]="portX(port)" [attr.y2]="portY(port)" /> }<circle cx="50" cy="50" r="10" /></svg> } @else { <span>🔒</span> }</button> }</div>
               <p class="hint">Ingresso a sinistra di IN, uscita a destra di OUT. Tocca un tuo tubo per ruotarlo di 90°. I tubi dell’altra persona sono nascosti: confrontiamo le aperture usando le coordinate. Il percorso alimentato non deve perdere; i tubi fuori percorso possono restare scollegati.</p>
-              <button class="btn primary" [disabled]="busy() || p.confirmed[r.seat]" (click)="send('pipes-check')">{{ p.confirmed[r.seat] ? 'Hai confermato i collegamenti' : 'Proviamo ad accenderlo' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra persona ha confermato.' : 'La prova parte quando confermiamo entrambi.' }}</p>
+              <button class="btn primary" [disabled]="busy() || p.confirmed[r.seat]" (click)="send('pipes-check')">{{ p.confirmed[r.seat] ? 'Hai confermato i collegamenti' : 'Proviamo ad accenderlo' }}</button><p class="hint">{{ p.confirmed[1-r.seat] ? '✅ L’altra conferma è arrivata.' : 'La prova parte quando confermiamo entrambi.' }}</p>
             }
           }
           @if (r.message) { <p class="feedback" role="status">{{ r.message }}</p> }
-          <footer class="puzzle-footer"><span>{{ p.type === 'machine' ? 'Esplorate con calma. Nessuna penalità per i tentativi.' : r.roundMoves + ' azioni · ' + r.roundErrors + ' errori · ' + r.hintsUsed + ' aiuti' }}</span><div class="button-row"><button class="btn" [disabled]="busy() || r.hintsUsed >= 3" (click)="send('hint')">💡 {{ r.hintsUsed ? 'Altro suggerimento' : 'Un suggerimento' }} ({{ r.hintsUsed }}/3)</button><button class="text-button" [disabled]="busy() || r.restartReady[r.userSeat]" (click)="send('restart-puzzle')">{{ r.restartReady[r.userSeat] ? 'Aspettiamo l’altra persona' : r.restartReady[1-r.userSeat] ? 'Conferma nuovo schema' : p.type === 'machine' ? 'Rimettiamo tutto a posto' : 'Proviamo un altro schema' }}</button></div>
+          <footer class="puzzle-footer"><span>{{ p.type === 'machine' ? 'Esploriamo con calma. Nessuna penalità per i tentativi.' : r.roundMoves + ' azioni · ' + r.roundErrors + ' errori · ' + r.hintsUsed + ' aiuti' }}</span><div class="button-row"><button class="btn" [disabled]="busy() || r.hintsUsed >= 3" (click)="send('hint')">💡 {{ r.hintsUsed ? 'Altro suggerimento' : 'Un suggerimento' }} ({{ r.hintsUsed }}/3)</button><button class="text-button" [disabled]="busy() || r.restartReady[r.userSeat]" (click)="send('restart-puzzle')">{{ r.restartReady[r.userSeat] ? 'Manca ancora l’altra conferma' : r.restartReady[1-r.userSeat] ? 'Conferma nuovo schema' : p.type === 'machine' ? 'Rimettiamo tutto a posto' : 'Proviamo un altro schema' }}</button></div>
             @if (p.hints.length) { <ol class="hints">@for (hint of p.hints; track $index) { <li>{{ hint }}</li> }</ol> }
           </footer>
         </section>
@@ -79,7 +79,7 @@
     } @else if (r.status === 'between' || r.status === 'won') {
       <section class="coop-panel results"><span class="big-icon">🎉</span><h2>{{ r.status === 'won' ? 'Partita completata!' : 'Prova superata!' }}</h2><p>{{ r.results.length }}/{{ r.total }} prove · {{ r.errors }} errori. Nessuna fretta: il tempo è solo un riepilogo, non una penalità.</p>
         <div class="result-list">@for (result of r.results; track $index) { <article><strong>{{ result.emoji }} {{ result.title }}</strong><span>{{ result.moves }} azioni · {{ result.errors }} errori · {{ result.hints }} aiuti · circa {{ minutes(result.durationMs) }} min</span></article> }</div>
-        @if (r.status === 'between') { <button class="btn primary" [disabled]="busy() || r.nextReady[r.userSeat]" (click)="send('next')">{{ r.nextReady[r.userSeat] ? 'Pronto! Aspettiamo l’altra persona' : 'Pronto per la prossima prova' }}</button> }
+        @if (r.status === 'between') { <button class="btn primary" [disabled]="busy() || r.nextReady[r.userSeat]" (click)="send('next')">{{ r.nextReady[r.userSeat] ? 'Ci sono! Manca ancora l’altra conferma' : 'Ci sono, avanti con la prossima!' }}</button> }
       </section>
     } @else { <p class="feedback">Partita chiusa. Possiamo scegliere un’altra prova.</p> }
   } @else {

@@ -78,7 +78,7 @@
       <app-pet-room [state]="state" [busy]="busy()" [userId]="userId()" [adminPreview]="isAdmin() && adminModeEnabled()" (command)="act($event.type, $event)" />
     }
     @if (kind() !== 'nuvola') {
-      <p class="sync-note">Salvato per entrambi · Si aggiorna automaticamente mentre questa pagina è aperta.</p>
+      <p class="sync-note">I nostri progressi restano salvati e si aggiornano mentre giochiamo.</p>
     }
   }
 </app-shell>

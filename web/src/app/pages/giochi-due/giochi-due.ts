@@ -142,7 +142,7 @@ export class GiochiDue implements OnDestroy {
   protected async publish(): Promise<void> {
     if (await this.act('create', { traps: this.draft(), title: this.title() })) {
       this.draft.set([]); this.title.set(''); this.selectedId.set(this.challenges()[0]?.id ?? '');
-      this.notice.set('Sfida pronta. L’altra persona la troverà qui, anche più tardi.');
+      this.notice.set('Sfida pronta. Resta qui anche se la giochiamo più tardi.');
     }
   }
   protected adjacent(a: number, b: number): boolean { return Math.abs(a - b) === 5 || (Math.floor(a / 5) === Math.floor(b / 5) && Math.abs(a - b) === 1); }
