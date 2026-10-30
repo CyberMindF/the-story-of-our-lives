@@ -74,6 +74,7 @@ try {
   await page.locator('.tavolo-game-card[href="/tavolo-da-gioco/gdr"]').click();
   await page.getByRole('heading',{name:'Gioco di Ruolo',exact:true}).waitFor();
   assert.match(await page.locator('.tavolo-intro').innerText(), /Io faccio da master/);
+  await page.screenshot({path:`/tmp/gdr-safe-intro-${width}.png`,fullPage:true});
   assert.equal(await page.locator('app-editorial-text[contentKey="gdr.introduzione"]').count(),0);
   await page.locator('.tavolo-game-card[href="/tavolo-da-gioco/gdr/gioca/il-prezzo-della-verita"]').click();
   await page.waitForURL(base+'/tavolo-da-gioco/gdr/gioca/il-prezzo-della-verita');

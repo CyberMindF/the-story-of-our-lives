@@ -1,8 +1,4 @@
 <main id="access-gate" class="access-gate portone-gate" aria-labelledby="access-title">
-  <header class="portone-access-bar">
-    <p>Il Mondo Bianco</p>
-    <app-safe-mode-toggle [outside]="true" />
-  </header>
   <div class="portone-layout">
     @if (!safe.enabled()) {
     <section class="portone-story" aria-labelledby="portone-title">
@@ -30,6 +26,10 @@
     }
     <form id="access-form" class="access-card portone-card glass-surface"
       (ngSubmit)="recoveryMode() === 'none' ? submit() : submitPasswordRecovery()">
+      <header class="portone-access-bar">
+        <p>Il Mondo Bianco</p>
+        <app-safe-mode-toggle [outside]="true" />
+      </header>
       <h1 id="access-title">{{ title() }}</h1>
       <p id="access-text">{{ text() }}</p>
 

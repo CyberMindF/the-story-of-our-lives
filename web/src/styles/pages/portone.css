@@ -172,3 +172,19 @@
     display: none;
   }
 }
+
+.portone-access-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: start;
+  gap: .75rem 1rem;
+  margin: 0 0 1.5rem;
+}
+.portone-access-bar > p {
+  margin: .8rem 0 0;
+  color: var(--text-color);
+  font-size: .85rem;
+  font-weight: 700;
+}
+.portone-access-bar app-safe-mode-toggle { flex: 0 1 10rem; min-width: 10rem; margin-left: auto; }
