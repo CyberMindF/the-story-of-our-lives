@@ -104,7 +104,8 @@ export class Portone implements OnInit {
   });
 
   ngOnInit(): void {
-    this.safe.apply(true);
+    this.safe.entryAuthenticated.set(false);
+    this.safe.apply(this.safe.entryChoice() ?? true);
     const token = this.route.snapshot.queryParamMap.get('resetToken');
     if (token) {
       this.resetToken = token;
@@ -123,6 +124,12 @@ export class Portone implements OnInit {
     }
 
     const session = await this.authService.loadAuthSession();
+    this.safe.entryAuthenticated.set(session.authenticated && Boolean(session.user));
+    if (session.user) {
+      const choice = this.safe.entryChoice();
+      if (choice === null) this.safe.apply(session.user.safeMode === true);
+      else if (choice !== session.user.safeMode) await this.safe.save(choice);
+    }
     if (!session.authenticated) {
       this.mode.set(this.authService.getInitialAccessMode());
       return;
@@ -240,7 +247,8 @@ export class Portone implements OnInit {
     if (!session.authenticated || !session.user) throw new Error('Sessione non valida.');
     const choice = this.safe.entryChoice();
     if (choice !== null) {
-      if (!await this.safe.save(choice)) throw new Error(this.safe.error());
+      if (session.user.safeMode !== choice && !await this.safe.save(choice)) throw new Error(this.safe.error());
+      this.safe.apply(choice);
       this.safe.entryChoice.set(null);
     }
     if (choice === null) this.safe.apply(session.user.safeMode === true);

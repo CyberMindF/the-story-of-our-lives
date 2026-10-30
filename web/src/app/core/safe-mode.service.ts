@@ -20,6 +20,7 @@ export class SafeModeService {
   readonly enabled = signal(true);
   readonly saving = signal(false);
   readonly error = signal('');
+  readonly entryAuthenticated = signal(false);
   readonly entryChoice = signal<boolean | null>(null);
 
   apply(enabled: boolean): void {
@@ -33,6 +34,7 @@ export class SafeModeService {
 
   chooseEntry(enabled: boolean): void {
     this.entryChoice.set(enabled);
+    this.apply(enabled);
   }
 
   async save(enabled: boolean): Promise<boolean> {

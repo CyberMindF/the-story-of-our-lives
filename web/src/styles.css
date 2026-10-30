@@ -32,7 +32,7 @@ body.safe-mode, body.safe-mode .place-shell :is(h1, h2, h3, .world-area-heading 
 }
 body.world-atmosphere.safe-mode[data-theme], body.world-atmosphere.safe-mode { background: var(--bg-color); }
 body.safe-mode::before, body.safe-mode::after { display: none; }
-body.portone-page .portone-layout { grid-template-columns: minmax(0, 32rem); justify-content: center; }
+body.portone-page.safe-mode .portone-layout { grid-template-columns: minmax(0, 32rem); justify-content: center; }
 .safe-mode-control { display: inline-flex; align-items: center; gap: .45rem; font: inherit; cursor: pointer; white-space: nowrap; }
 
 .safe-mode-button {
@@ -65,3 +65,19 @@ body.portone-page .portone-layout { grid-template-columns: minmax(0, 32rem); jus
 @media (prefers-reduced-motion: reduce) {
   .safe-mode-button, .safe-mode-button .settings-toggle-switch, .safe-mode-button .settings-toggle-switch::before { transition: none; }
 }
+
+.portone-access-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  width: min(100%, 76rem);
+  margin: 0 auto 1.75rem;
+}
+body.safe-mode .portone-access-bar { width: min(100%, 32rem); }
+.portone-access-bar > p { margin: .8rem 0 0; color: var(--text-color); font-size: .85rem; font-weight: 700; white-space: nowrap; }
+.safe-mode-entry.is-outside { display: grid; justify-items: end; gap: .4rem; }
+.safe-mode-entry.is-outside .safe-mode-button { padding: .55rem .7rem; min-height: 2.65rem; font-size: .85rem; }
+.safe-entry-status { margin: 0; max-width: 26ch; color: var(--muted-color); font-size: .75rem; line-height: 1.45; text-align: right; }

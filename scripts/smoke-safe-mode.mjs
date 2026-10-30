@@ -23,7 +23,11 @@ const server = createServer(async (req, res) => {
         let data=''; for await (const chunk of req) data+=chunk;
         if (failSave) { res.writeHead(500, {'Content-Type':'application/json'}); res.end('{}'); return; }
         preferences.set(id, JSON.parse(data).enabled); if (preferences.get(id)) adminModes.set(id,false); body={ safeMode:preferences.get(id) };
-      } else if (path === '/api/auth/session') body={authenticated:true,user,adminModeEnabled:adminModes.get(id)};
+      } else if (path === '/api/auth/session') body=id === 0 ? {authenticated:false} : {authenticated:true,user,adminModeEnabled:adminModes.get(id)};
+      else if (path === '/api/auth/login' && id === 0) {
+        res.setHeader('Set-Cookie','user=1; Path=/');
+        body={authenticated:true,user:{...user,id:1,safeMode:preferences.get(1)}};
+      }
       else if (path === '/api/auth/admin-mode') {
         let data=''; for await (const chunk of req) data+=chunk;
         adminModes.set(id,JSON.parse(data).enabled); body={adminModeEnabled:adminModes.get(id)};
@@ -46,7 +50,7 @@ const base=`http://127.0.0.1:${server.address().port}`;
 const browser=await chromium.launch();
 try {
  for (const width of [390,1280]) {
-  const context=await browser.newContext({viewport:{width,height:850}});
+  const context=await browser.newContext({viewport:{width,height:850},reducedMotion:'reduce'});
   const page=await context.newPage(); const errors=[]; page.on('pageerror',e=>errors.push(e.message));
   await context.addCookies([{name:'user',value:'1',url:base}]);
   await page.addInitScript(()=>{
@@ -109,14 +113,28 @@ try {
   await page.goto(base+'/login');
   await page.getByRole('heading',{name:'Ti ricordi della chiave?'}).waitFor();
   assert.equal(await page.locator('.portone-story').count(),0);
-  await page.getByRole('combobox', {name:'Safe mode',exact:true}).selectOption('false');
+  assert.equal(await page.getByRole('combobox',{name:'Safe mode',exact:true}).count(),0);
+  await page.screenshot({path:`/tmp/safe-login-${width}.png`});
+  await page.getByRole('switch',{name:'Safe mode',exact:true}).click();
+  await page.locator('.portone-story').waitFor();
+  await page.waitForFunction(() => !document.querySelector('[role="switch"]').disabled);
+  assert.equal(preferences.get(1),false);
+  await page.reload();
+  await page.getByRole('heading',{name:'Ti ricordi della chiave?'}).waitFor();
+  await page.locator('.portone-story').waitFor();
+  assert.equal(await page.getByRole('switch',{name:'Safe mode',exact:true}).isChecked(),false);
   await page.locator('input[name="worldKey"]').fill('chiave-test');
   await page.getByRole('button',{name:'Entra',exact:true}).click();
   await page.waitForURL(base+'/');
   await page.locator('.world-music').waitFor();
   assert.equal(preferences.get(1),false);
   await page.goto(base+'/login');
-  await page.getByRole('combobox', {name:'Safe mode',exact:true}).selectOption('true');
+  await page.getByRole('heading',{name:'Ti ricordi della chiave?'}).waitFor();
+  await page.locator('.portone-story').waitFor();
+  await page.getByRole('switch',{name:'Safe mode',exact:true}).click();
+  await page.locator('.portone-story').waitFor({state:'detached'});
+  await page.waitForFunction(() => !document.querySelector('[role="switch"]').disabled);
+  assert.equal(preferences.get(1),true);
   await page.locator('input[name="worldKey"]').fill('chiave-test');
   await page.getByRole('button',{name:'Entra',exact:true}).click();
   await page.waitForURL(base+'/');
@@ -125,6 +143,26 @@ try {
   assert.deepEqual(errors,[]);
   await context.close();
  }
+ // Senza una sessione, il cambio aggiorna subito l’ingresso e viene salvato dopo il login.
+ const anonymous = await browser.newContext({viewport:{width:390,height:850},reducedMotion:'reduce'});
+ await anonymous.addCookies([{name:'user',value:'0',url:base}]);
+ const login = await anonymous.newPage();
+ await login.addInitScript(() => localStorage.setItem('noi-crossword-known-account-v1','true'));
+ await login.goto(base+'/login');
+ await login.getByRole('heading',{name:'Accedi al Mondo Bianco',exact:true}).waitFor();
+ const savedPreference = preferences.get(1);
+ await login.getByRole('switch',{name:'Safe mode',exact:true}).click();
+ await login.locator('.portone-story').waitFor();
+ assert.equal(preferences.get(1),savedPreference);
+ await login.locator('input[name="email"]').fill('test@example.com');
+ await login.locator('app-password-field input').first().fill('password-test');
+ await login.locator('input[name="worldKey"]').fill('chiave-test');
+ await login.getByRole('button',{name:'Accedi ed entra',exact:true}).click();
+ await login.waitForURL(base+'/');
+ await login.locator('.world-music').waitFor();
+ assert.equal(preferences.get(1),false);
+ await anonymous.close();
+ preferences.set(1,true);
  news.forEach(update => update.seen = false);
  const context = await browser.newContext();
  await context.addCookies([{name:'user',value:'1',url:base}]);
