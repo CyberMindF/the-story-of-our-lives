@@ -4,7 +4,7 @@ import { recordEvent } from "../_shared/events.js";
 
 // Esportazione di sicurezza (documentazione/cms/planning-editor-contenuti.md, Fase 8): un backup scaricabile di
 // tutti i contenuti editoriali del CMS, richiesto dal piano prima di eliminare ogni vecchia
-// fonte JSON. Include private_text delle attività dell'Agenda — è un backup per Rory, che ne è
+// fonte JSON. Include private_text e stati salvati delle attività dell'Agenda — è un backup per Rory, che ne è
 // l'autore, non un endpoint pubblico: resta dietro content.edit come ogni altra azione admin.
 export async function onRequestGet(context) {
   try {
@@ -23,7 +23,8 @@ export async function onRequestGet(context) {
       stories,
       cuffietteSongs,
       mapDestinations,
-      togetherActivities
+      togetherActivities,
+      togetherActivityStatuses
     ] = await Promise.all([
       db.prepare("SELECT * FROM content_entries").all(),
       db.prepare("SELECT * FROM content_versions").all(),
@@ -32,7 +33,8 @@ export async function onRequestGet(context) {
       db.prepare("SELECT * FROM stories").all(),
       db.prepare("SELECT * FROM cuffiette_songs").all(),
       db.prepare("SELECT * FROM map_destinations").all(),
-      db.prepare("SELECT * FROM together_activities").all()
+      db.prepare("SELECT * FROM together_activities").all(),
+      db.prepare("SELECT * FROM together_activity_status ORDER BY activity_id").all()
     ]);
 
     context.waitUntil(recordEvent(context.env, { userId: session.user.id, sessionId: session.sessionId }, {
@@ -52,7 +54,8 @@ export async function onRequestGet(context) {
         stories: stories.results,
         cuffietteSongs: cuffietteSongs.results,
         mapDestinations: mapDestinations.results,
-        togetherActivities: togetherActivities.results
+        togetherActivities: togetherActivities.results,
+        togetherActivityStatuses: togetherActivityStatuses.results
       },
       200,
       { "Content-Disposition": `attachment; filename="mondo-bianco-export-${exportedAt.slice(0, 10)}.json"` }
