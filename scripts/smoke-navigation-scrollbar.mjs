@@ -38,17 +38,23 @@ try {
       sessionStorage.setItem('noi-crossword-access-session-touched-at-v1', String(Date.now()));
     });
     await page.goto(base + '/ponti');
-    const opener = page.getByRole('button', { name: 'Apri il pannello con tutti i luoghi', exact: true });
     if (width <= 680) {
-      assert.equal(await page.locator('.world-navigation-rail').isVisible(), false);
-      const before = await opener.boundingBox();
+      const trigger = page.getByRole('button', { name: 'Apri i comandi rapidi', exact: true });
+      const before = await trigger.boundingBox();
       await page.evaluate(() => window.scrollBy(0, 200));
-      const after = await opener.boundingBox();
-      assert.ok(after.y < before.y - 100, 'Il pulsante mobile deve scorrere con la pagina');
-      await page.evaluate(() => window.scrollTo(0, 0));
-      await page.screenshot({ path: join(screenshots, `closed-${width}.png`) });
+      const after = await trigger.boundingBox();
+      assert.ok(Math.abs(after.y - before.y) < 1, 'I comandi devono restare disponibili durante lo scorrimento');
+      await trigger.click();
+      const rail = page.locator('.world-navigation-rail');
+      await rail.waitFor({ state: 'visible' });
+      for (const name of ["Vai all'inizio della pagina", 'Vai alla fine della pagina', 'Vai al Mondo Bianco']) {
+        assert.equal(await rail.getByRole(name === 'Vai al Mondo Bianco' ? 'link' : 'button', { name, exact: true }).isVisible(), true);
+      }
+      await page.screenshot({ path: join(screenshots, `quick-${width}.png`) });
+      await rail.getByRole('button', { name: "Vai all'inizio della pagina", exact: true }).click();
+      await page.getByRole('button', { name: 'Apri i comandi rapidi', exact: true }).click();
     }
-    await opener.click();
+    await page.getByRole('button', { name: 'Apri il pannello con tutti i luoghi', exact: true }).click();
     const sheet = page.locator('.world-navigation-sheet');
     await page.locator('.world-navigation-sheet:not([aria-hidden])').waitFor();
     const games = sheet.locator('.world-navigation-entry').filter({ has: page.locator('a[href="/tavolo-da-gioco"]') });
