@@ -90,3 +90,8 @@
   .global-chat-trigger.has-unread::before { opacity: .7; }
 }
 @media (max-width: 480px) { :host { right: .6rem; bottom: .6rem; } .global-chat-panel { width: calc(100vw - 1.2rem); height: min(32rem, calc(100vh - 5.5rem)); } }
+
+@media (max-width: 680px) {
+  :host { bottom: var(--mobile-tools-bottom, max(.6rem, env(safe-area-inset-bottom))); }
+  .global-chat-panel { max-height: calc(100dvh - var(--mobile-tools-panel-bottom, 6rem) - 1rem); }
+}

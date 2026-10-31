@@ -39,20 +39,15 @@ try {
     });
     await page.goto(base + '/ponti');
     if (width <= 680) {
-      const trigger = page.getByRole('button', { name: 'Apri i comandi rapidi', exact: true });
-      const before = await trigger.boundingBox();
-      await page.evaluate(() => window.scrollBy(0, 200));
-      const after = await trigger.boundingBox();
-      assert.ok(Math.abs(after.y - before.y) < 1, 'I comandi devono restare disponibili durante lo scorrimento');
-      await trigger.click();
       const rail = page.locator('.world-navigation-rail');
-      await rail.waitFor({ state: 'visible' });
-      for (const name of ["Vai all'inizio della pagina", 'Vai alla fine della pagina', 'Vai al Mondo Bianco']) {
-        assert.equal(await rail.getByRole(name === 'Vai al Mondo Bianco' ? 'link' : 'button', { name, exact: true }).isVisible(), true);
-      }
+      const before = await rail.boundingBox();
+      await page.evaluate(() => window.scrollBy(0, 200));
+      const after = await rail.boundingBox();
+      assert.ok(Math.abs(after.y - before.y) < 1, 'La barra deve restare fissa');
+      assert.ok(Math.abs(after.x + after.width / 2 - width / 2) < 1, 'La barra deve essere centrata');
+      const chat = await page.locator('.global-chat-trigger').boundingBox();
+      assert.ok(chat.y + chat.height < after.y, 'La chat deve stare sopra alla barra');
       await page.screenshot({ path: join(screenshots, `quick-${width}.png`) });
-      await rail.getByRole('button', { name: "Vai all'inizio della pagina", exact: true }).click();
-      await page.getByRole('button', { name: 'Apri i comandi rapidi', exact: true }).click();
     }
     await page.getByRole('button', { name: 'Apri il pannello con tutti i luoghi', exact: true }).click();
     const sheet = page.locator('.world-navigation-sheet');

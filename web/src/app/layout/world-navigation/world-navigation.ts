@@ -27,12 +27,6 @@ export class WorldNavigation {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly navigationOpen = signal(false);
-  protected readonly quickOpen = signal(false);
-
-  protected toggleQuick(): void {
-    this.navigationOpen.set(false);
-    this.quickOpen.update(open => !open);
-  }
   protected readonly currentPath = signal(this.pathFromUrl(this.router.url));
   protected readonly safe = inject(SafeModeService);
   protected readonly groups = computed(() => HOME_AREAS.map((area) => {
@@ -69,17 +63,14 @@ export class WorldNavigation {
   }
 
   protected open(): void {
-    this.quickOpen.set(false);
     this.navigationOpen.set(true);
   }
 
   protected close(): void {
     this.navigationOpen.set(false);
-    this.quickOpen.set(false);
   }
 
   protected toggle(): void {
-    this.quickOpen.set(false);
     this.navigationOpen.update((open) => !open);
   }
 
@@ -89,12 +80,10 @@ export class WorldNavigation {
   }
 
   protected scrollToTop(): void {
-    this.quickOpen.set(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   protected scrollToBottom(): void {
-    this.quickOpen.set(false);
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
   }
 

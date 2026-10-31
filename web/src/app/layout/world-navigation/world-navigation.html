@@ -1,15 +1,8 @@
-<button type="button" class="world-navigation-mobile-trigger"
-  [attr.aria-label]="quickOpen() ? 'Chiudi i comandi rapidi' : 'Apri i comandi rapidi'" aria-controls="world-navigation-quick"
-  [attr.aria-expanded]="quickOpen()" (click)="toggleQuick()">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
-  <span>Naviga</span>
-</button>
-
 <button type="button" class="world-navigation-backdrop" [class.is-visible]="navigationOpen()"
   [attr.aria-hidden]="navigationOpen() ? null : true" [attr.tabindex]="navigationOpen() ? 0 : -1"
   aria-label="Chiudi il pannello dei luoghi" (click)="close()"></button>
 
-<aside id="world-navigation-panel" class="world-navigation-drawer" [class.is-open]="navigationOpen()" [class.quick-is-open]="quickOpen()" aria-labelledby="world-navigation-title">
+<aside id="world-navigation-panel" class="world-navigation-drawer" [class.is-open]="navigationOpen()" aria-labelledby="world-navigation-title">
   <nav id="world-navigation-quick" class="world-navigation-rail glass-surface" aria-label="Navigazione rapida">
     <button class="world-navigation-action" type="button" aria-label="Vai all'inizio della pagina" title="Inizio pagina" (click)="scrollToTop()">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 15 7-7 7 7" /></svg>

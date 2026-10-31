@@ -295,3 +295,14 @@
 .gdr-panel-tabs.is-workspace { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); overflow:visible; }
 .gdr-panel-tabs.is-workspace button { min-width:0; white-space:normal; }
 @media(min-width:641px) { .is-wide .gdr-panel-tabs.is-workspace { grid-template-columns:repeat(5,minmax(0,1fr)); } }
+
+@media (max-width: 680px) {
+  :host {
+    --gdr-trigger-bottom: var(--mobile-tools-bottom);
+    --gdr-panel-bottom: var(--mobile-tools-panel-bottom);
+  }
+  .gdr-panel-trigger {
+    left: max(.6rem, env(safe-area-inset-left));
+    right: auto;
+  }
+}

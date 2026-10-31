@@ -225,61 +225,20 @@
   box-shadow: inset 0 0 0 1px var(--focus-color);
 }
 
-.world-navigation-mobile-trigger { display: none; }
-
 @media (max-width: 680px) {
-  :host { display: block; }
-
-  .world-navigation-mobile-trigger {
-    position: fixed;
-    left: max(0.75rem, env(safe-area-inset-left));
-    bottom: max(0.75rem, env(safe-area-inset-bottom));
-    z-index: 71;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    min-height: 44px;
-    margin: 0;
-    box-shadow: var(--shadow);
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 999px;
-    background: var(--button-bg);
-    color: var(--text-color);
-    font: inherit;
-  }
-
-  .world-navigation-mobile-trigger svg {
-    width: 1.15rem;
-    height: 1.15rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-  }
-
-  .world-navigation-mobile-trigger:focus-visible {
-    outline: 3px solid var(--focus-color);
-    outline-offset: 3px;
-  }
-
   .world-navigation-rail {
+    position: fixed;
     top: auto;
-    bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + 3.5rem);
-    left: max(0.75rem, env(safe-area-inset-left));
+    bottom: var(--mobile-navigation-bottom);
+    left: 50vw;
     right: auto;
-    gap: 0.15rem;
-    visibility: hidden;
-    opacity: 0;
-    pointer-events: none;
     display: flex;
-    justify-content: space-evenly;
+    gap: 0.15rem;
     padding: 0.35rem;
     border: 1px solid var(--border-color);
     border-radius: 999px;
     box-shadow: var(--shadow);
-    transform: translateY(0.5rem);
-    transition: opacity 150ms ease, transform 150ms ease, visibility 150ms;
+    transform: translateX(-50%);
   }
 
   .world-navigation-action { width: 44px; height: 44px; }
@@ -292,13 +251,6 @@
     border-top: 0;
     border-right: 0;
     border-radius: 0;
-  }
-
-  .world-navigation-drawer.quick-is-open .world-navigation-rail {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: auto;
-    transform: none;
   }
 
   .world-navigation-drawer.is-open .world-navigation-sheet { transform: none; }
@@ -323,7 +275,3 @@
 /* Il contenitore chiuso non deve intercettare i controlli della pagina. */
 .world-navigation-drawer { pointer-events: none; }
 .world-navigation-rail, .world-navigation-sheet { pointer-events: auto; }
-
-@media (max-width: 680px) {
-  .world-navigation-drawer:not(.quick-is-open) .world-navigation-rail { pointer-events: none; }
-}

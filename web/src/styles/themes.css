@@ -291,3 +291,13 @@ body.safe-mode[data-theme], body.safe-mode {
   --accent-color: #34628c;
   --focus-color: #34628c;
 }
+
+/* Le azioni di pagina occupano una riga distinta dagli strumenti chat/GDR. */
+@media (max-width: 680px) {
+  :root {
+    --mobile-navigation-bottom: max(.6rem, env(safe-area-inset-bottom));
+    --mobile-tools-bottom: calc(var(--mobile-navigation-bottom) + 4rem);
+    --mobile-tools-panel-bottom: calc(var(--mobile-tools-bottom) + 4.25rem);
+  }
+  body:has(app-world-navigation) { padding-bottom: calc(var(--mobile-tools-bottom) + 4.5rem); }
+}

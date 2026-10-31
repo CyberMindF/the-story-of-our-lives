@@ -84,6 +84,20 @@ try {
   await page.locator('.tavolo-game-card[href="/tavolo-da-gioco/gdr/gioca/il-prezzo-della-verita"]').click();
   await page.waitForURL(base+'/tavolo-da-gioco/gdr/gioca/il-prezzo-della-verita');
   await page.locator('app-gdr-laboratorio').waitFor();
+  if (width <= 680) {
+    const sheetTrigger = page.locator('.gdr-panel-trigger');
+    await sheetTrigger.waitFor();
+    const nav = await page.locator('.world-navigation-rail').boundingBox();
+    const gdr = await sheetTrigger.boundingBox();
+    const chat = await page.locator('.global-chat-trigger').boundingBox();
+    assert.ok(gdr.y + gdr.height < nav.y, 'Scheda GDR sopra la navigazione');
+    assert.ok(chat.y + chat.height < nav.y, 'Chat sopra la navigazione');
+    assert.ok(gdr.x + gdr.width < chat.x, 'Scheda GDR e chat separate');
+    await sheetTrigger.click();
+    await page.locator('.gdr-panel-sheet').waitFor();
+    await page.screenshot({path:`/tmp/gdr-mobile-tools-${width}.png`,fullPage:false});
+    await page.getByRole('button',{name:'Chiudi la scheda',exact:true}).click();
+  }
   await page.goto(base+'/tavolo-da-gioco/animali');
   await page.getByRole('heading',{name:'🐾 La casa degli animali',exact:true}).waitFor();
   await page.locator('app-pet-room').waitFor();
